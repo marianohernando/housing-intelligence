@@ -133,6 +133,21 @@ export function landCaution(item: LandItem | null): string | null {
   return `${notes.join(" ")} El precio libre y el valor residual del suelo de esta cuenta no valen para vivienda protegida ni para una concesión: tómalos solo como referencia de mercado.`;
 }
 
+/** The situation of a planning area of line A (D-247, VEDA), in words. */
+export const AREA_STAGE_TEXT: Record<string, string> = {
+  edificacion: "En fase de edificación: se puede construir ya",
+  gestion_urbanizacion: "En gestión o urbanización",
+  pendiente_planeamiento: "Pendiente de planeamiento de desarrollo",
+  pendiente_sectorizacion: "Pendiente de plan de sectorización",
+};
+
+/** What a planning area says besides its m²: its situation and the type of home («colectiva»). */
+export function areaFacts(item: LandItem): string[] {
+  if (item.kind !== "ambito") return [];
+  const stage = item.stage ? (AREA_STAGE_TEXT[item.stage] ?? null) : null;
+  return [stage, item.use ? `vivienda ${item.use}` : null].filter((f): f is string => Boolean(f));
+}
+
 export const REGIME_TEXT: Record<string, string> = {
   venta: "En venta",
   concesion: "En concesión, derecho de superficie o alquiler",
@@ -394,7 +409,7 @@ export const CALCULATOR_TEXT = {
   newPrice: (price: number) => `Vivienda nueva a unos ${formatNumber(Math.round(price), 0)} €/m².`,
   withLand: "Con el precio del suelo que has puesto: margen sobre ventas, antes de financiación e impuestos.",
   withoutLand:
-    "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale.",
+    "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale. La rentabilidad del alquiler cuenta el suelo a ese valor máximo, así que sale igual en los tres escenarios: compara el alquiler con el precio de venta.",
   thresholds:
     "Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %.",
   costCaution:
@@ -438,7 +453,9 @@ export const SHEET_TEXT = {
   commerce: "Comercio de proximidad",
   landIntro:
     "Contexto urbanístico, no qué se puede construir: los m² edificables son los que publica la fuente, y la normativa de cada parcela manda. No los pasamos a viviendas.",
-  parcels: (n: number) => (n === 1 ? "1 parcela pública para vivienda" : `${n} parcelas públicas para vivienda`),
+  // D-246: a zone without parcels never says «0 parcelas»
+  parcels: (n: number) =>
+    n === 0 ? "Parcelas públicas para vivienda" : n === 1 ? "1 parcela pública para vivienda" : `${n} parcelas públicas para vivienda`,
   noParcels: "El Portal del Suelo no ofrece ahora ninguna parcela residencial en este barrio.",
   remaining: "Edificabilidad residencial que queda en los ámbitos del Plan General",
   remainingUnknown: "Aún sin dato para este barrio.",

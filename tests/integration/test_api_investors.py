@@ -11,7 +11,7 @@ from sqlalchemy import Engine, event
 from hi_api.deps import get_engine
 from hi_api.main import app
 from hi_api.services import investors
-from hi_contracts.catalog.enums import NullReason, TerritoryLevel
+from hi_contracts.catalog.enums import TerritoryLevel
 from hi_contracts.catalog.pipeline import PermitBudgetPipeline
 from hi_contracts.pro.investors import ValueMark
 from hi_contracts.public.responses import (
@@ -45,8 +45,9 @@ def test_the_pilot_list_has_its_barrios_and_their_district(client: TestClient) -
     palacio = zones["28079011"]
     assert palacio.zone.admin_unit_id == "ES.28.BAR.28079011"
     assert palacio.district.code == "2807901"
-    assert palacio.commerce_per_1000 is None  # line A's, not loaded here
-    assert palacio.remaining_m2 is None
+    # Line A's figures (D-247), on the fixture database since #95
+    assert palacio.commerce_per_1000 is not None
+    assert palacio.remaining_m2 is not None  # a confirmed 0 when no area is left
     assert body.data.pilot == investors.PILOT_TEXT
 
 
@@ -59,12 +60,19 @@ def test_a_barrio_sheet_says_where_each_figure_comes_from(client: TestClient) ->
     for figure in [*sheet.demand.model_dump().values(), *sheet.prices.model_dump().values()]:
         assert figure["source"]["text"]
         assert (figure["value"] is None) == (figure["null_reason"] is not None)
-    # Line A's figures, until loaded: null with their reason and a warning
-    for figure in [*sheet.gaps.commerce] if sheet.gaps else []:
-        assert figure.value is None
-        assert figure.null_reason is NullReason.SOURCE_NO_COVERAGE
-    assert sheet.land.remaining == [] and sheet.land.remaining_m2.value is None
-    assert any("edificabilidad_remanente_residencial_m2" in w for w in body.warnings)
+    # Line A's figures (D-247): read by their id, each with its dataset; never 0 for unknown
+    assert sheet.gaps is not None
+    commerce = {f.feature_id: f for f in sheet.gaps.commerce}
+    assert set(commerce) == set(investors.COMMERCE)
+    for feature_id in ("comercio_proximidad_1000hab", "locales_abiertos_1000hab"):
+        figure = commerce[feature_id]
+        assert figure.value is not None and figure.null_reason is None
+        assert "ayto_censo_locales_actividades" in figure.source.dataset_ids  # and the padrón
+        assert figure.source.level is TerritoryLevel.BARRIO
+    remaining = sheet.land.remaining_m2
+    assert remaining.value is not None
+    assert "ayto_edificabilidad_remanente_ambitos" in remaining.source.dataset_ids
+    assert not any("not loaded" in w for w in body.warnings)
     # Defaults: data and assumptions marked as such
     assert sheet.defaults.pem_m2.value == PEM_EUR_M2
     assert sheet.defaults.pem_m2.mark is ValueMark.DATO

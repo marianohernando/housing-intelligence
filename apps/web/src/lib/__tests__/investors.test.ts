@@ -7,12 +7,14 @@ import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/inve
 
 import {
   adminUnitId,
+  areaFacts,
   defaultLand,
   FIELD_LIMITS,
   fieldErrors,
   LAND_LIMITS,
   landCaution,
   remainingLine,
+  SHEET_TEXT,
   uniqueDatasets,
   figure,
   gapsLine,
@@ -102,6 +104,13 @@ describe("the list of barrios", () => {
     expect(parcelsLine(1, null)).toBe("1 parcela pública");
     expect(parcelsLine(0, 0)).toBeNull();
     expect(parcelsLine(null, null)).toBeNull();
+  });
+
+  it("says a planning area's situation and type of home in words", () => {
+    const area = { kind: "ambito", code: "APR.16.04", name: "UVA de Hortaleza", buildable_m2: 26322, stage: "edificacion", use: "colectiva" };
+    expect(areaFacts(area)).toEqual(["En fase de edificación: se puede construir ya", "vivienda colectiva"]);
+    expect(areaFacts({ ...area, stage: "otra", use: null })).toEqual([]);
+    expect(areaFacts(parcel("x", 1))).toEqual([]);
   });
 
   it("says when a planning area also covers other barrios", () => {
@@ -196,6 +205,12 @@ describe("the calculator", () => {
     expect(landCaution(concession)).toMatch(/^Se ofrece en concesión.*no valen para vivienda protegida ni para una concesión/);
     expect(landCaution({ ...parcel("c", 328), regime: "venta", manager: "Ayuntamiento de Madrid" })).toBeNull();
     expect(landCaution(null)).toBeNull();
+  });
+
+  it("never says «0 parcelas» (D-246)", () => {
+    expect(SHEET_TEXT.parcels(0)).toBe("Parcelas públicas para vivienda");
+    expect(SHEET_TEXT.parcels(1)).toBe("1 parcela pública para vivienda");
+    expect(SHEET_TEXT.parcels(4)).toBe("4 parcelas públicas para vivienda");
   });
 
   it("lists each dataset once", () => {

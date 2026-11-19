@@ -5,9 +5,7 @@ source; the API image only carries the Python packages.
 - hi_domain/viability_data.py from data/catalog/manual/pem_visados_cm.yaml (the PEM of the
   permits, written by scripts/pem_visados_cm.py).
 - hi_domain/investors_pilot.py from data/catalog/manual/inversores_barrios_m40.yaml (D-247, the
-  pilot barrios inside the M-40, written by line A's scripts/m40_barrios.py). Until that file
-  lands in the branch, the committed module is the last one generated and --check says so
-  instead of failing.
+  pilot barrios inside the M-40, written by line A's scripts/m40_barrios.py).
 
 Usage: uv run python scripts/export_investor_data.py [--check]
 """
@@ -95,21 +93,16 @@ def load(path: Path) -> dict[str, Any]:
     return yaml.safe_load(path.read_text())
 
 
-def outputs() -> tuple[list[tuple[Path, str]], list[str]]:
-    rendered = [(PEM_TARGET, render_pem(load(PEM_SOURCE)))]
-    notes: list[str] = []
-    if PILOT_SOURCE.exists():
-        rendered.append((PILOT_TARGET, render_pilot(load(PILOT_SOURCE))))
-    else:
-        notes.append(f"{PILOT_SOURCE.relative_to(ROOT)} not in this branch yet: kept the module")
-    return rendered, notes
+def outputs() -> list[tuple[Path, str]]:
+    return [
+        (PEM_TARGET, render_pem(load(PEM_SOURCE))),
+        (PILOT_TARGET, render_pilot(load(PILOT_SOURCE))),
+    ]
 
 
 def main() -> int:
     check = "--check" in sys.argv
-    rendered, notes = outputs()
-    for note in notes:
-        print(note)
+    rendered = outputs()
     stale = [p for p, content in rendered if not p.exists() or p.read_text() != content]
     if check:
         if stale:

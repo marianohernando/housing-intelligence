@@ -65,3 +65,14 @@ def test_without_shared_areas_the_sum_says_nothing_more() -> None:
     assert "otros barrios" not in block.remaining_m2.source.text
     assert shared_areas(_row([])) == 0
     assert shared_areas(None) is None
+
+
+def test_a_figure_not_loaded_is_null_with_its_reason_never_0() -> None:
+    """Line A's features before a database has them (e.g. a deploy before the sync)."""
+    from hi_contracts.catalog.enums import NullReason
+
+    block = land_block({}, PLACE, Sources({}))
+    for figure in (block.remaining_m2, block.vacant_units, block.parcels_m2):
+        assert figure.value is None
+        assert figure.null_reason is NullReason.SOURCE_NO_COVERAGE
+    assert block.remaining == [] and block.parcels == []

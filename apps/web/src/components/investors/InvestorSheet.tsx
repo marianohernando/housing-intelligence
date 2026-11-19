@@ -13,6 +13,7 @@ import SmallZoneTag from "@/components/zone/SmallZoneTag";
 import { errorMessage } from "@/lib/errors";
 import { notComparable, peopleAffectedText, rowComparison } from "@/lib/gaps";
 import {
+  areaFacts,
   COMMERCE_LABEL,
   uniqueDatasets,
   INVESTOR_TEXT as TEXT,
@@ -121,7 +122,7 @@ function LandList({ items }: { items: LandItem[] }) {
       {items.map((item) => (
         <li key={`${item.kind}-${item.code ?? item.name}`}>
           <strong>{landName(item)}</strong>
-          <span>{[landArea(item), item.use, item.regime ? REGIME_TEXT[item.regime] : null, item.manager].filter(Boolean).join(" · ")}</span>
+          <span>{[landArea(item), ...areaFacts(item), item.regime ? REGIME_TEXT[item.regime] : null, item.manager].filter(Boolean).join(" · ")}</span>
           {item.note && <span className={styles.note}>{item.note}</span>}
           {item.url?.startsWith("https://") && (
             <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.external}>

@@ -65,7 +65,6 @@ LEVEL_WORDS = {
 
 # The features the sheet reads, by id (the brief: line A's are consumed by their id)
 POPULATION = "poblacion_total"
-BARRIO_POPULATION = "poblacion_padron_barrio"  # line A (D-247): the barrio's own padrón
 HOUSEHOLD_SIZE = "tamano_medio_hogar"
 ONE_PERSON = "hogares_unipersonales_pct"
 FIVE_PLUS = "hogares_5_mas_pct"
@@ -98,7 +97,6 @@ COMMERCE_SUMMARY = "comercio_proximidad_1000hab"
 PEM = "pem_visado_vivienda_bloque_m2"
 SHEET_FEATURES = (
     PEM,
-    BARRIO_POPULATION,
     POPULATION,
     HOUSEHOLD_SIZE,
     ONE_PERSON,
@@ -418,20 +416,12 @@ def find_place(conn: Connection, admin_unit_id: str) -> Place:
     return Place(row["code"], row["district_code"])
 
 
-def population(values: Values, place: Place, sources: Sources) -> SourcedValue:
-    """The barrio's own padrón (line A) when loaded; else the finest of the total population."""
-    row = values.get((BARRIO_POPULATION, BARRIO.value, place.code))
-    if row is not None and row["value"] is not None:
-        return sourced(row, sources, "personas")
-    return sourced(finest(values, POPULATION, place), sources, "personas")
-
-
 def demand_block(values: Values, place: Place, sources: Sources) -> DemandBlock:
     def get(feature: str, unit: str) -> SourcedValue:
         return sourced(finest(values, feature, place), sources, unit)
 
     return DemandBlock(
-        population=population(values, place, sources),
+        population=get(POPULATION, "personas"),
         household_size=get(HOUSEHOLD_SIZE, "personas/hogar"),
         one_person_pct=get(ONE_PERSON, "%"),
         five_plus_pct=get(FIVE_PLUS, "%"),
