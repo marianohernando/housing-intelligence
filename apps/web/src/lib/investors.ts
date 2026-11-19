@@ -308,6 +308,16 @@ export function parcelsLine(parcels: number | null | undefined, m2: number | nul
   return m2 ? `${count}, ${formatNumber(m2, 0)} m² edificables` : count;
 }
 
+/**
+ * Line A's buildable area left in planning areas (D-247), with a caveat when some of them also
+ * cover other barrios: they count whole in this one (review of #95).
+ */
+export function remainingLine(m2: number | null | undefined, shared: number | null | undefined): string | null {
+  if (!m2) return null;
+  const line = `${formatNumber(m2, 0)} m² edificables en ámbitos del Plan General`;
+  return shared ? `${line} (alguno ocupa también otros barrios y cuenta entero aquí)` : line;
+}
+
 /** The barrio code from the address (/inversores/28079164) to the API id. */
 export function adminUnitId(code: string): string | null {
   return /^28079\d{3}$/.test(code) ? `ES.28.BAR.${code}` : null;

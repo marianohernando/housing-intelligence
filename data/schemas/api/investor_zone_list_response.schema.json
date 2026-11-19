@@ -227,8 +227,21 @@
               "type": "null"
             }
           ],
-          "description": "Residential buildable area left in its planning areas (line A); null until loaded",
+          "description": "Residential buildable area left in its planning areas (line A); null until loaded. An area that also covers other barrios counts whole here",
           "title": "Remaining M2"
+        },
+        "remaining_shared_areas": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How many of those areas also cover other barrios",
+          "title": "Remaining Shared Areas"
         },
         "rent_m2_month": {
           "anyOf": [

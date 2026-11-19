@@ -12,6 +12,7 @@ import {
   fieldErrors,
   LAND_LIMITS,
   landCaution,
+  remainingLine,
   uniqueDatasets,
   figure,
   gapsLine,
@@ -101,6 +102,13 @@ describe("the list of barrios", () => {
     expect(parcelsLine(1, null)).toBe("1 parcela pública");
     expect(parcelsLine(0, 0)).toBeNull();
     expect(parcelsLine(null, null)).toBeNull();
+  });
+
+  it("says when a planning area also covers other barrios", () => {
+    expect(remainingLine(15000, 0)).toBe("15.000 m² edificables en ámbitos del Plan General");
+    expect(remainingLine(15000, 2)).toBe("15.000 m² edificables en ámbitos del Plan General (alguno ocupa también otros barrios y cuenta entero aquí)");
+    expect(remainingLine(null, null)).toBeNull();
+    expect(remainingLine(0, 0)).toBeNull();
   });
 
   it("takes only Madrid barrio codes from the address", () => {

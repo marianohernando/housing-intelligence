@@ -969,7 +969,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 | `inversores.lista.solo_suelo` | Solo barrios con suelo público | Botón que se queda pulsado (`aria-pressed`) |
 | `inversores.lista.falta` | Falta en el distrito de {distrito}: {filas}; justo: {filas}. | FALTA primero y después JUSTO, como en «Qué falta». Solo JUSTO: «Justo en el distrito de {distrito}: {filas}.»; ninguna: «En el distrito de {distrito} no falta nada de lo que medimos.»; sin lista: «Sin datos de lo que falta en el distrito de {distrito}.» Siempre nombra el distrito: el dato no es del barrio |
 | `inversores.lista.vacia` | La lista de barrios del piloto aún no está cargada. Vuelve a intentarlo en un rato. | Mientras la API no tenga la lista de D-247 |
-| `inversores.lista.suelo` | {n} parcelas públicas, {m2} m² edificables · Unos {precio} €/m² (estimado) | Una: «1 parcela pública». Sin parcelas no se dice nada, ni «0 parcelas» |
+| `inversores.lista.suelo` | {n} parcelas públicas, {m2} m² edificables · {m2} m² edificables en ámbitos del Plan General · Unos {precio} €/m² (estimado) | Una: «1 parcela pública». Sin parcelas ni ámbitos no se dice nada, ni «0 parcelas». Si algún ámbito ocupa también otros barrios: «(alguno ocupa también otros barrios y cuenta entero aquí)» (revisión del #95) |
 
 ### Ficha de un barrio
 
@@ -994,7 +994,7 @@ En este orden: 1. Quién vive aquí; 2. Precios; 3. Qué falta; 4. Suelo; 5. ¿S
 | `inversores.ficha.suelo.titulo` | 4. Suelo | |
 | `inversores.ficha.suelo.intro` | Contexto urbanístico, no qué se puede construir: los m² edificables son los que publica la fuente, y la normativa de cada parcela manda. No los pasamos a viviendas. | |
 | `inversores.ficha.suelo.parcelas` | {n} parcelas públicas para vivienda | Cada una como en `zona.vivienda_nueva.suelo.parcela` (D-246), con «Ver en el visor de la Comunidad». Sin ninguna: «El Portal del Suelo no ofrece ahora ninguna parcela residencial en este barrio.» |
-| `inversores.ficha.suelo.remanente` | Edificabilidad residencial que queda en los ámbitos del Plan General | D-247. Sin el dato: «Aún sin dato para este barrio.»; con 0: «Ningún ámbito del barrio tiene edificabilidad residencial disponible.» Cada ámbito con «Ver la ficha oficial» |
+| `inversores.ficha.suelo.remanente` | Edificabilidad residencial que queda en los ámbitos del Plan General | D-247. Sin el dato: «Aún sin dato para este barrio.»; con 0: «Ningún ámbito del barrio tiene edificabilidad residencial disponible.» Cada ámbito con su uso, su nota y «Ver la ficha oficial». La nota de un ámbito que ocupa varios barrios viene de la API («El ámbito ocupa también otros barrios: aquí está el 32 % de su superficie.»), y la fuente de la suma dice «Incluye N ámbitos que ocupan también otros barrios: cuentan enteros aquí; la nota de cada uno dice qué parte está en este barrio» |
 | `inversores.ficha.suelo.vacante` | Suelo vacante (Catastro) | D-247, contexto |
 | `inversores.ficha.fuera` | Ese barrio no está en el piloto (Madrid capital dentro de la M-40). | Con el botón «‹ Todos los barrios» |
 | `inversores.ficha.fuentes.titulo` | Fuentes y avisos | Los avisos fijos, la fecha de los datos y la lista de conjuntos de datos (en papel, con su dirección) |

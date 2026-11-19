@@ -377,6 +377,7 @@ def summary(
         parcels=None if parcels is None else len(parcels),
         parcels_m2=value_of(parcels_row),
         remaining_m2=value_of(values.get((REMAINING, BARRIO.value, code))),
+        remaining_shared_areas=shared_areas(values.get((REMAINING, BARRIO.value, code))),
         commerce_per_1000=value_of(values.get((COMMERCE_SUMMARY, BARRIO.value, code))),
         sale_price_m2=value_of(finest(values, PRICE, place)),
         rent_m2_month=value_of(finest(values, RENT, place)),
@@ -521,10 +522,28 @@ def land_items(row: dict[str, Any] | None, kind: str) -> list[LandItem]:
             manager=item.get("manager"),
             stage=item.get("stage"),
             use=item.get("use"),
+            note=item.get("note"),
             url=item.get("url"),
         )
         for item in items_of(row) or []
     ]
+
+
+def shared_areas(row: dict[str, Any] | None) -> int | None:
+    """Planning areas that also cover other barrios: their note says the share that is here."""
+    items = items_of(row)
+    return None if items is None else sum(1 for item in items if item.get("note"))
+
+
+def shared_note(count: int | None) -> str | None:
+    """Line A places each area whole in one barrio (D-247): the sum says so when it happens."""
+    if not count:
+        return None
+    areas = "1 ámbito que ocupa" if count == 1 else f"{count} ámbitos que ocupan"
+    return (
+        f"Incluye {areas} también otros barrios: cuenta{'n' if count > 1 else ''} entero"
+        f"{'s' if count > 1 else ''} aquí; la nota de cada uno dice qué parte está en este barrio"
+    )
 
 
 def land_block(values: Values, place: Place, sources: Sources) -> LandBlock:
@@ -534,7 +553,7 @@ def land_block(values: Values, place: Place, sources: Sources) -> LandBlock:
         parcels=land_items(parcels, "parcela"),
         parcels_m2=sourced(parcels, sources, "m²"),
         remaining=land_items(remaining, "ambito"),
-        remaining_m2=sourced(remaining, sources, "m²"),
+        remaining_m2=sourced(remaining, sources, "m²", note=shared_note(shared_areas(remaining))),
         vacant_units=sourced(finest(values, VACANT, place), sources, "unidades"),
     )
 

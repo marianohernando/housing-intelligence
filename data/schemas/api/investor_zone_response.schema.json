@@ -726,6 +726,19 @@
           ],
           "title": "Name"
         },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A caveat that travels with the item: an area that also covers other barrios says which share of it is here (it counts whole in this barrio)",
+          "title": "Note"
+        },
         "parcel": {
           "anyOf": [
             {

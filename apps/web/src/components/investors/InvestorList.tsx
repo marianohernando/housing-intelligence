@@ -9,7 +9,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { formatNumber } from "@/lib/format";
-import { districtHeading, INVESTOR_TEXT as TEXT, gapsLine, parcelsLine } from "@/lib/investors";
+import { districtHeading, INVESTOR_TEXT as TEXT, gapsLine, parcelsLine, remainingLine } from "@/lib/investors";
 
 import styles from "./Investors.module.css";
 import { useInvestorZones } from "./useInvestors";
@@ -24,7 +24,7 @@ function byDistrict(zones: InvestorZoneSummary[]): [string, InvestorZoneSummary[
 }
 
 function ZoneRow({ zone }: { zone: InvestorZoneSummary }) {
-  const land = parcelsLine(zone.parcels, zone.parcels_m2);
+  const land = [parcelsLine(zone.parcels, zone.parcels_m2), remainingLine(zone.remaining_m2, zone.remaining_shared_areas)].filter(Boolean).join(" · ");
   const price = zone.sale_price_m2 ? `Unos ${formatNumber(zone.sale_price_m2, 0)} €/m² (estimado)` : null;
   return (
     <li>

@@ -120,7 +120,10 @@ class InvestorZoneSummary(BaseModel):
     parcels_m2: float | None
     remaining_m2: float | None = Field(
         description="Residential buildable area left in its planning areas (line A); null "
-        "until loaded"
+        "until loaded. An area that also covers other barrios counts whole here"
+    )
+    remaining_shared_areas: int | None = Field(
+        default=None, description="How many of those areas also cover other barrios"
     )
     commerce_per_1000: float | None = Field(
         description="Open local shops per 1.000 inhabitants (line A); null until loaded"
@@ -188,6 +191,11 @@ class LandItem(BaseModel):
     stage: str | None = None
     use: str | None = Field(
         default=None, description="Line A's planning areas: their use, as the source writes it"
+    )
+    note: str | None = Field(
+        default=None,
+        description="A caveat that travels with the item: an area that also covers other "
+        "barrios says which share of it is here (it counts whole in this barrio)",
     )
     url: str | None = Field(default=None, description="The official viewer or record")
 

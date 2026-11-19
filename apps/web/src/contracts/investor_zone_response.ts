@@ -176,6 +176,10 @@ export type Code1 = string | null;
 export type Kind = string;
 export type Manager = string | null;
 export type Name2 = string | null;
+/**
+ * A caveat that travels with the item: an area that also covers other barrios says which share of it is here (it counts whole in this barrio)
+ */
+export type Note = string | null;
 export type Parcel = string | null;
 /**
  * venta | concesion
@@ -406,6 +410,7 @@ export interface LandItem {
   kind: Kind;
   manager?: Manager;
   name: Name2;
+  note?: Note;
   parcel?: Parcel;
   regime?: Regime;
   stage?: Stage;

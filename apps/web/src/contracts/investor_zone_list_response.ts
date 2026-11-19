@@ -69,9 +69,13 @@ export type Rows = string[];
 export type Parcels = number | null;
 export type ParcelsM2 = number | null;
 /**
- * Residential buildable area left in its planning areas (line A); null until loaded
+ * Residential buildable area left in its planning areas (line A); null until loaded. An area that also covers other barrios counts whole here
  */
 export type RemainingM2 = number | null;
+/**
+ * How many of those areas also cover other barrios
+ */
+export type RemainingSharedAreas = number | null;
 export type RentM2Month = number | null;
 export type SalePriceM2 = number | null;
 export type Zones = InvestorZoneSummary[];
@@ -122,6 +126,7 @@ export interface InvestorZoneSummary {
   parcels: Parcels;
   parcels_m2: ParcelsM2;
   remaining_m2: RemainingM2;
+  remaining_shared_areas?: RemainingSharedAreas;
   rent_m2_month: RentM2Month;
   sale_price_m2: SalePriceM2;
   zone: ZoneRef;

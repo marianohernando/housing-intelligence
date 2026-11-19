@@ -122,6 +122,7 @@ function LandList({ items }: { items: LandItem[] }) {
         <li key={`${item.kind}-${item.code ?? item.name}`}>
           <strong>{landName(item)}</strong>
           <span>{[landArea(item), item.use, item.regime ? REGIME_TEXT[item.regime] : null, item.manager].filter(Boolean).join(" · ")}</span>
+          {item.note && <span className={styles.note}>{item.note}</span>}
           {item.url?.startsWith("https://") && (
             <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.external}>
               {item.kind === "parcela" ? SHEET_TEXT.viewer : SHEET_TEXT.record}
@@ -149,6 +150,7 @@ function Land({ sheet }: { sheet: InvestorZone }) {
       ) : (
         <p>{land.remaining_m2.value === null ? SHEET_TEXT.remainingUnknown : SHEET_TEXT.noRemaining}</p>
       )}
+      {land.remaining.length > 0 && <p className={styles.source}>Fuente: {land.remaining_m2.source.text}</p>}
       <dl className={styles.figures}>
         <Figure label={SHEET_TEXT.vacant} value={land.vacant_units} />
       </dl>
