@@ -193,6 +193,124 @@
       "title": "AirQualityZonesPipeline",
       "type": "object"
     },
+    "CmDistrictConceptPipeline": {
+      "additionalProperties": false,
+      "description": "Instituto de Estadística tables whose only territory is a Madrid district named inside a\nfree-text concept («Inmuebles para uso comercial del distrito Chamartín del municipio de\nMadrid», D-247): `district_pattern` captures the name (group `district`), which resolves to\nthe district of the geography with the same name (no case, accents or signs). Rows that\nmatch `unassigned_pattern` («sin asignar distrito») are counted, never read. A row that is\nneither, or whose name is no district, goes to quarantine and blocks the run; in the latest\nyear read, every district must be published.",
+      "properties": {
+        "concept_column": {
+          "default": "Concepto",
+          "title": "Concept Column",
+          "type": "string"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "dimension_columns": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Dimension Columns",
+          "type": "object"
+        },
+        "district_pattern": {
+          "minLength": 10,
+          "title": "District Pattern",
+          "type": "string"
+        },
+        "expected_districts": {
+          "exclusiveMinimum": 0,
+          "title": "Expected Districts",
+          "type": "integer"
+        },
+        "kind": {
+          "const": "cm_district_concept",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "missing_markers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Markers",
+          "type": "array"
+        },
+        "municipio_ine": {
+          "pattern": "^28\\d{3}$",
+          "title": "Municipio Ine",
+          "type": "string"
+        },
+        "period_column": {
+          "default": "Año",
+          "title": "Period Column",
+          "type": "string"
+        },
+        "period_min": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Period Min"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "unassigned_pattern": {
+          "minLength": 5,
+          "title": "Unassigned Pattern",
+          "type": "string"
+        },
+        "unit_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Unidad",
+          "title": "Unit Column"
+        },
+        "value_column": {
+          "default": "Valor",
+          "title": "Value Column",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "municipio_ine",
+        "district_pattern",
+        "unassigned_pattern",
+        "dimension_columns",
+        "expected_districts"
+      ],
+      "title": "CmDistrictConceptPipeline",
+      "type": "object"
+    },
     "CmMunicipioConceptPipeline": {
       "additionalProperties": false,
       "description": "Instituto de Estadística tables without a territory code (D-235): the municipio comes\nby name and what the row counts is in a free-text 'Concepto' column.\n\nOnly the rows whose concept starts with one of the `concepts` are read, each with its value\nof `dimension` (e.g. the total and the cybercrime of the offences, so a feature can leave\nthe second out). The source writes the names by hand (double spaces, «Rozas de Madrid»),\nso `municipios` maps each spelling to its INE code after collapsing the whitespace. Two\nblocking checks keep a figure from being lost in silence: the quarantine must be empty (a\nname that is not there fails the run, even for a single row), and in the latest year read\neach of the `municipios` must have a row of every concept (a row renamed or dropped by the\nsource fails it too). Rows whose status is in `excluded_statuses` (e.g. «Provisional») are\nleft out and counted.",
@@ -955,6 +1073,137 @@
       "title": "GtfsFeedPipeline",
       "type": "object"
     },
+    "MadridBuildableAreasPipeline": {
+      "additionalProperties": false,
+      "description": "Ayuntamiento de Madrid, «PGOUM 97. Edificabilidad remanente en ámbitos» (VEDA, D-247):\none row per planning area (or per stage of one, `stage_column`) with its district, its\nsituation and the buildable area left, in m², for each use.\n\nEach area with residential area left (the sum of `residential_columns`, by type of\nbuilding) becomes one observation of `metric_id` in its district and in its barrio. The\nregister has no coordinates: a versioned table of points inside each area, read once from\nthe Ayuntamiento's own layer of the areas in force (`points`, in data/catalog/manual), is\nlocated in the canonical geography; an area without a point, or whose point is in no barrio\nof its district, goes to quarantine and blocks the run (the points must be read again).\n\nA blank cell is not a 0. An area whose residential cells are all blank but that has area\nleft for another use (`other_use_columns`) is not residential (counted apart); one with\nevery use blank is kept with an unknown value, so its zone's sum is unknown, never shorter.\nThe register's number of homes (its m² divided by 100) is not read: m² are never homes. A\nsituation the pipeline does not declare is quarantined and blocks the run.",
+      "properties": {
+        "code_column": {
+          "default": "COD_AMBITO",
+          "title": "Code Column",
+          "type": "string"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "date_column": {
+          "default": "ESTADO DEL DESARROLLO A FECHA",
+          "title": "Date Column",
+          "type": "string"
+        },
+        "district_column": {
+          "default": "COD_DISTRITO",
+          "title": "District Column",
+          "type": "string"
+        },
+        "keep_upper": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Keep Upper",
+          "type": "array"
+        },
+        "kind": {
+          "const": "madrid_buildable_areas",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "min_rows": {
+          "description": "fewer rows -> the register changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "municipio_ine": {
+          "pattern": "^28\\d{3}$",
+          "title": "Municipio Ine",
+          "type": "string"
+        },
+        "name_column": {
+          "default": "AMBITO",
+          "title": "Name Column",
+          "type": "string"
+        },
+        "other_use_columns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Other Use Columns",
+          "type": "array"
+        },
+        "points": {
+          "description": "file in data/catalog/manual",
+          "pattern": "^[a-z0-9_]+\\.yaml$",
+          "title": "Points",
+          "type": "string"
+        },
+        "residential_columns": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z_]*$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "Residential Columns",
+          "type": "object"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "stage_column": {
+          "default": "Etapa",
+          "title": "Stage Column",
+          "type": "string"
+        },
+        "state_column": {
+          "default": "SITUACION DEL ÁMBITO",
+          "title": "State Column",
+          "type": "string"
+        },
+        "states": {
+          "additionalProperties": {
+            "pattern": "^[a-z][a-z_]*$",
+            "type": "string"
+          },
+          "minProperties": 1,
+          "title": "States",
+          "type": "object"
+        },
+        "whole_area_pct": {
+          "default": 90,
+          "description": "below this share in its barrio, a note says so",
+          "maximum": 100,
+          "minimum": 50,
+          "title": "Whole Area Pct",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "municipio_ine",
+        "residential_columns",
+        "states",
+        "points",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "MadridBuildableAreasPipeline",
+      "type": "object"
+    },
     "MadridDevelopmentAreasPipeline": {
       "additionalProperties": false,
       "description": "Ayuntamiento de Madrid, «PGOUM 97. Estado de desarrollo de los ámbitos» (VEDA): one row\nper planning area with its district and the state of its four phases, in order (D-241).\n\nOnly the areas whose characteristic use is in `uses` and that are not finished are kept:\nsome phase is still `in_progress` or `not_started`. A state the pipeline does not declare\nsends its row to quarantine and blocks the run (a new wording must be read by a person).\nEach kept area becomes one observation of `metric_id` in its district, its surface in m²,\nwith its code, its name and its stage as dimensions. Names come in capitals: they are shown\nin title case, with the words of `keep_upper` (acronyms such as «PMM») as written, and\nwithout a leading `drop_name_prefixes` that several areas share («DESARROLLO DEL ESTE - »).",
@@ -1242,11 +1491,36 @@
     },
     "MadridPadronPipeline": {
       "additionalProperties": false,
-      "description": "Ayuntamiento de Madrid padrón: one row per census section and single year of age.\n\nDistricts get the CM census 5-year age bands plus their total, so ratios over this\npopulation compare like with like. The count columns (nationality x sex) are only summed.",
+      "description": "Ayuntamiento de Madrid padrón: one row per census section and single year of age.\n\nDistricts get the CM census 5-year age bands plus their total, so ratios over this\npopulation compare like with like. The count columns (nationality x sex) are only summed.\nWith `barrio_column` (the district and barrio number, «205»), each barrio also gets its\ntotal as `barrio_metric_id` (D-247); a row without a barrio counts in its district only.",
       "properties": {
         "age_column": {
           "title": "Age Column",
           "type": "string"
+        },
+        "barrio_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Barrio Column"
+        },
+        "barrio_metric_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]{2,95}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Barrio Metric Id"
         },
         "census_metric_id": {
           "anyOf": [
@@ -1293,6 +1567,19 @@
           "default": null,
           "title": "District Name Column"
         },
+        "expected_barrios": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Barrios"
+        },
         "expected_districts": {
           "exclusiveMinimum": 0,
           "title": "Expected Districts",
@@ -1335,6 +1622,189 @@
         "expected_districts"
       ],
       "title": "MadridPadronPipeline",
+      "type": "object"
+    },
+    "MadridPremisesCensusPipeline": {
+      "additionalProperties": false,
+      "description": "Ayuntamiento de Madrid, «Censo de locales, sus actividades y terrazas» (D-247): the file\nof activities, one row per premise and epígrafe (a premise without activity comes once,\nwith an empty epígrafe), with its district, barrio, access type and situation.\n\nA premise counts when its access type is in `access` with `counted: true` and its situation\nis one of `counted_states`; the others of `access` and `states` are known and counted apart,\nnever quarantined. A code whose literal is not the declared one, an undeclared code or an\nepígrafe that does not read as one (6 or 8 digits starting with its division) goes to\nquarantine and blocks the run: a new code is read by a person before it is counted. The\nepígrafes the file itself marks as not coded yet (`pending_epigrafes`, with their literal:\n«PTE. CODIFICAR», «SIN ASIGNAR») are listed in quarantine without blocking: their premise\ncounts by its situation, but its activity is unknown, never a proximity shop nor a 0. A\ncounted premise without a district or barrio is quarantined too; up to `max_unplaced` of\nthem do not block (they are listed, never counted as 0 anywhere).\n\nEach zone (district and barrio of `municipio_ine`) gets `premises_metric_id`, the counted\npremises by situation (0 included: the census is exhaustive), and `proximity_metric_id`, the\nopen premises with at least one epígrafe of each group of `proximity` (`grupo`) and of any\nof them (`grupo: proximidad`; not their sum: a shop may be in two groups), plus the open\npremises whose activity cannot be read (`grupo: sin_actividad`). Every epígrafe of\n`proximity` is declared with the file's own description: one that changes blocks the run.",
+      "properties": {
+        "access": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PremiseCode"
+          },
+          "minProperties": 1,
+          "title": "Access",
+          "type": "object"
+        },
+        "access_column": {
+          "default": "id_tipo_acceso_local",
+          "title": "Access Column",
+          "type": "string"
+        },
+        "access_label_column": {
+          "default": "desc_tipo_acceso_local",
+          "title": "Access Label Column",
+          "type": "string"
+        },
+        "barrio_column": {
+          "default": "cod_barrio_local",
+          "title": "Barrio Column",
+          "type": "string"
+        },
+        "counted_access": {
+          "description": "access slugs that count",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Counted Access",
+          "type": "array"
+        },
+        "counted_states": {
+          "description": "state slugs that count",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Counted States",
+          "type": "array"
+        },
+        "csv": {
+          "$ref": "#/$defs/CsvFormat"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "date_column": {
+          "default": "fx_carga",
+          "title": "Date Column",
+          "type": "string"
+        },
+        "district_column": {
+          "default": "id_distrito_local",
+          "title": "District Column",
+          "type": "string"
+        },
+        "division_column": {
+          "default": "id_division",
+          "title": "Division Column",
+          "type": "string"
+        },
+        "epigrafe_column": {
+          "default": "id_epigrafe",
+          "title": "Epigrafe Column",
+          "type": "string"
+        },
+        "epigrafe_label_column": {
+          "default": "desc_epigrafe",
+          "title": "Epigrafe Label Column",
+          "type": "string"
+        },
+        "kind": {
+          "const": "madrid_premises_census",
+          "title": "Kind",
+          "type": "string"
+        },
+        "max_rows": {
+          "exclusiveMinimum": 0,
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "max_unplaced": {
+          "minimum": 0,
+          "title": "Max Unplaced",
+          "type": "integer"
+        },
+        "min_rows": {
+          "description": "fewer rows -> the file changed or is cut",
+          "exclusiveMinimum": 0,
+          "title": "Min Rows",
+          "type": "integer"
+        },
+        "municipio_ine": {
+          "pattern": "^28\\d{3}$",
+          "title": "Municipio Ine",
+          "type": "string"
+        },
+        "pending_epigrafes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Pending Epigrafes",
+          "type": "object"
+        },
+        "premise_column": {
+          "default": "id_local",
+          "title": "Premise Column",
+          "type": "string"
+        },
+        "premises_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Premises Metric Id",
+          "type": "string"
+        },
+        "proximity": {
+          "minProperties": 1,
+          "patternProperties": {
+            "^[a-z][a-z_]*$": {
+              "patternProperties": {
+                "^\\d{6}(\\d{2})?$": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "title": "Proximity",
+          "type": "object"
+        },
+        "proximity_metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Proximity Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "state_column": {
+          "default": "id_situacion_local",
+          "title": "State Column",
+          "type": "string"
+        },
+        "state_label_column": {
+          "default": "desc_situacion_local",
+          "title": "State Label Column",
+          "type": "string"
+        },
+        "states": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PremiseCode"
+          },
+          "minProperties": 1,
+          "title": "States",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "municipio_ine",
+        "premises_metric_id",
+        "proximity_metric_id",
+        "access",
+        "counted_access",
+        "states",
+        "counted_states",
+        "proximity",
+        "max_unplaced",
+        "min_rows",
+        "max_rows"
+      ],
+      "title": "MadridPremisesCensusPipeline",
       "type": "object"
     },
     "MetricSplit": {
@@ -1669,6 +2139,46 @@
       "title": "OsmWalkNetworkPipeline",
       "type": "object"
     },
+    "PilotZonesPipeline": {
+      "additionalProperties": false,
+      "description": "D-247: the pilot barrios of the investor version (Madrid inside the M-40), from their\nversioned table in data/catalog/manual (`PilotZonesTable`, built from OpenStreetMap by\nscripts/m40_barrios.py). Each pilot barrio becomes one observation of `metric_id` (value 1)\nwith its name, whether it is on the edge of the ring and the note of its review. The run\nreads the versioned file, never the network; its lineage keeps the query and the day it was\nread. Every barrio of the geography must be accounted for by the table, or the run blocks.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "pilot_zones",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "table": {
+          "description": "file in data/catalog/manual",
+          "pattern": "^[a-z0-9_]+\\.yaml$",
+          "title": "Table",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "table"
+      ],
+      "title": "PilotZonesPipeline",
+      "type": "object"
+    },
     "PlaceCategory": {
       "enum": [
         "education",
@@ -1959,6 +2469,28 @@
         "y_column"
       ],
       "title": "PointsPipeline",
+      "type": "object"
+    },
+    "PremiseCode": {
+      "additionalProperties": false,
+      "description": "A code of the census of premises with the literal the file must carry next to it.",
+      "properties": {
+        "label": {
+          "minLength": 2,
+          "title": "Label",
+          "type": "string"
+        },
+        "slug": {
+          "pattern": "^[a-z][a-z_]*$",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "slug"
+      ],
+      "title": "PremiseCode",
       "type": "object"
     },
     "PublicLandParcelsPipeline": {
@@ -2416,6 +2948,7 @@
       "aeat_rent_comparison": "#/$defs/AeatRentComparisonPipeline",
       "air_quality_hourly": "#/$defs/AirQualityHourlyPipeline",
       "air_quality_zones": "#/$defs/AirQualityZonesPipeline",
+      "cm_district_concept": "#/$defs/CmDistrictConceptPipeline",
       "cm_municipio_concept": "#/$defs/CmMunicipioConceptPipeline",
       "cm_municipio_name_table": "#/$defs/CmMunicipioNameTablePipeline",
       "cm_postcode_concept": "#/$defs/CmPostcodeConceptPipeline",
@@ -2423,13 +2956,16 @@
       "curated_zone_items": "#/$defs/CuratedZoneItemsPipeline",
       "facility_directory": "#/$defs/FacilityDirectoryPipeline",
       "gtfs_feed": "#/$defs/GtfsFeedPipeline",
+      "madrid_buildable_areas": "#/$defs/MadridBuildableAreasPipeline",
       "madrid_development_areas": "#/$defs/MadridDevelopmentAreasPipeline",
       "madrid_district_panel": "#/$defs/MadridDistrictPanelPipeline",
       "madrid_padron": "#/$defs/MadridPadronPipeline",
+      "madrid_premises_census": "#/$defs/MadridPremisesCensusPipeline",
       "noise_raster": "#/$defs/NoiseRasterPipeline",
       "osm_parks": "#/$defs/OsmParksPipeline",
       "osm_pois": "#/$defs/OsmPoisPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
+      "pilot_zones": "#/$defs/PilotZonesPipeline",
       "points_csv": "#/$defs/PointsPipeline",
       "public_land_parcels": "#/$defs/PublicLandParcelsPipeline",
       "serpavi_rent": "#/$defs/SerpaviRentPipeline",
@@ -2491,6 +3027,18 @@
     },
     {
       "$ref": "#/$defs/PublicLandParcelsPipeline"
+    },
+    {
+      "$ref": "#/$defs/MadridPremisesCensusPipeline"
+    },
+    {
+      "$ref": "#/$defs/MadridBuildableAreasPipeline"
+    },
+    {
+      "$ref": "#/$defs/CmDistrictConceptPipeline"
+    },
+    {
+      "$ref": "#/$defs/PilotZonesPipeline"
     },
     {
       "$ref": "#/$defs/NoiseRasterPipeline"

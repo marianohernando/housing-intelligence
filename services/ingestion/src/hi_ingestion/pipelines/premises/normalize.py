@@ -256,15 +256,16 @@ def normalize_premises(
         quarantine,
         len(records),
     )
+    blocking = sum(1 for q in reading.quarantine if q["blocking"])
     return PremisesObservations(
         obs=obs,
         rows=len(records),
         premises=len(reading.premises),
         counted=len(counted),
         not_counted=dict(not_counted),
-        pending=int((~quarantine["blocking"].astype(bool)).sum()) - len(reading.unplaced),
+        pending=len(reading.quarantine) - blocking - len(reading.unplaced),
         unplaced=len(reading.unplaced),
-        blocking=int(quarantine["blocking"].astype(bool).sum()),
+        blocking=blocking,
         dates=frozenset(reading.dates),
         epigrafes=reading.epigrafes,
     )

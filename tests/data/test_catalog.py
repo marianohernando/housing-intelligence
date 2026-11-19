@@ -649,3 +649,48 @@ def test_reference_rent_only_fills_and_says_its_year(catalog: Catalog) -> None:
     assert catalog.metrics[formula["metric"]].dataset_id == "mivau_serpavi_alquiler"
     calibration = catalog.metrics[formula["calibration"]["metric"]]
     assert catalog.datasets[calibration.dataset_id].source_id == CM_SOURCE  # scaled to the CM
+
+
+INVESTOR_CONTEXT = {
+    "locales_abiertos_1000hab",
+    "locales_cerrados_pct",
+    "comercio_proximidad_1000hab",
+    "edificabilidad_remanente_residencial_m2",
+    "unidades_comerciales_1000hab",
+    "suelo_vacante_unidades",
+    "piloto_inversores_m40",
+}
+
+
+def test_investor_data_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-247: the data of the investor version never scores, ranks, filters or enters «Qué
+    falta»: no `fit`, no `gap_row`, no model, and tagged `context_only` (the search only reads
+    features with `fit`)."""
+    for feature_id in INVESTOR_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None, feature_id
+        assert spec.gap_row is None, feature_id
+        assert not spec.models, feature_id
+        assert "context_only" in spec.tests, feature_id
+
+
+def test_investor_cm_context_comes_from_the_cm_portal(catalog: Catalog) -> None:
+    """D-247: the commercial units and the vacant land are CM open data (CC BY 4.0), by
+    municipio and, for the commercial units, by district of Madrid; vacant land is a count."""
+    for feature_id in ("unidades_comerciales_1000hab", "suelo_vacante_unidades"):
+        spec = catalog.features[feature_id]
+        primary = {s.dataset_id for s in spec.sources if s.role == "primary"}
+        assert all(catalog.datasets[d].source_id == CM_SOURCE for d in primary), feature_id
+        assert all(catalog.datasets[d].license_status == "CLEAR" for d in primary), feature_id
+    assert catalog.features["suelo_vacante_unidades"].unit == "unidades"
+    levels = (catalog.features["unidades_comerciales_1000hab"].formula.model_extra or {})["levels"]
+    assert set(levels) == {"distrito"}
+
+
+def test_buildable_area_is_m2_never_homes(catalog: Catalog) -> None:
+    """D-247: the VEDA register's «Nº Viviendas» columns are not read."""
+    spec = catalog.pipelines["ayto_edificabilidad_remanente_ambitos"]
+    assert spec.kind == "madrid_buildable_areas"
+    read = {*spec.residential_columns, *spec.other_use_columns}
+    assert not any("Viviendas" in column for column in read)
+    assert catalog.features["edificabilidad_remanente_residencial_m2"].unit == "m2"
