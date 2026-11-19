@@ -16,7 +16,8 @@ appraised value shared out by the cadastral value per built m², D-234) and the 
                     no yield when V ≤ 0)
 
 `fp` and `fc` are the scenario's price and cost factors: base (1, 1), optimistic (1,10, 0,95),
-pessimistic (0,90, 1,05), as Nestra's sensitivity. The verdict compares the margin with the
+pessimistic (0,90, 1,15): costs of construction differ by 15 % or more between public references
+(D-252), so the pessimistic one carries that. The verdict compares the margin with the
 target margin m* and the floor below which the operation does not work, and only exists with a
 land price: without it there is no verdict, and the headline is the residual land value (what
 the land can cost at most). Financing (interest, fees) is out of v0.
@@ -25,12 +26,12 @@ Defaults that are not data carry the mark «supuesto» and where they come from;
 the data (price, rent, premium, PEM, buildable m², income) with their datasets.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import StrEnum
 
 from hi_domain.gaps import es_number
 
-VIABILITY_VERSION = "viability-0.1"
+VIABILITY_VERSION = "viability-0.2"  # D-252: ICIO 3,75 %, PEM of reference, −10/+15, 15 %
 
 
 class Mark(StrEnum):
@@ -62,6 +63,12 @@ class Part:
     source: str
 
 
+# ICIO of Madrid: 3,75 % (Ordenanza fiscal 7/2023, art. 25; the rate approved for 2024 and still
+# in the 2025 book of fiscal ordinances; 4 % before), on the PEM; the licence fee and other taxes,
+# about 1 % («supuesto»). Review of #109, R-02: the 2026 rate is not verified at the source.
+ICIO_RATE = 0.0375
+LICENCE_FEES_SHARE = 0.01
+
 # PEM → total construction cost: k = 1 + the parts, all on the PEM. «Supuesto»: no open data
 # gives them by zone; the person edits k.
 COST_PARTS: tuple[Part, ...] = (
@@ -82,9 +89,10 @@ COST_PARTS: tuple[Part, ...] = (
     Part(
         "licencias_icio",
         "Licencia, ICIO y tasas",
-        0.05,
-        "ICIO de Madrid, 4 % del presupuesto (Ordenanza fiscal del impuesto), y la tasa de la "
-        "licencia y otros tributos, alrededor de un 1 % (supuesto)",
+        ICIO_RATE + LICENCE_FEES_SHARE,
+        f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto (Ordenanza fiscal "
+        "7/2023, art. 25: tipo aprobado para 2024 y vigente en 2025), y la tasa de la licencia y "
+        f"otros tributos, alrededor de un {es_number(LICENCE_FEES_SHARE * 100, 0)} % (supuesto)",
     ),
     Part(
         "otros",
@@ -109,12 +117,21 @@ SALES_COST_PARTS: tuple[Part, ...] = (
 SALES_COSTS_SHARE = round(sum(p.share for p in SALES_COST_PARTS), 4)
 
 # Margin on sales before financing. «Supuesto»: promoters usually ask 15-20 % or more; with
-# financing out of v0, the target sits at the top. Below the floor the operation does not work.
+# financing out of v0, the target sits at the top. Below the floor the operation does not work:
+# the mortgage appraisal rule asks at least 18 % for first homes, without financing nor
+# corporate tax (Orden ECO/805/2003, DA 6.ª), so a margin under 15 % is not «ajustar» (D-252).
 TARGET_MARGIN = 0.20
-ADJUST_FLOOR = 0.10
+ADJUST_FLOOR = 0.15
+APPRAISAL_MIN_MARGIN = 0.18
+APPRAISAL_SOURCE = (
+    "Orden ECO/805/2003, disposición adicional sexta: margen mínimo del promotor del 18 % para "
+    "viviendas de primera residencia, sin financiación ni Impuesto sobre Sociedades"
+)
 MARGIN_SOURCE = (
     "supuesto: un promotor suele pedir entre el 15 % y el 20 % sobre ventas, o más; como la "
-    "financiación no entra, se toma el 20 %. Por debajo del 10 %, no sale"
+    "financiación no entra, se toma el 20 %. La tasación hipotecaria pide al menos un 18 % en "
+    "vivienda de primera residencia, sin financiación ni Impuesto sobre Sociedades (Orden "
+    "ECO/805/2003, disposición adicional sexta). Por debajo del 15 %, no sale"
 )
 
 
@@ -129,7 +146,7 @@ class Scenario:
 SCENARIOS: tuple[Scenario, ...] = (
     Scenario("base", "Base", 1.0, 1.0),
     Scenario("optimista", "Optimista (+10 % precio, −5 % coste)", 1.10, 0.95),
-    Scenario("pesimista", "Pesimista (−10 % precio, +5 % coste)", 0.90, 1.05),
+    Scenario("pesimista", "Pesimista (−10 % precio, +15 % coste)", 0.90, 1.15),
 )
 
 # Demand check. «Supuesto» except the threshold, which is the one the housing law uses.
@@ -162,8 +179,8 @@ NOTICES: tuple[str, ...] = (
     "Sin dato no es 0: lo que no sabemos se dice, nunca se rellena.",
     "La financiación (intereses y comisiones del préstamo) no entra en esta versión: el margen "
     "es antes de financiación e impuestos.",
-    "El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. "
-    "Ajusta el coeficiente si tienes un presupuesto.",
+    "El coste de construcción es un supuesto: el PEM de referencia de la Comunidad de Madrid "
+    "(2022) por un coeficiente. Cámbialo si tienes un presupuesto.",
 )
 
 
@@ -181,6 +198,25 @@ class ViabilityInputs:
     sales_costs_share: float = SALES_COSTS_SHARE
     target_margin: float = TARGET_MARGIN
     adjust_floor: float = ADJUST_FLOOR
+
+
+@dataclass(frozen=True)
+class BreakEven:
+    """D-252: the most the construction can cost per built m² (the PEM times the coefficient,
+    before the scenario's cost factor) for the operation to keep the target margin, everything
+    else as given; and the same as a PEM with the coefficient given, or as a coefficient on the
+    PEM given. Without a land price it is the construction cost with free land: each euro under
+    it is a euro the land can cost."""
+
+    construction_m2: float
+    pem_m2: float
+    coefficient: float
+    current_construction_m2: float
+    land_counted: bool
+
+    @property
+    def reachable(self) -> bool:
+        return self.construction_m2 > 0
 
 
 @dataclass(frozen=True)
@@ -202,6 +238,9 @@ class ScenarioResult:
     yield_land: YieldLand | None
     verdict: Verdict | None  # only with a land price
     headline: str  # the verdict in words, or without land the residual land value
+    break_even: BreakEven | None = None
+    # Only with a land price: the same as if the land were free
+    break_even_free_land: BreakEven | None = None
 
 
 @dataclass(frozen=True)
@@ -216,6 +255,30 @@ def money(amount: float) -> str:
     if abs(amount) >= 1_000_000:
         return f"{es_number(amount / 1_000_000, 2)} millones de €"
     return f"{es_number(round(amount), 0)} €"
+
+
+def three_figures(amount: float) -> float:
+    """Rounded to three significant figures: 66.958.000 → 67.000.000; 4.297 → 4.300 (D-252: an
+    estimate on assumptions never says its cents)."""
+    if amount == 0:
+        return 0.0
+    digits = len(str(int(abs(amount)))) if abs(amount) >= 1 else 1
+    return float(round(amount, 3 - digits))
+
+
+def rough_money(amount: float) -> str:
+    """«unos 67 millones de €», «unos 1,23 millones de €», «unos 900.000 €»."""
+    rounded = three_figures(amount)
+    if abs(rounded) >= 1_000_000:
+        millions = rounded / 1_000_000
+        decimals = 0 if millions >= 100 else 1 if millions >= 10 else 2
+        text = es_number(millions, decimals)
+        if "," in text:
+            text = text.rstrip("0").rstrip(",")
+        if text == "1":  # review of #109, R-10: never «unos 1 millones»
+            return "alrededor de 1 millón de €"
+        return f"unos {text} millones de €"
+    return f"unos {es_number(rounded, 0)} €"
 
 
 def pct(share: float, decimals: int = 0) -> str:
@@ -266,6 +329,13 @@ def margin_verdict(margin: float, target: float, floor: float) -> tuple[Verdict,
     return Verdict.NO_SALE, f"No sale: margen del {shown}, por debajo del {pct(floor)}."
 
 
+# D-252 (B7): what the residual leaves out, in the headline itself
+RESIDUAL_LEAD = (
+    "Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del "
+    "suelo, urbanización y derribo"
+)
+
+
 def residual_headline(
     revenue: float, construction: float, sales: float, inputs: ViabilityInputs
 ) -> str:
@@ -273,16 +343,38 @@ def residual_headline(
     margin, or, if not even free land reaches it, the margin free land would leave."""
     at_target = residual_land_value(revenue, construction, sales, inputs.target_margin)
     if at_target > 0:
-        per_m2 = at_target / inputs.buildable_m2
+        per_m2 = three_figures(at_target / inputs.buildable_m2)
         return (
-            f"Lo máximo que se puede pagar por el suelo: {money(at_target)} "
-            f"({es_number(round(per_m2), 0)} € por m² edificable), para un margen del "
+            f"{RESIDUAL_LEAD}: {rough_money(at_target)} "
+            f"(unos {es_number(per_m2, 0)} € por m² edificable), para un margen del "
             f"{pct(inputs.target_margin)}."
         )
     free_land_margin = (revenue - construction - sales) / revenue
     return (
         f"Ni con el suelo gratis se llega al margen objetivo del {pct(inputs.target_margin)}: "
         f"se queda en el {pct(free_land_margin, 1)}."
+    )
+
+
+def break_even(inputs: ViabilityInputs, scenario: Scenario = SCENARIOS[0]) -> BreakEven:
+    """How much the construction may cost for the operation to keep the target margin:
+
+        I (1 − m*) − g·I − S ≥ A · c · fc   ⇔   c ≤ (I (1 − m*) − g·I − S) / (A · fc)
+
+    with I the scenario's revenue, S the land price (0 without one) and c the construction per
+    built m² as the person gives it (PEM × coefficient). Same model as run_scenario."""
+    area = inputs.buildable_m2
+    revenue = area * sale_price_with_premium(inputs) * scenario.price_factor
+    sales = inputs.sales_costs_share * revenue
+    land = inputs.land_eur or 0.0
+    room = revenue * (1 - inputs.target_margin) - sales - land
+    construction_m2 = room / (area * scenario.cost_factor)
+    return BreakEven(
+        construction_m2=construction_m2,
+        pem_m2=construction_m2 / inputs.cost_coefficient,
+        coefficient=construction_m2 / inputs.pem_m2,
+        current_construction_m2=inputs.pem_m2 * inputs.cost_coefficient,
+        land_counted=inputs.land_eur is not None,
     )
 
 
@@ -321,6 +413,10 @@ def run_scenario(inputs: ViabilityInputs, scenario: Scenario) -> ScenarioResult:
         yield_land=yield_land,
         verdict=verdict,
         headline=text,
+        break_even=break_even(inputs, scenario),
+        break_even_free_land=None
+        if land is None
+        else break_even(replace(inputs, land_eur=None), scenario),
     )
 
 

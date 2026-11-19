@@ -66,12 +66,17 @@ from hi_api.settings import ApiSettings
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import TerritoryLevel
 from hi_contracts.pro.investors import (
+    AmbitPhase,
+    AmbitStatus,
     Buildability,
     BuildabilityKind,
     DegradedPart,
+    LandItem,
     NormaZonal,
     ParcelBlock,
     ParcelCandidate,
+    ParcelCaution,
+    ParcelCautionKey,
     ParcelContext,
     ParcelInput,
     ParcelSheet,
@@ -79,19 +84,28 @@ from hi_contracts.pro.investors import (
     ParcelUnits,
     PlanningBlock,
     PlanningInstrument,
+    PlanUseFigure,
     UnitUse,
+    UseFigure,
 )
 from hi_contracts.public import ZoneRef
+from hi_domain import ambit_status
 from hi_domain import parcel_data as pd
 from hi_domain import viability as v
 from hi_domain.parcels import (
     LOOKUP_BUDGET_S,
+    PHASE_LABELS,
+    AmbitState,
     OfficialFigure,
+    ambit_state,
     classify_planning,
+    classify_use,
     in_madrid_bbox,
     initial_buildability,
     normalize_rc,
+    parcel_cautions,
     parse_address,
+    plan_use,
     same_street,
     street_address,
     typed_number,
@@ -167,6 +181,19 @@ def planning_source(day: date) -> ParcelSource:
         url=HttpUrl("https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo"),
         accessed_at=day,
     )
+
+
+AMBITS_SOURCE = ParcelSource(
+    source_id="ayto_pgoum_desarrollo_ambitos",
+    name="PGOUM 97. Estado de desarrollo de los ámbitos, y edificabilidad remanente en ámbitos",
+    publisher="Ayuntamiento de Madrid (Área de Urbanismo)",
+    license=CC_BY,
+    license_url=CC_BY_URL,
+    attribution="Origen de los datos: Ayuntamiento de Madrid (datos.madrid.es), CC BY 4.0. Estado "
+    f"de desarrollo a {es_date(date.fromisoformat(ambit_status.AS_OF))}.",
+    url=HttpUrl("https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos"),
+    accessed_at=date.fromisoformat(ambit_status.AS_OF),
+)
 
 
 GEOCODER_SOURCE = ParcelSource(
@@ -461,7 +488,9 @@ async def catastro_parcel(rc14: str, lookup: Lookup) -> CatastroParcel:
     return parcel
 
 
-async def planning_record(parcel: CatastroParcel, lookup: Lookup) -> PlanningRecord | None:
+async def planning_record(
+    parcel: CatastroParcel, lookup: Lookup, deadline: float | None = None
+) -> PlanningRecord | None:
     """The planning at the parcel's point (cached); UpstreamError when the Ayuntamiento fails."""
     if parcel.x is None or parcel.y is None:
         return None
@@ -469,7 +498,7 @@ async def planning_record(parcel: CatastroParcel, lookup: Lookup) -> PlanningRec
     if (cached := CACHE.get(key)) is not MISSING:
         return cached
     lookup.spend()
-    record = await timed(lookup, fetch_planning(CLIENTS.get(), parcel.x, parcel.y))
+    record = await timed(lookup, fetch_planning(CLIENTS.get(), parcel.x, parcel.y, deadline))
     if record is None or record.complete:  # a secondary layer that failed is asked again
         CACHE.set(key, record, TTL_S["planning"])
     return record
@@ -502,6 +531,43 @@ def parcel_block(parcel: CatastroParcel) -> ParcelBlock:
     )
 
 
+def plan_uses(record: PlanningRecord) -> list[PlanUseFigure] | None:
+    """D-252: tables 4 and 5 as our figures; None when they did not answer."""
+    if record.plan_rows is None:
+        return None
+    figures = []
+    for row in record.plan_rows:
+        found = plan_use(row.use, row.value, row.unit, row.principal, record.urban_parcel_area_m2)
+        if found is not None:
+            figures.append(
+                PlanUseFigure(
+                    use=found.use,
+                    use_class=found.use_class,
+                    use_ownership=found.use_ownership,
+                    principal=found.principal,
+                    value_m2=found.value_m2,
+                    coefficient=found.coefficient,
+                    assumed=found.assumed,
+                )
+            )
+    return figures
+
+
+def ambit_block(state: AmbitState | None) -> AmbitStatus | None:
+    if state is None:
+        return None
+    phases = [] if state.phases is None else list(zip(PHASE_LABELS, state.phases, strict=True))
+    return AmbitStatus(
+        code=state.code,
+        tracked=state.tracked,
+        pending=state.pending,
+        phases=[AmbitPhase(label=label, state=phase) for label, phase in phases],
+        veda_stage=state.veda_stage,  # pyright: ignore[reportArgumentType]
+        as_of=date.fromisoformat(ambit_status.AS_OF),
+        url=HttpUrl(ambit_status.DEVELOPMENT_URL),
+    )
+
+
 def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBlock:
     kind, zone = classify_planning(record.code)
     sheet_url, sheet_label = None, None
@@ -513,6 +579,7 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         sheet_url = article.url
         sheet_label = f"Artículo {article.number} de las Normas Urbanísticas"
     has_instrument = any((record.figure, record.instrument_name, record.file_number))
+    use_class, use_ownership = classify_use(record.use)
     return PlanningBlock(
         code=record.code,
         name=record.name,
@@ -521,7 +588,12 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         if zone is None
         else NormaZonal(nz=zone.nz, grado=zone.grado, nivel=zone.nivel, name=RULES[zone.nz].name),
         use=record.use,
+        use_class=use_class,
+        use_ownership=use_ownership,
         urban_parcel=" · ".join(p for p in (record.urban_parcel, record.zone_name) if p) or None,
+        urban_parcel_area_m2=record.urban_parcel_area_m2,
+        plan_uses=plan_uses(record),
+        ambit=ambit_block(ambit_state(record.code)),
         instrument=PlanningInstrument(
             figure=record.figure,
             name=record.instrument_name,
@@ -557,6 +629,7 @@ def buildability(
         rustic=parcel.rustic,
         official=official_figures(rc14),
         coef_z=coef_z,
+        ambit=None if planning is None else ambit_state(planning.code),
     )
     return Buildability(
         value_m2=result.value_m2,
@@ -569,6 +642,17 @@ def buildability(
         note=result.note,
         assumed_m2=result.assumed_m2,
         dataset_ids=list(result.dataset_ids),
+        by_use=[
+            UseFigure(
+                use_class=f.use_class,
+                use=f.use,
+                value_m2=f.value_m2,
+                source=f.source,
+                dataset_id=f.dataset_id,
+                residential=f.residential,
+            )
+            for f in result.by_use
+        ],
     )
 
 
@@ -597,7 +681,7 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
     degraded: list[DegradedPart] = []
     try:
         async with asyncio.timeout_at(deadline):
-            record = await planning_record(parcel, lookup)
+            record = await planning_record(parcel, lookup, deadline)
     except (UpstreamError, TimeoutError):
         record = None
         degraded.append("planning")
@@ -612,6 +696,8 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
         degraded.append("planning")
     if record is not None and record.z_failed:
         degraded.append("buildability")
+    if record is not None and record.uses_failed:
+        degraded.append("plan_uses")
     coef_z = None if record is None else record.coef_z
     return Parts(block, planning, buildability(rc14, block, planning, coef_z), degraded)
 
@@ -714,6 +800,8 @@ def sources_of(kind: ParcelInput, parts: Parts) -> list[ParcelSource]:
     sources = [catastro_source(parts.parcel.observed_at)]
     if parts.planning is not None:
         sources.append(planning_source(parts.planning.observed_at))
+        if parts.planning.ambit is not None and parts.planning.ambit.tracked:
+            sources.append(AMBITS_SOURCE)
     sources.extend(
         OFFICIAL_SOURCES[d] for d in parts.buildability.dataset_ids if d in OFFICIAL_SOURCES
     )
@@ -722,6 +810,24 @@ def sources_of(kind: ParcelInput, parts: Parts) -> list[ParcelSource]:
     if kind is ParcelInput.ADDRESS:
         sources.append(GEOCODER_SOURCE)
     return sources
+
+
+def cautions_of(rc14: str, planning: PlanningBlock | None) -> list[ParcelCaution]:
+    """D-252: what keeps the figures from passing for free housing ready to build."""
+    use = None if planning is None else planning.use
+    ambit = None if planning is None else ambit_state(planning.code)
+    return [
+        ParcelCaution(key=ParcelCautionKey(key), text=text)
+        for key, text in parcel_cautions(use, official_figures(rc14), ambit)
+    ]
+
+
+def public_land_of(rc14: str, context: ParcelContext | None) -> LandItem | None:
+    """D-252: the parcel among its barrio's public land (Portal del Suelo), by its reference."""
+    ref = pd.PORTAL_REFS.get(rc14)
+    if ref is None or context is None:
+        return None
+    return next((item for item in context.sheet.land.parcels if item.code == ref), None)
 
 
 def assemble(
@@ -747,6 +853,8 @@ def assemble(
         sources=sources_of(kind, parts),
         notices=list(PARCEL_NOTICES),
         degraded=degraded,
+        cautions=cautions_of(parts.parcel.rc14, parts.planning),
+        public_land=public_land_of(parts.parcel.rc14, barrio),
         fallback="demo_snapshot" if fallback else None,
     )
     return sheet, warnings, None if context is None else context.data_version

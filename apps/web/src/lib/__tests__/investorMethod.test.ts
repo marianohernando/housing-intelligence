@@ -3,7 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import InvestorMethod, { listed, n } from "@/components/method/InvestorMethod";
+import { CALCULATOR_TEXT } from "@/lib/investors";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
+import { USE_TEXT } from "@/lib/parcels";
 
 /** The section's text, without tags and with plain spaces. */
 function text(): string {
@@ -32,7 +34,14 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     const html = renderToStaticMarkup(createElement(InvestorMethod));
     expect(html).toContain('id="inversores"');
     const t = text();
-    expect(t).toContain(`${n(M.pem.eurM2)} €/m², ${M.pem.year}`);
+    // D-252: the PEM of reference (CRG midpoint), with the permits as the low reference
+    expect(t).toContain(`de ${n(M.costReferences.crg.defaultPem)} €/m², el punto medio del bloque abierto en Madrid`);
+    expect(t).toContain(`Comunidad de Madrid (${M.pem.year}): ${n(M.pem.eurM2)} €/m²`);
+    expect(n(M.costCoefficient)).toBe("1,3575");
+    expect(t).toContain(`el ICIO de Madrid es del ${n(M.icioPct)} %: Ordenanza fiscal 7/2023, art. 25, tipo aprobado para 2024 y vigente en 2025`);
+    expect(t).toContain(`margen mínimo del ${n(M.appraisalMinMarginPct)} % en vivienda de primera residencia`);
+    expect(t).not.toContain("pero no una cifra de m²");
+    expect(t).not.toMatch(/\bsolar\b/);
     expect(t).toContain(`coeficiente de ${n(M.costCoefficient)}`);
     expect(t).toContain(`un ${n(M.salesCostsPct)} % de las ventas`);
     expect(t).toContain(`un ${n(M.targetMarginPct)} % de las ventas`);
@@ -49,8 +58,9 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
       expect(html).toContain(`href="${rule.url.replace(/&/g, "&amp;")}"`);
     }
     for (const f of M.nz1.factors) expect(t).toContain(`grado ${f.grado}º, ${n(f.value)}`);
-    const [, optimistic] = M.scenarios;
+    const [, optimistic, pessimistic] = M.scenarios;
     expect(t).toContain(`un ${n(optimistic?.pricePct ?? 0)} % más de precio de venta y de alquiler`);
+    expect(t).toContain(`un ${n(pessimistic?.costPct ?? 0)} % más de coste`);
     expect(t).toContain(`las normas zonales ${listed(M.withoutCoefficient)}, que no fijan una cifra`);
     const split = M.zonalNorms.find((r) => r.nz === M.split.nz)?.coefficients.find((c) => c.grado === M.split.grado);
     expect(t).toContain(`En el grado ${M.split.grado}º, ${n(split?.value ?? 0)} hasta ${n(M.split.limitM2)} m²`);
@@ -77,5 +87,27 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     for (const word of ["PEM y PEC:", "ICIO:", "Seguro decenal:", "Ámbito:", "Dotacional:", "Valor residual del suelo:"]) {
       expect(t).toContain(word);
     }
+  });
+
+  it("explains each use, the figures by use and that the calculator is for housing (D-252)", () => {
+    const t = text();
+    for (const { label, plain } of Object.values(USE_TEXT)) expect(t).toContain(`${label}: ${plain.charAt(0).toLowerCase()}${plain.slice(1)}`);
+    const veda = M.vedaByUse;
+    expect(t).toContain(
+      `de las ${n(M.vedaParcels)} de VEDA, ${n(veda.residencial)} de uso residencial, ${n(veda.terciario)} de uso terciario y ${n(veda.industrial)} de uso industrial;`,
+    );
+    expect(Object.values(veda).reduce((a, b) => a + b, 0)).toBe(M.vedaParcels);
+    expect(Object.values(M.portalByUse).reduce((a, b) => a + b, 0)).toBe(M.portalParcels);
+    expect(t).toContain(`${M.portalByUse.otro} de otros usos`);
+    expect(t).toContain("nunca la repartimos entre usos");
+    expect(t).toContain("La calculadora calcula solo vivienda,");
+  });
+
+  it("says what the cost includes and leaves out, and the break-even, as the calculator does (D-252)", () => {
+    const t = text();
+    expect(t).toContain(CALCULATOR_TEXT.costIncludes(M.costParts.map((p) => p.label.charAt(0).toLowerCase() + p.label.slice(1))));
+    for (const line of CALCULATOR_TEXT.costExcludes) expect(t).toContain(line.replace(/&/g, "&amp;"));
+    expect(t).toContain("Hasta cuánto puede costar la construcción (el punto de equilibrio)");
+    expect(t).toContain("Punto de equilibrio:");
   });
 });

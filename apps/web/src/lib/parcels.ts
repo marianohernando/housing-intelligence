@@ -4,14 +4,20 @@
  * from the API (GET /api/v1/investors/parcels); this module never adds a number of its own.
  */
 import type {
+  AmbitStatus,
   Buildability,
+  LandItem,
   ParcelBlock,
   ParcelSheet,
   PlanningBlock,
+  PlanUseFigure,
   SourcedValue,
+  UseClass,
+  UseFigure,
+  UseOwnership,
 } from "@/contracts/parcel_sheet_response";
 import { formatNumber } from "@/lib/format";
-import { isoInWords } from "@/lib/investors";
+import { AREA_STAGE_TEXT, isoInWords, landCaution, REGIME_TEXT } from "@/lib/investors";
 import { titleCase } from "@/lib/names";
 
 /** A parcel near a point on the street (a 404's `details.nearest`; not in a response schema). */
@@ -23,9 +29,9 @@ export interface NearbyParcel {
 
 /** The four demo parcels (the API keeps their sheets for when a source fails). */
 export const DEMO_PARCELS: readonly { rc14: string; label: string; why: string }[] = [
-  { rc14: "2122202VK4722A", label: "Méndez Álvaro 47–49", why: "solar con edificabilidad oficial" },
-  { rc14: "3959601VK4735H", label: "Almería 1", why: "suelo público de Metro de Madrid" },
-  { rc14: "0390314VK4709A", label: "Luis Misson 2", why: "solar sin coeficiente: pones tú los m²" },
+  { rc14: "2122202VK4722A", label: "Méndez Álvaro 47–49", why: "sin edificar, con edificabilidad oficial y del plan por uso" },
+  { rc14: "3959601VK4735H", label: "Almería 1", why: "suelo público en un ámbito sin empezar" },
+  { rc14: "0390314VK4709A", label: "Luis Misson 2", why: "sin edificar y sin coeficiente: pones tú los m²" },
   { rc14: "9943003VK3794D", label: "Mayor 61", why: "edificio en división horizontal" },
 ];
 
@@ -83,7 +89,7 @@ export const SHEET_TEXT = {
   built: "Construido hoy",
   builtNote: "Es lo que hay, no lo que se puede construir.",
   year: "Año de construcción",
-  vacant: "¿Es un solar?",
+  vacant: "¿Está sin edificar? (según su uso en el Catastro)",
   division: "División horizontal",
   catastroLink: "Ver la parcela en la Sede Electrónica del Catastro",
   qualification: "Calificación",
@@ -99,6 +105,25 @@ export const SHEET_TEXT = {
   planningNone: "El Ayuntamiento no tiene calificación para el punto de esta parcela.",
   buildable: "Edificabilidad de partida",
   buildableEditable: "Siempre la puedes cambiar en la calculadora.",
+  byUseTitle: "Edificabilidad publicada, por uso",
+  byUseNote: "Cada fuente publica una sola cifra por parcela, con un solo uso: la enseñamos tal cual, sin repartirla entre usos.",
+  byUseNone:
+    "Ninguna fuente publica la edificabilidad de esta parcela: ni el visor de edificabilidad (VEDA) del Ayuntamiento ni el Portal del Suelo de la Comunidad de Madrid.",
+  notHousing: "No es vivienda: no entra en la calculadora.",
+  housingOnly:
+    "La calculadora calcula solo vivienda: parte de la edificabilidad residencial, porque sus precios y alquileres son de vivienda. Una cifra de otro uso (terciario, industrial) la enseñamos como referencia y no la usamos.",
+  officialTitle: "Lo que publica cada fuente para esta parcela catastral",
+  planUsesTitle: (urbanParcel: string | null | undefined) =>
+    urbanParcel ? `Según el plan, la parcela urbanística ${urbanParcel} tiene:` : "Según el plan, la parcela urbanística tiene:",
+  planUsesNone: "El plan no publica la edificabilidad por uso de esta parcela.",
+  planUsesCaveats:
+    "La parcela urbanística del plan puede no coincidir con la catastral, y es lo que el plan permite en total, no lo que queda por construir. Salvo excepciones, los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art. 7.2.8).",
+  planUsesSource: "Ayuntamiento de Madrid, Urbanismo (usos del suelo, uso cualificado principal y otros usos cualificados): información urbanística sin valor jurídico.",
+  planUsesDown: "No hemos podido leer ahora la edificabilidad por uso del plan; el resto de la ficha sí. Vuelve a intentarlo en un rato.",
+  ambit: "Estado del ámbito",
+  ambitUntracked: "El Ayuntamiento no publica su estado.",
+  ambitAsOf: (code: string, day: string) => `${code}, según el Ayuntamiento a ${day}`,
+  publicLand: "Suelo público",
   article: (n: string) => `Ver el artículo ${n} de las Normas Urbanísticas`,
   contextDown: "No hemos podido leer el barrio ahora; el resto de la ficha sí. La calculadora empieza sin los precios del barrio.",
   instrumentDown:
@@ -150,7 +175,7 @@ export function areaText(value: number | null | undefined): string {
 
 export function vacantText(parcel: ParcelBlock): string {
   if (parcel.is_vacant === null || parcel.is_vacant === undefined) return "Sin dato";
-  return parcel.is_vacant ? "Sí, sin edificar" : "No";
+  return parcel.is_vacant ? "Sí" : "No";
 }
 
 /** «Sí: 6 inmuebles (5 residencial, 314 m²; 1 comercial, 62 m²)». Never one unit by one. */
@@ -220,6 +245,98 @@ export function degradedLines(sheet: Pick<ParcelSheet, "degraded" | "fallback" |
   // Without any planning its own section says so; with it, a layer of it is missing
   if (degraded.includes("planning") && sheet.planning) lines.push(SHEET_TEXT.instrumentDown);
   if (degraded.includes("buildability")) lines.push(SHEET_TEXT.zDown);
+  if (degraded.includes("plan_uses")) lines.push(SHEET_TEXT.planUsesDown);
   if (degraded.includes("context")) lines.push(SHEET_TEXT.contextDown);
   return lines;
+}
+
+/** What each use is, in one plain line (D-252): the parcel's sheet and «Cómo lo calculamos». */
+export const USE_TEXT: Record<UseClass, { label: string; plain: string }> = {
+  residencial: { label: "Residencial", plain: "Vivienda, en pisos o en casas, libre o con protección pública." },
+  terciario: { label: "Terciario", plain: "Oficinas, comercios, hoteles y otros servicios privados." },
+  industrial: { label: "Industrial", plain: "Fábricas, talleres, almacenes y otras actividades productivas." },
+  dotacional: {
+    label: "Dotacional",
+    plain:
+      "Equipamientos como colegios, centros de salud o instalaciones deportivas, culturales o sociales; público si es de una administración, privado si es de una empresa o una entidad privada.",
+  },
+  zona_verde: { label: "Zona verde", plain: "Parques y jardines, suelo dotacional para el uso de todos y no para edificar." },
+  infraestructura: {
+    label: "Vía pública, transporte e infraestructuras",
+    plain: "Calles, vías del tren o del metro e instalaciones de agua, gas o electricidad; también es suelo dotacional.",
+  },
+  sin_uso: {
+    label: "Sin uso pormenorizado",
+    plain: "El plan aún no le ha fijado un uso concreto; lo fija el plan propio de su ámbito.",
+  },
+  otro: { label: "Otros usos", plain: "Un uso que la fuente no clasifica en los anteriores (en el Portal del Suelo, «Otros»)." },
+};
+
+/** «Dotacional privado», «Zona verde, de titularidad pública», «Industrial». */
+export function landUseLabel(kind: UseClass, owner?: UseOwnership | null): string {
+  const label = USE_TEXT[kind].label;
+  if (!owner) return label;
+  if (kind === "dotacional") return `${label} ${owner === "publico" ? "público" : "privado"}`;
+  return `${label}, de titularidad ${owner === "publico" ? "pública" : "privada"}`;
+}
+
+const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
+
+const folded = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+/**
+ * Under the plan's use: what it means, and that the calculator is for housing when it is not. The
+ * class goes first when the use's words do not already say it («Dotacional privado: …»).
+ */
+export function landUseNote(planning: Pick<PlanningBlock, "use" | "use_class" | "use_ownership">): string | null {
+  const kind = planning.use_class;
+  if (!kind) return null;
+  const plain = USE_TEXT[kind].plain;
+  const said = !planning.use_ownership && folded(planning.use ?? "").startsWith(folded(USE_TEXT[kind].label));
+  const meaning = said ? plain : `${landUseLabel(kind, planning.use_ownership)}: ${lowerFirst(plain)}`;
+  return kind === "residencial" ? meaning : `${meaning} La calculadora calcula solo vivienda.`;
+}
+
+/** One source's figure with its use: «Industrial: 3.465 m² edificables». */
+export function byUseText(figure: UseFigure): string {
+  return `${landUseLabel(figure.use_class)}: ${m2(figure.value_m2)} edificables`;
+}
+
+/** «Uso en la fuente: industrial · VEDA Madrid (…)». */
+export function byUseSource(figure: UseFigure): string {
+  return `Uso en la fuente: ${lowerFirst(sentence(figure.use) ?? figure.use)} · ${figure.source}`;
+}
+
+/** «Residencial: 60.231 m²», or with a coefficient «Terciario: 19.920 m² (1,2 m²/m² × 16.600 m² de la parcela urbanística: supuesto)». */
+export function planUseText(figure: PlanUseFigure, urbanArea: number | null | undefined): string {
+  const label = landUseLabel(figure.use_class, figure.use_ownership);
+  const coefficient = figure.coefficient;
+  if (coefficient === null || coefficient === undefined) {
+    return `${label}: ${figure.value_m2 === null || figure.value_m2 === undefined ? "sin cifra" : m2(figure.value_m2)}`;
+  }
+  const per = `${formatNumber(coefficient, 2).replace(/,?0+$/, "")} m²/m²`;
+  if (figure.value_m2 === null || figure.value_m2 === undefined || !urbanArea) return `${label}: ${per}`;
+  return `${label}: ${m2(figure.value_m2)} (${per} × ${m2(urbanArea)} de la parcela urbanística: supuesto)`;
+}
+
+/** «Uso principal: residencial vivienda colectiva» / «Otro uso: servicios terciarios». */
+export function planUseSource(figure: PlanUseFigure): string {
+  return `${figure.principal ? "Uso principal" : "Otro uso"}: ${lowerFirst(sentence(figure.use) ?? figure.use)}`;
+}
+
+/** «Planeamiento: finalizado · Gestión: sin iniciar · …», and VEDA's situation. */
+export function ambitText(ambit: AmbitStatus): string {
+  if (!ambit.tracked) return SHEET_TEXT.ambitUntracked;
+  const phases = (ambit.phases ?? []).map((p) => `${p.label}: ${p.state.toLowerCase()}`);
+  const stage = ambit.veda_stage ? AREA_STAGE_TEXT[ambit.veda_stage] : null;
+  return [...phases, stage ? `VEDA: ${lowerFirst(stage)}` : null].filter(Boolean).join(" · ");
+}
+
+/** D-252: the parcel as public land of the Portal del Suelo, with its owner, regime and urbanization. */
+export function publicLandText(item: LandItem): string {
+  const regime = item.regime ? (REGIME_TEXT[item.regime] ?? null) : null;
+  const stage = item.stage === "sin_urbanizar" ? "sin urbanizar" : item.stage === "urbanizado" ? "urbanizada según el Portal" : null;
+  const facts = [regime, item.manager ? `la ofrece ${item.manager}` : null, stage].filter(Boolean).join(", ");
+  const caution = landCaution(item);
+  return `Parcela del Portal del Suelo de la Comunidad de Madrid${facts ? `: ${facts}` : ""}.${caution ? ` ${caution}` : ""}`;
 }

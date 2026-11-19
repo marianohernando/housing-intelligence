@@ -1,0 +1,1573 @@
+# D-252: estado de desarrollo de cada ámbito del Plan General: sus cuatro fases
+# (203200) y su situación en VEDA (203182), para la búsqueda por parcela. Escrito por
+# scripts/pgoum_ambitos_estado.py desde los ficheros de bronze; scripts/export_investor_
+# data.py lo pasa a hi_domain.ambit_status. No editar a mano.
+title: Estado de desarrollo de los ámbitos del Plan General de 1997
+publisher: Ayuntamiento de Madrid (Área de Urbanismo)
+license: CC BY 4.0
+development:
+  dataset: '203200'
+  url: https://datos.madrid.es/dataset/203200-0-desarrollo-ambitos/resource/203200-17-desarrollo-ambitos/download/situacionambitos_01_01_2026distritos.xls
+  sha256: 1fb51343af3e244aab4fc8f484c21d895f4d776e25b7feeeca452697e2a3a9da
+  as_of: '2026-07-01'
+  phases: [planeamiento, gestion, proyecto_urbanizacion, obras_urbanizacion]
+veda: {dataset: '203182', url: 'https://datos.madrid.es/dataset/203182-0-ambitos-remanente/resource/203182-16-ambitos-remanente/download/edificabilidad-remanente-01_07_2026_datos-abiertos.xls',
+  sha256: 8aab3114713f983fa1bef6be4975877e9b0648ac6959127468af90facdb92f37}
+ambits:
+- code: AOE.00.02-RP
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: AOE.00.03
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: AOE.00.04
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: AOE.00.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: AOE.00.06
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: AOE.00.07
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: AOE.00.09
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: AOE.00.10
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: AOE.00.11-RP
+  phases: [Finalizado, En Ejecución, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.01.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.01.03/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.01.04
+  phases: [PGOUM-97, No Necesita, Finalizado, Finalizado]
+- code: APE.01.05/M
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APE.01.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.01.07/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.01.08
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.01.09
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: APE.01.10
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APE.01.11
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APE.02.01
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.02.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.10
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.103
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APE.02.104
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.02.11
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.12
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.02.13
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.14
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.15
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.16
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.17
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.02.18
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.02.19
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.02.20
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.02.21
+  phases: [PGOUM-97, No Necesita, Finalizado, Finalizado]
+- code: APE.02.23
+  phases: [PGOUM-97, PGOUM-85, Finalizado, Finalizado]
+- code: APE.02.24
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.02.25
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APE.02.25/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.02.26
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.02.27
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.02.28
+  phases: [Finalizado, Finalizado, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.03.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.03.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.03.04
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.03.05
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.03.06
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.03.07
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.03.08
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.03.09/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.03.10
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.04.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.04.05
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.04.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.04.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.04.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.04.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.04.10
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.04.11
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.04.12
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.04.13
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.04.14
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.04.15
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.04.16
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.05.01
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.05.02
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.05.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.05.04
+  phases: [PGOUM-97, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.05.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.05.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.05.07
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.05.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.05.107
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.05.26
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.05.28
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.05.29
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.05.30
+  phases: [Finalizado, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.05.31
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.06.01
+  phases: [PGOUM-97, En Ejecución, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.06.04
+  phases: [PGOUM-97, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.06.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.06.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.06.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.06.08/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.07.02
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.07.03
+  phases: [PGOUM-97, Sin Iniciar, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- code: APE.07.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.07.05
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.07.06
+  phases: [Finalizado, Finalizado, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.07.07
+  phases: [Finalizado, Finalizado, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.08.01
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.08.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.04
+  phases: [PGOUM-97, En Ejecución, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.08.05
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.08.06-RP
+  phases: [Finalizado, Finalizado, Sin Iniciar, Sin Iniciar]
+  veda: edificacion
+- {code: APE.08.07, veda: edificacion}
+- {code: APE.08.08, veda: edificacion}
+- code: APE.08.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.10
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.11
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.12
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.13
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.08.14
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.08.15
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.08.16-RP
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.08.17
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: APE.08.20
+  phases: [Finalizado, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.08.21
+  phases: [Finalizado, En Ejecución, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: APE.09.01
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.09.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.03-RP
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.09.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.09.06
+  phases: [PGOUM-97, Finalizado, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.09.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- {code: APE.09.11, veda: gestion_urbanizacion}
+- code: APE.09.12
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.13
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.18
+  phases: [PGOUM-97, PGOUM-85, No Necesita, No Necesita]
+- code: APE.09.19
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.09.20-RP
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.09.21
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.09.22
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.23
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.24/UE-1
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.24/UE-2
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.09.24/UE-3
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.09.24/UE-4
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.09.24/UE-5
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.09.24/UE-6
+  phases: [PGOUM-97, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.09.25
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.09.25/M
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APE.09.27
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+  veda: edificacion
+- code: APE.10.01
+  phases: [PGOUM-97, En Ejecución, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.10.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.10.04
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.10.05
+  phases: [PGOUM-97, Finalizado, Finalizado, En Ejecución]
+- code: APE.10.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.11
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.10.12
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.13
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.14
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.10.15
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.16
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.10.17
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.18
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.10.19
+  phases: [PGOUM-97, Sin Iniciar, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- code: APE.10.20
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.21
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- code: APE.10.22
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.10.23
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: APE.10.23-RP
+  phases: [Finalizado, En Ejecución, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.10.24
+  phases: [Finalizado, En Ejecución, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.11.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.06
+  phases: [PGOUM-97, Sin Iniciar, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- {code: APE.11.08, veda: edificacion}
+- code: APE.11.11
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.12
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.13
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.11.14
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.11.15/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.11.16
+  phases: [Finalizado, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.12.01
+  phases: [PGOUM-97, Finalizado, Finalizado, En Ejecución]
+- code: APE.12.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.12.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.12.06
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.12.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.12.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.12.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.12.10
+  phases: [PGOUM-97, Finalizado, Finalizado, No Necesita]
+- code: APE.13.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.13.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.13.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.13.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.13.10
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.15.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.09
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.15.10
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.11
+  phases: [PGOUM-97, Sin Iniciar, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- code: APE.15.12
+  phases: [PGOUM-97, Sin Iniciar, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- code: APE.15.13
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.15.14
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.15.15
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APE.15.16
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.15.17
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.16.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.16.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.16.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- {code: APE.16.05, veda: gestion_urbanizacion}
+- code: APE.16.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.16.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.16.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.16.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.16.10
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.16.11-RP
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.16.11/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.16.12
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: APE.17.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.17.04
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.17.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.06
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.10
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- {code: APE.17.12, veda: gestion_urbanizacion}
+- code: APE.17.13
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.14
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.15
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.17.16
+  phases: [PGOUM-97, No Necesita, No Necesita, No Necesita]
+- code: APE.17.17
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.17.18
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.17.20-RP
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.18.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- {code: APE.18.02, veda: gestion_urbanizacion}
+- code: APE.18.03
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.18.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.18.05/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APE.18.06
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: APE.18.06-RP
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.19.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.19.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.19.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.19.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- {code: APE.19.06, veda: gestion_urbanizacion}
+- code: APE.19.07
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.19.08
+  phases: [PGOUM-97, Finalizado, Finalizado, En Ejecución]
+  veda: edificacion
+- code: APE.19.09
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.19.10
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.19.11-RP
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.20.01
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.20.02
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.20.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.20.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.20.08
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.20.09
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.20.10
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+  veda: edificacion
+- code: APE.20.11
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.20.12
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.20.13
+  phases: [PGOUM-97, Finalizado, No Necesita, No Necesita]
+- code: APE.20.20
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.21.01
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.21.02
+  phases: [PGOUM-97, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.21.03
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.21.04
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+- code: APE.21.05
+  phases: [PGOUM-97, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APE.21.06
+  phases: [PGOUM-97, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APE.21.07/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: API.01.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.09/M
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.11
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.02.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.15
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.16
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.18
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.19
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.02.20
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.02.21
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.02.22
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.03.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.03.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.03.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.03.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.03.05
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.03.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.04.01
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.05.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.07
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.05.08
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.05.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.05.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.06.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.10
+  phases: [PGOUM-85, Finalizado, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.06.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.06.12
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.08.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.08.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.08.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.08.04
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.08.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.08.06
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.08.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.08.08
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.08.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.08.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.08.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.08.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.08.13
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.09.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.09.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.09.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.09.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.06
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.09.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.09.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.14-M
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.09.15
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.16
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.09.17
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.09.18
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.09.19
+  phases: [PGOUM-85, Finalizado, PGOUM-85, PGOUM-85]
+- code: API.09.20
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.09.21
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: API.10.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.05
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.10.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.15
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.10.16
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.11.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.08
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.11.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.11.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.15
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.11.16
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.11.17
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.11.18
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.11.19
+  phases: [PGOUM-85, Finalizado, PGOUM-85, PGOUM-85]
+- code: API.12.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.12.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.12.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.12.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.12.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.12.06
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.12.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.13.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.03
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.13.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.13.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.13.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.13.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.12
+  phases: [PGOUM-85, Finalizado, PGOUM-85, PGOUM-85]
+- code: API.13.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.13.15
+  phases: [PGOUM-85, Finalizado, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.14.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.14.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.14.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.14.04/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: API.14.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.14.06
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.15.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.15.07
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.15.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.13
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.15.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.15
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.16
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.17
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.19
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.15.20
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.15.21
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.16.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.16.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.16.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.15
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.16.17
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.16.18
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.19
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.16.20
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.21
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.22
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.16.23
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.16.24
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.17.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.17.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.17.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.17.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.11
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.17.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.17.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.05
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.18.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.07
+  phases: [PGOUM-85, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: API.18.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.09
+  phases: [PGOUM-85, En Ejecución, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: API.18.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.11
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.18.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.18.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.18.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.19.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.19.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.19.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.19.04
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.20.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.20.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.20.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.06
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.20.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.20.08
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.10
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.11
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: API.20.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.13
+  phases: [PGOUM-85, Sin Iniciar, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: API.20.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.16
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.20.17
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: API.21.01
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: API.21.02
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.03
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.04
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.06
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.07
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.09
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.11
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: API.21.12
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.13
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: API.21.14
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+- code: APR.01.02
+  phases: [Sin Iniciar, No Necesita, No Necesita, No Necesita]
+- code: APR.01.03
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.01.04
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.01.05
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.01.06
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.01.07
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.01.08
+  phases: [Sin Iniciar, No Necesita, No Necesita, No Necesita]
+- code: APR.01.09
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.01.10
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.01.11
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.01.12
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.02.01
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.02.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.06
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.02.07
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.08
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.09
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+  veda: gestion_urbanizacion
+- code: APR.02.10
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: APR.02.11
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.12
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.02.13
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.14
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.02.15/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.16
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.02.17
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.02.18
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.19
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.02.20/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.03.04
+  phases: [Finalizado, Sin Iniciar, No Necesita, No Necesita]
+  veda: gestion_urbanizacion
+- code: APR.04.01
+  phases: [En tramitación, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.04.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.04.03
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.04.04
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.04.05
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.04.06
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.04.08
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.04.09
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.04.10
+  phases: [No Necesita, Finalizado, No Necesita, No Necesita]
+- code: APR.04.12
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.05.01
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.05.02
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.05.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.05.04
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.05.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.05.06
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: APR.05.07
+  phases: [Finalizado, Finalizado, No Necesita, No Necesita]
+- code: APR.05.08
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.05.10
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.06.01
+  phases: [PGOUM-85, No Necesita, Finalizado, Finalizado]
+- code: APR.06.02
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: edificacion
+- code: APR.06.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.06.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.06.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.06.07
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.07.01
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.07.03
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.07.04
+  phases: [Sin Iniciar, No Necesita, No Necesita, No Necesita]
+  veda: pendiente_planeamiento
+- code: APR.07.05
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.07.07
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.07.09
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.07.10
+  phases: [Finalizado, Sin Iniciar, No Necesita, No Necesita]
+- code: APR.07.12
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.08.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.08.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.08.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.08.06/M
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.09.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.09.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.09.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.09.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.09.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.09.06
+  phases: [Finalizado, No Necesita, Finalizado, Finalizado]
+- code: APR.09.07
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.09.09
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.10.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.10.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.10.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.11.01
+  phases: [Finalizado, Finalizado, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.11.02
+  phases: [Sin Iniciar, No Necesita, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.11.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.11.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.11.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.11.06
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.12.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.12.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.12.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.12.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.12.06/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.13.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.13.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.15.01
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.15.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.16.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.16.02
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.16.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.16.04
+  phases: [Finalizado, PGOUM-85, Finalizado, En Ejecución]
+  veda: edificacion
+- code: APR.16.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.17.02
+  phases: [Finalizado, En Ejecución, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.17.03
+  phases: [Finalizado, En Ejecución, En tramitación, En Ejecución]
+  veda: gestion_urbanizacion
+- code: APR.17.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.17.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.17.06
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.17.07
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.17.08
+  phases: [Finalizado, En Ejecución, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.17.09
+  phases: [Finalizado, Finalizado, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.17.10
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.17.11
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.18.01
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.18.02/M
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.19.01
+  phases: [Finalizado, En Ejecución, En tramitación, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.19.03
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: APR.20.01/M
+  phases: [En tramitación, En Ejecución, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: APR.20.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.20.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.20.04
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.20.05
+  phases: [Sin Iniciar, Sin Iniciar, No Necesita, No Necesita]
+  veda: pendiente_planeamiento
+- code: APR.20.06
+  phases: [Finalizado, No Necesita, No Necesita, No Necesita]
+- code: APR.20.07
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: APR.20.07/M
+  phases: [Finalizado, En Ejecución, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.21.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+- code: APR.21.02
+  phases: [Finalizado, Finalizado, Finalizado, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: APR.21.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UNP.4.03
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_sectorizacion
+- code: UNP.4.03/C
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_sectorizacion
+- code: UNP.4.09
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_sectorizacion
+- code: UNS.04.05-RP
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_sectorizacion
+- code: UNS.04.07-RP
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_sectorizacion
+- code: UNS.04.11-RP
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_sectorizacion
+- code: US.04.10-RP
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: UZI.0./C
+  phases: [Finalizado, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: gestion_urbanizacion
+- code: UZI.0.01
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZI.0.02
+  phases: [PGOUM-85, PGOUM-85, Finalizado, Finalizado]
+- code: UZI.0.03
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: UZI.0.05
+  phases: [PGOUM-85, PGOUM-85, PGOUM-85, PGOUM-85]
+  veda: edificacion
+- code: UZI.0.07
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZI.0.08
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+- code: UZI.0.09
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZI.0.10
+  phases: [PGOUM-85, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZP.1.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZP.1.02
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZP.1.03
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZP.1.05
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZP.1.06
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: edificacion
+- code: UZP.2.01
+  phases: [Finalizado, Finalizado, Finalizado, Finalizado]
+  veda: gestion_urbanizacion
+- code: UZP.3.02
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: UZP.3.03
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: UZP.3.04
+  phases: [Sin Iniciar, Sin Iniciar, Sin Iniciar, Sin Iniciar]
+  veda: pendiente_planeamiento
+- code: UZPp.02.02-RP
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: UZPp.02.03-RP
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: UZPp.02.04-RP
+  phases: [Finalizado, Finalizado, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion
+- code: UZPp.03.01-RP
+  phases: [Finalizado, En Ejecución, Finalizado, En Ejecución]
+  veda: gestion_urbanizacion

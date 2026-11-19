@@ -6,6 +6,12 @@ import { describe, expect, it } from "vitest";
 import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 
 import {
+  breakEvenFreeText,
+  roughMoney,
+  breakEvenText,
+  breakEvenValue,
+  CALCULATOR_TEXT,
+  costNowValue,
   adminUnitId,
   areaFacts,
   defaultLand,
@@ -30,6 +36,7 @@ import {
   viabilityRequest,
   withoutMark,
 } from "../investors";
+import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
 // Test fixture: figures shaped as GET /api/v1/investors/zones/{id} gives them (Pinar del Rey, 19 nov)
 function value(v: number | null, unit: string, mark: SourcedValue["mark"] = "dato"): SourcedValue {
@@ -109,7 +116,11 @@ describe("the list of barrios", () => {
 
   it("says a planning area's situation and type of home in words", () => {
     const area = { kind: "ambito", code: "APR.16.04", name: "UVA de Hortaleza", buildable_m2: 26322, stage: "edificacion", use: "colectiva" };
-    expect(areaFacts(area)).toEqual(["En fase de edificación: se puede construir ya", "vivienda colectiva"]);
+    // D-252 (audit B10): never «se puede construir ya»
+    expect(areaFacts(area)).toEqual([
+      "En fase de edificación, según el Ayuntamiento: no quiere decir que se pueda construir ya (hace falta licencia)",
+      "vivienda colectiva",
+    ]);
     expect(areaFacts({ ...area, stage: "otra", use: null })).toEqual([]);
     expect(areaFacts(parcel("x", 1))).toEqual([]);
   });
@@ -232,5 +243,69 @@ describe("the calculator", () => {
     expect(missingFields(fields)).toEqual(["buildable_m2"]);
     expect(viabilityRequest(fields)).toBeNull();
     expect(viabilityRequest({ ...fields, buildable_m2: "0" })).toBeNull();
+  });
+});
+
+describe("the cost and its break-even (D-252)", () => {
+  const free = { construction_m2: 2800, pem_m2: 1866.67, coefficient: 4.6667, current_construction_m2: 875.84, land_counted: false, reachable: true };
+
+  it("says up to what construction cost the target margin holds, as PEM and as coefficient", () => {
+    expect(breakEvenText(free)).toBe(
+      "Sin pagar nada por el suelo, la promoción llega al margen objetivo mientras la construcción cueste menos de 2.800 €/m² construido (PEM × coeficiente). Es un PEM de hasta 1.867 €/m² con tu coeficiente, o un coeficiente de hasta 4,67 sobre tu PEM.",
+    );
+    const withLand = { ...free, construction_m2: 600, pem_m2: 400, coefficient: 1, land_counted: true };
+    expect(breakEvenText(withLand)).toMatch(/^Con el precio del suelo que has puesto, la promoción llega al margen objetivo mientras la construcción cueste menos de 600 €\/m² construido/);
+    expect(breakEvenFreeText(free)).toBe("Con el suelo gratis, hasta 2.800 €/m² construido.");
+    expect(costNowValue(free)).toBe("876 €/m² construido (PEM × coeficiente)");
+  });
+
+  it("says when not even free construction reaches the target margin", () => {
+    const none = { ...free, construction_m2: -1200, land_counted: true, reachable: false };
+    expect(breakEvenValue(none)).toBe("Ni gratis");
+    expect(breakEvenText(none)).toBe("Con el precio del suelo que has puesto, ni con la construcción gratis llega la promoción al margen objetivo.");
+    expect(breakEvenFreeText({ ...none, land_counted: false })).toBe("Ni con el suelo gratis llega al margen objetivo.");
+    // Review of #109, R-04: never «un coeficiente de hasta 0,8»
+    const tight = { ...free, construction_m2: 700, pem_m2: 515.65, coefficient: 0.79, land_counted: true };
+    expect(breakEvenText(tight)).toMatch(/\(PEM × coeficiente\)\. Con tu PEM, ni con el PEM solo \(coeficiente 1\) llega\.$/);
+  });
+
+  it("says what the cost counts and what it leaves out, and that the calculator is for housing", () => {
+    expect(CALCULATOR_TEXT.intro).toMatch(/^Calcula solo vivienda/);
+    expect(CALCULATOR_TEXT.costIncludes(["honorarios"])).toContain("con el coeficiente, honorarios.");
+    for (const left of ["El suelo", "La urbanización", "El derribo", "Los sótanos", "La financiación", "El IVA", "imprevistos"]) {
+      expect(CALCULATOR_TEXT.costExcludes.some((line) => line.includes(left))).toBe(true);
+    }
+  });
+
+  it("says the residual with three figures, never cents on assumptions (D-252, D7)", () => {
+    expect(roughMoney(66_958_000)).toBe("unos 67 millones de €");
+    expect(roughMoney(140_490_000)).toBe("unos 140 millones de €");
+    expect(roughMoney(1_234_567)).toBe("unos 1,23 millones de €");
+    expect(roughMoney(900_091)).toBe("unos 900.000 €");
+    expect(roughMoney(4297.4)).toBe("unos 4.300 €");
+    expect(roughMoney(1_002_000)).toBe("alrededor de 1 millón de €"); // review of #109, R-10
+  });
+
+  it("gives the semaphore and the scenarios from the code's figures (D-252, D8)", () => {
+    expect(CALCULATOR_TEXT.thresholds).toContain(`«Ajustar» entre el ${M.adjustFloorPct} % y el objetivo`);
+    expect(CALCULATOR_TEXT.thresholds).toContain("pesimista: −10 % y +15 %");
+    expect(CALCULATOR_TEXT.thresholds).toContain("Orden ECO/805/2003, disposición adicional sexta");
+    expect(CALCULATOR_TEXT.thresholds).toContain(`al menos un ${M.appraisalMinMarginPct} %`);
+  });
+
+  it("says where the cost comes from and how much it varies, without «mínimo oficial» (D-252, D4)", () => {
+    const [permits, crg, st] = CALCULATOR_TEXT.costReferences();
+    expect(permits?.text).toContain(`${M.pem.eurM2} €/m²`);
+    expect(crg?.text).toContain("bloque abierto, 871–1.064 €/m²");
+    expect(crg?.text).toContain(`punto medio del bloque abierto: ${M.costReferences.crg.defaultPem} €/m² (supuesto)`);
+    expect(st?.text).toContain("1.360 €/m²");
+    expect(st?.text).toContain("según la prensa");
+    expect(st?.text).toContain("No sabemos si incluye gastos generales y beneficio"); // R-03
+    expect(JSON.stringify(CALCULATOR_TEXT)).not.toContain("Mínimo oficial");
+    // The permits' PEM as the API reads it from the CM dataset, with its source
+    const [fromApi] = CALCULATOR_TEXT.costReferences(value(644, "€/m²"));
+    expect(fromApi?.text).toContain("(2025): 644 €/m²");
+    expect(fromApi?.text).toContain("Fuente: Fuente de prueba.");
+    expect(fromApi?.mark).toBe("dato");
   });
 });

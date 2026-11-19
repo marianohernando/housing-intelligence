@@ -1,5 +1,100 @@
 {
   "$defs": {
+    "AmbitPhase": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "examples": [
+            "Obras de urbanización"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "state": {
+          "examples": [
+            "Sin Iniciar",
+            "Finalizado",
+            "No Necesita",
+            "PGOUM-85"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "state"
+      ],
+      "title": "AmbitPhase",
+      "type": "object"
+    },
+    "AmbitStatus": {
+      "additionalProperties": false,
+      "description": "D-252: the state of the planning area, as the Ayuntamiento publishes it.",
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "code": {
+          "description": "The code in the Ayuntamiento's list",
+          "title": "Code",
+          "type": "string"
+        },
+        "pending": {
+          "description": "Planning, management or urbanization not finished",
+          "title": "Pending",
+          "type": "boolean"
+        },
+        "phases": {
+          "items": {
+            "$ref": "#/$defs/AmbitPhase"
+          },
+          "title": "Phases",
+          "type": "array"
+        },
+        "tracked": {
+          "description": "False: the Ayuntamiento does not publish its state",
+          "title": "Tracked",
+          "type": "boolean"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "veda_stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "pendiente_sectorizacion",
+                "pendiente_planeamiento",
+                "gestion_urbanizacion",
+                "edificacion"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Veda Stage"
+        }
+      },
+      "required": [
+        "code",
+        "tracked",
+        "pending",
+        "as_of",
+        "url"
+      ],
+      "title": "AmbitStatus",
+      "type": "object"
+    },
     "AssumptionPart": {
       "additionalProperties": false,
       "description": "One piece of an assumed percentage (the cost coefficient, the sales costs).",
@@ -79,6 +174,14 @@
           "default": null,
           "description": "The norm's assumption when an official figure wins",
           "title": "Assumed M2"
+        },
+        "by_use": {
+          "description": "D-252: every official figure of the parcel with its use and source",
+          "items": {
+            "$ref": "#/$defs/UseFigure"
+          },
+          "title": "By Use",
+          "type": "array"
         },
         "coefficient": {
           "anyOf": [
@@ -1139,7 +1242,7 @@
               "type": "null"
             }
           ],
-          "description": "A plot with nothing built (solar); null unknown",
+          "description": "Parcela sin edificar según su uso en el Catastro; no implica solar (a legal condition with services). null unknown",
           "title": "Is Vacant"
         },
         "lat": {
@@ -1266,6 +1369,36 @@
       "title": "ParcelBlock",
       "type": "object"
     },
+    "ParcelCaution": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "$ref": "#/$defs/ParcelCautionKey"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "text"
+      ],
+      "title": "ParcelCaution",
+      "type": "object"
+    },
+    "ParcelCautionKey": {
+      "description": "D-252: what keeps the sheet's figures from passing for free housing ready to build.",
+      "enum": [
+        "otro_uso",
+        "ambito_pendiente",
+        "vivienda_protegida",
+        "unifamiliar",
+        "ambito_sin_estado"
+      ],
+      "title": "ParcelCautionKey",
+      "type": "string"
+    },
     "ParcelContext": {
       "additionalProperties": false,
       "description": "The barrio around the parcel: the whole investor sheet in a pilot barrio (D-248); outside\nthe pilot, its district's figures, and it says so.",
@@ -1328,6 +1461,14 @@
         "buildability": {
           "$ref": "#/$defs/Buildability"
         },
+        "cautions": {
+          "description": "D-252: shown before the figures",
+          "items": {
+            "$ref": "#/$defs/ParcelCaution"
+          },
+          "title": "Cautions",
+          "type": "array"
+        },
         "context": {
           "anyOf": [
             {
@@ -1349,7 +1490,8 @@
               "catastro",
               "planning",
               "buildability",
-              "context"
+              "context",
+              "plan_uses"
             ],
             "type": "string"
           },
@@ -1403,6 +1545,18 @@
             }
           ],
           "description": "null when the Ayuntamiento fails"
+        },
+        "public_land": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LandItem"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the parcel as public land of the Portal del Suelo in its barrio (owner, regime, urbanization), when the barrio's sheet lists it"
         },
         "sources": {
           "items": {
@@ -1556,10 +1710,93 @@
       "title": "PeopleCount",
       "type": "object"
     },
+    "PlanUseFigure": {
+      "additionalProperties": false,
+      "description": "D-252: what the plan allows of one use on the urban parcel (USOS_SUELO, table 4 for the\nprincipal use and table 5 for the others). The total the plan allows, not what is left; the\nurban parcel may not be the cadastral one.",
+      "properties": {
+        "assumed": {
+          "default": false,
+          "description": "value_m2 computed from the coefficient",
+          "title": "Assumed",
+          "type": "boolean"
+        },
+        "coefficient": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "m²/m² when the plan gives it so",
+          "title": "Coefficient"
+        },
+        "principal": {
+          "description": "Table 4, «uso cualificado principal»; else table 5",
+          "title": "Principal",
+          "type": "boolean"
+        },
+        "use": {
+          "examples": [
+            "RESIDENCIAL VIVIENDA COLECTIVA"
+          ],
+          "title": "Use",
+          "type": "string"
+        },
+        "use_class": {
+          "$ref": "#/$defs/UseClass"
+        },
+        "use_ownership": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseOwnership"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "value_m2": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "m²; with a coefficient, coefficient × urban parcel area",
+          "title": "Value M2"
+        }
+      },
+      "required": [
+        "use",
+        "use_class",
+        "principal"
+      ],
+      "title": "PlanUseFigure",
+      "type": "object"
+    },
     "PlanningBlock": {
       "additionalProperties": false,
       "description": "«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point.",
       "properties": {
+        "ambit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AmbitStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the state of the planning area; null for a norma zonal"
+        },
         "code": {
           "examples": [
             "8.3.a",
@@ -1615,6 +1852,22 @@
           "title": "Observed At",
           "type": "string"
         },
+        "plan_uses": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/PlanUseFigure"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: what the plan allows by use on the urban parcel; [] when it publishes nothing, null when it could not be read",
+          "title": "Plan Uses"
+        },
         "sheet_label": {
           "anyOf": [
             {
@@ -1655,6 +1908,19 @@
           ],
           "title": "Urban Parcel"
         },
+        "urban_parcel_area_m2": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the area of the urban parcel's polygon in the plan",
+          "title": "Urban Parcel Area M2"
+        },
         "use": {
           "anyOf": [
             {
@@ -1668,6 +1934,30 @@
             "RESIDENCIAL VIVIENDA COLECTIVA"
           ],
           "title": "Use"
+        },
+        "use_class": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseClass"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the use, classified"
+        },
+        "use_ownership": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseOwnership"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: dotacional público or privado, when the plan says it"
         },
         "viewer_url": {
           "description": "The Geoportal viewer, centred on the parcel",
@@ -1957,6 +2247,74 @@
       "title": "UnitUse",
       "type": "object"
     },
+    "UseClass": {
+      "description": "D-252: a use as the person reads it, from the planning's or a source's words.",
+      "enum": [
+        "residencial",
+        "terciario",
+        "industrial",
+        "dotacional",
+        "zona_verde",
+        "infraestructura",
+        "sin_uso",
+        "otro"
+      ],
+      "title": "UseClass",
+      "type": "string"
+    },
+    "UseFigure": {
+      "additionalProperties": false,
+      "description": "One source's buildable m² for a parcel, with the use that source gives it. A source that\ngives one figure is never split by use.",
+      "properties": {
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "residential": {
+          "description": "Whether the calculator can use it (housing only)",
+          "title": "Residential",
+          "type": "boolean"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "use": {
+          "description": "As the source writes it",
+          "examples": [
+            "INDUSTRIAL"
+          ],
+          "title": "Use",
+          "type": "string"
+        },
+        "use_class": {
+          "$ref": "#/$defs/UseClass"
+        },
+        "value_m2": {
+          "minimum": 0,
+          "title": "Value M2",
+          "type": "number"
+        }
+      },
+      "required": [
+        "use_class",
+        "use",
+        "value_m2",
+        "source",
+        "dataset_id",
+        "residential"
+      ],
+      "title": "UseFigure",
+      "type": "object"
+    },
+    "UseOwnership": {
+      "enum": [
+        "publico",
+        "privado"
+      ],
+      "title": "UseOwnership",
+      "type": "string"
+    },
     "ValueMark": {
       "enum": [
         "dato",
@@ -2005,7 +2363,20 @@
           "$ref": "#/$defs/SourcedValue"
         },
         "pem_m2": {
-          "$ref": "#/$defs/SourcedValue"
+          "$ref": "#/$defs/SourcedValue",
+          "description": "D-252: the calculator's PEM, an assumption (midpoint of the CRG of the Comunidad de Madrid, bloque abierto, área 1)"
+        },
+        "pem_permits_m2": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourcedValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the PEM the building permits declare (CM dataset cm_visados_presupuesto_obra, from the Feature Store): the low reference"
         },
         "rent_m2_month": {
           "$ref": "#/$defs/SourcedValue"

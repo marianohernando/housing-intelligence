@@ -17,7 +17,10 @@ from hi_contracts.public.common import DatasetRef, ZoneRef
 from hi_contracts.public.gaps import GapRow
 
 __all__ = [
+    "AmbitPhase",
+    "AmbitStatus",
     "AssumptionPart",
+    "BreakEven",
     "Buildability",
     "BuildabilityKind",
     "DegradedPart",
@@ -37,11 +40,14 @@ __all__ = [
     "ParcelBlock",
     "ParcelCandidate",
     "ParcelCandidates",
+    "ParcelCaution",
+    "ParcelCautionKey",
     "ParcelContext",
     "ParcelInput",
     "ParcelSheet",
     "ParcelSource",
     "ParcelUnits",
+    "PlanUseFigure",
     "PlanningBlock",
     "PlanningInstrument",
     "PlanningKind",
@@ -49,6 +55,9 @@ __all__ = [
     "ScenarioOutcome",
     "SourcedValue",
     "UnitUse",
+    "UseClass",
+    "UseFigure",
+    "UseOwnership",
     "ValueMark",
     "Verdict",
     "ViabilityDefaults",
@@ -238,7 +247,15 @@ class ViabilityDefaults(BaseModel):
     sale_price_m2: SourcedValue
     new_build_premium_pct: SourcedValue
     rent_m2_month: SourcedValue
-    pem_m2: SourcedValue
+    pem_m2: SourcedValue = Field(
+        description="D-252: the calculator's PEM, an assumption (midpoint of the CRG of the "
+        "Comunidad de Madrid, bloque abierto, área 1)"
+    )
+    pem_permits_m2: SourcedValue | None = Field(
+        default=None,
+        description="D-252: the PEM the building permits declare (CM dataset "
+        "cm_visados_presupuesto_obra, from the Feature Store): the low reference",
+    )
     cost_coefficient: SourcedValue
     cost_parts: list[AssumptionPart]
     sales_costs_pct: SourcedValue
@@ -294,7 +311,7 @@ class ViabilityRequest(BaseModel):
     new_build_premium_pct: float = Field(default=0, ge=-20, le=50)
     rent_m2_month: float | None = Field(default=None, ge=1, le=100)
     pem_m2: float = Field(ge=200, le=5_000)
-    cost_coefficient: float = Field(default=1.36, ge=1, le=3)
+    cost_coefficient: float = Field(default=1.3575, ge=1, le=3)
     land_eur: float | None = Field(default=None, ge=0, le=1_000_000_000)
     land_eur_m2: float | None = Field(
         default=None, ge=0, le=30_000, description="€ per m² buildable"
@@ -302,7 +319,7 @@ class ViabilityRequest(BaseModel):
     sales_costs_pct: float = Field(default=8, ge=0, le=30)
     target_margin_pct: float = Field(default=20, ge=1, le=50)
     adjust_floor_pct: float = Field(
-        default=10, ge=0, le=50, description="Lowered to the target margin when above it"
+        default=15, ge=0, le=50, description="Lowered to the target margin when above it"
     )
     demand: DemandRequest | None = None
 
@@ -311,6 +328,21 @@ class ViabilityRequest(BaseModel):
         if self.land_eur is not None and self.land_eur_m2 is not None:
             raise ValueError("land as a total or per m² buildable, not both")
         return self
+
+
+class BreakEven(BaseModel):
+    """D-252: the most the construction can cost for the operation to reach the target margin,
+    the other inputs as they are: per built m² (the PEM times the coefficient), and the same said
+    as a PEM with the coefficient given or as a coefficient on the PEM given."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    construction_m2: float = Field(description="€ per built m², PEM × coefficient")
+    pem_m2: float = Field(description="The same, as a PEM with the coefficient given")
+    coefficient: float = Field(description="The same, as a coefficient on the PEM given")
+    current_construction_m2: float = Field(description="The inputs' PEM × coefficient")
+    land_counted: bool = Field(description="With the land price given; without one, free land")
+    reachable: bool = Field(description="False when not even free construction reaches it")
 
 
 class ScenarioOutcome(BaseModel):
@@ -348,6 +380,12 @@ class ScenarioOutcome(BaseModel):
             "Lo máximo que se puede pagar por el suelo: 1,90 millones de € (1.900 € por m² "
             "edificable), para un margen del 20 %.",
         ]
+    )
+    break_even: BreakEven | None = Field(
+        default=None, description="The most the construction can cost for the target margin"
+    )
+    break_even_free_land: BreakEven | None = Field(
+        default=None, description="Only with a land price: the same as if the land were free"
     )
 
 
@@ -422,7 +460,10 @@ class ParcelBlock(BaseModel):
     lon: float | None = Field(default=None, ge=-3.95, le=-3.45)
     area_m2: float | None = Field(ge=0, description="Surface of the parcel (land)")
     rustic: bool | None = Field(description="Rustic land: a reduced sheet, no buildability")
-    is_vacant: bool | None = Field(description="A plot with nothing built (solar); null unknown")
+    is_vacant: bool | None = Field(
+        description="Parcela sin edificar según su uso en el Catastro; no implica solar (a legal "
+        "condition with services). null unknown"
+    )
     horizontal_division: bool
     units: ParcelUnits | None = Field(description="Only in horizontal division")
     built_m2: float | None = Field(ge=0, description="Built today: context, not buildability")
@@ -474,6 +515,85 @@ class PlanningInstrument(BaseModel):
     url: HttpUrl | None
 
 
+class UseClass(StrEnum):
+    """D-252: a use as the person reads it, from the planning's or a source's words."""
+
+    RESIDENCIAL = "residencial"
+    TERCIARIO = "terciario"
+    INDUSTRIAL = "industrial"
+    DOTACIONAL = "dotacional"  # equipamientos and services
+    ZONA_VERDE = "zona_verde"
+    INFRAESTRUCTURA = "infraestructura"  # vía pública, transport, utilities
+    SIN_USO = "sin_uso"  # «sin uso pormenorizado»
+    OTRO = "otro"
+
+
+class UseOwnership(StrEnum):
+    PUBLICO = "publico"
+    PRIVADO = "privado"
+
+
+class UseFigure(BaseModel):
+    """One source's buildable m² for a parcel, with the use that source gives it. A source that
+    gives one figure is never split by use."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    use_class: UseClass
+    use: str = Field(description="As the source writes it", examples=["INDUSTRIAL"])
+    value_m2: float = Field(ge=0)
+    source: str
+    dataset_id: str
+    residential: bool = Field(description="Whether the calculator can use it (housing only)")
+
+
+class PlanUseFigure(BaseModel):
+    """D-252: what the plan allows of one use on the urban parcel (USOS_SUELO, table 4 for the
+    principal use and table 5 for the others). The total the plan allows, not what is left; the
+    urban parcel may not be the cadastral one."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    use: str = Field(examples=["RESIDENCIAL VIVIENDA COLECTIVA"])
+    use_class: UseClass
+    use_ownership: UseOwnership | None = None
+    principal: bool = Field(description="Table 4, «uso cualificado principal»; else table 5")
+    value_m2: float | None = Field(
+        default=None, description="m²; with a coefficient, coefficient × urban parcel area"
+    )
+    coefficient: float | None = Field(default=None, description="m²/m² when the plan gives it so")
+    assumed: bool = Field(default=False, description="value_m2 computed from the coefficient")
+
+
+class AmbitPhase(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    label: str = Field(examples=["Obras de urbanización"])
+    state: str = Field(examples=["Sin Iniciar", "Finalizado", "No Necesita", "PGOUM-85"])
+
+
+class AmbitStatus(BaseModel):
+    """D-252: the state of the planning area, as the Ayuntamiento publishes it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str = Field(description="The code in the Ayuntamiento's list")
+    tracked: bool = Field(description="False: the Ayuntamiento does not publish its state")
+    pending: bool = Field(description="Planning, management or urbanization not finished")
+    phases: list[AmbitPhase] = Field(default_factory=list[AmbitPhase])
+    veda_stage: (
+        Literal[
+            "pendiente_sectorizacion",
+            "pendiente_planeamiento",
+            "gestion_urbanizacion",
+            "edificacion",
+        ]
+        | None
+    ) = None
+    as_of: date
+    url: HttpUrl
+
+
 class PlanningBlock(BaseModel):
     """«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point."""
 
@@ -484,7 +604,22 @@ class PlanningBlock(BaseModel):
     kind: PlanningKind
     norma_zonal: NormaZonal | None
     use: str | None = Field(examples=["RESIDENCIAL VIVIENDA COLECTIVA"])
+    use_class: UseClass | None = Field(default=None, description="D-252: the use, classified")
+    use_ownership: UseOwnership | None = Field(
+        default=None, description="D-252: dotacional público or privado, when the plan says it"
+    )
     urban_parcel: str | None = Field(examples=["MANZANA B"])
+    urban_parcel_area_m2: float | None = Field(
+        default=None, description="D-252: the area of the urban parcel's polygon in the plan"
+    )
+    plan_uses: list[PlanUseFigure] | None = Field(
+        default=None,
+        description="D-252: what the plan allows by use on the urban parcel; [] when it publishes "
+        "nothing, null when it could not be read",
+    )
+    ambit: AmbitStatus | None = Field(
+        default=None, description="D-252: the state of the planning area; null for a norma zonal"
+    )
     instrument: PlanningInstrument | None
     sheet_url: HttpUrl | None = Field(
         description="The official record: the instrument's, or the article of the Normas "
@@ -520,6 +655,10 @@ class Buildability(BaseModel):
         default=None, ge=0, description="The norm's assumption when an official figure wins"
     )
     dataset_ids: list[str] = Field(default_factory=list[str])
+    by_use: list[UseFigure] = Field(
+        default_factory=list[UseFigure],
+        description="D-252: every official figure of the parcel with its use and source",
+    )
     editable: Literal[True] = True
 
 
@@ -552,7 +691,24 @@ class ParcelContext(BaseModel):
 
 # planning: the Ayuntamiento or its layer of instruments did not answer; buildability: the Z of
 # norma zonal 1 could not be read; context: the barrio (the database)
-DegradedPart = Literal["catastro", "planning", "buildability", "context"]
+DegradedPart = Literal["catastro", "planning", "buildability", "context", "plan_uses"]
+
+
+class ParcelCautionKey(StrEnum):
+    """D-252: what keeps the sheet's figures from passing for free housing ready to build."""
+
+    OTRO_USO = "otro_uso"
+    AMBITO_PENDIENTE = "ambito_pendiente"
+    VIVIENDA_PROTEGIDA = "vivienda_protegida"
+    UNIFAMILIAR = "unifamiliar"
+    AMBITO_SIN_ESTADO = "ambito_sin_estado"
+
+
+class ParcelCaution(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    key: ParcelCautionKey
+    text: str
 
 
 class ParcelSheet(BaseModel):
@@ -572,6 +728,14 @@ class ParcelSheet(BaseModel):
     notices: list[str]
     degraded: list[DegradedPart] = Field(
         default_factory=list[DegradedPart], description="The parts that could not be read now"
+    )
+    cautions: list[ParcelCaution] = Field(
+        default_factory=list[ParcelCaution], description="D-252: shown before the figures"
+    )
+    public_land: LandItem | None = Field(
+        default=None,
+        description="D-252: the parcel as public land of the Portal del Suelo in its barrio "
+        "(owner, regime, urbanization), when the barrio's sheet lists it",
     )
     fallback: Literal["demo_snapshot"] | None = Field(
         default=None, description="Served from the saved demo sheet because a source failed"
