@@ -1,69 +1,58 @@
 # Para inversores y promotores (20 nov, D-248)
 
-Rama `claude/f9-investor-app`. La sección `/inversores` lista los barrios piloto (Madrid capital dentro de la M-40, D-247) y `/inversores/{barrio}` da la ficha de un barrio con la calculadora de viabilidad v0. Lleva la etiqueta «Plan Inversor (acceso libre durante el concurso)», sin cobro ni login. Decisión: D-248. Textos: `pitch/textos_web.md` §11.
+Rama `claude/f9-investor-app`, rebasada sobre `claude/sprint-1-public` con la línea A fusionada (#95, D-247). La sección `/inversores` lista los 108 barrios piloto (Madrid capital dentro de la M-40) y `/inversores/{barrio}` da la ficha de un barrio con la calculadora de viabilidad v0. Lleva la etiqueta «Plan Inversor (acceso libre durante el concurso)», sin cobro ni login. Decisión: D-248. Textos: `pitch/textos_web.md` §11.
 
-**Cómo se ha medido.** Con `next build` (`NEXT_PUBLIC_FEATURE_SEARCH=true`, como en producción) y `next start` en el 3094, contra la API de la rama en el 8094. La base es `housing_inv_b`, una copia completa de `housing` a la que se han añadido dos cosas:
-- el dataset de los visados (`cm_visados_presupuesto_obra`, versión `2026-11-19-37e839d23fbf`) y la feature `pem_visado_vivienda_bloque_m2`;
-- la lista de los 108 barrios piloto, sacada del YAML de la línea A sin commitear.
+## Cómo se ha medido
 
-Las features de la línea A (comercio, remanente y suelo vacante) aún no están: la API las devuelve `null`, con su motivo y un aviso, y la web dice «Sin dato».
+- Web: `next build` con `NEXT_PUBLIC_FEATURE_SEARCH=true` (como en producción) y `next start` en el 3094.
+  - Hubo un build completo y dos más con la caché, para las etiquetas de los ámbitos, «0 parcelas» y la nota de la rentabilidad.
+  - Al final de cada build, el aviso de seguridad de Next corta el comando; la compilación queda completa.
+- API de la rama en el 8094, en dos pasadas:
+  - **`housing_inv_b`** (la base de la rama: copia de `housing` con el dataset de los visados y la feature del PEM cargados): e2e, golden y `check-inversores-housing_inv_b.json`. Aquí no están las features de A.
+  - **`housing_inv_a`** (la base de la línea A, con sus features cargadas; **solo lectura**): las capturas y `check-inversores.json` / `check-inversores-buenavista.json`. Así se ven el comercio, el remanente con sus notas y el suelo vacante. Esta base no tiene el dataset de los visados, así que el PEM sale de la cifra versionada (`viability_data.py`), con la misma fuente.
 
 ## Capturas (1440 y 390 px)
 
-- `*-lista.png`: los 108 barrios por distrito. Cada uno con lo que falta en el distrito (el distrito se nombra: «Falta en el distrito de Carabanchel: escuelas infantiles…»), sus parcelas públicas y su precio estimado. A 390 px, la primera pantalla.
-- `*-ficha.png`: **Pinar del Rey** (Hortaleza), con 4 parcelas del Portal del Suelo. Las secciones van en orden: quién vive aquí, precios, qué falta (cada fila con «Dato del distrito de Hortaleza»), suelo, calculadora y fuentes.
-  - Cada cifra lleva su marca («Dato», «Supuesto», «Lo pones tú») y su fuente.
-  - A 1440 px, la página entera; a 390 px, la primera pantalla.
-- `*-ficha-suelo.png`: las 4 parcelas con sus m² edificables, su gestor y «Ver en el visor de la Comunidad».
-- `1440-calculadora.png`: la calculadora entera.
-  - Arriba, el suelo: la parcela R25-L, de 12.192 m², elegida por defecto.
-  - Los supuestos, con su fuente y su desglose.
-  - Junto al PEM, «Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente».
-- `*-escenarios-sin-suelo.png`: sin precio del suelo **no hay veredicto**. El titular de cada escenario es lo máximo que se puede pagar por el suelo: 35,83 millones de € (2.939 €/m² edificable) en el base, 3.364 en el optimista y 2.513 en el pesimista. Debajo, la comprobación de demanda: con la renta media del barrio (41.018 €), la hipoteca sería el 42 % y el alquiler el 37 %, los dos por encima del 30 %.
+- `*-lista.png`: los 108 barrios por distrito.
+  - Cada uno dice lo que falta en su distrito, nombrándolo: «Falta en el distrito de Carabanchel: …».
+  - Sus parcelas públicas, la edificabilidad que queda en ámbitos del Plan General (avisa si alguno ocupa también otros barrios) y su precio estimado.
+  - A 390 px, la primera pantalla.
+- `*-ficha.png`: **Pinar del Rey** (Hortaleza). Secciones, en orden: quién vive aquí, precios, qué falta, suelo, calculadora y fuentes.
+  - En «qué falta», cada fila dice «Dato del distrito de Hortaleza», y está el comercio de proximidad del censo de locales.
+  - En «suelo», 4 parcelas del Portal del Suelo y 4 ámbitos con 55.628 m².
+- `*-ficha-suelo.png`: las parcelas (con su gestor y el enlace al visor) y los ámbitos (con su situación y el tipo de vivienda).
+- `*-buenavista-suelo-ambitos-compartidos.png`: **Buenavista** (Carabanchel), dos ámbitos que ocupan también otros barrios.
+  - Cada uno lleva su nota: «aquí está el 79 %» y «el 74 % de su superficie».
+  - La fuente de la suma dice que cuentan enteros.
+  - Sin parcelas, el encabezado no dice «0 parcelas».
+- `1440-calculadora.png`: la calculadora.
+  - Elegida, la parcela R25-L (de la AVS, con el aviso de que el precio libre y el valor residual no valen para vivienda protegida).
+  - Supuestos con su fuente y su desglose, y el aviso junto al coste.
+- `*-escenarios-sin-suelo.png`: sin precio del suelo **no hay veredicto**.
+  - Lo máximo que se puede pagar por el suelo: 2.939 €/m² edificable en el base, 3.364 en el optimista y 2.513 en el pesimista.
+  - La rentabilidad bruta del alquiler cuenta el suelo a ese valor: 5,0 %. Sale igual en los tres escenarios, y lo dice: con el suelo a su valor residual, la inversión es la fracción de los ingresos que no es margen ni comercialización.
+  - Comprobación de demanda: hipoteca 42 % y alquiler 37 % de la renta media, por encima del 30 %. No cuenta gastos ni suministros, así que es optimista.
 - `*-escenarios-con-suelo.png`: con el suelo a 3.200 €/m² edificable, el semáforo (icono, palabra y color): base 15,1 % «Ajustar», optimista 22,8 % «Sale» y pesimista 5,6 % «No sale».
-- `*-impresion.png` y `ficha-inversores.pdf`: la vista de «Guardar como PDF».
-  - Sin la cabecera ni los botones.
-  - Con la fecha de generación, la de los datos, las fuentes con su dirección y los avisos.
-  - Con los desgloses abiertos.
+- `*-impresion.png` y `ficha-inversores.pdf`: «Guardar como PDF».
+  - Sin la cabecera ni los botones, con los desgloses abiertos.
+  - Con la fecha, la de los datos, las fuentes (una vez cada una) con su dirección y los avisos.
 
 ## Comprobaciones
 
-- `apps/web/scripts/check-inversores.mjs` (`check-inversores.json`) mide la lista, la ficha, la calculadora con suelo y la impresión, a 390 y 1440 px:
-  - **0 textos de menos de 16 px** y **0 objetivos de menos de 44 px** en el contenido de la sección; el pie común lo mide `check-ux-mobile.mjs`.
-  - Sin desborde horizontal y **axe 0** (WCAG 2.2 AA).
-  - Sin errores de consola.
-  - También comprueba que sin precio del suelo no sale ningún «Sale», «Ajustar» ni «No sale».
-- `infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3094` (`e2e-report.json`): **escritorio 1440 px 116/116 y móvil 390 px 92/92**, sin cambiar el e2e.
+- `apps/web/scripts/check-inversores.mjs`, sobre las dos bases y en Pinar del Rey y Buenavista: la lista, la ficha, la calculadora con suelo y la impresión, a 390 y 1440 px.
+  - **0 textos de menos de 16 px** y **0 objetivos de menos de 44 px**.
+  - Sin desborde, **axe 0** y sin errores de consola.
+  - Sin precio del suelo, ningún «Sale», «Ajustar» ni «No sale».
+- `infra/deploy/e2e/e2e_prod.mjs --base http://localhost:3094` (`e2e-report.json`, sobre el último build): **escritorio 1440 px 116/116 y móvil 390 px 92/92**.
 
 ## Invariante
 
-`scripts/golden_search.py` contra `housing_inv_b` (con el dataset y la feature nuevos): **10 de 10**. Ni `/search` ni `/gaps` leen nada de D-248.
+`scripts/golden_search.py` contra `housing_inv_b`: **10 de 10**. Ni `/search` ni `/gaps` leen nada de D-248.
 
 ## Tests
 
-- `make lint typecheck test-unit`: limpios.
-- Tests del dominio con casos a mano: uno que sale, uno de «ajustar», uno que no sale y el valor residual sin suelo.
-- Vitest de `lib/investors.ts`.
-- `make test-db` sobre una base de tests vacía con las migraciones (`housing_inv_b_test`): **162 tests**, entre ellos los 5 de `tests/integration/test_api_investors.py`, incluida la carga del dataset de los visados y su paso por `/datasets`.
-- Números: Python 1084 (unitarios y de datos) y vitest 591.
-
-## Revisión del #94 (20 nov)
-
-Arreglos en la misma rama, sin esperar a A:
-- La rentabilidad bruta ya no se da nunca sin suelo. Sin precio, cuenta como suelo el valor residual: en Pinar del Rey, un 5,0 % en el escenario base, frente al 21,8 % de «sin contar el suelo».
-- El suelo de «ajustar» es el menor entre el 10 % y el objetivo.
-- Rangos y pasos en cada campo, iguales que los de la API: un test los compara con el JSON Schema, y el error sale bajo su campo.
-- Las fuentes, sin duplicados.
-- La lista de barrios hace 6 consultas en lugar de ~216.
-- Superficie mínima: 50 m².
-- La comprobación de demanda avisa de que no cuenta gastos ni suministros.
-- La etiqueta «Sin dato» sale en los valores por defecto que no tienen cifra.
-- Aviso para las parcelas de la AVS y para las de concesión.
-- La superficie del visado, documentada en D-248 y en el aviso del coste.
-- Tests de los bordes del 10 % y el 20 %.
-
-Comprobaciones:
-- `make lint typecheck test-unit`: Python 1088 y vitest 595.
-- `make test-db`: 163.
-
-**Las capturas y el e2e de arriba son anteriores a estos arreglos.** Con 2,2 GB libres no se rehace el build: el build, el e2e, `check-inversores.mjs` y las capturas se repiten, una sola vez, después del rebase sobre la línea A.
+- `make lint typecheck test-unit`: limpios, con Python 1119 y vitest 598.
+- `make test-db`: **167**. Incluye los 6 de `tests/integration/test_api_investors.py`:
+  - las features de A, ya en la base de pruebas;
+  - la carga del dataset de los visados y su paso por `/datasets`;
+  - las consultas de la lista: 6 para los 108 barrios, antes ~216.
