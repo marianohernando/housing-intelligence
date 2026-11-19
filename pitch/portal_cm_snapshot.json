@@ -37,6 +37,18 @@
       "slug": "calidad_aire_zonas",
       "title": "Red de Calidad del Aire. Municipios por zonas"
     },
+    "cm_catastro_inmuebles_distrito_uso": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "catastro_inmuebles_por_distrito_y_uso",
+      "title": "Catastro Inmobiliario. Inmuebles por distrito y uso"
+    },
+    "cm_catastro_unidades_urbanas_uso": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "unidades_urbanas_por_uso",
+      "title": "Catastro Inmobiliario. Unidades urbanas por uso. Municipios"
+    },
     "cm_centros_atencion_social": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -169,6 +181,12 @@
       "slug": "1004050",
       "title": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios"
     },
+    "cm_visados_presupuesto_obra": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "1006022",
+      "title": "Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características de los edificios"
+    },
     "cm_viviendas_antiguedad": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -248,5 +266,5 @@
       "title": "Topología de la Red de Metro Ligero / Tranvía"
     }
   },
-  "fetched_at": "2026-11-15"
+  "fetched_at": "2026-11-19"
 }
