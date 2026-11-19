@@ -7,9 +7,13 @@ import type { BarrioSearchResponse } from "@/contracts/barrio_search_response";
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { GapImpactResponse } from "@/contracts/gap_impact_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
+import type { InvestorZoneListResponse } from "@/contracts/investor_zone_list_response";
+import type { InvestorZoneResponse } from "@/contracts/investor_zone_response";
 import type { PlaceCategory as ContractPlaceCategory, PlacesResponse } from "@/contracts/places_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
+import type { ViabilityRequest } from "@/contracts/viability_request";
+import type { ViabilityResponse } from "@/contracts/viability_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
 import type { FeatureValueRow } from "@/lib/features";
@@ -196,6 +200,23 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scenario),
+        signal,
+      });
+    },
+    /** GET /api/v1/investors/zones (D-248): the pilot barrios with what they lack, their land and prices. */
+    investorZones({ timeoutMs }: GetOptions = {}) {
+      return call<InvestorZoneListResponse>("/api/v1/investors/zones", { timeoutMs });
+    },
+    /** GET /api/v1/investors/zones/{id} (D-248): one pilot barrio's sheet with the calculator's defaults. */
+    investorZone(adminUnitId: string, { timeoutMs }: GetOptions = {}) {
+      return call<InvestorZoneResponse>(`/api/v1/investors/zones/${encodeURIComponent(adminUnitId)}`, { timeoutMs });
+    },
+    /** POST /api/v1/investors/viability (D-248): the residual method on the person's inputs; `signal` cancels it. */
+    viability(request: ViabilityRequest, { signal }: { signal?: AbortSignal } = {}) {
+      return call<ViabilityResponse>("/api/v1/investors/viability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
         signal,
       });
     },

@@ -1,0 +1,376 @@
+/**
+ * «Para inversores» (D-248): texts, formats and the calculator's request. Copy from
+ * pitch/textos_web.md, section 11 (inversores.*). The figures and their sources come from the API
+ * (GET /api/v1/investors/zones/{id}); this module never adds a number of its own.
+ */
+import type { InvestorZoneSummary } from "@/contracts/investor_zone_list_response";
+import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
+import type { ViabilityRequest } from "@/contracts/viability_request";
+import type { Verdict } from "@/contracts/viability_response";
+import { formatEuros, formatNumber } from "@/lib/format";
+
+export const INVESTOR_TEXT = {
+  plan: "Plan Inversor (acceso libre durante el concurso)",
+  title: "Para inversores y promotores",
+  intro:
+    "Qué le falta a cada barrio, dónde hay suelo y si una promoción sale. Con datos abiertos y la fuente de cada cifra.",
+  pilot: "Piloto: los barrios de Madrid capital dentro de la M-40.",
+  model:
+    "Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro.",
+  listTitle: "Barrios del piloto",
+  withLand: "Solo barrios con suelo público",
+  loading: "Cargando los barrios…",
+  loadingSheet: "Cargando la ficha del barrio…",
+  retry: "Reintentar",
+  back: "‹ Todos los barrios",
+  listSummary: (total: number, withLand: number) =>
+    `${total} barrios. ${withLand === 1 ? "1 tiene" : `${withLand} tienen`} suelo público para vivienda en el Portal del Suelo. Lo que falta es dato del distrito de cada barrio: «Qué falta» no se calcula por barrio.`,
+  gapsUnknown: "Sin datos de lo que falta en su distrito.",
+  emptyPilot: "La lista de barrios del piloto aún no está cargada. Vuelve a intentarlo en un rato.",
+  print: "Guardar como PDF",
+  printHelp: "Abre la versión para imprimir; en el cuadro de impresión, elige «Guardar como PDF».",
+  generated: (date: string, version: string | null) =>
+    `Generado el ${date}${version ? ` con los datos calculados el ${isoInWords(version)}` : ""} · Vida Fácil, proyecto para DATAMAD 2026`,
+  sections: {
+    demand: "1. Quién vive aquí",
+    prices: "2. Precios",
+    gaps: "3. Qué falta",
+    land: "4. Suelo",
+    viability: "5. ¿Sale la promoción?",
+    sources: "Fuentes y avisos",
+  },
+} as const;
+
+/** «dato», «supuesto», «lo pones tú» next to a figure (never a colour alone). */
+export const MARK_TEXT: Record<SourcedValue["mark"], string> = {
+  dato: "Dato",
+  supuesto: "Supuesto",
+  usuario: "Lo pones tú",
+};
+
+/** The semaphore: icon + word + colour (WCAG 1.4.1), the only state colours on these pages. */
+export const VERDICT_TEXT: Record<Verdict, string> = {
+  sale: "Sale",
+  ajustar: "Ajustar",
+  no_sale: "No sale",
+};
+
+export const LEVEL_TEXT: Record<string, string> = {
+  barrio: "del barrio",
+  distrito: "del distrito",
+  municipio: "de toda la ciudad",
+};
+
+const MILLION = 1_000_000;
+
+/** «850.000 €», «1,25 millones de €», «−200.000 €». */
+export function money(amount: number): string {
+  if (Math.abs(amount) >= MILLION) return `${formatNumber(amount / MILLION, 2)} millones de €`;
+  return formatEuros(Math.round(amount));
+}
+
+export function percent(value: number, decimals = 1): string {
+  return `${formatNumber(value, decimals)} %`;
+}
+
+/** A sourced figure in words, or «Sin dato» (never 0 for unknown). */
+export function figure(value: SourcedValue, decimals = 0): string {
+  if (value.value === null || value.value === undefined) return "Sin dato";
+  const unit = value.unit;
+  if (unit === "%") return percent(value.value, decimals);
+  if (unit.startsWith("€/m²/mes")) return `${formatNumber(value.value, 2)} €/m² al mes`;
+  if (unit.startsWith("€/hogar")) return `${formatEuros(Math.round(value.value))} al año`;
+  if (unit.startsWith("€")) return `${formatNumber(value.value, decimals)} ${unit}`;
+  return `${formatNumber(value.value, decimals)} ${unit}`;
+}
+
+/** An assumption's source without its leading «Supuesto:», which the tag next to it already says. */
+export function withoutMark(source: string): string {
+  const rest = source.replace(/^supuesto:\s*/i, "");
+  return rest.charAt(0).toUpperCase() + rest.slice(1);
+}
+
+/** «Fuente: … · dato del distrito», as the API writes it. */
+export function sourceLine(value: SourcedValue): string {
+  return `Fuente: ${value.source.text}`;
+}
+
+export function rentRange(value: SourcedValue): string | null {
+  if (value.low === null || value.low === undefined || value.high === null || value.high === undefined) return null;
+  return `La mitad de los contratos, entre ${formatNumber(value.low, 1)} y ${formatNumber(value.high, 1)} €/m² al mes.`;
+}
+
+/** What a parcel or planning area is called in the picker and the list. */
+export function landName(item: LandItem): string {
+  const place = [item.name, item.parcel].filter(Boolean).join(" · ");
+  return place || `Referencia ${item.code ?? "sin código"}`;
+}
+
+export function landArea(item: LandItem): string {
+  return item.buildable_m2 === null || item.buildable_m2 === undefined
+    ? "Superficie edificable sin publicar"
+    : `${formatNumber(item.buildable_m2, 0)} m² edificables`;
+}
+
+export const REGIME_TEXT: Record<string, string> = {
+  venta: "En venta",
+  concesion: "En concesión, derecho de superficie o alquiler",
+};
+
+/** The land the calculator starts with: the largest parcel, else the largest planning area. */
+export function defaultLand(parcels: LandItem[], remaining: LandItem[]): LandItem | null {
+  const known = (items: LandItem[]) =>
+    items.filter((i) => typeof i.buildable_m2 === "number" && i.buildable_m2 > 0).sort((a, b) => (b.buildable_m2 ?? 0) - (a.buildable_m2 ?? 0));
+  return known(parcels)[0] ?? known(remaining)[0] ?? null;
+}
+
+export function landKey(item: LandItem): string {
+  return `${item.kind}:${item.code ?? item.name ?? ""}`;
+}
+
+/** The calculator's fields, as typed (strings: an empty field is «no value», never 0). */
+export interface CalculatorFields {
+  buildable_m2: string;
+  sale_price_m2: string;
+  new_build_premium_pct: string;
+  rent_m2_month: string;
+  pem_m2: string;
+  cost_coefficient: string;
+  land: string;
+  land_unit: "total" | "m2";
+  sales_costs_pct: string;
+  target_margin_pct: string;
+  household_income: string;
+  home_m2: string;
+  ltv_pct: string;
+  loan_years: string;
+  loan_rate_pct: string;
+}
+
+/** A default as the field shows it: Spanish decimals, no thousands dot («9,3», «12192»). */
+const text = (value: number | null | undefined, decimals: number): string =>
+  value === null || value === undefined ? "" : String(Number(value.toFixed(decimals))).replace(".", ",");
+
+export function initialFields(defaults: ViabilityDefaults, land: LandItem | null): CalculatorFields {
+  return {
+    buildable_m2: text(land?.buildable_m2, 0),
+    sale_price_m2: text(defaults.sale_price_m2.value, 0),
+    new_build_premium_pct: text(defaults.new_build_premium_pct.value, 1),
+    rent_m2_month: text(defaults.rent_m2_month.value, 2),
+    pem_m2: text(defaults.pem_m2.value, 0),
+    cost_coefficient: text(defaults.cost_coefficient.value, 2),
+    land: "",
+    land_unit: "total",
+    sales_costs_pct: text(defaults.sales_costs_pct.value, 1),
+    target_margin_pct: text(defaults.target_margin_pct.value, 1),
+    household_income: text(defaults.household_income.value, 0),
+    home_m2: text(defaults.home_m2.value, 0),
+    ltv_pct: text(defaults.ltv_pct.value, 0),
+    loan_years: text(defaults.loan_years.value, 0),
+    loan_rate_pct: text(defaults.loan_rate_pct.value, 2),
+  };
+}
+
+/** A typed number in Spanish or English decimals («1.234,5», «1234.5»); null if empty or not a number. */
+export function parseNumber(raw: string): number | null {
+  const trimmed = raw.trim().replace(/\s/g, "");
+  if (trimmed === "") return null;
+  // «12.192» is twelve thousand in Spanish; «1.36» and «9.3» are decimals typed the English way
+  const thousands = /^-?\d{1,3}(\.\d{3})+$/.test(trimmed);
+  const normalised = trimmed.includes(",") || thousands ? trimmed.replace(/\./g, "").replace(",", ".") : trimmed;
+  const value = Number(normalised);
+  return Number.isFinite(value) ? value : null;
+}
+
+/** Which fields are missing to calculate: the area, the price and the PEM. */
+export function missingFields(fields: CalculatorFields): (keyof CalculatorFields)[] {
+  const required: (keyof CalculatorFields)[] = ["buildable_m2", "sale_price_m2", "pem_m2"];
+  return required.filter((key) => {
+    const value = parseNumber(fields[key] as string);
+    return value === null || value <= 0;
+  });
+}
+
+/** The POST body; null while a required field is missing. Optional fields left empty are left out. */
+export function viabilityRequest(fields: CalculatorFields): ViabilityRequest | null {
+  if (missingFields(fields).length > 0) return null;
+  const n = (key: keyof CalculatorFields) => parseNumber(fields[key] as string);
+  const optional = <K extends string>(key: K, value: number | null) => (value === null ? {} : ({ [key]: value } as Record<K, number>));
+  const land = n("land");
+  const income = n("household_income");
+  return {
+    buildable_m2: n("buildable_m2") as number,
+    sale_price_m2: n("sale_price_m2") as number,
+    pem_m2: n("pem_m2") as number,
+    ...optional("new_build_premium_pct", n("new_build_premium_pct")),
+    ...optional("rent_m2_month", n("rent_m2_month")),
+    ...optional("cost_coefficient", n("cost_coefficient")),
+    ...optional("sales_costs_pct", n("sales_costs_pct")),
+    ...optional("target_margin_pct", n("target_margin_pct")),
+    ...optional(fields.land_unit === "m2" ? "land_eur_m2" : "land_eur", land),
+    ...(income === null
+      ? {}
+      : {
+          demand: {
+            household_income: income,
+            ...optional("home_m2", n("home_m2")),
+            ...optional("ltv_pct", n("ltv_pct")),
+            ...optional("loan_years", n("loan_years")),
+            ...optional("loan_rate_pct", n("loan_rate_pct")),
+          },
+        }),
+  };
+}
+
+/** «Hortaleza (6 barrios)» heading of a district in the list. */
+export function districtHeading(name: string, count: number): string {
+  return `${name} (${count === 1 ? "1 barrio" : `${count} barrios`})`;
+}
+
+export function parcelsLine(parcels: number | null | undefined, m2: number | null | undefined): string | null {
+  if (!parcels) return null;
+  const count = parcels === 1 ? "1 parcela pública" : `${parcels} parcelas públicas`;
+  return m2 ? `${count}, ${formatNumber(m2, 0)} m² edificables` : count;
+}
+
+/** The barrio code from the address (/inversores/28079164) to the API id. */
+export function adminUnitId(code: string): string | null {
+  return /^28079\d{3}$/.test(code) ? `ES.28.BAR.${code}` : null;
+}
+
+/** «2026-11-18» in words («18 de noviembre de 2026»); anything else as it comes. */
+export function isoInWords(iso: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  return match ? today(new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))) : iso;
+}
+
+export function today(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", year: "numeric" }).format(now);
+}
+
+const listOf = (labels: string[]) => labels.map((l, i) => (i === 0 ? l : l.toLowerCase())).join(", ");
+
+/**
+ * What the barrio's district lacks, in one line of the list (FALTA first, then JUSTO). «Qué falta»
+ * has no list by barrio: the line names the district the figure is of.
+ */
+export function gapsLine(zone: { gaps?: InvestorZoneSummary["gaps"]; district: { name: string } }): string {
+  const gaps = zone.gaps;
+  const where = `el distrito de ${zone.district.name}`;
+  if (!gaps) return `Sin datos de lo que falta en ${where}.`;
+  const missing = gaps.rows.slice(0, gaps.falta);
+  const tight = gaps.rows.slice(gaps.falta, gaps.falta + gaps.justo);
+  if (missing.length > 0) {
+    const rest = tight.length > 0 ? `; justo: ${listOf(tight).toLowerCase()}` : "";
+    return `Falta en ${where}: ${listOf(missing).toLowerCase()}${rest}.`;
+  }
+  if (tight.length > 0) return `Justo en ${where}: ${listOf(tight).toLowerCase()}.`;
+  return `En ${where} no falta nada de lo que medimos.`;
+}
+
+/** inversores.calculadora.* of pitch/textos_web.md */
+export const CALCULATOR_TEXT = {
+  intro:
+    "Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar: cada cifra dice si es un dato, un supuesto nuestro o lo has puesto tú. Los m² son construidos, como los del precio y los del coste.",
+  landPick: "¿Sobre qué suelo?",
+  parcel: "Parcela pública",
+  area: "Ámbito con edificabilidad",
+  custom: "Otra superficie: la pongo yo",
+  groupRevenue: "Superficie y precios",
+  groupCosts: "Costes y objetivo",
+  groupDemand: "Comprobación de demanda",
+  buildable: "Superficie edificable residencial",
+  buildableFrom: "La que publica la fuente para el suelo elegido",
+  buildableHelp: "Ponla tú: por ejemplo, la de tu parcela",
+  price: "Precio de venta (vivienda usada)",
+  premium: "Prima de la vivienda nueva",
+  rent: "Alquiler",
+  pem: "Coste de ejecución material (PEM)",
+  coefficient: "Coeficiente sobre el PEM",
+  coefficientParts: "Ver de qué se compone el coeficiente",
+  salesCostsField: "Comercialización y otros gastos",
+  salesParts: "Ver de qué se componen estos gastos",
+  landField: "Precio del suelo (opcional)",
+  landHelp: "Sin él, te decimos lo máximo que podrías pagar por el suelo",
+  landUnit: "El precio del suelo es",
+  landTotal: "en total",
+  landPerM2: "por m² edificable",
+  target: "Margen objetivo sobre ventas",
+  income: "Renta media de los hogares",
+  home: "Vivienda tipo",
+  ltv: "Parte del precio que financia el banco",
+  years: "Plazo de la hipoteca",
+  rate: "Tipo de interés",
+  threshold: (value: SourcedValue) => `Umbral de esfuerzo: ${percent(value.value ?? 0, 0)} de la renta. ${value.source.text}.`,
+  edited: "Has cambiado este valor",
+  results: "Resultado: tres escenarios",
+  missing: "Pon la superficie edificable, el precio de venta y el PEM para calcular.",
+  calculating: "Calculando…",
+  newPrice: (price: number) => `Vivienda nueva a unos ${formatNumber(Math.round(price), 0)} €/m².`,
+  withLand: "Con el precio del suelo que has puesto: margen sobre ventas, antes de financiación e impuestos.",
+  withoutLand:
+    "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale.",
+  thresholds:
+    "Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %.",
+  costCaution: "Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente.",
+  revenue: "Ingresos por ventas",
+  construction: "Construcción (PEM × coeficiente)",
+  salesCosts: "Comercialización y otros",
+  land: "Suelo",
+  landUnknown: "Sin precio",
+  profit: "Beneficio",
+  margin: "Margen sobre ventas",
+  residual: "Lo máximo que se puede pagar por el suelo",
+  yield: "Rentabilidad bruta si se alquila",
+  yieldNoLand: "Rentabilidad bruta si se alquila (sin contar el suelo)",
+  demandTitle: "¿Lo pueden pagar los hogares del barrio?",
+} as const;
+
+/** inversores.ficha.* of pitch/textos_web.md */
+export const SHEET_TEXT = {
+  eyebrow: (district: string) => `Barrio de Madrid · distrito de ${district}`,
+  income: "Renta neta media de los hogares",
+  householdSize: "Personas por hogar (media)",
+  onePerson: "Hogares de una persona",
+  fivePlus: "Hogares de 5 personas o más",
+  over65: "Personas de 65 años o más",
+  under15: "Menores de 15 años",
+  population: "Población",
+  demandNote:
+    "Cada cifra es de la zona más pequeña que la publica: el barrio, su distrito o toda la ciudad. Lo dice su fuente.",
+  sale: "Precio de venta estimado",
+  saleNote: "Es una estimación del precio de la vivienda usada, no el de un anuncio ni el de una venta.",
+  premium: "Prima de la vivienda nueva",
+  saleNew: "Precio de venta de vivienda nueva",
+  rent: "Alquiler de un contrato nuevo",
+  gapsIntro: (district: string) =>
+    `Lo que falta se calcula por distrito, no por barrio: estas son las filas de ${district}, comparado con los municipios de su tipo.`,
+  gapsLevel: (district: string) => `Dato del distrito de ${district}`,
+  gapsMore: (district: string) => `Ver «Qué falta» en ${district}, con sus cifras y fuentes`,
+  commerce: "Comercio de proximidad",
+  landIntro:
+    "Contexto urbanístico, no qué se puede construir: los m² edificables son los que publica la fuente, y la normativa de cada parcela manda. No los pasamos a viviendas.",
+  parcels: (n: number) => (n === 1 ? "1 parcela pública para vivienda" : `${n} parcelas públicas para vivienda`),
+  noParcels: "El Portal del Suelo no ofrece ahora ninguna parcela residencial en este barrio.",
+  remaining: "Edificabilidad residencial que queda en los ámbitos del Plan General",
+  remainingUnknown: "Aún sin dato para este barrio.",
+  noRemaining: "Ningún ámbito del barrio tiene edificabilidad residencial disponible.",
+  vacant: "Suelo vacante (Catastro)",
+  viewer: "Ver en el visor de la Comunidad",
+  record: "Ver la ficha oficial",
+  notPilot: "Ese barrio no está en el piloto (Madrid capital dentro de la M-40).",
+  version: (version: string | null) =>
+    version ? `Datos calculados el ${isoInWords(version)}. Método: viabilidad v0 (D-248).` : "Método: viabilidad v0 (D-248).",
+  datasets: (n: number) => `Los ${n} conjuntos de datos de esta ficha`,
+  open: "Ver la fuente",
+  pemDataset:
+    "Comunidad de Madrid: Visados, superficie y presupuesto de dirección de obra de edificios (Ministerio de Vivienda)",
+} as const;
+
+/** Line A's commerce figures (D-247), by their feature id. */
+export const COMMERCE_LABEL: Record<string, string> = {
+  comercio_proximidad_1000hab: "Comercio de proximidad abierto por cada 1.000 habitantes",
+  locales_abiertos_1000hab: "Locales abiertos por cada 1.000 habitantes",
+  locales_cerrados_pct: "Locales cerrados",
+  unidades_comerciales_1000hab: "Inmuebles comerciales del Catastro por cada 1.000 habitantes",
+};

@@ -7,7 +7,7 @@ import styles from "./SiteHeader.module.css";
 /** Brand and tabs. No login or user icon (brief). */
 export default function SiteHeader() {
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-site-header>
       <Link href="/" className={styles.brand}>
         <Logo />
       </Link>
