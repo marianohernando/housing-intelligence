@@ -8,8 +8,8 @@
 export const SITE_URL = "https://vidafacil-madrid.vercel.app";
 export const API_BASE = `${SITE_URL}/api/v1`;
 export const REPO_URL = "https://github.com/marianohernando/housing-intelligence";
-/** The branch with the API and the MCP of production (the repo's default branch is older). */
-export const REPO_BRANCH = "claude/sprint-1-public";
+/** The branch with the API and the MCP of production: the repo's default one since main caught up (19 nov, R-02 of #97). */
+export const REPO_BRANCH = "main";
 export const repoFile = (path: string) => `${REPO_URL}/blob/${REPO_BRANCH}/${path}`;
 export const repoFolder = (path: string) => `${REPO_URL}/tree/${REPO_BRANCH}/${path}`;
 
@@ -301,7 +301,7 @@ export const MCP_TOOLS: readonly McpTool[] = [
 const LOCAL_DATABASE_URL = "postgresql+psycopg://housing:housing@localhost:5440/housing";
 const CLONE_PATH = "/ruta/a/housing-intelligence";
 
-export const MCP_SETUP = `git clone --branch ${REPO_BRANCH} ${REPO_URL}.git
+export const MCP_SETUP = `git clone ${REPO_URL}.git
 cd housing-intelligence
 cp .env.example .env
 make dev

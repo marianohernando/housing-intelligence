@@ -85,6 +85,7 @@ from hi_contracts.public import ZoneRef
 from hi_domain import parcel_data as pd
 from hi_domain import viability as v
 from hi_domain.parcels import (
+    LOOKUP_BUDGET_S,
     OfficialFigure,
     classify_planning,
     in_madrid_bbox,
@@ -101,7 +102,7 @@ log = logging.getLogger(__name__)
 
 DAY_S = 86_400
 # The whole lookup: past it, the Catastro counts as failed and the planning as not read (R-06)
-BUDGET_S = 15.0
+BUDGET_S = LOOKUP_BUDGET_S
 TTL_S = {"catastro": 7 * DAY_S, "planning": DAY_S, "geocoder": 30 * DAY_S, "point": 7 * DAY_S}
 CACHE = TTLCache(maxsize=2000)
 CLIENTS = ClientHolder()

@@ -43,6 +43,16 @@ export const INVESTOR_TEXT = {
   },
 } as const;
 
+/**
+ * D-251: «Cómo lo calculamos» from the parcel's sheet and the calculator to the investor section of
+ * the method page; the hidden words tell it apart from the header tab for a screen reader.
+ */
+export const METHOD_LINK = {
+  href: "/como-lo-calculamos#inversores",
+  text: "Cómo lo calculamos",
+  context: ": la ficha para inversores",
+} as const;
+
 /** «dato», «supuesto», «lo pones tú» next to a figure (never a colour alone). */
 export const MARK_TEXT: Record<SourcedValue["mark"] | "sin_dato", string> = {
   dato: "Dato",

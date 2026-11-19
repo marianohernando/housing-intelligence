@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
+import InvestorMethod from "@/components/method/InvestorMethod";
 import MethodSteps from "@/components/method/MethodSteps";
 import CmCount from "@/components/provenance/CmCount";
 import DatasetList from "@/components/provenance/DatasetList";
@@ -499,6 +500,7 @@ export default function ComoLoCalculamosPage() {
       <GapMethod />
       <WalkingTimes />
       <Reliability />
+      <InvestorMethod />
       <Section id="datos" title="Qué datos usamos">
         <ul className={styles.text}>
           <li>

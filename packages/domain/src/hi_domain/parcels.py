@@ -23,6 +23,9 @@ from hi_domain.geo.names import LOWER_PARTICLES, title_case
 from hi_domain.zonal_norms import NNUU_CITATION, NZ1_FACTORS, RULES, coefficient_area
 
 PARCELS_VERSION = "parcels-0.1"
+# The longest a lookup may take: past it, the Catastro counts as failed and the planning as not
+# read (D-250, review R-06). «Cómo lo calculamos» says it (D-251).
+LOOKUP_BUDGET_S = 15.0
 
 # The municipio of Madrid (EPSG:4326), padded ~1 km: the cheap filter before PostGIS
 MADRID_CITY_BBOX = BBox(min_lon=-3.90, min_lat=40.30, max_lon=-3.51, max_lat=40.65)
