@@ -44,6 +44,7 @@ Decisión de Mariano del 19 nov, que sustituye a la del 12 nov: personas y ayunt
 | El modelo nuevo, con los precios como hipótesis: Inversor 99–199 €/mes, Equipo 399 €/mes y estudio a medida de 490–1.500 €; Nestra, 175, 437,50 y 1.050 €/mes como referencia | `modelo_negocio.md` | **Hecho el 19 nov** |
 | «Gratis para personas y ayuntamientos; pagan inversores y promotores», sin precios en la voz ni en la slide | slide 3, guion (bloque 4), `slides.md` y preguntas 6 y 60 | **Hecho el 19 nov.** Bloque 4: 102 palabras; margen, unos 28 s |
 | La sección «Para inversores» de la web | otra línea, en la web | **No se cita como hecha** hasta que datamad-10 la confirme en producción. Cuando llegue, se revisan la pregunta 6 («todavía no está en la web») y `modelo_negocio.md` |
+| La API pública y el MCP, gratis para todos (decisión de Mariano del 19 nov) | `modelo_negocio.md` y preguntas 1, 2 y 6 | **Hecho el 19 nov.** **No va en la voz ni en la slide** hasta que esté en producción la página de documentación de la API y del MCP (otra línea). Cuando datamad-10 la confirme, se decide con Mariano si entra en el guion o en la slide 3 |
 
 ---
 

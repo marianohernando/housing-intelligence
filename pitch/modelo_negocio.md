@@ -5,6 +5,12 @@
 - **Ayuntamientos: gratis.** Cada ayuntamiento ve qué le falta a su municipio frente a municipios parecidos, dónde y a cuánta gente afecta, con la fuente de cada dato. Es «Qué falta», que ya está en producción en los 179 municipios y en los 21 distritos de Madrid (`GET /api/v1/gaps?level=municipio` y `?level=distrito`, 179 y 21 zonas, 19 nov). Les sirve para decidir dónde invertir primero, sin contrato ni licitación. Por ejemplo, Parla sale FALTA en farmacias: 2,0 por cada 10.000 habitantes a pie, frente a 4,2 en los demás municipios urbanos (`GET /api/v1/gaps/municipio/28106`, `gap-0.3`, 19 nov).
 - **Inversores y promotores privados: pagan, con un plan de precios.** En su versión ven qué le falta a una zona y si una operación allí es viable. Esa versión todavía no está en la web: es un plan (ver «Qué falta para cobrar»).
 
+**La API pública y el MCP: gratis para todos, igual que los datos** (otra decisión de Mariano, del 19 nov). También para empresas y ayuntamientos, que pueden meter «Qué falta» y el encaje de cada zona en sus propias herramientas o en un agente de IA. Lo que hay hoy:
+- **La API pública** (`/api/v1`) está en producción y no pide claves. Tiene 10 rutas de datos y 2 de salud, con su descripción OpenAPI en `/api/v1/openapi.json` (leída por D en producción el 19 nov). Las rutas y sus contratos están en `docs/04_technical_architecture/31_public_api_routes.md`.
+- **El MCP** tiene cinco herramientas de solo lectura: buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos (D-225, `docs/04_technical_architecture/32_mcp_server.md`). Hoy funciona en local (`make mcp`) y no está desplegado. Como el código es abierto (Apache-2.0), cualquiera puede arrancarlo, pero necesita su propia base Postgres con los datos cargados («Arrancarlo en local» en `32_mcp_server.md`). Servirlo en remoto está planteado.
+
+**Lo único de pago:** los planes para inversores (Inversor y Equipo) y el estudio a medida.
+
 **Lo que no cambia:** nunca se venden datos de personas; solo zonas, y siempre agregadas.
 
 ---
@@ -14,6 +20,7 @@
 | Plan | Para quién | Precio | Qué incluye |
 |---|---|---|---|
 | Gratis | personas y ayuntamientos | 0 € | la búsqueda, la ficha de cada zona, «Qué falta» y el suelo público para vivienda (D-246). Todo está en producción |
+| API y MCP | todos, también empresas | 0 € | la API pública, en producción, y el MCP, hoy en local (ver arriba) |
 | Inversor | un inversor o un promotor | unos 99–199 €/mes | lo que solo necesita quien invierte: la ficha de inversor de una zona y de las parcelas del Portal del Suelo, la viabilidad de una operación, exportación a PDF y Excel, y avisos de suelo nuevo |
 | Equipo | una promotora o un fondo con varias personas | unos 399 €/mes | lo del plan Inversor, con usuarios ilimitados, informes con su marca y carteras de parcelas |
 | Estudio a medida | quien quiere el trabajo hecho | 490–1.500 € | un estudio de zona, revisado a mano antes de entregarlo |
@@ -22,7 +29,7 @@
 
 **De los planes de pago, hoy no existe nada:** ni cuentas, ni cobro, ni ficha de inversor, ni viabilidad, ni exportación. Se apoyan en lo que ya es gratis: las fichas de zona, «Qué falta» y el suelo público.
 
-**Posible, sin decidir:** cobrar por la API y el MCP a empresas de software y agentes de IA, como «Enterprise/API» en `docs/06_business/03_pricing.md`. La decisión del 19 nov no dice nada de la API.
+**La API y el MCP no se cobran** (decisión de Mariano del 19 nov). Por eso ya no vale la línea «Enterprise/API, personalizado» de `docs/06_business/03_pricing.md`.
 
 **De dónde salen los precios:**
 - **Los del repo** (`docs/06_business/03_pricing.md`):
@@ -46,11 +53,12 @@
 - **Slide 3, columna «Viabilidad»:** «Gratis para personas y ayuntamientos. Pagan inversores y promotores.».
 - **Guion, bloque 4:** «Gratis para personas y ayuntamientos: cada ayuntamiento ve qué le falta a su municipio. Pagan inversores y promotores, por saber qué falta antes de construir.».
 - **Los precios** no se dicen en voz alta ni van en la slide. Si preguntan, están en la pregunta 6 de `pitch/preguntas.md`.
+- **La API y el MCP gratis para todos** no van, por ahora, en la voz ni en la slide: solo en las preguntas 1, 2 y 6. Se decidirá cuando esté en producción la página de documentación de la API y del MCP.
 
 ## Lo que decía el 12 nov (sustituido)
 - En el pitch, los ayuntamientos pagaban un informe de «Qué falta» de 990–1.500 €, por contrato menor.
 - Los primeros ingresos serían estudios de 490 a 1.500 € para promotoras y consultoras.
-- La API y el MCP serían gratis sin uso comercial.
+- La API y el MCP serían gratis sin uso comercial. Desde el 19 nov son gratis para todos.
 
 El texto completo, con las tres opciones que se compararon, está en el historial de git de este fichero.
 
@@ -77,6 +85,7 @@ El texto completo, con las tres opciones que se compararon, está en el historia
   - CPU activa desde 0,128 $ por hora;
   - memoria desde 0,0106 $ por GB y hora.
 - Con unos miles de búsquedas al día debería caber en el crédito incluido, pero no está medido: hay que vigilar el panel de uso el primer mes.
+- Con la API gratis para todos, ese cómputo es lo primero que se vigila. Hoy no pide claves; si el uso crece, se añade un límite por IP (`docs/04_technical_architecture/29_api_mcp_security_rate_limits.md`).
 - La recarga de datos se hace en local (`make ingest`, `make supabase-sync`), así que no cuesta nada en la nube.
 
 ## Mantenimiento con una sola persona
