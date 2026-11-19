@@ -20,11 +20,13 @@
 
 **1. ¿Cómo se integra esto con otros sistemas?**
 Con una API pública versionada (`/api/v1`) cuyos contratos están publicados como JSON Schema. Las zonas se identifican con el código INE del municipio, así que se cruzan con cualquier otra fuente oficial.
-- Evidencia: `docs/04_technical_architecture/31_public_api_routes.md` · `data/schemas/api/*.schema.json` (4 esquemas) · `GET /api/v1/gaps/municipio/28092`.
+- Evidencia: `docs/04_technical_architecture/31_public_api_routes.md` · `data/schemas/api/*.schema.json` (10 esquemas el 19 nov) · `GET /api/v1/gaps/municipio/28092`.
+- Si preguntan cuánto cuesta integrarla: nada. La API y el MCP son abiertos y gratuitos para todos, también para empresas y ayuntamientos, igual que los datos (decisión de Mariano del 19 nov, `pitch/modelo_negocio.md`). La API está en producción, sin claves, con 10 rutas de datos y su descripción OpenAPI en `/api/v1/openapi.json` (leída por D el 19 nov).
 
 **2. ¿Tenéis MCP para agentes de IA?**
 Sí: un servidor MCP con cinco herramientas de solo lectura (buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos). Llaman a los mismos servicios que la API, nunca a SQL libre, así que un agente no puede inventar ni cambiar datos, y los tests comprueban que cada herramienta responde lo mismo que su ruta de la API. Hoy funciona en local (`make mcp`); el siguiente paso es servirlo en remoto.
-- Evidencia: D-225 · `services/mcp/` · `make mcp` · `CLAUDE.md` §3 (Arquitectura).
+- Evidencia: D-225 · `services/mcp/` · `docs/04_technical_architecture/32_mcp_server.md` · `make mcp` · `CLAUDE.md` §3 (Arquitectura).
+- Si preguntan si se cobra: no. El MCP y la API son abiertos y gratuitos para todos (decisión de Mariano del 19 nov, `pitch/modelo_negocio.md`). Hoy el MCP se arranca en local con el código abierto (Apache-2.0); servirlo en remoto es el siguiente paso.
 - Si quieren verlo: un clip de 20 s con un agente preguntando «¿qué le falta a Parla?» (**pendiente de A**).
 
 **3. ¿Vuestro catálogo de datos es reutilizable?**
@@ -44,7 +46,7 @@ Cada ingesta compara la huella (sha256) del fichero. Si no cambia, se salta; si 
 ## Olga Quirós · ASEDIE (sector infomediario, negocio)
 
 **6. ¿Quién paga?**
-Pagan los inversores y los promotores privados, con un plan de precios: quieren saber qué le falta a una zona antes de construir allí y, más adelante, si la operación sale. Para las personas y los ayuntamientos es gratis. Un ayuntamiento ve qué le falta a su municipio frente a otros parecidos y a cuánta gente afecta, para decidir dónde invertir primero, sin contrato ni licitación.
+Pagan los inversores y los promotores privados, con un plan de precios: quieren saber qué le falta a una zona antes de construir allí y, más adelante, si la operación sale. Para las personas y los ayuntamientos es gratis: un ayuntamiento ve qué le falta a su municipio frente a otros parecidos y a cuánta gente afecta, para decidir dónde invertir primero, sin contrato ni licitación. La API y el MCP también son gratis para todos, como los datos: de pago solo quedan el plan para inversores y el estudio a medida.
 - Evidencia: `pitch/modelo_negocio.md` (decisión de Mariano del 19 nov, que sustituye a la del 12 nov) · `CLAUDE.md` §16 (cliente inicial: promotoras e inmobiliarias medianas) · «Qué falta» en producción en 179 municipios y 21 distritos (`GET /api/v1/gaps?level=municipio` y `?level=distrito`, 19 nov).
 - Si piden precios (hipótesis por validar, `pitch/modelo_negocio.md`):
   - plan Inversor, unos 99–199 €/mes; Equipo, unos 399 €/mes;
