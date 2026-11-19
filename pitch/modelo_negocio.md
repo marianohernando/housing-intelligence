@@ -51,7 +51,8 @@
 
 ## Qué se dice en el pitch
 - **Slide 3, columna «Viabilidad»:** «Gratis para personas y ayuntamientos. Pagarán inversores y promotores.», y al pie, «Ya está, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.».
-- **Guion, bloque 4:** «Gratis para personas y ayuntamientos: cada ayuntamiento ve qué le falta a su municipio. Nunca vendemos datos personales: solo zonas, siempre sumadas. Pagarán inversores y promotores, y su versión ya está en la web, con un piloto en Madrid: de dónde vivir a dónde construir, con la viabilidad sobre una parcela y el contexto de su barrio.».
+- **Guion, bloque 4:** «Gratis para personas y ayuntamientos: cada ayuntamiento ve qué le falta a su municipio. Nunca vendemos datos personales: solo zonas, siempre sumadas. Pagarán inversores y promotores, y su versión ya está en la web, con un piloto en Madrid: la viabilidad sobre una parcela y el contexto de su barrio.».
+- **No se dice «de dónde vivir a dónde construir»** como algo hecho (revisión del #98): hoy ninguna parcela se cruza con la vivienda que le falta a su zona. Es el paso siguiente (pregunta 60).
 - **«Pagarán», no «pagan»:** hoy no se cobra nada. La versión para inversores se describe de forma genérica hasta que esté en producción la versión por parcela exacta (datamad-10, 19 nov).
 - **Los precios** no se dicen en voz alta ni van en la slide. Si preguntan, están en la pregunta 6 de `pitch/preguntas.md`.
 - **La API y el MCP gratis para todos** no van, por ahora, en la voz ni en la slide: solo en las preguntas 1, 2 y 6. Se decidirá cuando esté en producción la página de documentación de la API y del MCP.

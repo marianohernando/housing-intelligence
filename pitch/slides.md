@@ -191,7 +191,7 @@ Versión con buscador (la que vale):
   - añadir un dataset es añadir un YAML de pipeline (`data/catalog/pipelines/`);
   - cada dato con su lineage y su control de calidad (`evidence/gate-01/`).
 
-- **De dónde vivir a dónde construir** (idea aprobada por Mariano el 18 nov; desde el 19 nov ya no es un siguiente paso). En la slide, al pie de la tarjeta, con el borde violeta de las citas: «**Ya está**, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.». Ocupa el sitio de la miniatura C7, que no cabía con él (ver «Capturas necesarias»). **En la slide no se nombra ninguna empresa.**
+- **La línea del pie de «Viabilidad»** (la idea de pasar de dónde vivir a dónde construir, aprobada por Mariano el 18 nov; desde el 19 nov dice lo que ya está, la viabilidad de una parcela, y no el cruce con la vivienda que falta, que todavía no existe: revisión del #98). En la slide, al pie de la tarjeta, con el borde violeta de las citas: «**Ya está**, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.». Ocupa el sitio de la miniatura C7, que no cabía con él (ver «Capturas necesarias»). **En la slide no se nombra ninguna empresa.**
   - **Redacción genérica a propósito (datamad-10, 19 nov):** Mariano quiere la versión para inversores por parcela exacta (referencia catastral, dirección o clic en el mapa, con su calificación) y la lista de barrios en segundo plano. Hasta que esté en producción, la slide no lleva capturas ni detalle de la versión por barrios. Con ella, se revisan esta línea y las preguntas 6 y 60, con capturas nuevas.
   - **Cabe en 3 líneas a 1920 × 1080**, como la del 18 nov: con cuatro, las tres tarjetas se alargan y se meten bajo la banda de enlaces (medido el 19 nov). Por eso no lleva «y promotores» ni «libre durante el concurso»: lo dice la línea de «Quién paga» («Pagarán») y, si preguntan, la pregunta 6.
   - **Antes, el 18 nov:** «Ya enseñamos el suelo público para vivienda. **Siguiente paso:** dónde construir, según la vivienda que falta.». El suelo público sigue en la web (D-246) y está dentro de la versión para inversores.
@@ -264,7 +264,7 @@ Se hacen el 24 nov sobre la demo desplegada, con el caso demo precargado, a 1440
 | C5 | Estados de Chamartín con gap-0.3: centro de salud y colegio CUBIERTO, mayores JUSTO (C6, el móvil, no enseña estados) | Zona Chamartín en 3D |
 | C1, C2 | Rehechas por D el 18 nov en producción (`55651c2`, `pitch/capturas/`): C1, el mapa con la tarjeta esencial de Puente de Vallecas («Muy buena opción», «Unos 1.129 € al mes» y «No le falta nada de lo que buscáis.»); C2, «Zonas que os convienen» con Puente de Vallecas y Latina, «Muy buena opción · 94 %» | Portada → «Ejemplo: pareja con 2 hijos…», la lista y la tarjeta de la 1.ª |
 | C6 | Rehecha por D el 18 nov en producción a 390 × 844 (`pitch/capturas/C6.png`): la lista del móvil con 5 filas esenciales | Portada → «Ejemplo: pareja con 2 hijos…», en el móvil |
-| C7 | Desde el 18 nov no va en la slide 3: su sitio lo ocupa la línea de dónde construir (desde el 19 nov, la versión para inversores). Queda de reserva | `/como-lo-calculamos` |
+| C7 | Desde el 18 nov no va en la slide 3: su sitio lo ocupa la línea del pie de «Viabilidad» (desde el 19 nov, la versión para inversores). Queda de reserva | `/como-lo-calculamos` |
 
 | Id | Pantalla y estado | Tamaño | Slide | Estado |
 |---|---|---|---|---|
