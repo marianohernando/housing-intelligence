@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov), de la 51 a la 53 (lo que cambió tras la prueba, 14 nov), de la 54 a la 59 (contexto de la zona, alquiler de los anuncios, coche y validación de la fórmula, 15 nov) y la 60 (el siguiente paso: desde el 19 nov ya se puede buscar una parcela exacta de Madrid capital y calcular si una promoción sale; decir qué vivienda hace falta construir en ella, todavía no).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov), de la 51 a la 53 (lo que cambió tras la prueba, 14 nov), de la 54 a la 59 (contexto de la zona, alquiler de los anuncios, coche y validación de la fórmula, 15 nov), la 60 (el siguiente paso: desde el 19 nov ya se puede buscar una parcela exacta de Madrid capital y calcular si una promoción sale; decir qué vivienda hace falta construir en ella, todavía no) y la 61 (¿por qué no van a una consultora?, de la prueba con un inversor del 19 nov).
 
 ---
 
@@ -65,8 +65,9 @@ Pagarán los inversores y los promotores privados, con un plan de precios, y su 
   - Luis Misson 2, en Berruguete: «Sin dato», porque la norma zonal 4 no tiene coeficiente; la persona pone los m².
   - La primera búsqueda de una parcela tarda unos 11 s, porque pregunta al Catastro y al Ayuntamiento; las siguientes, unos 0,3 s (deploy-39, punto 13). En la demo, mejor una de estas 4.
 - Si preguntan en qué se diferencia de Nestra: pregunta 60.
+- Si preguntan por qué no van a una consultora, o si las consultoras son la competencia: pregunta 61. Las consultoras y las inmobiliarias que les hacen el estudio a los promotores también son clientes: con la ficha hacen sus estudios más rápido, y para ellas es el plan Equipo (`pitch/modelo_negocio.md`, añadido el 19 nov tras la prueba con P7 (inversor)).
 - Si piden precios (hipótesis por validar, `pitch/modelo_negocio.md`):
-  - plan Inversor, unos 99–199 €/mes; Equipo, unos 399 €/mes;
+  - plan Inversor, unos 99–199 €/mes; Equipo, para una promotora, un fondo, una consultora o una inmobiliaria con varias personas, unos 399 €/mes;
   - estudio a medida, de 490 a 1.500 €;
   - de referencia, Nestra, que analiza la normativa de parcelas en España, cobra 175, 437,50 y 1.050 €/mes, sin IVA y con pago anual ([precios](https://www.nestra.es/precios), consultados el 19 nov);
   - antes de fijarlos, entrevistas de disposición a pagar (`docs/08_validation/09_pricing_validation.md`).
@@ -85,6 +86,7 @@ Sí. Los datos del portal CM son CC BY y la licencia del CRTM permite reutilizar
 **9. ¿En qué os diferenciáis de los portales inmobiliarios o de las consultoras?**
 Los portales enseñan la oferta de pisos; nosotros enseñamos la necesidad y el encaje de cada zona. Frente a un estudio de consultora, aquí todo es abierto, reproducible y cita cada dato.
 - Evidencia: `docs/09_datamad/25_plan_competicion.md` §8.
+- Si preguntan por qué un promotor no iría directamente a una consultora: no es lo uno o lo otro. La ficha de la parcela es el primer filtro, antes de pagar un estudio completo, y las consultoras y las inmobiliarias también son clientes (pregunta 61).
 
 **10. ¿Cuánto cuesta mantenerlo?**
 Hoy, 0 € al mes: la web y la API van en el plan gratuito de Vercel y la base en el de Supabase, y los datos se recargan copiando tablas ya validadas. Para un uso comercial habría que pasar a planes de pago, porque el gratuito de Vercel no lo admite.
@@ -448,3 +450,19 @@ Buscar una parcela exacta y calcular si una promoción sale ya se puede; decir q
   - la búsqueda por parcela: D-250, en producción desde el 19 nov (despliegue de `79020a1`, verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-39-79020a1-parcela.md`, PR #102). Capturas de producción en `evidence/gate-06/2026-11-19-deploy/deploy-39/`: la búsqueda en el móvil (`390-buscar.jpg`), la ficha de Méndez Álvaro 47 (`390-ficha-mendez-alvaro.jpg`) y la de Almería 1 entera (`1440-ficha-almeria.jpg`);
   - el análisis por parcela está en la visión desde D-040 («Parcel Intelligence ampliado», `docs/01_product/05_pro_layer.md`); quedó fuera del concurso con D-192, y Mariano lo trajo el 19 nov con D-250, sin el Housing Gap.
 - Estado: la búsqueda por parcela, en producción desde el 19 nov (D-250), con la versión por barrios detrás (D-247 y D-248); decir qué vivienda hace falta construir en cada parcela, un plan. El suelo público, en producción desde el 18 nov (D-246).
+
+## Una más: ¿por qué no una consultora? (prueba con un inversor, 19 nov)
+Sale de la prueba de la versión para inversores que hizo el 19 nov un inversor con experiencia en promoción, P7 (inversor): «la gente que va a hacer eso se va a una inmobiliaria o una consultora a que les hagan el estudio completo».
+
+**61. Para invertir, un promotor va a una consultora o a una inmobiliaria a que le hagan el estudio completo. ¿Para qué iba a usar esto?**
+Porque antes de pagar un estudio completo hay que saber qué parcela merece uno, y la ficha es ese primer filtro: en unos minutos da la parcela, su planeamiento, una edificabilidad de partida, cuánto se podría pagar por el suelo o, con su precio, si una promoción sale, y el contexto de demanda de su zona. Las consultoras y las inmobiliarias no son la competencia, sino clientes: con la ficha hacen sus estudios más rápido, con cada dato citado, y para ellas es el plan Equipo. No sustituye al estudio completo, y lo decimos nosotros mismos en cada ficha: «No es una tasación ni un informe vinculante ni una garantía de rentabilidad.»
+- Si preguntan qué tiene el estudio completo que la ficha no tiene: la visita, la normativa completa de la parcela (pregunta 60) y una tasación. Y tres cosas que señaló P7 (inversor), que se están trabajando (D-252, en curso; ninguna está hecha):
+  - si el solar tiene servicios, como la acometida de agua o el suministro de luz: la ficha no lo dice;
+  - la edificabilidad por uso, separando residencial, terciario y dotacional: la ficha da una sola cifra, junto al uso que marca el planeamiento;
+  - el coste de obra, que según él «baila mucho»: hoy es el PEM de los visados de obra nueva de la Comunidad por un coeficiente supuesto, con su desglose, que se puede cambiar, y la ficha avisa de que el PEM de los visados suele declararse a la baja.
+- Si preguntan si ya lo usa alguna consultora: no. Que paguen es una hipótesis, como los precios, y se valida en las entrevistas de disposición a pagar (`docs/08_validation/09_pricing_validation.md`). Durante el concurso, la versión para inversores es de acceso libre, sin cuentas ni cobro (D-248 §1).
+- Evidencia:
+  - el aviso, en producción: en la ficha de cada parcela (`notices` de `GET /api/v1/investors/parcels`, leído por D el 19 nov con Almería 1) y en la sección de inversores de «Cómo lo calculamos» (D-251, leída por D el 19 nov). El texto está en `packages/domain/src/hi_domain/viability.py`;
+  - el coste de hoy, en la misma respuesta: `defaults.pem_m2`, 644 €/m² (visados de obra nueva de viviendas en bloque de 2025, de toda la Comunidad, `cm_visados_presupuesto_obra`), y `defaults.cost_coefficient`, 1,36, marcado «supuesto» y desglosado;
+  - el cliente: `CLAUDE.md` §16 (cliente inicial, «promotoras/inmobiliarias medianas»; «vender informes/estudios antes del SaaS completo») · las consultoras y las inmobiliarias, entre los clientes de la capa PRO (`docs/01_product/05_pro_layer.md`) y del go-to-market (`docs/06_business/06_go_to_market.md`) · el plan Equipo, en `pitch/modelo_negocio.md`.
+- Estado: el posicionamiento, en el pitch desde el 19 nov (preguntas 6, 9 y 61 y `modelo_negocio.md`); la voz y las slides no cambian. Los servicios, la edificabilidad por uso y el coste, en curso (D-252).
