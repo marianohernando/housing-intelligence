@@ -235,12 +235,18 @@ def test_a_row_without_barrio_counts_in_its_district_only(
     assert _barrio_rows(obs.frame)["value"].tolist() == [_people(rows.iloc[1], barrio_spec)]
 
 
-def test_a_barrio_of_another_district_is_quarantined(
-    barrio_spec: MadridPadronPipeline, source: pd.DataFrame
+def test_a_barrio_of_another_district_is_listed_and_still_counts_in_its_district(
+    barrio_spec: MadridPadronPipeline, spec: MadridPadronPipeline, source: pd.DataFrame
 ) -> None:
+    """The district population never depends on the barrio column (review R-01 of #93)."""
     rows = source.loc[source["COD_DISTRITO"] == "6"].head(1).copy()
     rows.loc[rows.index[0], "COD_DIST_BARRIO"] = "501"
-    assert len(normalize(rows, barrio_spec).quarantine) == 1
+    obs = normalize(rows, barrio_spec)
+    assert len(obs.quarantine) == 1
+    assert "district only" in obs.quarantine["reason"].iloc[0]
+    assert _barrio_rows(obs.frame).empty
+    districts = obs.frame.loc[obs.frame["territory_level"] == "distrito"].reset_index(drop=True)
+    assert districts.equals(normalize(rows, spec).frame.reset_index(drop=True))
 
 
 def test_barrios_that_do_not_add_up_block_publication(

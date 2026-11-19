@@ -150,6 +150,30 @@ def test_an_undeclared_situation_or_epigrafe_blocks(
     assert "situation" in reasons and "epígrafe" in reasons
 
 
+def test_a_premise_whose_rows_disagree_or_without_id_blocks(
+    premises: pd.DataFrame, premises_spec: MadridPremisesCensusPipeline
+) -> None:
+    """A premise is counted once: its rows must agree (review R-03)."""
+    ids: list[str] = premises["id_local"].tolist()
+    key = next(i for i in ids if ids.count(i) > 1)
+    changed = premises.copy()
+    last = changed.index[changed["id_local"] == key][-1]
+    changed.loc[last, ["id_situacion_local", "desc_situacion_local"]] = ["4", "Cerrado"]
+    changed.loc[changed.index[0], "id_local"] = ""
+    result = normalize_premises(changed, premises_spec)
+    reasons = " ".join(result.obs.quarantine["reason"])
+    assert result.blocking == 2
+    assert "another access" in reasons and "without premise id" in reasons
+
+
+def test_a_pending_code_with_another_literal_blocks(
+    premises: pd.DataFrame, premises_spec: MadridPremisesCensusPipeline
+) -> None:
+    changed = premises.copy()
+    changed.loc[changed["id_epigrafe"] == "999", "desc_epigrafe"] = "COMERCIO DIVERSO"
+    assert normalize_premises(changed, premises_spec).blocking == 1
+
+
 def test_a_premise_without_barrio_is_listed_never_counted(
     premises: pd.DataFrame, premises_spec: MadridPremisesCensusPipeline
 ) -> None:
@@ -279,6 +303,7 @@ def test_residential_area_left_by_area_and_never_a_blank_as_zero(
     )
     assert register.obs.quarantine.empty
     assert register.out_of_scope == {"not_residential": 1, "nothing_left": 1}
+    assert register.partial_blank == 1  # APE.02.12: colectiva with a figure, unifamiliar blank
     barrios = register.obs.frame.loc[register.obs.frame["territory_level"] == "barrio"]
     items = {d["item"]: (d, v) for d, v in zip(barrios["dims"], barrios["value"], strict=True)}
     assert items["APE.02.12"][1] == 6670  # the blank unifamiliar cell is absent, not 0
@@ -419,6 +444,13 @@ def test_the_district_comes_by_name_from_the_concept(catalog: Catalog) -> None:
         pd.DataFrame(CONCEPTS[:1], columns=CONCEPT_COLUMNS), spec, {"retiro": "2807903"}
     )
     assert len(unknown.quarantine) == 1
+    rows = [list(r) for r in CONCEPTS]
+    rows[0][5] = ""  # a row without its use is not a use «unknown»
+    rows[2][6] = "12"  # a figure on a row of no district is reported
+    changed = normalize_district_concept(
+        pd.DataFrame(rows, columns=CONCEPT_COLUMNS), spec, DISTRICTS
+    )
+    assert len(changed.quarantine) == 1 and changed.unassigned_with_figure == 1
 
 
 # --- The pilot barrios -------------------------------------------------------------------------

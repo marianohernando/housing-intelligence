@@ -3,7 +3,8 @@
 The padrón is an exhaustive register: an age with no row in a district means nobody of that
 age lives there, so every band is published (0 included). A row that cannot be read goes to
 quarantine and is never counted as 0. With a barrio column (D-247), each barrio also gets its
-total; a row without a barrio counts in its district only (never dropped from it).
+total; a row without a barrio, or with one that cannot be read (listed in quarantine), counts in
+its district only (never dropped from it).
 """
 
 import re
@@ -103,6 +104,26 @@ def _observation(
     }
 
 
+def _barrio(
+    row: dict[str, str],
+    spec: MadridPadronPipeline,
+    district: str,
+    index: int,
+    bad: list[dict[str, Any]],
+) -> str | None:
+    """The row's barrio, or None. An unreadable one is listed in quarantine, but the row still
+    counts in its district (D-247: the district population never depends on the barrio column;
+    a barrio that falls short blocks through `barrios_add_up_to_districts`)."""
+    if not spec.barrio_column:
+        return None
+    try:
+        return barrio_code(row.get(spec.barrio_column), district)
+    except RowError as exc:
+        reason = f"{exc}: counted in its district only"
+        bad.append({"source_row": index, "reason": reason, "raw": str(row)[:300]})
+        return None
+
+
 def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
     people: Counter[tuple[str, date, str]] = Counter()
     barrios: Counter[tuple[str, date]] = Counter()
@@ -115,10 +136,10 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
             period = _period(row[spec.period_column])
             band = five_year_age_band(parse_age(row[spec.age_column]))
             count = sum(_count(row[column]) for column in spec.count_columns)
-            barrio = barrio_code(row[spec.barrio_column], code) if spec.barrio_column else None
         except (RowError, KeyError) as exc:
             bad.append({"source_row": index, "reason": str(exc), "raw": str(row)[:300]})
             continue
+        barrio = _barrio(row, spec, code, index, bad)
         people[(code, period, band)] += count
         people[(code, period, TOTAL_AGE)] += count
         if barrio:

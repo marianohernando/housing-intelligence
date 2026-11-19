@@ -19,6 +19,7 @@ from hi_ingestion.pipelines.premises.normalize import (
     normalize_premises,
 )
 from hi_ingestion.pipelines.runner import PipelineSteps, run_pipeline
+from hi_ingestion.pipelines.stat_tables.normalize import Observations
 from hi_ingestion.pipelines.stat_tables.publish import replace_observations
 from hi_ingestion.pipelines.stat_tables.quality import (
     CheckResult,
@@ -60,9 +61,12 @@ def premises_quality(
 ) -> QualityReport:
     """The common checks on what is published, and on the whole file: its size, one load date,
     no undeclared code, few premises without a barrio and the 21 districts and 131 barrios."""
-    base = run_quality(result.obs, metrics, set())
     frame = result.obs.frame
     blocking = result.obs.quarantine.loc[result.obs.quarantine["blocking"].astype(bool)]
+    # The pending epígrafes and the premises without barrio are listed, not errors: the
+    # quarantine ratio counts only what blocks
+    read = Observations(frame, blocking, result.obs.source_rows)
+    base = run_quality(read, metrics, set())
     extra = [
         CheckResult(
             "file_size",

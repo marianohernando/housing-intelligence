@@ -14,13 +14,8 @@
       "critical": true,
       "passed": true,
       "details": {
-        "quarantined": 186,
-        "reasons": {
-          "epígrafe pending in the file: 999 «SIN ASIGNAR»": 159,
-          "epígrafe pending in the file: PTECO1 «PTE. CODIFICAR (ACTIV. EMPRESARIALES:INDUST,COMERCIAL,DE SERVICIOS Y MINERAS)»": 22,
-          "epígrafe pending in the file: PTECO2 «PTE. CODIFICAR (OTROS PROF. RELACIONADOS CON SERVICIOS)»": 4,
-          "counted premise without district or barrio": 1
-        }
+        "quarantined": 0,
+        "reasons": {}
       }
     },
     {

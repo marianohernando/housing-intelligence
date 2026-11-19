@@ -35,6 +35,9 @@ def clean(raw: Any) -> str:
     return " ".join(str(raw).split())
 
 
+PARTIAL_BLANK = "partial_blank"
+
+
 @dataclass(frozen=True)
 class PlacedArea:
     """Where an area's point is (its barrio, in the district of the point) and the share of the
@@ -52,6 +55,7 @@ class AreaRegister:
     out_of_scope: Mapping[str, int]
     dates: frozenset[date]
     districts: frozenset[str]
+    partial_blank: int = 0  # kept areas with one residential cell blank
 
 
 def area_size(raw: Any) -> float | None:
@@ -93,7 +97,9 @@ def residential(
     if total == 0:
         return 0.0, "", "nothing_left"
     uses = "_y_".join(slug for slug, v in sizes.items() if v)
-    return total, uses, None
+    # Kept, and counted: one type of home has a figure and the other a blank cell (read as
+    # «this type is not in the area»), so a change in how the register fills cells shows
+    return total, uses, PARTIAL_BLANK if any(v is None for v in sizes.values()) else None
 
 
 def _item(row: Mapping[str, Any], spec: MadridBuildableAreasPipeline) -> tuple[str, str]:
@@ -131,7 +137,7 @@ def _area_rows(
     district = district_code(spec.municipio_ine, row.get(spec.district_column))
     observed = register_date(row.get(spec.date_column))
     value, uses, out = residential(row, spec)
-    if out is not None:
+    if out is not None and out != PARTIAL_BLANK:
         return [], out
     code = clean(row.get(spec.code_column))
     item, name = _item(row, spec)
@@ -165,7 +171,7 @@ def _area_rows(
             (TerritoryLevel.BARRIO, barrio, dims),
         )
     ]
-    return rows, None
+    return rows, out
 
 
 def normalize_buildable_areas(
@@ -189,6 +195,7 @@ def normalize_buildable_areas(
         if reason:
             out[reason] += 1
         rows.extend(kept)
+    partial = out.pop(PARTIAL_BLANK, 0)
     obs = Observations(
         pd.DataFrame(rows, columns=OBS_COLUMNS),
         pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
@@ -196,5 +203,5 @@ def normalize_buildable_areas(
     )
     kept_areas = len(rows) // 2
     return AreaRegister(
-        obs, len(records), kept_areas, dict(out), frozenset(dates), frozenset(districts)
+        obs, len(records), kept_areas, dict(out), frozenset(dates), frozenset(districts), partial
     )

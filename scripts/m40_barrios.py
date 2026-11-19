@@ -21,6 +21,7 @@ from urllib.parse import urlencode
 import httpx
 import shapely
 import yaml
+from pydantic import ValidationError
 from pyproj import Transformer
 from shapely.geometry import LineString, MultiPolygon, Polygon
 from sqlalchemy import Engine, text
@@ -31,6 +32,7 @@ from hi_ingestion.http import make_client, polite_retry
 
 MANUAL = Path(__file__).resolve().parents[1] / "data" / "catalog" / "manual"
 TABLE = MANUAL / "inversores_barrios_m40.yaml"
+DRAFT = MANUAL / "inversores_barrios_m40.draft.yaml"
 OVERPASS = "https://overpass-api.de/api/interpreter"
 QUERY = (
     '[out:json][timeout:120];area["ISO3166-2"="ES-MD"]->.a;'
@@ -111,9 +113,11 @@ def barrio_rows(engine: Engine, ring: Polygon) -> list[dict[str, Any]]:
 
 
 def previous_reviews() -> dict[str, str]:
-    if not TABLE.exists():
+    """The reviews of the versioned table, or of a draft a person is completing."""
+    source = DRAFT if DRAFT.exists() else TABLE
+    if not source.exists():
         return {}
-    old = yaml.safe_load(TABLE.read_text(encoding="utf-8"))
+    old = yaml.safe_load(source.read_text(encoding="utf-8"))
     entries = [*old.get("barrios", []), *old.get("reviewed_outside", [])]
     return {e["code"]: e["review"] for e in entries if e.get("review")}
 
@@ -181,13 +185,19 @@ def main() -> None:
         overpass = read_overpass(client)
     ring = ring_polygon(overpass["elements"])
     body = pilot_table(overpass, barrio_rows(engine, ring), ring)
-    TABLE.write_text(
-        HEADER + yaml.dump(body, Dumper=FlowPairs, allow_unicode=True, sort_keys=False, width=100),
-        encoding="utf-8",
+    text = HEADER + yaml.dump(
+        body, Dumper=FlowPairs, allow_unicode=True, sort_keys=False, width=100
     )
     edge = len(body["reviewed_outside"])
     print(f"{len(body['barrios'])} barrios inside, {edge} on the edge outside")
-    PilotZonesTable.model_validate(body)  # fails while an edge barrio has no review
+    try:
+        PilotZonesTable.model_validate(body)
+    except ValidationError:
+        # The versioned table is never left invalid: the draft waits for the reviews by hand
+        DRAFT.write_text(text, encoding="utf-8")
+        print(f"edge barrios without review: write them in {DRAFT.name} and rename it")
+        raise
+    TABLE.write_text(text, encoding="utf-8")
 
 
 if __name__ == "__main__":

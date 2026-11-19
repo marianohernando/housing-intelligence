@@ -3,6 +3,7 @@
 import re
 import uuid
 from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -67,7 +68,10 @@ def _row(
         msg = f"concept {concept[:80]!r} names no district of the geography"
         raise RowError(msg)
     start, end = parse_period(row[spec.period_column])
-    dims = {dim: slugify(row[col]) or "unknown" for col, dim in spec.dimension_columns.items()}
+    dims = {dim: slugify(row[col]) for col, dim in spec.dimension_columns.items()}
+    if not all(dims.values()):
+        msg = f"a row of {code} without {', '.join(spec.dimension_columns)}"
+        raise RowError(msg)
     value, null_reason = parse_value(row[spec.value_column], spec.missing_markers, spec.csv.decimal)
     return observation(
         metric_id=spec.metric_id,
@@ -86,9 +90,14 @@ def _row(
     )
 
 
+@dataclass(frozen=True)
+class DistrictObservations(Observations):
+    unassigned_with_figure: int = 0  # rows of no district with a figure (not «-»)
+
+
 def normalize_district_concept(
     frame: pd.DataFrame, spec: CmDistrictConceptPipeline, names: Mapping[str, str]
-) -> Observations:
+) -> DistrictObservations:
     """Rows before `period_min` are counted as out_of_window; rows of no district as
     out_of_scope; a row that cannot be read is quarantined."""
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
@@ -101,7 +110,7 @@ def normalize_district_concept(
     ]
     rows: list[dict[str, Any]] = []
     bad: list[dict[str, Any]] = []
-    unassigned = 0
+    unassigned = with_figure = 0
     for index, row in recent:
         try:
             kept = _row(row, spec, names)
@@ -110,14 +119,17 @@ def normalize_district_concept(
             continue
         if kept is None:
             unassigned += 1
+            # Rows of no district carry «-» today; one with a figure is reported, never read
+            with_figure += row[spec.value_column] not in spec.missing_markers
         else:
             rows.append(kept)
-    return Observations(
+    return DistrictObservations(
         pd.DataFrame(rows, columns=OBS_COLUMNS),
         pd.DataFrame(bad, columns=["source_row", "reason", "raw"]),
         len(recent) - unassigned,
         out_of_window=len(records) - len(recent),
         out_of_scope=unassigned,
+        unassigned_with_figure=with_figure,
     )
 
 
@@ -136,10 +148,10 @@ def latest_year_complete(obs: Observations, expected: int) -> CheckResult:
 
 def district_concept_steps(
     engine: Engine, catalog: Catalog, spec: CmDistrictConceptPipeline
-) -> PipelineSteps[Observations]:
+) -> PipelineSteps[DistrictObservations]:
     metrics = {m: catalog.metrics[m] for m in spec.metric_ids()}
 
-    def quality(obs: Observations) -> dict[str, Any]:
+    def quality(obs: DistrictObservations) -> dict[str, Any]:
         known = set(district_names(engine, spec.municipio_ine).values())
         base = run_quality(obs, metrics, set())
         return QualityReport(
@@ -151,7 +163,9 @@ def district_concept_steps(
             ]
         ).to_dict()
 
-    def publish(session: Session, obs: Observations, version_id: uuid.UUID) -> dict[str, int]:
+    def publish(
+        session: Session, obs: DistrictObservations, version_id: uuid.UUID
+    ) -> dict[str, int]:
         return {
             "observations": replace_observations(session, obs.frame, [spec.metric_id], version_id)
         }
@@ -168,6 +182,7 @@ def district_concept_steps(
         counts=lambda obs: (
             row_counts(obs.frame)
             | {"out_of_window": obs.out_of_window, "unassigned": obs.out_of_scope or 0}
+            | {"unassigned_with_figure": obs.unassigned_with_figure}
         ),
         write_silver=write_silver,
         publish=publish,

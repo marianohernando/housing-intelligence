@@ -73,9 +73,17 @@ def read_code(code: str, label: str, declared: Mapping[str, PremiseCode], what: 
     return known.slug
 
 
-def read_epigrafe(code: str, division: str, spec: MadridPremisesCensusPipeline) -> str | None:
-    """The epígrafe, None for a premise without one or one the file marks as pending."""
-    if not code or code in spec.pending_epigrafes:
+def read_epigrafe(
+    code: str, division: str, label: str, spec: MadridPremisesCensusPipeline
+) -> str | None:
+    """The epígrafe, None for a premise without one or one the file marks as pending (with its
+    declared literal: a pending code whose meaning changes is read by a person first)."""
+    if not code:
+        return None
+    if code in spec.pending_epigrafes:
+        if clean(spec.pending_epigrafes[code]) != label:
+            msg = f"pending epígrafe {code!r} «{label}» is not the declared one"
+            raise RowError(msg)
         return None
     if not _EPIGRAFE.match(code) or not code.startswith(division):
         msg = f"epígrafe {code!r} of division {division!r} does not read as one"
@@ -140,16 +148,35 @@ def _premise(row: Mapping[str, Any], spec: MadridPremisesCensusPipeline) -> Prem
     return Premise(access, state, distrito, barrio)
 
 
+def _same_premise(known: Premise | None, read: Premise, key: str) -> Premise:
+    """A premise is counted once: every row of it must say the same access, situation and
+    zone, or the run blocks (the census promises it; a broken file would count it twice)."""
+    if known is None:
+        return read
+    if (known.access, known.state, known.distrito, known.barrio) != (
+        read.access,
+        read.state,
+        read.distrito,
+        read.barrio,
+    ):
+        msg = f"premise {key} has rows with another access, situation or zone"
+        raise RowError(msg)
+    return known
+
+
 def _read_row(
     index: int, row: Mapping[str, Any], spec: MadridPremisesCensusPipeline, reading: _Reading
 ) -> None:
     key = clean(row.get(spec.premise_column))
     try:
+        if not key:
+            raise RowError("a row without premise id")
         reading.dates.add(load_date(row.get(spec.date_column)))
-        premise = reading.premises.get(key) or _premise(row, spec)
+        premise = _same_premise(reading.premises.get(key), _premise(row, spec), key)
         reading.premises.setdefault(key, premise)
         code = clean(row.get(spec.epigrafe_column))
-        epigrafe = read_epigrafe(code, clean(row.get(spec.division_column)), spec)
+        label = clean(row.get(spec.epigrafe_label_column))
+        epigrafe = read_epigrafe(code, clean(row.get(spec.division_column)), label, spec)
     except RowError as exc:
         reading.broken.add(key)
         reading.bad(index, str(exc), row, blocking=True)

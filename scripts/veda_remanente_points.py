@@ -101,12 +101,14 @@ def register_areas(url: str, spec: MadridBuildableAreasPipeline) -> dict[str, st
         with make_client(timeout=120) as client:
             download(client, url, path)
         frame = read_areas(path)
-    return {
-        str(row[spec.code_column]).strip(): district_code(
-            spec.municipio_ine, row[spec.district_column]
-        )
-        for row in frame.to_dict("records")
-    }
+    areas: dict[str, str] = {}
+    for row in frame.to_dict("records"):
+        code = str(row[spec.code_column]).strip()
+        district = district_code(spec.municipio_ine, row[spec.district_column])
+        if areas.setdefault(code, district) != district:
+            msg = f"area {code} is in two districts of the register ({areas[code]}, {district})"
+            raise ValueError(msg)
+    return areas
 
 
 def main() -> None:
@@ -119,6 +121,11 @@ def main() -> None:
     areas = register_areas(register, spec)
     with make_client(timeout=180) as client:
         layer = read_layer(client, url)
+    labels = [f["properties"][LABEL] for f in layer["features"]]
+    repeated = sorted({label for label in labels if labels.count(label) > 1} & set(areas))
+    if repeated:
+        msg = f"areas with two polygons in the layer: {repeated}"
+        raise ValueError(msg)
     polygons = {f["properties"][LABEL]: shape(f["geometry"]) for f in layer["features"]}
     geo = zones(make_engine(os.environ.get("DATABASE_URL")), spec.municipio_ine)
     points = []

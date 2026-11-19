@@ -137,6 +137,7 @@ def area_steps(
         counts=lambda result: (
             row_counts(result.obs.frame)
             | {"rows": result.rows, "areas_kept": result.kept, "points": len(points.points)}
+            | {"partial_blank": result.partial_blank}
             | {f"out_of_scope|{k}": v for k, v in sorted(result.out_of_scope.items())}
         ),
         write_silver=lambda result, directory: write_silver(result.obs, directory),
