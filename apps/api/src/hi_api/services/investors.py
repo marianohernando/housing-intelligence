@@ -174,6 +174,23 @@ class Place(NamedTuple):
     def codes(self) -> dict[TerritoryLevel, str]:
         return {BARRIO: self.code, DISTRITO: self.district, MUNICIPIO: CITY}
 
+    def own(self) -> tuple[TerritoryLevel, str]:
+        """The zone the sheet is of: the barrio."""
+        return BARRIO, self.code
+
+
+class DistrictPlace(Place):
+    """A barrio outside the pilot (D-250): its sheet reads its district's figures, then the
+    city's, never the barrio's, and is of the district."""
+
+    __slots__ = ()
+
+    def codes(self) -> dict[TerritoryLevel, str]:
+        return {DISTRITO: self.district, MUNICIPIO: CITY}
+
+    def own(self) -> tuple[TerritoryLevel, str]:
+        return DISTRITO, self.district
+
 
 Values = dict[tuple[str, str, str], dict[str, Any]]  # (feature, level, code) -> row
 
@@ -537,8 +554,9 @@ def shared_note(count: int | None) -> str | None:
 
 
 def land_block(values: Values, place: Place, sources: Sources) -> LandBlock:
-    parcels = values.get((PARCELS, BARRIO.value, place.code))
-    remaining = values.get((REMAINING, BARRIO.value, place.code))
+    level, code = place.own()
+    parcels = values.get((PARCELS, level.value, code))
+    remaining = values.get((REMAINING, level.value, code))
     return LandBlock(
         parcels=land_items(parcels, "parcela"),
         parcels_m2=sourced(parcels, sources, "m²"),
@@ -620,7 +638,12 @@ def defaults_block(
 
 
 def zone_sheet(conn: Connection, admin_unit_id: str) -> tuple[InvestorZone, list[str], str | None]:
-    place = find_place(conn, admin_unit_id)
+    return place_sheet(conn, find_place(conn, admin_unit_id))
+
+
+def place_sheet(conn: Connection, place: Place) -> tuple[InvestorZone, list[str], str | None]:
+    """The sheet of a pilot barrio (Place) or, outside the pilot, of its district
+    (DistrictPlace, D-250): the same blocks, each figure at the finest level it may use."""
     values = load_values(conn, SHEET_FEATURES, [place])
     units = {
         r["feature_id"]: r["unit"]
@@ -637,7 +660,7 @@ def zone_sheet(conn: Connection, admin_unit_id: str) -> tuple[InvestorZone, list
         if f not in units
     ]
     sheet = InvestorZone(
-        zone=zone_ref(conn, BARRIO, place.code),
+        zone=zone_ref(conn, *place.own()),
         district=zone_ref(conn, DISTRITO, place.district),
         demand=demand,
         prices=prices,
@@ -648,6 +671,22 @@ def zone_sheet(conn: Connection, admin_unit_id: str) -> tuple[InvestorZone, list
         datasets=refs if gaps is None else union(refs, gaps.rows),
     )
     return sheet, warnings, data_stamp(conn)[:10]
+
+
+def offline_defaults() -> ViabilityDefaults:
+    """The calculator's defaults without the database (D-250: the barrio could not be read): the
+    assumptions and the versioned PEM; the barrio's price, rent and income «sin dato»."""
+    none = Sources({})
+    note = "Sin el contexto del barrio"
+    unknown = sourced(None, none, "€/m²", note=note)
+    prices = PricesBlock(
+        sale_m2=unknown,
+        new_build_premium_pct=sourced(None, none, "%", note=note),
+        new_build_sale_m2=unknown,
+        rent_m2_month=sourced(None, none, "€/m²/mes", note=note),
+    )
+    income = sourced(None, none, "€/hogar/año", note=note)
+    return defaults_block(prices, income, pem_value({}, none))
 
 
 def union(refs: list[DatasetRef], rows: Iterable[Any]) -> list[DatasetRef]:

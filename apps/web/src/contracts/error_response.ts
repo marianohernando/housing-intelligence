@@ -12,7 +12,8 @@ export type ErrorCode =
   | "MODEL_UNAVAILABLE"
   | "CONSENT_REQUIRED"
   | "RATE_LIMITED"
-  | "NOT_FOUND";
+  | "NOT_FOUND"
+  | "AMBIGUOUS_INPUT";
 export type Message = string;
 
 export interface ErrorEnvelope {

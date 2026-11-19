@@ -43,7 +43,7 @@ interface FieldProps {
   /** The note under the field instead of the default's source */
   help?: string;
   /** The mark when the field has no default of its own (the area of the chosen land is data) */
-  mark?: SourcedValue["mark"];
+  mark?: SourcedValue["mark"] | "sin_dato";
   /** What is wrong with the value (out of range, not a whole number): said under the field */
   error?: string;
 }
@@ -208,16 +208,27 @@ function Results({ result }: { result: ViabilityResponse["data"] }) {
   );
 }
 
+/** A parcel's sheet (D-250): the calculator starts from its buildable m², marked as the sheet marks it. */
+export interface ParcelStart {
+  m2: number | null;
+  mark: SourcedValue["mark"] | "sin_dato";
+  help: string;
+}
+
 interface Props {
   defaults: ViabilityDefaults;
   parcels: LandItem[];
   remaining: LandItem[];
+  parcel?: ParcelStart;
 }
 
 /** The viability v0 (D-248): the land, the editable inputs with their sources, three scenarios and the demand check. */
-export default function Calculator({ defaults, parcels, remaining }: Props) {
+export default function Calculator({ defaults, parcels, remaining, parcel }: Props) {
   const firstLand = defaultLand(parcels, remaining);
-  const initial = useMemo(() => initialFields(defaults, firstLand), [defaults, firstLand]);
+  const initial = useMemo(() => {
+    const fields = initialFields(defaults, firstLand);
+    return parcel ? { ...fields, buildable_m2: parcel.m2 === null ? "" : String(Math.round(parcel.m2)) } : fields;
+  }, [defaults, firstLand, parcel]);
   const [fields, setFields] = useState<CalculatorFields>(initial);
   const [chosen, setChosen] = useState(firstLand ? landKey(firstLand) : CUSTOM);
   const [state, setState] = useState<{ result?: ViabilityResponse["data"]; error?: ApiError; busy: boolean }>({ busy: false });
@@ -254,6 +265,10 @@ export default function Calculator({ defaults, parcels, remaining }: Props) {
   };
   const chosenItem = land.find((item) => landKey(item) === chosen) ?? null;
   const fromLand = chosenItem?.buildable_m2 != null && parseNumber(fields.buildable_m2) === Math.round(chosenItem.buildable_m2);
+  // A parcel's figure keeps its mark (dato, supuesto or sin dato) until the person changes it
+  const fromParcel = parcel !== undefined && fields.buildable_m2 === initial.buildable_m2;
+  const buildableMark = fromParcel ? parcel.mark : fromLand ? "dato" : "usuario";
+  const buildableHelp = fromParcel ? parcel.help : fromLand ? TEXT.buildableFrom : TEXT.buildableHelp;
   const missing = missingFields(fields);
   const errors = fieldErrors(fields);
   const invalid = Object.keys(errors).length > 0;
@@ -281,8 +296,8 @@ export default function Calculator({ defaults, parcels, remaining }: Props) {
             unit="m²"
             {...common}
             {...err("buildable_m2")}
-            mark={fromLand ? "dato" : "usuario"}
-            help={fromLand ? TEXT.buildableFrom : TEXT.buildableHelp}
+            mark={buildableMark}
+            help={buildableHelp}
           />
           <NumberField name="sale_price_m2" label={TEXT.price} unit="€/m²" source={defaults.sale_price_m2} {...common} {...err("sale_price_m2")} />
           <NumberField name="new_build_premium_pct" label={TEXT.premium} unit="%" source={defaults.new_build_premium_pct} {...common} {...err("new_build_premium_pct")} />

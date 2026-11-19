@@ -401,6 +401,7 @@ dependencies = [
     { name = "hi-contracts" },
     { name = "hi-db" },
     { name = "hi-domain" },
+    { name = "httpx" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -410,6 +411,7 @@ requires-dist = [
     { name = "hi-contracts", editable = "packages/contracts" },
     { name = "hi-db", editable = "packages/db" },
     { name = "hi-domain", editable = "packages/domain" },
+    { name = "httpx", specifier = ">=0.28" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.35" },
 ]
 

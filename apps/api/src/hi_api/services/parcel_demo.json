@@ -1,0 +1,223 @@
+{
+  "observed_at": "2026-11-19",
+  "method": "Fichas de demostración: los campos de Vida Fácil de cada parcela (datos de la parcela, planeamiento y edificabilidad), elaborados el día `observed_at` a partir de la Sede Electrónica del Catastro y del Ayuntamiento de Madrid por scripts/parcel_demo_snapshot.py. Sin respuestas originales de ningún servicio.",
+  "parcels": [
+    {
+      "parcel": {
+        "rc14": "2122202VK4722A",
+        "address": "Calle Mendez Alvaro 47, 28045 Madrid",
+        "postal_code": "28045",
+        "lat": 40.398511,
+        "lon": -3.682491,
+        "area_m2": 2843.0,
+        "rustic": false,
+        "is_vacant": true,
+        "horizontal_division": false,
+        "units": null,
+        "built_m2": 0.0,
+        "year_built": null,
+        "current_use": "Obras de urbanización y jardineria, suelos sin edificar",
+        "official_url": "https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?del=28&mun=900&refcat=2122202VK4722A",
+        "observed_at": "2026-11-19"
+      },
+      "planning": {
+        "code": "APR.02.06",
+        "name": "MÉNDEZ ÁLVARO NORTE I",
+        "kind": "APR",
+        "norma_zonal": null,
+        "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+        "urban_parcel": "MANZANA B",
+        "instrument": {
+          "figure": "MPR.02.391",
+          "name": "Tercera Modificación del APR.02.06 Méndez Álvaro Norte I",
+          "file_number": "711/2014/11518",
+          "url": "https://servpub.madrid.es/VSURB_WBVISOR/seguimiento/expPlaneamiento.iam?figura=MPR.02.391"
+        },
+        "sheet_url": "https://servpub.madrid.es/VSURB_WBVISOR/seguimiento/expPlaneamiento.iam?figura=MPR.02.391",
+        "sheet_label": "Ficha del expediente MPR.02.391",
+        "viewer_url": "https://geoportal.madrid.es/IDEAM_WBGEOPORTAL/visor_ide.iam?ArcGIS=https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer&center=-3.682491,40.398511&level=18&marker=-3.682491,40.398511",
+        "notice": "Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial.",
+        "observed_at": "2026-11-19"
+      },
+      "buildability": {
+        "value_m2": 13121.0,
+        "kind": "oficial",
+        "source": "VEDA Madrid (Ayuntamiento de Madrid), julio de 2026: edificabilidad de la parcela",
+        "article": null,
+        "article_url": null,
+        "coefficient": null,
+        "formula": null,
+        "note": null,
+        "assumed_m2": null,
+        "dataset_ids": [
+          "ayto_edificabilidad_remanente_ambitos"
+        ],
+        "editable": true
+      }
+    },
+    {
+      "parcel": {
+        "rc14": "3959601VK4735H",
+        "address": "Calle Almeria 1, 28028 Madrid",
+        "postal_code": "28028",
+        "lat": 40.430669,
+        "lon": -3.662733,
+        "area_m2": 20502.0,
+        "rustic": false,
+        "is_vacant": false,
+        "horizontal_division": false,
+        "units": null,
+        "built_m2": 6573.0,
+        "year_built": 2011,
+        "current_use": "Industrial",
+        "official_url": "https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?del=28&mun=900&refcat=3959601VK4735H",
+        "observed_at": "2026-11-19"
+      },
+      "planning": {
+        "code": "APR.04.09",
+        "name": "COCHERAS METRO PTE. DE VENTAS",
+        "kind": "APR",
+        "norma_zonal": null,
+        "use": "SIN USO PORMENORIZADO",
+        "urban_parcel": "231123",
+        "instrument": null,
+        "sheet_url": null,
+        "sheet_label": null,
+        "viewer_url": "https://geoportal.madrid.es/IDEAM_WBGEOPORTAL/visor_ide.iam?ArcGIS=https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer&center=-3.662733,40.430669&level=18&marker=-3.662733,40.430669",
+        "notice": "Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial.",
+        "observed_at": "2026-11-19"
+      },
+      "buildability": {
+        "value_m2": 32697.0,
+        "kind": "oficial",
+        "source": "Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela",
+        "article": null,
+        "article_url": null,
+        "coefficient": null,
+        "formula": null,
+        "note": null,
+        "assumed_m2": null,
+        "dataset_ids": [
+          "cm_parcelas_portal_suelo"
+        ],
+        "editable": true
+      }
+    },
+    {
+      "parcel": {
+        "rc14": "0390314VK4709A",
+        "address": "Calle Luis Misson 2, 28039 Madrid",
+        "postal_code": "28039",
+        "lat": 40.458439,
+        "lon": -3.70514,
+        "area_m2": 601.0,
+        "rustic": false,
+        "is_vacant": true,
+        "horizontal_division": false,
+        "units": null,
+        "built_m2": 0.0,
+        "year_built": null,
+        "current_use": "Obras de urbanización y jardineria, suelos sin edificar",
+        "official_url": "https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?del=28&mun=900&refcat=0390314VK4709A",
+        "observed_at": "2026-11-19"
+      },
+      "planning": {
+        "code": "4",
+        "name": "NZ 4",
+        "kind": "norma_zonal",
+        "norma_zonal": {
+          "nz": 4,
+          "grado": null,
+          "nivel": null,
+          "name": "Edificación en manzana cerrada"
+        },
+        "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+        "urban_parcel": "M03772_4",
+        "instrument": null,
+        "sheet_url": "https://transparencia.madrid.es/UnidadesDescentralizadas/UrbanismoyVivienda/Urbanismo/Transparencia/Planeamiento%20urban%C3%ADstico/PUInformacionPublica/Planeamiento/Ficheros/3.%20Refundido%20de%20las%20normas%20urban%C3%ADsticas.pdf#page=349",
+        "sheet_label": "Artículo 8.4.9 de las Normas Urbanísticas",
+        "viewer_url": "https://geoportal.madrid.es/IDEAM_WBGEOPORTAL/visor_ide.iam?ArcGIS=https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer&center=-3.70514,40.458439&level=18&marker=-3.70514,40.458439",
+        "notice": "Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial.",
+        "observed_at": "2026-11-19"
+      },
+      "buildability": {
+        "value_m2": null,
+        "kind": "sin_dato",
+        "source": "La norma zonal 4 no fija un coeficiente: sale del número de plantas según el ancho de la calle y del fondo edificable.",
+        "article": "8.4.9",
+        "article_url": "https://transparencia.madrid.es/UnidadesDescentralizadas/UrbanismoyVivienda/Urbanismo/Transparencia/Planeamiento%20urban%C3%ADstico/PUInformacionPublica/Planeamiento/Ficheros/3.%20Refundido%20de%20las%20normas%20urban%C3%ADsticas.pdf#page=349",
+        "coefficient": null,
+        "formula": null,
+        "note": "Pon tú los m² edificables.",
+        "assumed_m2": null,
+        "dataset_ids": [],
+        "editable": true
+      }
+    },
+    {
+      "parcel": {
+        "rc14": "9943003VK3794D",
+        "address": "Calle Mayor 61, 28013 Madrid",
+        "postal_code": "28013",
+        "lat": 40.415539,
+        "lon": -3.709878,
+        "area_m2": 68.0,
+        "rustic": false,
+        "is_vacant": false,
+        "horizontal_division": true,
+        "units": {
+          "total": 6,
+          "by_use": [
+            {
+              "use": "Residencial",
+              "count": 5,
+              "built_m2": 314.0
+            },
+            {
+              "use": "Comercial",
+              "count": 1,
+              "built_m2": 62.0
+            }
+          ]
+        },
+        "built_m2": 376.0,
+        "year_built": 1890,
+        "current_use": "Residencial",
+        "official_url": "https://www1.sedecatastro.gob.es/Cartografia/mapa.aspx?del=28&mun=900&refcat=9943003VK3794D",
+        "observed_at": "2026-11-19"
+      },
+      "planning": {
+        "code": "1.2",
+        "name": "ZONA 1 GRADO 2º",
+        "kind": "norma_zonal",
+        "norma_zonal": {
+          "nz": 1,
+          "grado": 2,
+          "nivel": null,
+          "name": "Protección del Patrimonio Histórico"
+        },
+        "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+        "urban_parcel": "M08336",
+        "instrument": null,
+        "sheet_url": "https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150",
+        "sheet_label": "Artículo 8.1.10 de las Normas Urbanísticas",
+        "viewer_url": "https://geoportal.madrid.es/IDEAM_WBGEOPORTAL/visor_ide.iam?ArcGIS=https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer&center=-3.709878,40.415539&level=18&marker=-3.709878,40.415539",
+        "notice": "Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial.",
+        "observed_at": "2026-11-19"
+      },
+      "buildability": {
+        "value_m2": 224.4,
+        "kind": "supuesto",
+        "source": "Supuesto aproximado: norma zonal 1 grado 2º, art. 8.1.10 de las Normas Urbanísticas del PGOUM 1997 (refundido de la Dirección General de Planeamiento; BOCM 27-11-2023)",
+        "article": "8.1.10",
+        "article_url": "https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150",
+        "coefficient": 3.3,
+        "formula": "68 m² de parcela × Z 5 × C 0,66",
+        "note": "Aproximado: la norma multiplica Z (plano de condiciones de la edificación de 1997) y C por el fondo edificable o la parcela edificable, no siempre por la parcela entera.",
+        "assumed_m2": null,
+        "dataset_ids": [],
+        "editable": true
+      }
+    }
+  ]
+}

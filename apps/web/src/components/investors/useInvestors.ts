@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import type { InvestorZoneListResponse } from "@/contracts/investor_zone_list_response";
 import type { InvestorZoneResponse } from "@/contracts/investor_zone_response";
+import type { ParcelSheetResponse } from "@/contracts/parcel_sheet_response";
 import { ApiError, createApi } from "@/lib/api";
 
 /** A cold API container takes a few seconds; after this, «Reintentar» (as useZoneGaps). */
@@ -50,4 +51,12 @@ export function useInvestorZones() {
 
 export function useInvestorZone(adminUnitId: string) {
   return useGet<InvestorZoneResponse>(adminUnitId, () => createApi().investorZone(adminUnitId, { timeoutMs: TIMEOUT_MS }));
+}
+
+/** A cold API container plus a cold Catastro or Ayuntamiento (6–9 s on their first call) */
+const PARCEL_TIMEOUT_MS = 30_000;
+
+/** GET /api/v1/investors/parcels?rc= (D-250): a parcel's sheet, by its reference. */
+export function useParcel(rc14: string) {
+  return useGet<ParcelSheetResponse>(`parcel:${rc14}`, () => createApi().parcel({ rc: rc14 }, { timeoutMs: PARCEL_TIMEOUT_MS }));
 }

@@ -1,7 +1,13 @@
 """Named response envelopes, so generated TypeScript types get readable names."""
 
 from hi_contracts.api.envelope import Envelope
-from hi_contracts.pro.investors import InvestorZone, InvestorZoneList, ViabilityResult
+from hi_contracts.pro.investors import (
+    InvestorZone,
+    InvestorZoneList,
+    ParcelCandidates,
+    ParcelSheet,
+    ViabilityResult,
+)
 from hi_contracts.public.common import DatasetList
 from hi_contracts.public.explanation import ZoneExplanation, ZoneLookup
 from hi_contracts.public.gaps import GapImpact, GapRowMap, ZoneGapList
@@ -55,3 +61,11 @@ class InvestorZoneResponse(Envelope[InvestorZone]):
 
 class ViabilityResponse(Envelope[ViabilityResult]):
     """POST /api/v1/investors/viability (D-248)"""
+
+
+class ParcelSheetResponse(Envelope[ParcelSheet]):
+    """GET /api/v1/investors/parcels (D-250)"""
+
+
+class ParcelCandidatesResponse(Envelope[ParcelCandidates]):
+    """GET /api/v1/investors/parcels/candidates (D-250)"""

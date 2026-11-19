@@ -104,7 +104,7 @@ async function run() {
     page.on("console", (m) => m.type() === "error" && errors.push(`${width}: ${m.text()}`));
 
     await page.goto(`${BASE}/inversores`);
-    await page.getByRole("heading", { name: "Barrios del piloto" }).waitFor({ timeout: WAIT });
+    await page.getByRole("heading", { name: "Explorar barrios" }).waitFor({ timeout: WAIT });
     await page.getByRole("link").filter({ hasText: /Pinar del Rey/ }).first().waitFor({ timeout: WAIT });
     await check(page, `${width}-lista`, report, true);
 

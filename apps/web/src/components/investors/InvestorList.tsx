@@ -80,7 +80,9 @@ export default function InvestorList() {
   return (
     <GlassCard as="section" aria-labelledby="barrios-piloto" className={styles.card}>
       <h2 id="barrios-piloto">{TEXT.listTitle}</h2>
-      <p className={styles.lead}>{TEXT.listSummary(all.length, withLand.length)}</p>
+      <p className={styles.lead}>
+        {TEXT.listIntro} {TEXT.listSummary(all.length, withLand.length)}
+      </p>
       <button type="button" className={styles.toggle} aria-pressed={onlyLand} onClick={() => setOnlyLand((on) => !on)}>
         {TEXT.withLand}
       </button>

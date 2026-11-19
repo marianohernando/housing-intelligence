@@ -18,7 +18,8 @@ export const INVESTOR_TEXT = {
   model:
     "Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro.",
   developers: "¿Integrarlo en tu sistema? API y MCP gratis", // inversores.desarrolladores (D-249)
-  listTitle: "Barrios del piloto",
+  listTitle: "Explorar barrios", // inversores.lista.titulo (D-250: after «Busca tu parcela»)
+  listIntro: "O empieza por un barrio del piloto: qué le falta, dónde hay suelo público y sus precios.",
   withLand: "Solo barrios con suelo público",
   loading: "Cargando los barrios…",
   loadingSheet: "Cargando la ficha del barrio…",

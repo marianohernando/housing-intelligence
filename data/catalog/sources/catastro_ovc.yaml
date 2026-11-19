@@ -1,0 +1,29 @@
+source_id: catastro_ovc
+name: Sede Electrónica del Catastro — servicios web libres (callejero y coordenadas, JSON)
+provider: Dirección General del Catastro
+source_type: official_service
+api_type: none
+base_url: https://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/
+catalog_url: https://www.catastro.hacienda.gob.es/ws/Webservices_Libres.pdf
+license_name: Licencia de acceso y uso de los servicios y conjuntos de datos INSPIRE de la DGC (v1.0, julio 2016)
+license_url: https://www.catastro.hacienda.gob.es/webinspire/documentos/Licencia.pdf
+license_status: RESTRICTED
+attribution_text: "Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el {fecha}."
+commercial_use: true
+redistribution_allowed: false
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: continuous
+geographic_scope: España (sin País Vasco ni Navarra)
+terms_reviewed_at: 2026-11-19T00:00:00Z
+robots_status: api
+active: true
+notes: >-
+  D-250. Datos no protegidos de una parcela por su referencia (Consulta_DNPRC), su punto de
+  referencia (Consulta_CPMRC), la parcela de un punto (Consulta_RCCOOR) y las de un número de
+  una calle (ObtenerNumerero), para la búsqueda por parcela de la versión para inversores. El
+  documento de los servicios solo dice que «pueden ser invocados por cualquier ciudadano» y
+  datos.gob.es no les asigna licencia: se les aplica la de los servicios INSPIRE. La API solo
+  devuelve campos transformados y agregados (sin la lista de inmuebles con su planta y su
+  puerta), no guarda sus respuestas fuera de la memoria del proceso y los tests usan respuestas
+  sintéticas. Se pregunta solo en las búsquedas que no están en caché, con un límite por IP.

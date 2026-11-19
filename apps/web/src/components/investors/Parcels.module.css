@@ -1,0 +1,214 @@
+/*
+ * «Busca tu parcela» (D-250). The rules of D-244 and D-245: nothing read under 16 px
+ * (--text-xs is that floor), every target 44 px (--target), no state colours.
+ */
+.search {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.ways {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-5);
+}
+
+.way {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.way h2 {
+  font-size: var(--text-lg);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.form label {
+  font-weight: 600;
+}
+
+.inputRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  min-width: 0;
+}
+
+.inputRow input {
+  flex: 1 1 12rem;
+  min-width: 0;
+  min-height: var(--target);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.inputRow input[aria-invalid="true"] {
+  border-width: 2px;
+  border-color: var(--ink);
+}
+
+.submit {
+  min-height: var(--target);
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--violet-strong);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.help {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+}
+
+.status {
+  min-height: 1.5em;
+  color: var(--ink);
+  font-size: var(--text-sm);
+}
+
+.status:empty {
+  min-height: 0;
+}
+
+.fieldError {
+  padding-left: var(--space-2);
+  border-left: 3px solid var(--ink);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.candidates {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.candidate {
+  display: grid;
+  gap: 0;
+  min-height: var(--target);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.candidate:hover,
+.candidate:focus-visible {
+  border-color: var(--violet-strong);
+}
+
+.candidateNote {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.wayMap {
+  gap: var(--space-3);
+}
+
+.mapBox {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.map {
+  height: 22rem;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--map-land);
+}
+
+.mapCredits {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+}
+
+.mapCredits a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: inherit;
+  text-decoration: underline;
+}
+
+.mapFailed {
+  padding: var(--space-3) var(--space-4);
+  border: 1px dashed var(--control-border);
+  border-radius: var(--radius);
+  color: var(--ink);
+}
+
+.demos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: 0;
+  list-style: none;
+}
+
+.demo {
+  display: grid;
+  min-height: var(--target);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--violet-strong);
+  border-radius: var(--radius);
+  background: var(--violet-soft);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.demo span {
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+}
+
+.demo:hover,
+.demo:focus-visible {
+  background: var(--surface);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+}
+
+@media (max-width: 760px) {
+  .map {
+    height: 18rem;
+  }
+
+  .demos li,
+  .demo {
+    width: 100%;
+  }
+}
+
+@media print {
+  .search {
+    display: none;
+  }
+}
