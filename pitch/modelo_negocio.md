@@ -14,12 +14,15 @@
 | Plan | Para quién | Precio | Qué incluye |
 |---|---|---|---|
 | Gratis | personas y ayuntamientos | 0 € | la búsqueda, la ficha de cada zona, «Qué falta» y el suelo público para vivienda (D-246). Todo está en producción |
-| Inversor | un inversor o un promotor | unos 99–199 €/mes | fichas de zona y de las parcelas del Portal del Suelo sin límite, la viabilidad de una operación, exportación a PDF y Excel, y avisos de suelo nuevo |
+| Inversor | un inversor o un promotor | unos 99–199 €/mes | lo que solo necesita quien invierte: la ficha de inversor de una zona y de las parcelas del Portal del Suelo, la viabilidad de una operación, exportación a PDF y Excel, y avisos de suelo nuevo |
 | Equipo | una promotora o un fondo con varias personas | unos 399 €/mes | lo del plan Inversor, con usuarios ilimitados, informes con su marca y carteras de parcelas |
 | Estudio a medida | quien quiere el trabajo hecho | 490–1.500 € | un estudio de zona, revisado a mano antes de entregarlo |
-| API y MCP para uso comercial | empresas de software y agentes de IA | a medida | lo que `03_pricing.md` llama «Enterprise/API» |
 
-**De los planes de pago, hoy solo existe la base:** las fichas de zona, «Qué falta» y el suelo público. No hay cuentas, ni cobro, ni viabilidad, ni exportación.
+**Lo de pago no recorta lo gratis.** Personas y ayuntamientos tienen la web entera, sin límites; los planes de pago añaden lo que solo usa quien invierte.
+
+**De los planes de pago, hoy no existe nada:** ni cuentas, ni cobro, ni ficha de inversor, ni viabilidad, ni exportación. Se apoyan en lo que ya es gratis: las fichas de zona, «Qué falta» y el suelo público.
+
+**Posible, sin decidir:** cobrar por la API y el MCP a empresas de software y agentes de IA, como «Enterprise/API» en `docs/06_business/03_pricing.md`. La decisión del 19 nov no dice nada de la API.
 
 **De dónde salen los precios:**
 - **Los del repo** (`docs/06_business/03_pricing.md`):
