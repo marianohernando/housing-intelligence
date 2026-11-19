@@ -15,6 +15,7 @@ const TEXT = {
   code: "Código abierto (Apache-2.0)",
   codeHref: "https://github.com/marianohernando/housing-intelligence",
   investors: "Para inversores y promotores", // inversores.enlace (D-248)
+  developers: "API y MCP gratis, para desarrolladores", // pie.desarrolladores (D-249)
   // For screen readers only: the links open in a new tab (review of PR #16)
   newTab: " (se abre en una pestaña nueva)",
 };
@@ -29,6 +30,11 @@ export default function SiteFooter() {
       <p className="no-print">
         <Link href="/inversores" className={styles.link}>
           {TEXT.investors}
+        </Link>
+      </p>
+      <p className="no-print">
+        <Link href="/desarrolladores" className={styles.link}>
+          {TEXT.developers}
         </Link>
       </p>
       <p>

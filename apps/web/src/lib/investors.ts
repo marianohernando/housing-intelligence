@@ -17,6 +17,7 @@ export const INVESTOR_TEXT = {
   pilot: "Piloto: los barrios de Madrid capital dentro de la M-40.",
   model:
     "Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro.",
+  developers: "¿Integrarlo en tu sistema? API y MCP gratis", // inversores.desarrolladores (D-249)
   listTitle: "Barrios del piloto",
   withLand: "Solo barrios con suelo público",
   loading: "Cargando los barrios…",

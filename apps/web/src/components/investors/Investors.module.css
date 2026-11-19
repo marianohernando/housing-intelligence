@@ -48,6 +48,14 @@
   font-size: var(--text-sm);
 }
 
+/* inversores.desarrolladores (D-249): the API and the MCP, as a 44 px target */
+.devLink a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+  color: var(--violet-strong);
+}
+
 .backLink a {
   display: inline-flex;
   align-items: center;
