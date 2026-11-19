@@ -26,6 +26,8 @@
         "kind": "APR",
         "norma_zonal": null,
         "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+        "use_class": "residencial",
+        "use_ownership": null,
         "urban_parcel": "MANZANA B",
         "instrument": {
           "figure": "MPR.02.391",
@@ -51,6 +53,16 @@
         "assumed_m2": null,
         "dataset_ids": [
           "ayto_edificabilidad_remanente_ambitos"
+        ],
+        "by_use": [
+          {
+            "use_class": "residencial",
+            "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+            "value_m2": 13121.0,
+            "source": "VEDA Madrid (Ayuntamiento de Madrid), julio de 2026: edificabilidad de la parcela",
+            "dataset_id": "ayto_edificabilidad_remanente_ambitos",
+            "residential": true
+          }
         ],
         "editable": true
       }
@@ -79,6 +91,8 @@
         "kind": "APR",
         "norma_zonal": null,
         "use": "SIN USO PORMENORIZADO",
+        "use_class": "sin_uso",
+        "use_ownership": null,
         "urban_parcel": "231123",
         "instrument": null,
         "sheet_url": null,
@@ -99,6 +113,16 @@
         "assumed_m2": null,
         "dataset_ids": [
           "cm_parcelas_portal_suelo"
+        ],
+        "by_use": [
+          {
+            "use_class": "residencial",
+            "use": "Residencial",
+            "value_m2": 32697.0,
+            "source": "Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela",
+            "dataset_id": "cm_parcelas_portal_suelo",
+            "residential": true
+          }
         ],
         "editable": true
       }
@@ -132,6 +156,8 @@
           "name": "Edificación en manzana cerrada"
         },
         "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+        "use_class": "residencial",
+        "use_ownership": null,
         "urban_parcel": "M03772_4",
         "instrument": null,
         "sheet_url": "https://transparencia.madrid.es/UnidadesDescentralizadas/UrbanismoyVivienda/Urbanismo/Transparencia/Planeamiento%20urban%C3%ADstico/PUInformacionPublica/Planeamiento/Ficheros/3.%20Refundido%20de%20las%20normas%20urban%C3%ADsticas.pdf#page=349",
@@ -151,6 +177,7 @@
         "note": "Pon tú los m² edificables.",
         "assumed_m2": null,
         "dataset_ids": [],
+        "by_use": [],
         "editable": true
       }
     },
@@ -197,6 +224,8 @@
           "name": "Protección del Patrimonio Histórico"
         },
         "use": "RESIDENCIAL VIVIENDA COLECTIVA",
+        "use_class": "residencial",
+        "use_ownership": null,
         "urban_parcel": "M08336",
         "instrument": null,
         "sheet_url": "https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150",
@@ -216,6 +245,7 @@
         "note": "Aproximado: la norma multiplica Z (plano de condiciones de la edificación de 1997) y C por el fondo edificable o la parcela edificable, no siempre por la parcela entera.",
         "assumed_m2": null,
         "dataset_ids": [],
+        "by_use": [],
         "editable": true
       }
     }

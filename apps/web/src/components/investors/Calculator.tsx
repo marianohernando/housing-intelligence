@@ -5,12 +5,17 @@ import { useEffect, useId, useMemo, useState } from "react";
 
 import type { AssumptionPart, LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 import type { ScenarioOutcome, ViabilityResponse } from "@/contracts/viability_response";
+import Button from "@/components/ui/Button";
 import { ApiError, createApi } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
 import { formatNumber } from "@/lib/format";
 import {
+  breakEvenFreeText,
+  breakEvenText,
+  breakEvenValue,
   type CalculatorFields,
   CALCULATOR_TEXT as TEXT,
+  costNowValue,
   defaultLand,
   initialFields,
   landArea,
@@ -47,16 +52,18 @@ interface FieldProps {
   mark?: SourcedValue["mark"] | "sin_dato";
   /** What is wrong with the value (out of range, not a whole number): said under the field */
   error?: string;
+  /** A data default used as an assumption (the PEM of the permits for the person's own works) */
+  assumed?: boolean;
 }
 
 /** A number the person can edit, with its unit, its mark (data, assumption or theirs) and its source. */
-function NumberField({ name, label, unit, fields, initial, onChange, source, help, mark: own, error }: FieldProps) {
+function NumberField({ name, label, unit, fields, initial, onChange, source, help, mark: own, error, assumed }: FieldProps) {
   const id = useId();
   const value = fields[name] as string;
   const edited = own === undefined && value !== initial[name];
   // A default without its data says so («Sin dato»), never «Dato»
   const unknown = !edited && own === undefined && source !== undefined && (source.value === null || source.value === undefined);
-  const mark = edited ? "usuario" : unknown ? "sin_dato" : (own ?? source?.mark ?? "usuario");
+  const mark = edited ? "usuario" : unknown ? "sin_dato" : (own ?? (assumed ? "supuesto" : source?.mark) ?? "usuario");
   const described = error ? `${id}-error ${id}-help` : `${id}-help`;
   return (
     <div className={styles.field}>
@@ -99,6 +106,22 @@ function PartsList({ title, parts }: { title: string; parts: AssumptionPart[] })
             </strong>{" "}
             {part.source}
           </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+/** What the construction cost counts and what it leaves out (D-252), from what viability.py models. */
+function CostScope({ parts }: { parts: AssumptionPart[] }) {
+  return (
+    <details className={styles.parts}>
+      <summary>{TEXT.costScopeTitle}</summary>
+      <p>{TEXT.costIncludes(parts.map((p) => `${p.label.charAt(0).toLowerCase()}${p.label.slice(1)}`))}</p>
+      <p>{TEXT.costExcludesTitle}</p>
+      <ul>
+        {TEXT.costExcludes.map((line) => (
+          <li key={line}>{line}</li>
         ))}
       </ul>
     </details>
@@ -156,6 +179,8 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
     `${money(scenario.residual_land_value)} (${formatNumber(Math.round(scenario.residual_land_value_m2), 0)} €/m² edificable)`,
   ]);
   // Never without land: with the price given, or without one at the residual land value
+  if (scenario.break_even) rows.push([TEXT.breakEvenRow, breakEvenValue(scenario.break_even)]);
+  if (scenario.break_even_free_land) rows.push([TEXT.breakEvenFreeRow, breakEvenValue(scenario.break_even_free_land)]);
   if (scenario.rental_yield_pct !== null && scenario.rental_yield_pct !== undefined) {
     rows.push([scenario.yield_land === "valor_residual" ? TEXT.yieldResidual : TEXT.yield, percent(scenario.rental_yield_pct)]);
   } else if (scenario.annual_rent !== null && scenario.annual_rent !== undefined) {
@@ -183,7 +208,24 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
   );
 }
 
-function Results({ result }: { result: ViabilityResponse["data"] }) {
+/** The base scenario's break-even, and the construction cost the scenarios count now. */
+function BreakEvenBlock({ scenario, costMark }: { scenario: ScenarioOutcome; costMark: "supuesto" | "usuario" }) {
+  const be = scenario.break_even;
+  if (!be) return null;
+  return (
+    <section aria-labelledby="equilibrio" className={styles.demand}>
+      <h4 id="equilibrio">{TEXT.breakEvenTitle}</h4>
+      <p>{breakEvenText(be)}</p>
+      {scenario.break_even_free_land && <p>{breakEvenFreeText(scenario.break_even_free_land)}</p>}
+      <p>
+        <MarkTag mark={costMark} /> {TEXT.costNow}: {costNowValue(be)}.
+      </p>
+    </section>
+  );
+}
+
+function Results({ result, costMark }: { result: ViabilityResponse["data"]; costMark: "supuesto" | "usuario" }) {
+  const base = result.scenarios.find((s) => s.key === "base") ?? result.scenarios[0];
   return (
     <>
       <p className={styles.lead}>
@@ -194,6 +236,7 @@ function Results({ result }: { result: ViabilityResponse["data"] }) {
           <ScenarioCard key={scenario.key} scenario={scenario} />
         ))}
       </div>
+      {base && <BreakEvenBlock scenario={base} costMark={costMark} />}
       <p className={styles.thresholds}>{TEXT.thresholds}</p>
       {result.demand && (
         <section aria-labelledby="demanda-check" className={styles.demand}>
@@ -278,6 +321,11 @@ export default function Calculator({ defaults, parcels, remaining, parcel, metho
   const caution = landCaution(chosenItem);
   const ready = missing.length === 0 && !invalid;
   const common = { fields, initial, onChange: set };
+  const costEdited = fields.pem_m2 !== initial.pem_m2 || fields.cost_coefficient !== initial.cost_coefficient;
+  const costsEdited = costEdited || fields.sales_costs_pct !== initial.sales_costs_pct;
+  const resetCosts = () =>
+    setFields((f) => ({ ...f, pem_m2: initial.pem_m2, cost_coefficient: initial.cost_coefficient, sales_costs_pct: initial.sales_costs_pct }));
+  const pemKnown = defaults.pem_m2.value !== null && defaults.pem_m2.value !== undefined;
   const err = (name: keyof CalculatorFields) => ({ error: errors[name] });
 
   return (
@@ -308,15 +356,30 @@ export default function Calculator({ defaults, parcels, remaining, parcel, metho
         </fieldset>
         <fieldset className={styles.group}>
           <legend>{TEXT.groupCosts}</legend>
-          <NumberField name="pem_m2" label={TEXT.pem} unit="€/m²" source={defaults.pem_m2} {...common} {...err("pem_m2")} />
+          <NumberField
+            name="pem_m2"
+            label={TEXT.pem}
+            unit="€/m²"
+            source={defaults.pem_m2}
+            {...common}
+            {...err("pem_m2")}
+            assumed={pemKnown}
+            help={pemKnown ? TEXT.pemAssumed(withoutMark(defaults.pem_m2.source.text)) : undefined}
+          />
           <p className={styles.caution}>
             <Info size={18} aria-hidden="true" />
             <span>{TEXT.costCaution}</span>
           </p>
+          <CostScope parts={defaults.cost_parts} />
           <NumberField name="cost_coefficient" label={TEXT.coefficient} unit="×" source={defaults.cost_coefficient} {...common} {...err("cost_coefficient")} />
           <PartsList title={TEXT.coefficientParts} parts={defaults.cost_parts} />
           <NumberField name="sales_costs_pct" label={TEXT.salesCostsField} unit="% de las ventas" source={defaults.sales_costs_pct} {...common} {...err("sales_costs_pct")} />
           <PartsList title={TEXT.salesParts} parts={defaults.sales_cost_parts} />
+          {costsEdited && (
+            <Button variant="secondary" onClick={resetCosts}>
+              {TEXT.costReset}
+            </Button>
+          )}
           <NumberField name="land" label={TEXT.landField} unit={fields.land_unit === "m2" ? "€/m² edificable" : "€ en total"} {...common} {...err("land")} help={TEXT.landHelp} />
           <label className={styles.selectRow}>
             <span>{TEXT.landUnit}</span>
@@ -346,7 +409,7 @@ export default function Calculator({ defaults, parcels, remaining, parcel, metho
           {missing.length === 0 && invalid && <p className={styles.lead}>{TEXT.invalid}</p>}
           {ready && state.error && <p role="alert">{errorMessage(state.error)}</p>}
           {ready && !state.error && !state.result && <p>{TEXT.calculating}</p>}
-          {ready && state.result && <Results result={state.result} />}
+          {ready && state.result && <Results result={state.result} costMark={costEdited ? "usuario" : "supuesto"} />}
         </div>
       </section>
       {methodLink && <MethodLink />}

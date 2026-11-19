@@ -25,7 +25,7 @@ Defaults that are not data carry the mark «supuesto» and where they come from;
 the data (price, rent, premium, PEM, buildable m², income) with their datasets.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import StrEnum
 
 from hi_domain.gaps import es_number
@@ -184,6 +184,25 @@ class ViabilityInputs:
 
 
 @dataclass(frozen=True)
+class BreakEven:
+    """D-252: the most the construction can cost per built m² (the PEM times the coefficient,
+    before the scenario's cost factor) for the operation to keep the target margin, everything
+    else as given; and the same as a PEM with the coefficient given, or as a coefficient on the
+    PEM given. Without a land price it is the construction cost with free land: each euro under
+    it is a euro the land can cost."""
+
+    construction_m2: float
+    pem_m2: float
+    coefficient: float
+    current_construction_m2: float
+    land_counted: bool
+
+    @property
+    def reachable(self) -> bool:
+        return self.construction_m2 > 0
+
+
+@dataclass(frozen=True)
 class ScenarioResult:
     scenario: Scenario
     revenue: float
@@ -202,6 +221,9 @@ class ScenarioResult:
     yield_land: YieldLand | None
     verdict: Verdict | None  # only with a land price
     headline: str  # the verdict in words, or without land the residual land value
+    break_even: BreakEven | None = None
+    # Only with a land price: the same as if the land were free
+    break_even_free_land: BreakEven | None = None
 
 
 @dataclass(frozen=True)
@@ -286,6 +308,28 @@ def residual_headline(
     )
 
 
+def break_even(inputs: ViabilityInputs, scenario: Scenario = SCENARIOS[0]) -> BreakEven:
+    """How much the construction may cost for the operation to keep the target margin:
+
+        I (1 − m*) − g·I − S ≥ A · c · fc   ⇔   c ≤ (I (1 − m*) − g·I − S) / (A · fc)
+
+    with I the scenario's revenue, S the land price (0 without one) and c the construction per
+    built m² as the person gives it (PEM × coefficient). Same model as run_scenario."""
+    area = inputs.buildable_m2
+    revenue = area * sale_price_with_premium(inputs) * scenario.price_factor
+    sales = inputs.sales_costs_share * revenue
+    land = inputs.land_eur or 0.0
+    room = revenue * (1 - inputs.target_margin) - sales - land
+    construction_m2 = room / (area * scenario.cost_factor)
+    return BreakEven(
+        construction_m2=construction_m2,
+        pem_m2=construction_m2 / inputs.cost_coefficient,
+        coefficient=construction_m2 / inputs.pem_m2,
+        current_construction_m2=inputs.pem_m2 * inputs.cost_coefficient,
+        land_counted=inputs.land_eur is not None,
+    )
+
+
 def run_scenario(inputs: ViabilityInputs, scenario: Scenario) -> ScenarioResult:
     area = inputs.buildable_m2
     revenue = area * sale_price_with_premium(inputs) * scenario.price_factor
@@ -321,6 +365,10 @@ def run_scenario(inputs: ViabilityInputs, scenario: Scenario) -> ScenarioResult:
         yield_land=yield_land,
         verdict=verdict,
         headline=text,
+        break_even=break_even(inputs, scenario),
+        break_even_free_land=None
+        if land is None
+        else break_even(replace(inputs, land_eur=None), scenario),
     )
 
 

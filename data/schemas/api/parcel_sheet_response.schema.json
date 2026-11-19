@@ -80,6 +80,14 @@
           "description": "The norm's assumption when an official figure wins",
           "title": "Assumed M2"
         },
+        "by_use": {
+          "description": "D-252: every official figure of the parcel with its use and source",
+          "items": {
+            "$ref": "#/$defs/UseFigure"
+          },
+          "title": "By Use",
+          "type": "array"
+        },
         "coefficient": {
           "anyOf": [
             {
@@ -1669,6 +1677,30 @@
           ],
           "title": "Use"
         },
+        "use_class": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseClass"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the use, classified"
+        },
+        "use_ownership": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UseOwnership"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: dotacional público or privado, when the plan says it"
+        },
         "viewer_url": {
           "description": "The Geoportal viewer, centred on the parcel",
           "format": "uri",
@@ -1956,6 +1988,74 @@
       ],
       "title": "UnitUse",
       "type": "object"
+    },
+    "UseClass": {
+      "description": "D-252: a use as the person reads it, from the planning's or a source's words.",
+      "enum": [
+        "residencial",
+        "terciario",
+        "industrial",
+        "dotacional",
+        "zona_verde",
+        "infraestructura",
+        "sin_uso",
+        "otro"
+      ],
+      "title": "UseClass",
+      "type": "string"
+    },
+    "UseFigure": {
+      "additionalProperties": false,
+      "description": "One source's buildable m² for a parcel, with the use that source gives it. A source that\ngives one figure is never split by use.",
+      "properties": {
+        "dataset_id": {
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "residential": {
+          "description": "Whether the calculator can use it (housing only)",
+          "title": "Residential",
+          "type": "boolean"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "use": {
+          "description": "As the source writes it",
+          "examples": [
+            "INDUSTRIAL"
+          ],
+          "title": "Use",
+          "type": "string"
+        },
+        "use_class": {
+          "$ref": "#/$defs/UseClass"
+        },
+        "value_m2": {
+          "minimum": 0,
+          "title": "Value M2",
+          "type": "number"
+        }
+      },
+      "required": [
+        "use_class",
+        "use",
+        "value_m2",
+        "source",
+        "dataset_id",
+        "residential"
+      ],
+      "title": "UseFigure",
+      "type": "object"
+    },
+    "UseOwnership": {
+      "enum": [
+        "publico",
+        "privado"
+      ],
+      "title": "UseOwnership",
+      "type": "string"
     },
     "ValueMark": {
       "enum": [

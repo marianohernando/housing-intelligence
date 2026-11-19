@@ -14,13 +14,17 @@ import {
   areaText,
   buildabilityMark,
   buildableText,
+  byUseSource,
+  byUseText,
   degradedLines,
   divisionText,
   instrumentText,
   LOOKUP_ERROR,
+  otherPlanningUse,
   qualificationText,
   sentence,
   SHEET_TEXT as TEXT,
+  landUseNote,
   vacantText,
 } from "@/lib/parcels";
 
@@ -108,7 +112,9 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
         <Fact label={TEXT.qualification} note={planning.norma_zonal?.name ?? null}>
           {qualificationText(planning)}
         </Fact>
-        <Fact label={TEXT.planningUse}>{sentence(planning.use) ?? "Sin dato"}</Fact>
+        <Fact label={TEXT.planningUse} note={landUseNote(planning)}>
+          {sentence(planning.use) ?? "Sin dato"}
+        </Fact>
         {planning.urban_parcel && <Fact label={TEXT.urbanParcel}>{planning.urban_parcel}</Fact>}
         {instrument && <Fact label={TEXT.instrument}>{instrument}</Fact>}
       </dl>
@@ -129,9 +135,30 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
   );
 }
 
+/** Each source's figure with the use it gives (D-252): never split, never added up. */
+function ByUse({ figures }: { figures: Sheet["buildability"]["by_use"] }) {
+  if (!figures || figures.length === 0) return <p className={styles.note}>{TEXT.byUseNone}</p>;
+  return (
+    <>
+      <h3 className={styles.subhead}>{TEXT.byUseTitle}</h3>
+      <ul className={styles.landList}>
+        {figures.map((f) => (
+          <li key={`${f.dataset_id}-${f.use}`}>
+            <strong>{byUseText(f)}</strong>
+            <span className={styles.note}>{byUseSource(f)}</span>
+            {!f.residential && <span className={styles.note}>{TEXT.notHousing}</span>}
+          </li>
+        ))}
+      </ul>
+      <p className={styles.note}>{TEXT.byUseNote}</p>
+    </>
+  );
+}
+
 function BuildabilitySection({ sheet }: { sheet: Sheet }) {
   const b = sheet.buildability;
   const built = sheet.parcel.built_m2;
+  const otherUse = b.kind === "supuesto" ? otherPlanningUse(sheet.planning) : null;
   return (
     <Section id="edificabilidad" title={TEXT.sections.buildability}>
       <dl className={styles.figures}>
@@ -152,7 +179,16 @@ function BuildabilitySection({ sheet }: { sheet: Sheet }) {
         )}
       </dl>
       {b.article && b.article_url && <External href={b.article_url}>{TEXT.article(b.article)}</External>}
-      <p className={styles.note}>{TEXT.buildableEditable}</p>
+      {otherUse && (
+        <p className={styles.caution}>
+          <Info size={18} aria-hidden="true" />
+          <span>{TEXT.assumedOtherUse(otherUse)}</span>
+        </p>
+      )}
+      <ByUse figures={b.by_use} />
+      <p className={styles.note}>
+        {TEXT.housingOnly} {TEXT.buildableEditable}
+      </p>
       <MethodLink />
     </Section>
   );

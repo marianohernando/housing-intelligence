@@ -6,6 +6,11 @@ import { describe, expect, it } from "vitest";
 import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 
 import {
+  breakEvenFreeText,
+  breakEvenText,
+  breakEvenValue,
+  CALCULATOR_TEXT,
+  costNowValue,
   adminUnitId,
   areaFacts,
   defaultLand,
@@ -232,5 +237,37 @@ describe("the calculator", () => {
     expect(missingFields(fields)).toEqual(["buildable_m2"]);
     expect(viabilityRequest(fields)).toBeNull();
     expect(viabilityRequest({ ...fields, buildable_m2: "0" })).toBeNull();
+  });
+});
+
+describe("the cost and its break-even (D-252)", () => {
+  const free = { construction_m2: 2800, pem_m2: 1866.67, coefficient: 4.6667, current_construction_m2: 875.84, land_counted: false, reachable: true };
+
+  it("says up to what construction cost the target margin holds, as PEM and as coefficient", () => {
+    expect(breakEvenText(free)).toBe(
+      "Sin pagar nada por el suelo, la promoción llega al margen objetivo mientras la construcción cueste menos de 2.800 €/m² construido (PEM × coeficiente). Es un PEM de hasta 1.867 €/m² con tu coeficiente, o un coeficiente de hasta 4,67 sobre tu PEM.",
+    );
+    const withLand = { ...free, construction_m2: 600, pem_m2: 400, coefficient: 1, land_counted: true };
+    expect(breakEvenText(withLand)).toMatch(/^Con el precio del suelo que has puesto, la promoción llega al margen objetivo mientras la construcción cueste menos de 600 €\/m² construido/);
+    expect(breakEvenFreeText(free)).toBe("Con el suelo gratis, hasta 2.800 €/m² construido.");
+    expect(costNowValue(free)).toBe("876 €/m² construido (PEM × coeficiente)");
+  });
+
+  it("says when not even free construction reaches the target margin", () => {
+    const none = { ...free, construction_m2: -1200, land_counted: true, reachable: false };
+    expect(breakEvenValue(none)).toBe("Ni gratis");
+    expect(breakEvenText(none)).toBe("Con el precio del suelo que has puesto, ni con la construcción gratis llega la promoción al margen objetivo.");
+    expect(breakEvenFreeText({ ...none, land_counted: false })).toBe("Ni con el suelo gratis llega al margen objetivo.");
+  });
+
+  it("says what the cost counts and what it leaves out, and that the calculator is for housing", () => {
+    expect(CALCULATOR_TEXT.intro).toMatch(/^Calcula solo vivienda/);
+    expect(CALCULATOR_TEXT.costIncludes(["honorarios"])).toContain("con el coeficiente, honorarios.");
+    for (const left of ["El suelo", "La urbanización", "El derribo", "Los sótanos", "La financiación", "El IVA", "imprevistos"]) {
+      expect(CALCULATOR_TEXT.costExcludes.some((line) => line.includes(left))).toBe(true);
+    }
+    expect(CALCULATOR_TEXT.pemAssumed("Visados de obra nueva (2025).")).toBe(
+      "Visados de obra nueva (2025). Es un dato oficial; usarlo como el coste de tu obra es un supuesto: el de tu obra puede ser otro.",
+    );
   });
 });

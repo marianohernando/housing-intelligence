@@ -217,6 +217,8 @@ def test_a_parcel_with_its_planning_and_an_assumed_buildability() -> None:
     assert sheet.planning is not None
     assert sheet.planning.code == "8.3.a" and sheet.planning.kind.value == "norma_zonal"
     assert sheet.planning.use == "RESIDENCIAL VIVIENDA UNIFAMILIAR"
+    assert sheet.planning.use_class is not None and sheet.planning.use_class.value == "residencial"
+    assert sheet.planning.use_ownership is None
     assert sheet.planning.sheet_label == "Artículo 8.8.9 de las Normas Urbanísticas"
     assert sheet.planning.norma_zonal is not None
     assert sheet.planning.norma_zonal.name == "Edificación en vivienda unifamiliar"
@@ -224,6 +226,7 @@ def test_a_parcel_with_its_planning_and_an_assumed_buildability() -> None:
     built = sheet.buildability
     assert built.kind.value == "supuesto" and built.value_m2 == pytest.approx(350)
     assert built.article == "8.8.9" and built.editable is True
+    assert built.by_use == []  # no source publishes this parcel's figure
     # Without a database: no barrio, and it says so; the calculator still has its assumptions
     assert sheet.context is None and sheet.degraded == ["context"]
     assert "SOURCE_DEGRADED: context" in body.warnings
@@ -733,6 +736,18 @@ def test_the_demo_sheets_are_our_fields_for_the_four_parcels() -> None:
     divided = snapshot.parcels[3].parcel
     assert divided.horizontal_division and divided.units is not None
     assert all(set(u.model_dump()) == {"use", "count", "built_m2"} for u in divided.units.by_use)
+
+
+def test_the_demo_sheets_give_each_source_figure_with_its_own_use() -> None:
+    veda, portal, *assumed = parcel_sheet.demo_snapshot().parcels
+    assert [(f.use_class.value, f.value_m2, f.residential) for f in veda.buildability.by_use] == [
+        ("residencial", 13121.0, True)
+    ]
+    # The plan says «sin uso pormenorizado»; the Portal del Suelo publishes it as housing
+    assert portal.planning is not None and portal.planning.use_class is not None
+    assert portal.planning.use_class.value == "sin_uso"
+    assert [f.use for f in portal.buildability.by_use] == ["Residencial"]
+    assert all(d.buildability.by_use == [] for d in assumed)
 
 
 # --- Review of #101 (R-01 to R-09) ---

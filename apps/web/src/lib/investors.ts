@@ -6,7 +6,7 @@
 import type { InvestorZoneSummary } from "@/contracts/investor_zone_list_response";
 import type { DatasetRef, LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 import type { ViabilityRequest } from "@/contracts/viability_request";
-import type { Verdict } from "@/contracts/viability_response";
+import type { BreakEven, Verdict } from "@/contracts/viability_response";
 import { formatEuros, formatNumber } from "@/lib/format";
 
 export const INVESTOR_TEXT = {
@@ -383,7 +383,7 @@ export function gapsLine(zone: { gaps?: InvestorZoneSummary["gaps"]; district: {
 /** inversores.calculadora.* of pitch/textos_web.md */
 export const CALCULATOR_TEXT = {
   intro:
-    "Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar: cada cifra dice si es un dato, un supuesto nuestro o lo has puesto tú. Los m² son construidos, como los del precio y los del coste.",
+    "Calcula solo vivienda, con los precios y alquileres de vivienda del barrio: no oficinas, locales ni naves. Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar: cada cifra dice si es un dato, un supuesto nuestro o lo has puesto tú. Los m² son construidos, como los del precio y los del coste.",
   landPick: "¿Sobre qué suelo?",
   parcel: "Parcela pública",
   area: "Ámbito con edificabilidad",
@@ -424,6 +424,27 @@ export const CALCULATOR_TEXT = {
     "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale. La rentabilidad del alquiler cuenta el suelo a ese valor máximo, así que sale igual en los tres escenarios: compara el alquiler con el precio de venta.",
   thresholds:
     "Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %.",
+  pemAssumed: (source: string) =>
+    `${source.replace(/\.$/, "")}. Es un dato oficial; usarlo como el coste de tu obra es un supuesto: el de tu obra puede ser otro.`,
+  costReset: "Volver a nuestros supuestos de coste",
+  costScopeTitle: "Qué incluye el coste y qué no",
+  costIncludes: (parts: string[]) =>
+    `Incluye la obra en sí (el PEM: materiales, mano de obra, maquinaria e instalaciones) y, con el coeficiente, ${parts.join("; ")}. Los gastos de la venta van aparte, en «Comercialización y otros gastos».`,
+  costExcludesTitle: "No incluye:",
+  costExcludes: [
+    "El suelo: va aparte, en «Precio del suelo». Si quieres contar lo que cuesta comprarlo (impuestos, notaría), súmalo ahí.",
+    "La urbanización ni las cargas del ámbito (cesiones, cuotas de la junta de compensación), si las tiene.",
+    "El derribo de lo que haya construido ni la limpieza del suelo.",
+    "Los sótanos y garajes: el coste por m² se multiplica solo por la superficie edificable sobre rasante.",
+    "La financiación (intereses y comisiones del préstamo) ni los plazos de la obra y de la venta.",
+    "El IVA, que el PEM nunca lleva, ni los impuestos sobre el beneficio.",
+    "Un colchón para imprevistos.",
+  ],
+  breakEvenTitle: "Hasta cuánto puede costar la construcción",
+  breakEvenRow: "Construcción máxima para el margen objetivo",
+  breakEvenFreeRow: "Lo mismo, con el suelo gratis",
+  breakEvenNone: "Ni gratis",
+  costNow: "Coste de construcción que usamos ahora",
   costCaution:
     "Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente. Además, el PEM del visado se reparte entre toda la superficie a construir (probablemente con sótanos y garajes) y aquí se multiplica solo por la edificable sobre rasante.",
   revenue: "Ingresos por ventas",
@@ -440,6 +461,32 @@ export const CALCULATOR_TEXT = {
   invalid: "Revisa los campos marcados: hay alguno fuera de su rango.",
   demandTitle: "¿Lo pueden pagar los hogares del barrio?",
 } as const;
+
+const eurM2 = (value: number) => `${formatNumber(Math.round(value), 0)} €/m²`;
+
+/** «2.800 €/m² construido», or «Ni gratis» when not even free construction keeps the margin. */
+export function breakEvenValue(be: BreakEven): string {
+  return be.reachable ? `${eurM2(be.construction_m2)} construido` : CALCULATOR_TEXT.breakEvenNone;
+}
+
+/** The break-even (D-252) in words: up to what construction cost the target margin holds. */
+export function breakEvenText(be: BreakEven): string {
+  const land = be.land_counted ? "Con el precio del suelo que has puesto" : "Sin pagar nada por el suelo";
+  if (!be.reachable) return `${land}, ni con la construcción gratis llega la promoción al margen objetivo.`;
+  return `${land}, la promoción llega al margen objetivo mientras la construcción cueste menos de ${breakEvenValue(be)} (PEM × coeficiente). Es un PEM de hasta ${eurM2(be.pem_m2)} con tu coeficiente, o un coeficiente de hasta ${formatNumber(be.coefficient, 2)} sobre tu PEM.`;
+}
+
+/** The same with free land, when a land price is given. */
+export function breakEvenFreeText(be: BreakEven): string {
+  return be.reachable
+    ? `Con el suelo gratis, hasta ${breakEvenValue(be)}.`
+    : "Ni con el suelo gratis llega al margen objetivo.";
+}
+
+/** «876 €/m² construido (PEM × coeficiente)»: what the scenarios count now. */
+export function costNowValue(be: BreakEven): string {
+  return `${eurM2(be.current_construction_m2)} construido (PEM × coeficiente)`;
+}
 
 /** inversores.ficha.* of pitch/textos_web.md */
 export const SHEET_TEXT = {

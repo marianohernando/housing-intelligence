@@ -16,7 +16,7 @@ import unicodedata
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 
-from hi_contracts.pro.investors import BuildabilityKind, PlanningKind
+from hi_contracts.pro.investors import BuildabilityKind, PlanningKind, UseClass, UseOwnership
 from hi_domain.gaps import es_number
 from hi_domain.geo.bounds import BBox
 from hi_domain.geo.names import LOWER_PARTICLES, title_case
@@ -295,6 +295,58 @@ def parse_address(text: str) -> TypedAddress | None:
     return TypedAddress(street_type or "CL", " ".join(words).upper(), number)
 
 
+# --- Uses (D-252) ---
+
+# The first words of a use, as the planning layer (USOS_SUELO, `USP_TX_DENOM`), VEDA
+# (`TIPO_SUELO`) or the Portal del Suelo (`uso_principal_codigo` in words) write it. Checked
+# against the 137 values of the planning layer read on 19 Nov (VEDA writes «INDUSTRIA …» too).
+_USE_PREFIXES: tuple[tuple[str, UseClass], ...] = (
+    ("residencial", UseClass.RESIDENCIAL),
+    ("servicios terciario", UseClass.TERCIARIO),  # also «SERVICIOS TERCIARIO OFICINAS» (VEDA)
+    ("terciario", UseClass.TERCIARIO),
+    ("industria", UseClass.INDUSTRIAL),
+    ("dotacional zonas verdes", UseClass.ZONA_VERDE),
+    ("dotacional via publica", UseClass.INFRAESTRUCTURA),
+    ("dotacional transporte", UseClass.INFRAESTRUCTURA),
+    ("dotacional servicios infraestructurales", UseClass.INFRAESTRUCTURA),
+    ("dotacional", UseClass.DOTACIONAL),
+    ("sin uso", UseClass.SIN_USO),
+)
+_OWNED_CLASSES = frozenset({UseClass.DOTACIONAL, UseClass.ZONA_VERDE, UseClass.INFRAESTRUCTURA})
+
+
+def classify_use(use: str | None) -> tuple[UseClass | None, UseOwnership | None]:
+    """A use's class, and whether a dotacional use is public or private when the words say it
+    («DOTACIONAL EQUIPAMIENTO PRIVADO EDUCATIVO»: dotacional, privado). Housing «de protección
+    pública» is a price regime, not public ownership: no owner. None for no use; «otro» for words
+    of no known class (the Portal del Suelo's «Otros», a mixed use)."""
+    if not use or not use.strip():
+        return None, None
+    words = " ".join(fold(use).split())
+    kind = next((k for prefix, k in _USE_PREFIXES if words.startswith(prefix)), UseClass.OTRO)
+    if kind not in _OWNED_CLASSES:
+        return kind, None
+    tokens = set(words.split())
+    owner = None
+    if "privado" in tokens:
+        owner = UseOwnership.PRIVADO
+    elif "publico" in tokens or "administracion publica" in words:
+        owner = UseOwnership.PUBLICO
+    return kind, owner
+
+
+@dataclass(frozen=True)
+class UseFigureResult:
+    """One source's figure for the parcel with the use it gives (never split by use)."""
+
+    use_class: UseClass
+    use: str
+    value_m2: float
+    source: str
+    dataset_id: str
+    residential: bool
+
+
 # --- Buildability ---
 
 
@@ -309,7 +361,18 @@ class OfficialFigure:
 
     @property
     def residential(self) -> bool:
-        return self.use is None or fold(self.use).startswith("residencial")
+        return self.use is None or classify_use(self.use)[0] is UseClass.RESIDENCIAL
+
+    def by_use(self) -> UseFigureResult:
+        kind, _ = classify_use(self.use)
+        return UseFigureResult(
+            use_class=kind or UseClass.RESIDENCIAL,
+            use=self.use or "Residencial",
+            value_m2=self.value_m2,
+            source=self.source,
+            dataset_id=self.dataset_id,
+            residential=self.residential,
+        )
 
 
 @dataclass(frozen=True)
@@ -324,6 +387,7 @@ class BuildabilityResult:
     note: str | None = None
     assumed_m2: float | None = None
     dataset_ids: tuple[str, ...] = ()
+    by_use: tuple[UseFigureResult, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -426,6 +490,7 @@ def initial_buildability(
     """
     official = list(official)
     residential = [f for f in official if f.residential]
+    by_use = tuple(f.by_use() for f in official)
     kind, zone = classify_planning(planning_code) if planning_code else (None, None)
     assumption, reason = None, None
     if zone is not None and area_m2:
@@ -448,6 +513,7 @@ def initial_buildability(
             note=note,
             assumed_m2=None if assumption is None else round(assumption.value_m2, 1),
             dataset_ids=tuple(f.dataset_id for f in official),
+            by_use=by_use,
         )
     if official:  # only of other uses: a reference, never the calculator's start for housing
         first = official[0]
@@ -458,6 +524,7 @@ def initial_buildability(
             f"{fold(first.use or 'no residencial')}, no residencial.",
             note=OTHER_USE,
             dataset_ids=tuple(f.dataset_id for f in official),
+            by_use=by_use,
         )
     if rustic:
         return BuildabilityResult(None, BuildabilityKind.SIN_DATO, RUSTIC, note=TYPE_IT)

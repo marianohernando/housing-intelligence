@@ -80,6 +80,7 @@ from hi_contracts.pro.investors import (
     PlanningBlock,
     PlanningInstrument,
     UnitUse,
+    UseFigure,
 )
 from hi_contracts.public import ZoneRef
 from hi_domain import parcel_data as pd
@@ -88,6 +89,7 @@ from hi_domain.parcels import (
     LOOKUP_BUDGET_S,
     OfficialFigure,
     classify_planning,
+    classify_use,
     in_madrid_bbox,
     initial_buildability,
     normalize_rc,
@@ -513,6 +515,7 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         sheet_url = article.url
         sheet_label = f"Artículo {article.number} de las Normas Urbanísticas"
     has_instrument = any((record.figure, record.instrument_name, record.file_number))
+    use_class, use_ownership = classify_use(record.use)
     return PlanningBlock(
         code=record.code,
         name=record.name,
@@ -521,6 +524,8 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         if zone is None
         else NormaZonal(nz=zone.nz, grado=zone.grado, nivel=zone.nivel, name=RULES[zone.nz].name),
         use=record.use,
+        use_class=use_class,
+        use_ownership=use_ownership,
         urban_parcel=" · ".join(p for p in (record.urban_parcel, record.zone_name) if p) or None,
         instrument=PlanningInstrument(
             figure=record.figure,
@@ -569,6 +574,17 @@ def buildability(
         note=result.note,
         assumed_m2=result.assumed_m2,
         dataset_ids=list(result.dataset_ids),
+        by_use=[
+            UseFigure(
+                use_class=f.use_class,
+                use=f.use,
+                value_m2=f.value_m2,
+                source=f.source,
+                dataset_id=f.dataset_id,
+                residential=f.residential,
+            )
+            for f in result.by_use
+        ],
     )
 
 

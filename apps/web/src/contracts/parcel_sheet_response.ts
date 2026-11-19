@@ -33,6 +33,33 @@ export type ArticleUrl = string | null;
  * The norm's assumption when an official figure wins
  */
 export type AssumedM2 = number | null;
+export type DatasetId = string;
+/**
+ * Whether the calculator can use it (housing only)
+ */
+export type Residential = boolean;
+export type Source = string;
+/**
+ * As the source writes it
+ */
+export type Use = string;
+/**
+ * D-252: a use as the person reads it, from the planning's or a source's words.
+ */
+export type UseClass =
+  | "residencial"
+  | "terciario"
+  | "industrial"
+  | "dotacional"
+  | "zona_verde"
+  | "infraestructura"
+  | "sin_uso"
+  | "otro";
+export type ValueM2 = number;
+/**
+ * D-252: every official figure of the parcel with its use and source
+ */
+export type ByUse = UseFigure[];
 /**
  * m² per m² of parcel
  */
@@ -48,15 +75,15 @@ export type Note = string | null;
 /**
  * In words, with its date or its article
  */
-export type Source = string;
-export type ValueM2 = number | null;
+export type Source1 = string;
+export type ValueM21 = number | null;
 export type InPilot = boolean;
 export type Note1 = string | null;
 /**
  * What the licence asks to show next to the data (source, date, geocoder)
  */
 export type AttributionText = string | null;
-export type DatasetId = string;
+export type DatasetId1 = string;
 /**
  * Published in the Comunidad de Madrid open data portal (counts for DATAMAD)
  */
@@ -110,7 +137,7 @@ export type Value = number | null;
 export type Key = string;
 export type Label = string;
 export type Pct = number;
-export type Source1 = string;
+export type Source2 = string;
 export type CostParts = AssumptionPart[];
 export type SalesCostParts = AssumptionPart[];
 export type Commerce = SourcedValue[];
@@ -218,7 +245,7 @@ export type Url2 = string | null;
 /**
  * Line A's planning areas: their use, as the source writes it
  */
-export type Use = string | null;
+export type Use1 = string | null;
 export type Parcels = LandItem[];
 export type Remaining = LandItem[];
 export type Notices = string[];
@@ -268,8 +295,8 @@ export type Rc14 = string;
 export type Rustic = boolean | null;
 export type BuiltM21 = number | null;
 export type Count1 = number;
-export type Use1 = string;
-export type ByUse = UnitUse[];
+export type Use2 = string;
+export type ByUse1 = UnitUse[];
 export type Total = number;
 export type YearBuilt = number | null;
 export type Code2 = string;
@@ -298,7 +325,8 @@ export type SheetLabel = string | null;
  */
 export type SheetUrl = string | null;
 export type UrbanParcel = string | null;
-export type Use2 = string | null;
+export type Use3 = string | null;
+export type UseOwnership = "publico" | "privado";
 /**
  * The Geoportal viewer, centred on the parcel
  */
@@ -371,13 +399,26 @@ export interface Buildability {
   article?: Article;
   article_url?: ArticleUrl;
   assumed_m2?: AssumedM2;
+  by_use?: ByUse;
   coefficient?: Coefficient;
   dataset_ids?: DatasetIds;
   editable?: Editable;
   formula?: Formula;
   kind: BuildabilityKind;
   note?: Note;
+  source: Source1;
+  value_m2: ValueM21;
+}
+/**
+ * One source's buildable m² for a parcel, with the use that source gives it. A source that
+ * gives one figure is never split by use.
+ */
+export interface UseFigure {
+  dataset_id: DatasetId;
+  residential: Residential;
   source: Source;
+  use: Use;
+  use_class: UseClass;
   value_m2: ValueM2;
 }
 /**
@@ -409,7 +450,7 @@ export interface InvestorZone {
  */
 export interface DatasetRef {
   attribution_text?: AttributionText;
-  dataset_id: DatasetId;
+  dataset_id: DatasetId1;
   is_cm_open_data: IsCmOpenData;
   license?: License;
   name: Name1;
@@ -476,7 +517,7 @@ export interface AssumptionPart {
   key: Key;
   label: Label;
   pct: Pct;
-  source: Source1;
+  source: Source2;
 }
 /**
  * Who lives there. Each figure at the finest level published (its `source.level`).
@@ -580,7 +621,7 @@ export interface LandItem {
   regime?: Regime;
   stage?: Stage;
   url?: Url2;
-  use?: Use;
+  use?: Use1;
 }
 export interface PricesBlock {
   new_build_premium_pct: SourcedValue;
@@ -616,7 +657,7 @@ export interface ParcelBlock {
  * A building in horizontal division, summarised: units by use (no list of units).
  */
 export interface ParcelUnits {
-  by_use: ByUse;
+  by_use: ByUse1;
   total: Total;
 }
 /**
@@ -625,7 +666,7 @@ export interface ParcelUnits {
 export interface UnitUse {
   built_m2: BuiltM21;
   count: Count1;
-  use: Use1;
+  use: Use2;
 }
 /**
  * «Planeamiento»: the Ayuntamiento's planning at the parcel's reference point.
@@ -641,7 +682,15 @@ export interface PlanningBlock {
   sheet_label: SheetLabel;
   sheet_url: SheetUrl;
   urban_parcel: UrbanParcel;
-  use: Use2;
+  use: Use3;
+  /**
+   * D-252: the use, classified
+   */
+  use_class?: UseClass | null;
+  /**
+   * D-252: dotacional público or privado, when the plan says it
+   */
+  use_ownership?: UseOwnership | null;
   viewer_url: ViewerUrl;
 }
 /**

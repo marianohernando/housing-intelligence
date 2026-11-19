@@ -6,8 +6,19 @@
 export const INVESTOR_METHOD = {
   "pilotBarrios": 108,
   "vedaParcels": 1109,
+  "vedaByUse": {
+    "residencial": 574,
+    "terciario": 51,
+    "industrial": 484
+  },
   "vedaSource": "VEDA Madrid (Ayuntamiento de Madrid), julio de 2026: edificabilidad de la parcela",
   "portalParcels": 50,
+  "portalByUse": {
+    "residencial": 38,
+    "terciario": 7,
+    "industrial": 3,
+    "otro": 2
+  },
   "portalSource": "Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela",
   "pem": {
     "eurM2": 644,

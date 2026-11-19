@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 
 import GlassCard from "@/components/ui/GlassCard";
 import { formatNumber } from "@/lib/format";
+import { CALCULATOR_TEXT } from "@/lib/investors";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
+import { USE_TEXT } from "@/lib/parcels";
 
 import styles from "../../app/(vida)/section.module.css";
 
@@ -24,6 +26,13 @@ const grado = (g: number) => `${g}º`;
 export const listed = (items: readonly (string | number)[]) =>
   items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} y ${items.at(-1)}`;
 const lower = (label: string) => label.charAt(0).toLowerCase() + label.slice(1);
+/** «574 de uso residencial, 51 de uso terciario y 484 de uso industrial» */
+const byUse = (counts: Partial<Record<keyof typeof USE_TEXT, number>>) =>
+  listed(
+    (Object.entries(counts) as [keyof typeof USE_TEXT, number][]).map(([kind, count]) =>
+      kind === "otro" ? `${n(count)} de otros usos` : `${n(count)} de uso ${USE_TEXT[kind].label.toLowerCase()}`,
+    ),
+  );
 
 function External({ href, children }: { href: string; children: ReactNode }) {
   return (
@@ -120,6 +129,19 @@ export default function InvestorMethod() {
         </li>
       </ol>
       <p className={styles.para}>
+        <strong>Por uso.</strong> Cada fuente publica una sola cifra por parcela, con un solo uso: de las {n(M.vedaParcels)} de VEDA,{" "}
+        {byUse(M.vedaByUse)}; de las {M.portalParcels} del Portal del Suelo, {byUse(M.portalByUse)}. En la ficha enseñamos cada cifra
+        con su uso y su fuente, y nunca la repartimos entre usos. El planeamiento del Ayuntamiento dice el uso de la parcela (y, en el
+        dotacional, si es público o privado), pero no una cifra de m².
+      </p>
+      <p className={styles.para}>
+        <strong>La calculadora calcula solo vivienda,</strong> porque sus precios y alquileres son de vivienda: parte de la cifra
+        residencial. Si solo hay cifra de otros usos, la edificabilidad de partida queda «sin dato» y pones tú los m² de vivienda que
+        quieras estudiar. Si la de partida es un supuesto de la norma zonal y el planeamiento da a la parcela otro uso (por
+        ejemplo, industrial o terciario en la norma zonal 9, de actividades económicas), te avisamos en la ficha: comprueba si la parcela admite
+        vivienda.
+      </p>
+      <p className={styles.para}>
         <strong>Puedes cambiar la edificabilidad siempre.</strong> «Sin dato» no es 0. Al lado enseñamos lo construido hoy, que es lo
         que hay, no lo que se puede construir. Las normas: {M.nnuuCitation}.
       </p>
@@ -158,6 +180,15 @@ export default function InvestorMethod() {
         </li>
       </ul>
       <p className={styles.para}>
+        <strong>{CALCULATOR_TEXT.costScopeTitle}.</strong> {CALCULATOR_TEXT.costIncludes(M.costParts.map((p) => lower(p.label)))}{" "}
+        {CALCULATOR_TEXT.costExcludesTitle}
+      </p>
+      <ul className={styles.text}>
+        {CALCULATOR_TEXT.costExcludes.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
+      <p className={styles.para}>
         En la calculadora puedes cambiar los m², el precio, la prima, el alquiler, el PEM, el coeficiente, los gastos, el suelo, el
         margen objetivo y los datos de la comprobación de demanda. No se cambian el suelo del «Ajustar» ({pct(M.adjustFloorPct)}), la
         subida y la bajada de los escenarios ni el umbral de esfuerzo ({pct(M.effortThresholdPct)}).
@@ -171,6 +202,13 @@ export default function InvestorMethod() {
         <li>
           <strong>Lo máximo que se puede pagar por el suelo</strong> (el valor residual: lo que queda para el suelo tras pagar la
           construcción, los gastos y el margen objetivo).
+        </li>
+        <li>
+          <strong>Hasta cuánto puede costar la construcción</strong> (el punto de equilibrio): el coste por m² construido (PEM ×
+          coeficiente) con el que la promoción llega justo al margen objetivo. Es lo que queda de los ingresos tras quitar el margen
+          objetivo, los gastos de la venta y el suelo, entre los m², y en cada escenario con su subida o bajada del coste. Con el
+          precio del suelo que pones y, si lo pones, también con el suelo gratis. Te lo damos también como PEM, con tu coeficiente, y
+          como coeficiente, sobre tu PEM: si el presupuesto de tu obra queda por debajo, la promoción llega al margen objetivo.
         </li>
         <li>
           <strong>La rentabilidad bruta si se alquila:</strong> el alquiler de un año (el de referencia de un contrato nuevo del barrio
@@ -223,8 +261,13 @@ export default function InvestorMethod() {
         <li>
           <strong>Ámbito:</strong> una zona de la ciudad con su propio plan, que fija lo que se construye en ella.
         </li>
+        {(Object.keys(USE_TEXT) as (keyof typeof USE_TEXT)[]).map((kind) => (
+          <li key={kind}>
+            <strong>{USE_TEXT[kind].label}:</strong> {lower(USE_TEXT[kind].plain)}
+          </li>
+        ))}
         <li>
-          <strong>Dotacional:</strong> suelo para equipamientos, zonas verdes o servicios públicos, no para vivienda.
+          <strong>Punto de equilibrio:</strong> el coste de construcción con el que la promoción llega justo al margen objetivo.
         </li>
         <li>
           <strong>Valor residual del suelo:</strong> lo máximo que se puede pagar por el suelo para que la promoción llegue al margen

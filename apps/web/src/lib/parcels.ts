@@ -9,6 +9,9 @@ import type {
   ParcelSheet,
   PlanningBlock,
   SourcedValue,
+  UseClass,
+  UseFigure,
+  UseOwnership,
 } from "@/contracts/parcel_sheet_response";
 import { formatNumber } from "@/lib/format";
 import { isoInWords } from "@/lib/investors";
@@ -99,6 +102,16 @@ export const SHEET_TEXT = {
   planningNone: "El Ayuntamiento no tiene calificación para el punto de esta parcela.",
   buildable: "Edificabilidad de partida",
   buildableEditable: "Siempre la puedes cambiar en la calculadora.",
+  byUseTitle: "Edificabilidad publicada, por uso",
+  byUseNote: "Cada fuente publica una sola cifra por parcela, con un solo uso: la enseñamos tal cual, sin repartirla entre usos.",
+  byUseNone:
+    "Ninguna fuente publica la edificabilidad de esta parcela: ni el visor de edificabilidad (VEDA) del Ayuntamiento ni el Portal del Suelo de la Comunidad de Madrid.",
+  notHousing: "No es vivienda: no entra en la calculadora.",
+  housingOnly:
+    "La calculadora calcula solo vivienda: parte de la edificabilidad residencial, porque sus precios y alquileres son de vivienda. Una cifra de otro uso (terciario, industrial) la enseñamos como referencia y no la usamos.",
+  /** A norm's assumption on a parcel the plan gives another use (NZ 9, actividades económicas) */
+  assumedOtherUse: (use: string) =>
+    `El planeamiento da a esta parcela uso ${use}, no de vivienda. La calculadora parte de estos m² como si fueran de vivienda: comprueba en la ficha oficial si la parcela la admite.`,
   article: (n: string) => `Ver el artículo ${n} de las Normas Urbanísticas`,
   contextDown: "No hemos podido leer el barrio ahora; el resto de la ficha sí. La calculadora empieza sin los precios del barrio.",
   instrumentDown:
@@ -222,4 +235,68 @@ export function degradedLines(sheet: Pick<ParcelSheet, "degraded" | "fallback" |
   if (degraded.includes("buildability")) lines.push(SHEET_TEXT.zDown);
   if (degraded.includes("context")) lines.push(SHEET_TEXT.contextDown);
   return lines;
+}
+
+/** What each use is, in one plain line (D-252): the parcel's sheet and «Cómo lo calculamos». */
+export const USE_TEXT: Record<UseClass, { label: string; plain: string }> = {
+  residencial: { label: "Residencial", plain: "Vivienda, en pisos o en casas, libre o con protección pública." },
+  terciario: { label: "Terciario", plain: "Oficinas, comercios, hoteles y otros servicios privados." },
+  industrial: { label: "Industrial", plain: "Fábricas, talleres, almacenes y otras actividades productivas." },
+  dotacional: {
+    label: "Dotacional",
+    plain:
+      "Equipamientos como colegios, centros de salud o instalaciones deportivas, culturales o sociales; público si es de una administración, privado si es de una empresa o una entidad privada.",
+  },
+  zona_verde: { label: "Zona verde", plain: "Parques y jardines, suelo dotacional para el uso de todos y no para edificar." },
+  infraestructura: {
+    label: "Vía pública, transporte e infraestructuras",
+    plain: "Calles, vías del tren o del metro e instalaciones de agua, gas o electricidad; también es suelo dotacional.",
+  },
+  sin_uso: {
+    label: "Sin uso pormenorizado",
+    plain: "El plan aún no le ha fijado un uso concreto; lo fija el plan propio de su ámbito.",
+  },
+  otro: { label: "Otros usos", plain: "Un uso que la fuente no clasifica en los anteriores (en el Portal del Suelo, «Otros»)." },
+};
+
+/** «Dotacional privado», «Zona verde, de titularidad pública», «Industrial». */
+export function landUseLabel(kind: UseClass, owner?: UseOwnership | null): string {
+  const label = USE_TEXT[kind].label;
+  if (!owner) return label;
+  if (kind === "dotacional") return `${label} ${owner === "publico" ? "público" : "privado"}`;
+  return `${label}, de titularidad ${owner === "publico" ? "pública" : "privada"}`;
+}
+
+const lowerFirst = (text: string) => text.charAt(0).toLowerCase() + text.slice(1);
+
+const folded = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+/**
+ * Under the plan's use: what it means, and that the calculator is for housing when it is not. The
+ * class goes first when the use's words do not already say it («Dotacional privado: …»).
+ */
+export function landUseNote(planning: Pick<PlanningBlock, "use" | "use_class" | "use_ownership">): string | null {
+  const kind = planning.use_class;
+  if (!kind) return null;
+  const plain = USE_TEXT[kind].plain;
+  const said = !planning.use_ownership && folded(planning.use ?? "").startsWith(folded(USE_TEXT[kind].label));
+  const meaning = said ? plain : `${landUseLabel(kind, planning.use_ownership)}: ${lowerFirst(plain)}`;
+  return kind === "residencial" ? meaning : `${meaning} La calculadora calcula solo vivienda.`;
+}
+
+/** The plan's use when it is not housing nor undecided, for the caution on a norm's assumption. */
+export function otherPlanningUse(planning: Pick<PlanningBlock, "use_class" | "use_ownership"> | null | undefined): string | null {
+  const kind = planning?.use_class;
+  if (!kind || kind === "residencial" || kind === "sin_uso" || kind === "otro") return null;
+  return landUseLabel(kind, planning.use_ownership).toLowerCase();
+}
+
+/** One source's figure with its use: «Industrial: 3.465 m² edificables». */
+export function byUseText(figure: UseFigure): string {
+  return `${landUseLabel(figure.use_class)}: ${m2(figure.value_m2)} edificables`;
+}
+
+/** «Uso en la fuente: industrial · VEDA Madrid (…)». */
+export function byUseSource(figure: UseFigure): string {
+  return `Uso en la fuente: ${lowerFirst(sentence(figure.use) ?? figure.use)} · ${figure.source}`;
 }

@@ -20,6 +20,7 @@ from hi_api.services.search import fill_detail
 from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.pro.investors import (
     AssumptionPart,
+    BreakEven,
     DemandBlock,
     DemandOutcome,
     DemandRequest,
@@ -752,6 +753,21 @@ def outcome(s: v.ScenarioResult) -> ScenarioOutcome:
         yield_land=None if s.yield_land is None else s.yield_land.value,
         verdict=None if s.verdict is None else Verdict(s.verdict.value),
         headline=s.headline,
+        break_even=None if s.break_even is None else break_even(s.break_even),
+        break_even_free_land=None
+        if s.break_even_free_land is None
+        else break_even(s.break_even_free_land),
+    )
+
+
+def break_even(b: v.BreakEven) -> BreakEven:
+    return BreakEven(
+        construction_m2=b.construction_m2,
+        pem_m2=b.pem_m2,
+        coefficient=b.coefficient,
+        current_construction_m2=b.current_construction_m2,
+        land_counted=b.land_counted,
+        reachable=b.reachable,
     )
 
 

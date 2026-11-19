@@ -3,7 +3,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import InvestorMethod, { listed, n } from "@/components/method/InvestorMethod";
+import { CALCULATOR_TEXT } from "@/lib/investors";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
+import { USE_TEXT } from "@/lib/parcels";
 
 /** The section's text, without tags and with plain spaces. */
 function text(): string {
@@ -77,5 +79,27 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     for (const word of ["PEM y PEC:", "ICIO:", "Seguro decenal:", "Ámbito:", "Dotacional:", "Valor residual del suelo:"]) {
       expect(t).toContain(word);
     }
+  });
+
+  it("explains each use, the figures by use and that the calculator is for housing (D-252)", () => {
+    const t = text();
+    for (const { label, plain } of Object.values(USE_TEXT)) expect(t).toContain(`${label}: ${plain.charAt(0).toLowerCase()}${plain.slice(1)}`);
+    const veda = M.vedaByUse;
+    expect(t).toContain(
+      `de las ${n(M.vedaParcels)} de VEDA, ${n(veda.residencial)} de uso residencial, ${n(veda.terciario)} de uso terciario y ${n(veda.industrial)} de uso industrial;`,
+    );
+    expect(Object.values(veda).reduce((a, b) => a + b, 0)).toBe(M.vedaParcels);
+    expect(Object.values(M.portalByUse).reduce((a, b) => a + b, 0)).toBe(M.portalParcels);
+    expect(t).toContain(`${M.portalByUse.otro} de otros usos`);
+    expect(t).toContain("nunca la repartimos entre usos");
+    expect(t).toContain("La calculadora calcula solo vivienda,");
+  });
+
+  it("says what the cost includes and leaves out, and the break-even, as the calculator does (D-252)", () => {
+    const t = text();
+    expect(t).toContain(CALCULATOR_TEXT.costIncludes(M.costParts.map((p) => p.label.charAt(0).toLowerCase() + p.label.slice(1))));
+    for (const line of CALCULATOR_TEXT.costExcludes) expect(t).toContain(line.replace(/&/g, "&amp;"));
+    expect(t).toContain("Hasta cuánto puede costar la construcción (el punto de equilibrio)");
+    expect(t).toContain("Punto de equilibrio:");
   });
 });

@@ -18,6 +18,7 @@ from hi_contracts.public.gaps import GapRow
 
 __all__ = [
     "AssumptionPart",
+    "BreakEven",
     "Buildability",
     "BuildabilityKind",
     "DegradedPart",
@@ -49,6 +50,9 @@ __all__ = [
     "ScenarioOutcome",
     "SourcedValue",
     "UnitUse",
+    "UseClass",
+    "UseFigure",
+    "UseOwnership",
     "ValueMark",
     "Verdict",
     "ViabilityDefaults",
@@ -313,6 +317,21 @@ class ViabilityRequest(BaseModel):
         return self
 
 
+class BreakEven(BaseModel):
+    """D-252: the most the construction can cost for the operation to reach the target margin,
+    the other inputs as they are: per built m² (the PEM times the coefficient), and the same said
+    as a PEM with the coefficient given or as a coefficient on the PEM given."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    construction_m2: float = Field(description="€ per built m², PEM × coefficient")
+    pem_m2: float = Field(description="The same, as a PEM with the coefficient given")
+    coefficient: float = Field(description="The same, as a coefficient on the PEM given")
+    current_construction_m2: float = Field(description="The inputs' PEM × coefficient")
+    land_counted: bool = Field(description="With the land price given; without one, free land")
+    reachable: bool = Field(description="False when not even free construction reaches it")
+
+
 class ScenarioOutcome(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -348,6 +367,12 @@ class ScenarioOutcome(BaseModel):
             "Lo máximo que se puede pagar por el suelo: 1,90 millones de € (1.900 € por m² "
             "edificable), para un margen del 20 %.",
         ]
+    )
+    break_even: BreakEven | None = Field(
+        default=None, description="The most the construction can cost for the target margin"
+    )
+    break_even_free_land: BreakEven | None = Field(
+        default=None, description="Only with a land price: the same as if the land were free"
     )
 
 
@@ -474,6 +499,38 @@ class PlanningInstrument(BaseModel):
     url: HttpUrl | None
 
 
+class UseClass(StrEnum):
+    """D-252: a use as the person reads it, from the planning's or a source's words."""
+
+    RESIDENCIAL = "residencial"
+    TERCIARIO = "terciario"
+    INDUSTRIAL = "industrial"
+    DOTACIONAL = "dotacional"  # equipamientos and services
+    ZONA_VERDE = "zona_verde"
+    INFRAESTRUCTURA = "infraestructura"  # vía pública, transport, utilities
+    SIN_USO = "sin_uso"  # «sin uso pormenorizado»
+    OTRO = "otro"
+
+
+class UseOwnership(StrEnum):
+    PUBLICO = "publico"
+    PRIVADO = "privado"
+
+
+class UseFigure(BaseModel):
+    """One source's buildable m² for a parcel, with the use that source gives it. A source that
+    gives one figure is never split by use."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    use_class: UseClass
+    use: str = Field(description="As the source writes it", examples=["INDUSTRIAL"])
+    value_m2: float = Field(ge=0)
+    source: str
+    dataset_id: str
+    residential: bool = Field(description="Whether the calculator can use it (housing only)")
+
+
 class PlanningBlock(BaseModel):
     """«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point."""
 
@@ -484,6 +541,10 @@ class PlanningBlock(BaseModel):
     kind: PlanningKind
     norma_zonal: NormaZonal | None
     use: str | None = Field(examples=["RESIDENCIAL VIVIENDA COLECTIVA"])
+    use_class: UseClass | None = Field(default=None, description="D-252: the use, classified")
+    use_ownership: UseOwnership | None = Field(
+        default=None, description="D-252: dotacional público or privado, when the plan says it"
+    )
     urban_parcel: str | None = Field(examples=["MANZANA B"])
     instrument: PlanningInstrument | None
     sheet_url: HttpUrl | None = Field(
@@ -520,6 +581,10 @@ class Buildability(BaseModel):
         default=None, ge=0, description="The norm's assumption when an official figure wins"
     )
     dataset_ids: list[str] = Field(default_factory=list[str])
+    by_use: list[UseFigure] = Field(
+        default_factory=list[UseFigure],
+        description="D-252: every official figure of the parcel with its use and source",
+    )
     editable: Literal[True] = True
 
 

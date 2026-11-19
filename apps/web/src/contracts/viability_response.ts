@@ -23,6 +23,30 @@ export type Notices = string[];
  */
 export type SalePriceM2New = number;
 export type AnnualRent = number | null;
+/**
+ * The same, as a coefficient on the PEM given
+ */
+export type Coefficient = number;
+/**
+ * € per built m², PEM × coefficient
+ */
+export type ConstructionM2 = number;
+/**
+ * The inputs' PEM × coefficient
+ */
+export type CurrentConstructionM2 = number;
+/**
+ * With the land price given; without one, free land
+ */
+export type LandCounted = boolean;
+/**
+ * The same, as a PEM with the coefficient given
+ */
+export type PemM2 = number;
+/**
+ * False when not even free construction reaches it
+ */
+export type Reachable = boolean;
 export type Construction = number;
 export type CostFactor = number;
 export type Headline = string;
@@ -90,6 +114,14 @@ export interface DemandOutcome {
 }
 export interface ScenarioOutcome {
   annual_rent: AnnualRent;
+  /**
+   * The most the construction can cost for the target margin
+   */
+  break_even?: BreakEven | null;
+  /**
+   * Only with a land price: the same as if the land were free
+   */
+  break_even_free_land?: BreakEven | null;
   construction: Construction;
   cost_factor: CostFactor;
   headline: Headline;
@@ -110,6 +142,19 @@ export interface ScenarioOutcome {
    */
   verdict: Verdict | null;
   yield_land: YieldLand;
+}
+/**
+ * D-252: the most the construction can cost for the operation to reach the target margin,
+ * the other inputs as they are: per built m² (the PEM times the coefficient), and the same said
+ * as a PEM with the coefficient given or as a coefficient on the PEM given.
+ */
+export interface BreakEven {
+  coefficient: Coefficient;
+  construction_m2: ConstructionM2;
+  current_construction_m2: CurrentConstructionM2;
+  land_counted: LandCounted;
+  pem_m2: PemM2;
+  reachable: Reachable;
 }
 export interface Meta {
   api_version?: ApiVersion;

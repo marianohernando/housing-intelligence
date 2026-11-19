@@ -18,6 +18,7 @@ from hi_domain.viability import (
     Verdict,
     ViabilityInputs,
     YieldLand,
+    break_even,
     demand_check,
     monthly_payment,
     viability,
@@ -245,3 +246,51 @@ def test_demand_check_without_rent() -> None:
     assert check.purchase_within
     assert check.rent_effort is None and check.rent_within is None
     assert not any(line.startswith("El alquiler") for line in check.lines)
+
+
+# --- D-252: how much the construction can cost for the target margin ---
+
+
+def test_break_even_with_free_land_is_the_most_the_construction_can_cost() -> None:
+    # 4.000.000 × 0,8 − 400.000 = 2.800.000 for the construction: 2.800 €/m² built
+    even = break_even(_inputs())
+    assert even.construction_m2 == pytest.approx(2800)
+    assert even.pem_m2 == pytest.approx(2800 / 1.5)
+    assert even.coefficient == pytest.approx(2800 / 600)
+    assert even.current_construction_m2 == pytest.approx(900)
+    assert not even.land_counted and even.reachable
+
+
+def test_break_even_with_a_land_price() -> None:
+    # The same less 2.200.000 of land: 600 €/m², under the 900 of the inputs (the 12,5 % margin)
+    even = break_even(_inputs(land_eur=2_200_000))
+    assert even.construction_m2 == pytest.approx(600)
+    assert even.pem_m2 == pytest.approx(400)
+    assert even.coefficient == pytest.approx(1.0)
+    assert even.land_counted and even.reachable
+
+
+def test_break_even_by_scenario_is_in_the_inputs_cost_terms() -> None:
+    # Optimistic: 4.400.000 × 0,8 − 440.000 − 2.200.000 = 880.000, over 1.000 m² × 0,95
+    runs = _run(land_eur=2_200_000)
+    even = runs["optimista"].break_even
+    assert even is not None and even.construction_m2 == pytest.approx(880_000 / 950)
+    assert runs["base"].break_even == break_even(_inputs(land_eur=2_200_000))
+
+
+def test_break_even_not_reachable_when_the_land_alone_eats_the_room() -> None:
+    even = break_even(_inputs(land_eur=5_000_000))
+    assert even.construction_m2 < 0 and not even.reachable
+
+
+@given(
+    price=st.floats(min_value=1500, max_value=12_000),
+    land=st.one_of(st.none(), st.floats(min_value=0, max_value=3_000_000)),
+)
+def test_at_the_break_even_cost_the_margin_is_the_target(price: float, land: float | None) -> None:
+    even = break_even(_inputs(sale_price_m2=price, land_eur=land))
+    if not even.reachable:
+        return
+    at = _run(sale_price_m2=price, land_eur=0.0 if land is None else land, pem_m2=even.pem_m2)
+    margin = at["base"].margin
+    assert margin is not None and margin == pytest.approx(CASE["target_margin"], abs=1e-9)

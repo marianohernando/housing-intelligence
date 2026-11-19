@@ -2,7 +2,7 @@
 
 import pytest
 
-from hi_contracts.pro.investors import BuildabilityKind, PlanningKind
+from hi_contracts.pro.investors import BuildabilityKind, PlanningKind, UseClass, UseOwnership
 from hi_domain.parcels import (
     AREA_PLAN,
     DOTACIONAL,
@@ -14,6 +14,7 @@ from hi_domain.parcels import (
     ZoneCode,
     catastro_number,
     classify_planning,
+    classify_use,
     in_madrid_bbox,
     initial_buildability,
     is_vacant,
@@ -306,3 +307,73 @@ def test_an_official_figure_of_other_uses_only_is_a_reference() -> None:
     assert result.kind is BuildabilityKind.SIN_DATO and result.value_m2 is None
     assert "3.465 m² edificables de uso industrial, no residencial" in result.source
     assert result.dataset_ids == ("ayto_veda_parcelas",)
+
+
+# --- D-252: uses ---
+
+
+@pytest.mark.parametrize(
+    ("use", "kind", "owner"),
+    [
+        ("RESIDENCIAL VIVIENDA COLECTIVA  ", UseClass.RESIDENCIAL, None),
+        (
+            "RESIDENCIAL VIVIENDA COLECTIVA PROTECCIÓN PÚBLICA",
+            UseClass.RESIDENCIAL,
+            None,
+        ),
+        ("Residencial", UseClass.RESIDENCIAL, None),
+        ("SERVICIOS TERCIARIOS OFICINAS", UseClass.TERCIARIO, None),
+        ("SERVICIOS TERCIARIO OFICINAS", UseClass.TERCIARIO, None),
+        ("TERCIARIO COMERCIAL", UseClass.TERCIARIO, None),
+        ("Terciario", UseClass.TERCIARIO, None),
+        ("INDUSTRIAL", UseClass.INDUSTRIAL, None),
+        ("INDUSTRIA INDUSTRIA TRADICIONAL", UseClass.INDUSTRIAL, None),
+        ("DOTACIONAL EQUIPAMIENTO PRIVADO EDUCATIVO", UseClass.DOTACIONAL, UseOwnership.PRIVADO),
+        ("DOTACIONAL EQUIPAMIENTO PÚBLICO SALUD BÁSICO", UseClass.DOTACIONAL, UseOwnership.PUBLICO),
+        ("DOTACIONAL ADMINISTRACIÓN PÚBLICA", UseClass.DOTACIONAL, UseOwnership.PUBLICO),
+        ("DOTACIONAL DEPORTIVO", UseClass.DOTACIONAL, None),
+        ("DOTACIONAL ZONAS VERDES BARRIO BÁSICO", UseClass.ZONA_VERDE, None),
+        ("DOTACIONAL VÍA PÚBLICA PRINCIPAL", UseClass.INFRAESTRUCTURA, None),
+        ("DOTACIONAL TRANSPORTE FERROVIARIO", UseClass.INFRAESTRUCTURA, None),
+        (
+            "DOTACIONAL SERVICIOS INFRAESTRUCTURALES PRIVADO GAS",
+            UseClass.INFRAESTRUCTURA,
+            UseOwnership.PRIVADO,
+        ),
+        ("SIN USO PORMENORIZADO", UseClass.SIN_USO, None),
+        ("Otros", UseClass.OTRO, None),
+    ],
+)
+def test_uses_are_classified_with_their_ownership(
+    use: str, kind: UseClass, owner: UseOwnership | None
+) -> None:
+    assert classify_use(use) == (kind, owner)
+
+
+def test_no_use_is_no_class() -> None:
+    assert classify_use(None) == (None, None)
+    assert classify_use("  ") == (None, None)
+
+
+def test_every_official_figure_goes_by_use_and_none_is_split() -> None:
+    industrial = OfficialFigure(3465.3, "VEDA Madrid", "ayto_veda_parcelas", "INDUSTRIAL")
+    housing = OfficialFigure(
+        800.0, "Portal del Suelo 4.0", "cm_parcelas_portal_suelo", "Residencial"
+    )
+    result = initial_buildability(
+        area_m2=4000,
+        planning_code="APE.20.10",
+        use=None,
+        rustic=False,
+        official=[industrial, housing],
+    )
+    assert [(f.use_class, f.value_m2, f.residential) for f in result.by_use] == [
+        (UseClass.INDUSTRIAL, 3465.3, False),
+        (UseClass.RESIDENCIAL, 800.0, True),
+    ]
+    only_industrial = initial_buildability(
+        area_m2=4000, planning_code="9.3", use=None, rustic=False, official=[industrial]
+    )
+    assert only_industrial.value_m2 is None and len(only_industrial.by_use) == 1
+    assumed = initial_buildability(area_m2=502, planning_code="8.3.a", use=None, rustic=False)
+    assert assumed.by_use == ()

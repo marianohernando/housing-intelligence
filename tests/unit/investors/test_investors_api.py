@@ -53,6 +53,26 @@ def test_viability_land_per_m2_and_demand_in_percent() -> None:
     assert data.demand.monthly_rent == pytest.approx(80 * 15)
 
 
+def test_each_scenario_says_up_to_what_construction_cost_it_keeps_the_target() -> None:
+    free = ViabilityResponse.model_validate(
+        client.post("/api/v1/investors/viability", json=BODY).json()
+    ).data.scenarios[0]
+    assert free.break_even is not None and not free.break_even.land_counted
+    assert free.break_even.construction_m2 == pytest.approx(2800)
+    assert free.break_even.current_construction_m2 == pytest.approx(900)
+    with_land = ViabilityResponse.model_validate(
+        client.post("/api/v1/investors/viability", json=BODY | {"land_eur_m2": 2200}).json()
+    ).data.scenarios[0]
+    assert with_land.break_even is not None and with_land.break_even.land_counted
+    assert with_land.break_even.construction_m2 == pytest.approx(600)
+    assert with_land.break_even.pem_m2 == pytest.approx(400)
+    assert with_land.break_even.coefficient == pytest.approx(1.0)
+    assert with_land.break_even.reachable
+    assert free.break_even_free_land is None  # without land it already is the free land one
+    assert with_land.break_even_free_land is not None
+    assert with_land.break_even_free_land.construction_m2 == pytest.approx(2800)
+
+
 @pytest.mark.parametrize(
     "change",
     [

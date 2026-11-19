@@ -1,21 +1,27 @@
 import { describe, expect, it } from "vitest";
 
-import type { ParcelBlock, PlanningBlock } from "@/contracts/parcel_sheet_response";
+import type { ParcelBlock, PlanningBlock, UseFigure } from "@/contracts/parcel_sheet_response";
 import { ApiError, createApi, parcelPath } from "@/lib/api";
 import {
   areaText,
   buildabilityMark,
   buildableText,
+  byUseSource,
+  byUseText,
   DEMO_PARCELS,
   degradedLines,
   divisionText,
   instrumentText,
+  otherPlanningUse,
   parcelHref,
   parcelRc,
   qualificationText,
   SEARCH_TEXT,
   SHEET_TEXT,
   sentence,
+  USE_TEXT,
+  landUseLabel,
+  landUseNote,
   vacantText,
 } from "@/lib/parcels";
 
@@ -136,5 +142,56 @@ describe("«Busca tu parcela» (D-250)", () => {
   it("never calls our data «información catastral» and never under its own name", () => {
     const all = JSON.stringify({ SEARCH_TEXT, SHEET: Object.values(SHEET_TEXT).filter((v) => typeof v === "string") });
     expect(all.toLowerCase()).not.toMatch(/(información|ficha|cartografía) catastral/);
+  });
+});
+
+describe("Edificabilidad por uso (D-252)", () => {
+  const industrial: UseFigure = {
+    use_class: "industrial",
+    use: "INDUSTRIAL",
+    value_m2: 3465.3,
+    source: "VEDA Madrid (Ayuntamiento de Madrid), julio de 2026: edificabilidad de la parcela",
+    dataset_id: "ayto_edificabilidad_remanente_ambitos",
+    residential: false,
+  };
+
+  it("names each use in plain words, with público or privado when the plan says it", () => {
+    expect(landUseLabel("dotacional", "privado")).toBe("Dotacional privado");
+    expect(landUseLabel("dotacional", "publico")).toBe("Dotacional público");
+    expect(landUseLabel("zona_verde", "publico")).toBe("Zona verde, de titularidad pública");
+    expect(landUseLabel("industrial")).toBe("Industrial");
+    for (const { label, plain } of Object.values(USE_TEXT)) {
+      expect(label.length).toBeGreaterThan(0);
+      expect(plain.endsWith(".")).toBe(true);
+    }
+  });
+
+  it("says under the plan's use what it means, and that the calculator is for housing", () => {
+    // The use's words already say the class: only what it means
+    expect(landUseNote(planning({ use_class: "residencial" }))).toBe("Vivienda, en pisos o en casas, libre o con protección pública.");
+    expect(landUseNote(planning({ use: "SIN USO PORMENORIZADO", use_class: "sin_uso" }))).toBe(
+      "El plan aún no le ha fijado un uso concreto; lo fija el plan propio de su ámbito. La calculadora calcula solo vivienda.",
+    );
+    expect(landUseNote(planning({ use: "SERVICIOS TERCIARIOS OFICINAS", use_class: "terciario" }))).toMatch(/^Terciario: oficinas/);
+    const note = landUseNote(planning({ use: "DOTACIONAL EQUIPAMIENTO PRIVADO EDUCATIVO", use_class: "dotacional", use_ownership: "privado" }));
+    expect(note).toMatch(/^Dotacional privado: equipamientos como colegios/);
+    expect(note).toMatch(/La calculadora calcula solo vivienda\.$/);
+    expect(landUseNote(planning({}))).toBeNull();
+  });
+
+  it("warns on a norm's assumption only when the plan gives another use than housing", () => {
+    expect(otherPlanningUse(planning({ use_class: "industrial" }))).toBe("industrial");
+    expect(otherPlanningUse(planning({ use_class: "residencial" }))).toBeNull();
+    expect(otherPlanningUse(planning({ use_class: "sin_uso" }))).toBeNull();
+    expect(otherPlanningUse(null)).toBeNull();
+    expect(SHEET_TEXT.assumedOtherUse("industrial")).toContain("uso industrial, no de vivienda");
+  });
+
+  it("gives each source's figure with its own use and source, never split", () => {
+    expect(byUseText(industrial)).toBe("Industrial: 3.465 m² edificables");
+    expect(byUseSource(industrial)).toBe(`Uso en la fuente: industrial · ${industrial.source}`);
+    expect(byUseSource({ ...industrial, use: "Residencial", use_class: "residencial" })).toMatch(/^Uso en la fuente: residencial · /);
+    expect(SHEET_TEXT.byUseNote).toContain("sin repartirla entre usos");
+    expect(SHEET_TEXT.housingOnly).toMatch(/^La calculadora calcula solo vivienda/);
   });
 });

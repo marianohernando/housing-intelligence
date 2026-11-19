@@ -9,7 +9,7 @@ source; the API image only carries the Python packages.
 - hi_domain/parcel_data.py from data/catalog/manual/veda_parcelas.yaml and
   portal_suelo_madrid_parcelas.yaml (D-250: the parcels of Madrid with official buildable m², by
   cadastral reference, written by scripts/buildable_parcels.py).
-- apps/web/src/lib/investorMethod.ts (D-251): the figures «Cómo lo calculamos» gives for the
+- apps/web/src/lib/investorMethod.ts (D-251, D-252): the figures «Cómo lo calculamos» gives for the
   investor version, from the same tables and the code's constants (hi_domain.viability,
   hi_domain.zonal_norms, hi_domain.parcels), so the page never types a number of its own.
 
@@ -18,13 +18,15 @@ Usage: uv run python scripts/export_investor_data.py [--check]
 
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
 import yaml
 
+from hi_contracts.pro.investors import UseClass
 from hi_domain import viability as v
-from hi_domain.parcels import LOOKUP_BUDGET_S
+from hi_domain.parcels import LOOKUP_BUDGET_S, classify_use
 from hi_domain.zonal_norms import (
     NNUU_CITATION,
     NZ1_FACTORS,
@@ -160,6 +162,12 @@ def pct(share: float) -> float:
     return round(share * 100, 2)
 
 
+def by_use(parcels: list[dict[str, Any]]) -> dict[str, int]:
+    """How many parcels a source publishes of each use (D-252): one figure with one use each."""
+    counts = Counter(classify_use(p.get("use"))[0] for p in parcels)
+    return {kind.value: counts[kind] for kind in UseClass if counts[kind]}
+
+
 def method_figures(
     pem: dict[str, Any], pilot: dict[str, Any], veda: dict[str, Any], portal: dict[str, Any]
 ) -> dict[str, Any]:
@@ -169,8 +177,10 @@ def method_figures(
     return {
         "pilotBarrios": len(pilot["barrios"]),
         "vedaParcels": len(veda["parcels"]),
+        "vedaByUse": by_use(veda["parcels"]),
         "vedaSource": veda["source_text"],
         "portalParcels": len(portal["parcels"]),
+        "portalByUse": by_use(portal["parcels"]),
         "portalSource": portal["source_text"],
         "pem": {
             "eurM2": entry[default["kind"]]["pem_eur_m2"],
