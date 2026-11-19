@@ -19,7 +19,7 @@ from hi_ingestion.pipelines.stat_tables.publish import replace_observations
 from hi_ingestion.pipelines.stat_tables.quality import row_counts
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
-PARSER_VERSION = "madrid_padron-1.0.0"
+PARSER_VERSION = "madrid_padron-1.1.0"  # 1.1: barrio totals (D-247)
 _LAST_DISTRICT_TOTALS = text(
     """
     SELECT territory_code, value FROM metric_observation
@@ -93,6 +93,7 @@ def padron_steps(
             known_districts(engine, spec.municipio_ine),
             census_total(engine, catalog, spec),
             last_district_totals(engine, spec),
+            known_barrios(engine, spec.municipio_ine),
         ).to_dict(),
         counts=lambda obs: row_counts(obs.frame),
         write_silver=write_silver,

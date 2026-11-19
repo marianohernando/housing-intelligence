@@ -1,0 +1,14 @@
+metric_id: inmuebles_por_distrito_uso
+human_name: Inmuebles del Catastro por distrito de Madrid y uso
+description: >-
+  Inmuebles del Catastro Inmobiliario en cada distrito de Madrid por uso (viviendas colectivas,
+  viviendas unifamiliares, aparcamientos, comercial, industrial, oficinas y resto de usos), según
+  la titularidad del IBI de cada año. Publica el Instituto de Estadística de la Comunidad de
+  Madrid con datos de la Dirección General del Catastro (D-247).
+domain: urbanism
+unit: inmuebles
+aggregation_method: sum
+geo_resolution_min: distrito
+temporal_resolution: annual
+dataset_id: cm_catastro_inmuebles_distrito_uso
+dimensions: [uso]

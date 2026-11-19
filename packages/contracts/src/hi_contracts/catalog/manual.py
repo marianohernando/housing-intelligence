@@ -1,7 +1,8 @@
 """Versioned inputs a run reads instead of the network: tables typed by hand from an official
 page that publishes no file (D-241: Plan Vive), the points of the Portal del Suelo parcels of
-Madrid, read once from the CM map layer (D-246, `ParcelPointsTable`), and the pilot barrios of
-the investor version, inside the M-40 of OpenStreetMap (D-247, `PilotZonesTable`).
+Madrid, read once from the CM map layer (D-246, `ParcelPointsTable`), and, for the investor
+version (D-247), the points of the planning areas with buildable area left (`AreaPointsTable`)
+and the pilot barrios inside the M-40 of OpenStreetMap (`PilotZonesTable`).
 
 They live in data/catalog/manual/. Every typed entry quotes the page (`says`, its exact text),
 and the contract rejects an entry whose name, figure or stage the quote does not contain:
@@ -142,6 +143,44 @@ class ParcelPointsTable(BaseModel):
         refs = [p.ref for p in self.points]
         if len(refs) != len(set(refs)):
             raise ValueError("one point per parcel")
+        return self
+
+
+class AreaPoint(BaseModel):
+    """A point inside one planning area of Madrid and inside the district the register gives it
+    (D-247), in metres (EPSG:25830), with the share of the area in the barrio of the point."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ref: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9.\-/]{2,30}$", description="COD_AMBITO")
+    x: int = Field(ge=REGION_X[0], le=REGION_X[1])
+    y: int = Field(ge=REGION_Y[0], le=REGION_Y[1])
+    share_pct: int = Field(ge=0, le=100, description="% of the area in the barrio of the point")
+
+
+class AreaPointsTable(BaseModel):
+    """D-247: where the planning areas of the register of buildable area left (VEDA) are, read
+    once from the Ayuntamiento's own map layer of the areas in force and versioned, so the run
+    that places each area in a barrio needs no network. The point is inside the area and inside
+    the district the register names (an area across two districts stays in the register's)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=3)
+    publisher: str = Field(min_length=3)
+    url: HttpUrl
+    layer: str = Field(min_length=3)
+    crs: str = Field(pattern=r"^EPSG:25830$")
+    consulted: date
+    method: str = Field(min_length=10)
+    municipio_ine: str = Field(pattern=INE_MUNICIPIO)
+    points: list[AreaPoint] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _one_point_per_area(self) -> Self:
+        refs = [p.ref for p in self.points]
+        if len(refs) != len(set(refs)):
+            raise ValueError("one point per area")
         return self
 
 

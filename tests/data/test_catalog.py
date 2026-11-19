@@ -149,8 +149,9 @@ def test_directories_complement_cm_registers(catalog: Catalog) -> None:
 # Statistics the CM does not publish at the level the product needs (D-209: population and
 # households by district of Madrid; D-228: the rent of the leases signed in the year, which only
 # adjusts the CM rent; D-241: what is coming, the planning areas of Madrid and the Plan Vive page,
-# which publishes no file; D-242: the Ministry's rent reference, only where the CM publishes none).
-# They complement CM data, never replace it.
+# which publishes no file; D-242: the Ministry's rent reference, only where the CM publishes none;
+# D-247: the census of premises and the buildable area left in the planning areas of Madrid, for
+# the investor version). They complement CM data, never replace it.
 COMPLEMENTARY_STATISTICS = {
     "ayto_padron_municipal",
     "ayto_panel_indicadores_distritos_barrios",
@@ -159,6 +160,9 @@ COMPLEMENTARY_STATISTICS = {
     "ayto_pgoum_desarrollo_ambitos",
     "cm_plan_vive_promociones",
     "mivau_serpavi_alquiler",
+    "ayto_censo_locales_actividades",
+    "ayto_edificabilidad_remanente_ambitos",
+    "osm_m40",
 }
 
 

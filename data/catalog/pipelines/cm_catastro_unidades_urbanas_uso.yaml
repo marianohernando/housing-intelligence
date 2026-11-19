@@ -1,0 +1,10 @@
+kind: cm_stat_table
+dataset_id: cm_catastro_unidades_urbanas_uso
+metric_id: unidades_urbanas_por_uso
+territory_types: {"Comunidad de Madrid": ccaa, "Municipios": municipio, "Zonas Estadísticas": zona_estadistica}
+# «Uso» (13 uses; the source writes «Deportivo» and «Industrial» in capitals for one measure and
+# in lower case for the other: the slug is the same) and «Medida» (Unidades, Porcentaje)
+dimension_columns: {"Uso": uso, "Medida": medida}
+# 2003 to 2026 in the file; the last three years are kept (storage budget, counted as
+# out_of_window)
+period_min: 2024

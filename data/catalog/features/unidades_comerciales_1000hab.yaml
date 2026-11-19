@@ -1,0 +1,39 @@
+feature_id: unidades_comerciales_1000hab
+version: 1
+human_name: Unidades urbanas de uso comercial del Catastro por cada 1.000 habitantes
+domain: economy
+type: derived
+unit: unidades/1000 hab
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_catastro_unidades_urbanas_uso, role: primary, levels: [municipio]}
+  - {dataset_id: cm_poblacion_edad_nacionalidad_sexo, role: denominator, levels: [municipio]}
+  - {dataset_id: cm_catastro_inmuebles_distrito_uso, role: primary, levels: [distrito]}
+  - {dataset_id: ayto_padron_municipal, role: denominator, levels: [distrito]}
+formula:
+  method: metric_ratio
+  numerator_metric: unidades_urbanas_por_uso
+  numerator_dims: {uso: [comercial], medida: [unidades]}
+  denominator_metric: poblacion_censada
+  denominator_dims: {edad: [total], nacionalidad: [total], sexo: [total]}
+  per: 1000
+  levels:
+    # D-247: the CM table by district of Madrid (inmuebles, the same units), over the padrón
+    distrito:
+      numerator_metric: inmuebles_por_distrito_uso
+      numerator_dims: {uso: [comercial]}
+      denominator_metric: poblacion_padron
+      denominator_dims: {edad: [total]}
+      regional_reference: false
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Unidades urbanas del Catastro de uso comercial (inmuebles con una propiedad delimitada a efectos fiscales: locales, no negocios abiertos) del último año publicado por la Comunidad de Madrid (2026), entre la población del censo anual más reciente (1 de enero de 2025). Un local vacío cuenta igual que uno abierto."
+  - "Por municipio, con la Comunidad de Madrid como referencia, y por distrito de Madrid con la tabla del Catastro por distrito y uso (inmuebles de uso comercial, de la misma fuente y año, 95.742 en los 21 distritos frente a 96.106 unidades en la ciudad: 364 no tienen distrito asignado) entre la población del padrón municipal. Para Madrid capital por barrio, el censo de locales del Ayuntamiento (locales_abiertos_1000hab) dice cuáles están abiertos."
+  - "Dato de contexto de la Comunidad de Madrid para la versión para inversores: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-247)."

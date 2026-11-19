@@ -21,7 +21,11 @@ def _run(engine: Engine, tmp: Path, expected_districts: int, path: Path = FIXTUR
     catalog = load_catalog()
     spec = catalog.pipelines[DATASET]
     assert isinstance(spec, MadridPadronPipeline)
-    sample = spec.model_copy(update={"expected_districts": expected_districts})
+    # The sample's barrios are four of the admin sample's (D-247): Palacio, Nueva España,
+    # Castillejos and Almenara; the city's 131 are not all there.
+    sample = spec.model_copy(
+        update={"expected_districts": expected_districts, "expected_barrios": None}
+    )
     source = local_file(DATASET, "primary", path)
     return run_padron_pipeline(
         engine, catalog, sample, source, evidence_root=tmp / "ev", data_dir=tmp / "data"
@@ -50,6 +54,15 @@ def test_padron_publishes_district_bands_and_reruns_are_skipped(
         assert row.admin_unit_id == f"ES.28.DIS.{row.territory_code}"
         assert row.n == 22  # 21 CM age bands + total
         assert row.bands == row.total > 0
+    with migrated_engine.connect() as conn:
+        barrios = conn.execute(
+            text(
+                "SELECT left(territory_code, 7) AS district, sum(value) AS total "
+                "FROM metric_observation WHERE metric_id = 'poblacion_padron_barrio' "
+                "AND territory_level = 'barrio' GROUP BY 1 ORDER BY 1"
+            )
+        ).all()
+    assert {b.district: b.total for b in barrios} == {r.territory_code: r.total for r in rows}
 
 
 def test_a_file_missing_districts_keeps_the_last_valid_observations(
