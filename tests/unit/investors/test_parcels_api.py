@@ -20,8 +20,8 @@ from sqlalchemy import create_engine
 from hi_api import privacy
 from hi_api.deps import get_engine
 from hi_api.main import app
+from hi_api.routes import investors as investors_route
 from hi_api.services import parcel_sheet
-from hi_api.services import parcels as parcels_service
 from hi_api.services.parcels import (
     CALLEJERO,
     CARTOCIUDAD,
@@ -31,6 +31,7 @@ from hi_api.services.parcels import (
     PLANEAMIENTO,
     USER_AGENT,
     USOS_SUELO,
+    UpstreamError,
 )
 from hi_contracts.public.responses import ParcelCandidatesResponse, ParcelSheetResponse
 
@@ -1040,25 +1041,99 @@ def test_an_industrial_norma_zonal_9_is_never_housing_and_says_so() -> None:
     assert [c.key.value for c in sheet.cautions] == ["otro_uso"]
 
 
+def late(seconds: float, rows: list[dict[str, Any]] | None = None) -> Any:
+    """A table that answers after `seconds`."""
+
+    async def answer(request: httpx.Request) -> httpx.Response:
+        await asyncio.sleep(seconds)
+        return httpx.Response(200, json=table(rows or []))
+
+    return answer
+
+
 @respx.mock
-def test_slow_tables_degrade_only_the_plan_uses_never_the_planning(
+def test_slow_tables_with_time_left_complete_the_sheet() -> None:
+    """D-252b: tables taking more than the old fixed 4 s, with budget to spare, are read."""
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA, tables=(late(4.3), late(4.3)))
+    response = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(response).data
+    assert sheet.planning is not None and sheet.planning.plan_uses == []
+    assert "plan_uses" not in sheet.degraded
+
+
+@respx.mock
+def test_slow_tables_without_time_left_degrade_only_the_plan_uses(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Review of #109, R-01: tables 4 and 5 out of their time leave the planning in place."""
-    monkeypatch.setattr(parcels_service, "PLAN_USES_TIMEOUT_S", 0.2)
-
-    async def slow(request: httpx.Request) -> httpx.Response:
-        await asyncio.sleep(2)
-        return httpx.Response(200, json={"features": []})
-
+    """R-01 and D-252b: out of the sheet's time, the planning stays and only plan_uses goes."""
+    monkeypatch.setattr(parcel_sheet, "BUDGET_S", 1.5)
     mock_catastro(respx.mock)
-    mock_sigma(respx.mock, USES_AREA, tables=(slow, slow))
+    mock_sigma(respx.mock, USES_AREA, tables=(late(3), late(3)))
     response = client.get("/api/v1/investors/parcels", params={"rc": RC})
     sheet = sheet_of(response).data
     assert sheet.planning is not None and sheet.planning.code == "APR.02.06"
     assert sheet.planning.plan_uses is None
     assert sheet.degraded == ["plan_uses", "context"]
     assert response.headers["cache-control"] == "no-store"
+
+
+@respx.mock
+def test_a_quick_error_of_the_tables_is_asked_once_more() -> None:
+    """D-252b: an error (not the time running out) with time left: one retry."""
+    mock_catastro(respx.mock)
+    ok = httpx.Response(200, json=table([]))
+    mock_sigma(respx.mock, USES_AREA, tables=([httpx.ConnectError("blip"), ok], None))
+    response = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(response).data
+    assert sheet.planning is not None and sheet.planning.plan_uses == []
+    assert "plan_uses" not in sheet.degraded
+    asked = [c for c in respx.calls if "/MapServer/4/query" in str(c.request.url)]
+    assert len(asked) == 2
+
+
+@respx.mock
+def test_the_planning_is_kept_by_parts_and_only_what_failed_is_asked_again(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """D-252b: tables down twice: the sheet is degraded and the layer 3 kept; the next lookup
+    asks only the tables, and the log line says the stage, the error and the time."""
+    mock_catastro(respx.mock)
+    down = httpx.ConnectError("down")
+    ok = httpx.Response(200, json=table([]))
+    mock_sigma(respx.mock, USES_AREA, tables=([down, down, ok], [ok, ok, ok]))
+    with caplog.at_level(logging.INFO, logger="hi_api"):
+        first = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert first.degraded == ["plan_uses", "context"]
+    line = next(r.getMessage() for r in caplog.records if r.getMessage().startswith("parcel input"))
+    assert "parts=plan_uses:ConnectError:" in line
+    second = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    assert "plan_uses" not in sheet_of(second).data.degraded
+    layer3 = [c for c in respx.calls if "/USOS_SUELO/MapServer/3/query" in str(c.request.url)]
+    assert len(layer3) == 1  # kept: only the tables were asked again
+    # the rows are kept by UBOV_ID: a third lookup asks nothing of sigma
+    before = len(respx.calls)
+    client.get("/api/v1/investors/parcels", params={"rc": RC})
+    assert all("sigma.madrid.es" not in str(c.request.url) for c in respx.calls[before:])
+
+
+def test_an_error_with_a_typed_address_is_never_kept_by_a_shared_cache() -> None:
+    """D-252b: ?address= errors are private, no-store (the address travels in the URL)."""
+    failure = investors_route.lookup_failure(UpstreamError("geocoder", "down"), typed=True)
+    assert failure.headers is not None and failure.headers["Cache-Control"] == "private, no-store"
+    plain = investors_route.lookup_failure(UpstreamError("catastro", "down"))
+    assert plain.headers is not None and "Cache-Control" not in plain.headers
+
+
+def test_our_log_lines_reach_stdout_at_info() -> None:
+    """D-252b: without a level, hi_api's loggers inherited the root's WARNING and were dropped."""
+    from hi_api import logs
+
+    logs.install()
+    logs.install()  # once
+    log = logging.getLogger("hi_api")
+    assert log.level == logging.INFO
+    assert sum(isinstance(h, logging.StreamHandler) for h in log.handlers) == 1
 
 
 @respx.mock

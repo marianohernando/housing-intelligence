@@ -3,11 +3,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from hi_api import privacy
+from hi_api import logs, privacy
 from hi_api.routes import datasets, features, gaps, geo, health, investors, places, search
 from hi_api.settings import ApiSettings
 
 privacy.install()
+logs.install()
 
 app = FastAPI(title="Housing Intelligence API", version="0.0.1", openapi_url="/api/v1/openapi.json")
 app.add_middleware(
