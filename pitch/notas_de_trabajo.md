@@ -8,7 +8,7 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 | Cifra | Hoy | Si no llega | De quién |
 |---|---|---|---|
-| 36 conjuntos CM (27 el 12 nov; 29 con D-235; 35 con D-237 y D-241, en producción el 15 nov; 36 con D-246, en producción el 18 nov) | **Cumplida.** La web enseña los 2 de camas bajo la nota del hospital (D-231, `3325084`, en producción) y `GET /api/v1/datasets?cm_only=true` da 36, y 53 en total (18 nov) | — | — |
+| 39 conjuntos CM (27 el 12 nov; 29 con D-235; 35 con D-237 y D-241, en producción el 15 nov; 36 con D-246, en producción el 18 nov; 39 con D-247 y D-248, en producción el 19 nov) | **Cumplida.** La web enseña los 2 de camas bajo la nota del hospital (D-231, `3325084`, en producción) y `GET /api/v1/datasets?cm_only=true` da 39, y 59 en total (comprobado por D el 19 nov, tras el despliegue de `396d8f6`) | — | — |
 
 ---
 
@@ -43,7 +43,9 @@ Decisión de Mariano del 19 nov, que sustituye a la del 12 nov: personas y ayunt
 |---|---|---|
 | El modelo nuevo, con los precios como hipótesis: Inversor 99–199 €/mes, Equipo 399 €/mes y estudio a medida de 490–1.500 €; Nestra, 175, 437,50 y 1.050 €/mes como referencia | `modelo_negocio.md` | **Hecho el 19 nov** |
 | «Gratis para personas y ayuntamientos; pagan inversores y promotores», sin precios en la voz ni en la slide | slide 3, guion (bloque 4), `slides.md` y preguntas 6 y 60 | **Hecho el 19 nov.** Bloque 4: 102 palabras; margen, unos 28 s |
-| La sección «Para inversores» de la web | otra línea, en la web | **No se cita como hecha** hasta que datamad-10 la confirme en producción. Cuando llegue, se revisan la pregunta 6 («todavía no está en la web») y `modelo_negocio.md` |
+| La sección «Para inversores» de la web | otra línea, en la web | **En producción desde el 19 nov** (D-247 y D-248, despliegue de `396d8f6` y sync; `evidence/gate-06/2026-11-19-deploy/deploy-37-396d8f6-inversores.md`, PR #96; confirmado por datamad-10). Ya citada como hecha, **con redacción genérica** («la viabilidad sobre una parcela, con el contexto de su barrio»), en la slide 3, el bloque 4 del guion (100 palabras; margen, unos 29 s), las preguntas 6 y 60, `slides.md` y `modelo_negocio.md`. Sin capturas |
+| La versión por parcela exacta (referencia catastral, dirección o clic en el mapa, con su calificación; la lista de barrios, en segundo plano) | otra línea, en la web | **Pedida por Mariano el 19 nov; prevista en producción el 20 nov** (datamad-10). Hasta que datamad-10 la confirme: ni capturas de inversores en las slides ni detalle en la pregunta 6 ni en la línea de la slide 3. Cuando llegue: capturas nuevas, la pregunta 6 y la 60 con detalle y cifras, y revisar si cambia «piloto en Madrid» o el límite de la 60 («hoy no leemos la normativa de ninguna parcela») |
+| Contador 36 → 39 CM y 53 → 59 en total | `datasets_cm.md` (y la instantánea del portal, leída el 19 nov), slide 2, guion, preguntas 7 y 23, `slides.md`, `metodologia.md`, `textos_web.md`, `README_publico.md` y `video_respaldo.md` | **Hecho el 19 nov.** `pitch/formulario.md` no se toca. **Para Mariano:** en la slide 2, «Vivienda» pasa a 12 y ocupa una línea más; las filas de la tabla van 2 px más justas para que «Apoyo (no CM)» siga dentro de la tarjeta (`slides.md`, slide 2) |
 | La API pública y el MCP, gratis para todos (decisión de Mariano del 19 nov) | `modelo_negocio.md` y preguntas 1, 2 y 6 | **Hecho el 19 nov.** **No va en la voz ni en la slide** hasta que esté en producción la página de documentación de la API y del MCP (otra línea). Cuando datamad-10 la confirme, se decide con Mariano si entra en el guion o en la slide 3 |
 
 ---
