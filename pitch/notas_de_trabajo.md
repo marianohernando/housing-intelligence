@@ -35,6 +35,16 @@ Aprobado por Mariano el 18 nov. Está en el guion (bloque 4), en la slide 3 («V
 | +1 en `pitch/datasets_cm.md` (36 CM, 53 en total, igual que el README y la API), la frase del suelo en el bloque 4 del guion, sin cifra (sin la lista de datos: 101 palabras, unos 28 s de margen) y la pregunta 60 sin «pendiente» | `datasets_cm.md`, guion, preguntas, slides, metodología | **Hecho el 18 nov** |
 | «Ya enseñamos el suelo público para vivienda.» en la slide 3, o una captura de la capa | deck | **Hecho el 18 nov, por decisión de Mariano:** la frase va en la línea del siguiente paso de la slide 3 y cabe a 1920 × 1080; sin captura de la capa. Mariano también quitó la cifra (291) del bloque 4 del guion: no está en pantalla. La slide 2 ya cuenta 36: su número y su tabla salen del catálogo (`pitch/deck/build.py`) |
 
+## Modelo de negocio del 19 nov
+
+Decisión de Mariano del 19 nov, que sustituye a la del 12 nov: personas y ayuntamientos, gratis; pagan inversores y promotores privados, con un plan de precios (`pitch/modelo_negocio.md`).
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| El modelo nuevo, con los precios como hipótesis: Inversor 99–199 €/mes, Equipo 399 €/mes y estudio a medida de 490–1.500 €; Nestra, 175, 437,50 y 1.050 €/mes como referencia | `modelo_negocio.md` | **Hecho el 19 nov** |
+| «Gratis para personas y ayuntamientos; pagan inversores y promotores», sin precios en la voz ni en la slide | slide 3, guion (bloque 4), `slides.md` y preguntas 6 y 60 | **Hecho el 19 nov.** Bloque 4: 102 palabras; margen, unos 28 s |
+| La sección «Para inversores» de la web | otra línea, en la web | **No se cita como hecha** hasta que datamad-10 la confirme en producción. Cuando llegue, se revisan la pregunta 6 («todavía no está en la web») y `modelo_negocio.md` |
+
 ---
 
 ## Condiciones de publicación de `metodologia.md`

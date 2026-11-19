@@ -1,66 +1,59 @@
-# Modelo de negocio: 3 opciones para elegir
+# Modelo de negocio
 
-Fichero de trabajo para que Mariano eligiera.
+**Decisión de Mariano (19 nov), que sustituye a la del 12 nov.** Tres patas:
+- **Personas: gratis.** Para quien busca dónde vivir, Vida Fácil es gratis y completa. La versión gratuita no se recorta para empujar a pagar (`CLAUDE.md` §3 y §16).
+- **Ayuntamientos: gratis.** Cada ayuntamiento ve qué le falta a su municipio frente a municipios parecidos, dónde y a cuánta gente afecta, con la fuente de cada dato. Es «Qué falta», que ya está en producción en los 179 municipios y en los 21 distritos de Madrid (`GET /api/v1/gaps?level=municipio` y `?level=distrito`, 179 y 21 zonas, 19 nov). Les sirve para decidir dónde invertir primero, sin contrato ni licitación. Por ejemplo, Parla sale FALTA en farmacias: 2,0 por cada 10.000 habitantes a pie, frente a 4,2 en los demás municipios urbanos (`GET /api/v1/gaps/municipio/28106`, `gap-0.3`, 19 nov).
+- **Inversores y promotores privados: pagan, con un plan de precios.** En su versión ven qué le falta a una zona y si una operación allí es viable. Esa versión todavía no está en la web: es un plan (ver «Qué falta para cobrar»).
 
-**Decisión de Mariano (12 nov):**
-- **En el pitch:** la opción A, ayuntamientos (informe «Qué falta» por municipio, 990–1.500 €, por contrato menor).
-- **Primeros ingresos:** la opción B, promotoras y consultoras (estudios de 490 a 1.500 €).
-- **Siempre gratis:** la ciudadanía. La API y el MCP (opción C) también, sin uso comercial.
-- **Coste en la slide 3:** «0 € hoy; unos 45 $/mes para uso comercial».
-
-**Lo que no cambia en ninguna opción:**
-- Para las personas, Vida Fácil es gratis y completa. La versión gratuita no se recorta para empujar a pagar (`CLAUDE.md` §3 y §16).
-- Nunca se venden datos de personas: solo zonas y siempre agregados.
-
-**Los precios son hipótesis.** Los de informes y suscripción salen de `docs/06_business/03_pricing.md`. Los de la API son propuesta de la línea D, sin respaldo en el repo. La regla del repo es no fijar ningún precio sin entrevistas de disposición a pagar (`docs/08_validation/09_pricing_validation.md`).
+**Lo que no cambia:** nunca se venden datos de personas; solo zonas, y siempre agregadas.
 
 ---
 
-## Opción A · Ayuntamientos: informe «Qué falta» de su municipio
+## Planes y precios (hipótesis para validar)
 
-- **Cliente tipo:** la concejalía de servicios sociales, educación o urbanismo de un municipio urbano de la Comunidad de Madrid. Tiene datos sueltos y ningún técnico que los cruce.
-- **La pregunta por la que paga:** «¿Qué nos falta frente a municipios como el nuestro, dónde y a cuánta gente afecta?». Por ejemplo, Parla sale FALTA en farmacias: 2,0 por cada 10.000 habitantes a pie, frente a 4,2 en los municipios urbanos (`GET /api/v1/gaps/municipio/28106`, 12 nov).
-- **Qué recibe:**
-  - un informe de 10–15 páginas con las 6 filas de «Qué falta», sus fuentes y sus límites, y la comparación con municipios parecidos;
-  - una sesión de una hora para explicarlo;
-  - el enlace a la vista de su municipio en la web.
-- **Precio orientativo:**
-  - **990–1.500 € por informe**, la horquilla de `03_pricing.md`;
-  - seguimiento anual con los datos nuevos: hipótesis de unos 1.500 € al año, sin validar.
-- **Por qué se puede vender:** queda muy por debajo del límite del contrato menor de servicios, 15.000 € sin IVA ([Ley 9/2017, art. 118](https://www.boe.es/buscar/act.php?id=BOE-A-2017-12902)). Un ayuntamiento puede contratarlo sin licitación.
-- **Ventaja para el concurso:** es el uso más directo de los datos de la Comunidad para decidir dónde invertir.
-- **Riesgo:** los ayuntamientos compran despacio y con presupuesto anual, y el mercado de la región es de 179 municipios.
+| Plan | Para quién | Precio | Qué incluye |
+|---|---|---|---|
+| Gratis | personas y ayuntamientos | 0 € | la búsqueda, la ficha de cada zona, «Qué falta» y el suelo público para vivienda (D-246). Todo está en producción |
+| Inversor | un inversor o un promotor | unos 99–199 €/mes | fichas de zona y de las parcelas del Portal del Suelo sin límite, la viabilidad de una operación, exportación a PDF y Excel, y avisos de suelo nuevo |
+| Equipo | una promotora o un fondo con varias personas | unos 399 €/mes | lo del plan Inversor, con usuarios ilimitados, informes con su marca y carteras de parcelas |
+| Estudio a medida | quien quiere el trabajo hecho | 490–1.500 € | un estudio de zona, revisado a mano antes de entregarlo |
+| API y MCP para uso comercial | empresas de software y agentes de IA | a medida | lo que `03_pricing.md` llama «Enterprise/API» |
 
-## Opción B · Promotoras y consultoras: estudios de zona y suscripción
+**De los planes de pago, hoy solo existe la base:** las fichas de zona, «Qué falta» y el suelo público. No hay cuentas, ni cobro, ni viabilidad, ni exportación.
 
-- **Cliente tipo:** una promotora o inmobiliaria mediana, o una consultora que hace estudios de mercado. Es el cliente inicial que fija `CLAUDE.md` §16.
-- **La pregunta por la que paga:** «¿En qué zonas hay hogares que no encuentran lo que necesitan, y qué producto encaja?». Por ejemplo:
-  - familias de 4 o más con pocas viviendas grandes;
-  - mayores con pocas plazas cerca.
-- **Qué recibe:**
-  - primero, estudios a medida: se vende inteligencia antes de tener el producto de pago terminado (`docs/06_business/08_pro_gtm_and_offer_ladder.md`);
-  - después, una suscripción con el mapa, comparativas entre zonas y exportación de datos.
-- **Precio orientativo** (`03_pricing.md`):
-  - estudio rápido de una zona, **490 €**; estudio completo, **990–1.500 €**;
-  - suscripción individual, **79–99 €/mes**; para equipos, **249–399 €/mes**.
-- **Riesgo:** la suscripción no existe todavía (en la demo no hay cuentas ni proyectos guardados), así que al principio solo se venden estudios.
+**De dónde salen los precios:**
+- **Los del repo** (`docs/06_business/03_pricing.md`):
+  - suscripción individual, 79–99 €/mes;
+  - para equipos, 249–399 €/mes;
+  - informes de 490, 990 y 1.500 €.
 
-## Opción C · Datos para software: API y MCP
+  El plan Equipo toma el techo de la horquilla de equipos y el estudio a medida, la de los informes. El plan Inversor sube el techo hasta 199 €/mes, más cerca de la referencia de mercado.
+- **Referencia de mercado:** Nestra, que analiza en España la normativa urbanística de una parcela, cobra 175, 437,50 y 1.050 €/mes en sus planes Starter, Professional y Business. Son precios sin IVA y con pago anual; tiene además un plan gratuito y uno a medida ([precios de Nestra](https://www.nestra.es/precios), consultados el 19 nov).
+- El análisis de mercado completo es un documento interno del 19 nov, fuera del repo, como el brief de diseño.
 
-- **Cliente tipo:** una empresa de software que quiere el «qué falta» o el encaje de cada zona dentro de su producto. Por ejemplo, una app de mudanzas, una aseguradora, una herramienta para gestores de residencias o un asistente de IA.
-- **La pregunta por la que paga:** «Para esta zona, ¿qué servicios tiene a pie y qué le falta, con su fuente?». La respuesta llega en JSON o desde un agente.
-- **Qué recibe:**
-  - la API pública, que ya existe (`docs/04_technical_architecture/31_public_api_routes.md`);
-  - el servidor MCP con cinco herramientas de solo lectura (`make mcp`), que hoy funciona en local.
-- **Precio orientativo** (propuesta de D, sin validar):
-  - gratis para uso no comercial e investigación, con un límite de llamadas;
-  - de pago desde unos **99 €/mes** según volumen y uso comercial;
-  - a medida a partir de ahí, como dice `03_pricing.md` para «Enterprise/API».
-- **Riesgo:** hace falta un sistema de claves y de cobro por uso que hoy no existe. Además, el MCP tendría que funcionar en remoto y no solo en local.
+**Regla del repo:** no se fija ningún precio sin entrevistas de disposición a pagar (`docs/08_validation/09_pricing_validation.md`).
+
+## Qué falta para cobrar
+- La versión para inversores, que todavía no está en la web.
+- Cuentas y cobro: la demo no tiene cuentas ni proyectos guardados.
+- Pasar a un plan comercial: el gratuito de Vercel no admite cobrar (ver «Coste a escala»).
+- Las entrevistas de disposición a pagar con inversores y promotores.
+
+## Qué se dice en el pitch
+- **Slide 3, columna «Viabilidad»:** «Gratis para personas y ayuntamientos. Pagan inversores y promotores.».
+- **Guion, bloque 4:** «Gratis para personas y ayuntamientos: cada ayuntamiento ve qué le falta a su municipio. Pagan inversores y promotores, por saber qué falta antes de construir.».
+- **Los precios** no se dicen en voz alta ni van en la slide. Si preguntan, están en la pregunta 6 de `pitch/preguntas.md`.
+
+## Lo que decía el 12 nov (sustituido)
+- En el pitch, los ayuntamientos pagaban un informe de «Qué falta» de 990–1.500 €, por contrato menor.
+- Los primeros ingresos serían estudios de 490 a 1.500 € para promotoras y consultoras.
+- La API y el MCP serían gratis sin uso comercial.
+
+El texto completo, con las tres opciones que se compararon, está en el historial de git de este fichero.
 
 ---
 
-## Coste a escala (las tres opciones)
+## Coste a escala
 
 **Hoy cuesta 0 €/mes, pero no vale para cobrar.**
 - La demo está en el plan gratuito de Vercel (Hobby), que es solo para uso personal y no comercial.
@@ -98,20 +91,9 @@ Fichero de trabajo para que Mariano eligiera.
 | Semana | Revisar la prueba de humo y los errores | 30 min |
 | Trimestre | Recargar los horarios del Consorcio. Caducan: el del metro venció en mayo de 2026 | medio día |
 | Año | Recargar la estadística anual (padrón, censo, alquiler, centros) y los catálogos del Ministerio de Sanidad. Volver a calcular «Qué falta» | 2–3 días |
-| Informe vendido | Revisar a mano el informe del cliente antes de enviarlo | 2–4 h |
+| Estudio vendido | Revisar a mano el estudio del cliente antes de enviarlo | 2–4 h |
 
 **Riesgo de depender de una persona y cómo se reduce:**
 - el código es abierto (Apache-2.0);
 - cada decisión está en `docs/00_index/01_decisions_log.md`;
 - cada conjunto de datos se declara en un YAML del catálogo, y para añadir uno basta con escribir su YAML.
-
----
-
-## Recomendación de D
-
-- **A para el pitch, B para los primeros ingresos.**
-  - **A** es la historia que el jurado entiende y la que más usa los datos de la Comunidad: «a este municipio le falta esto, y afecta a tantas personas».
-  - **B** es el cliente que el proyecto ya eligió y el que puede pagar antes, con estudios sueltos.
-- **C, más adelante:** cuando haya claves de API y el MCP en remoto.
-- **Para la slide**, una sola línea: «Gratis para las personas. Pagan ayuntamientos y empresas por informes de lo que falta en su zona.». Va con el coste mínimo para cobrar, unos 45 $/mes.
-- **Decide Mariano:** qué opción u opciones, y si los precios se dicen en la final o solo si preguntan.
