@@ -1,0 +1,118 @@
+{
+  "base": "production",
+  "code": {
+    "pilotBarrios": 108,
+    "vedaParcels": 1109,
+    "portalParcels": 50,
+    "pem": {
+      "eurM2": 644,
+      "year": 2025,
+      "url": "https://datos.comunidad.madrid/dataset/1006022"
+    }
+  },
+  "widths": {
+    "390": {
+      "method": {
+        "heading": "Cómo calculamos la ficha para inversores",
+        "headingTopPx": -0.3,
+        "headingInView": true,
+        "figures": {
+          "pilot": {
+            "expected": "uno de los 108 del piloto",
+            "shown": true
+          },
+          "veda": {
+            "expected": "(1.109 parcelas, de vivienda y de otros usos)",
+            "shown": true
+          },
+          "portal": {
+            "expected": "(50 parcelas de Madrid capital)",
+            "shown": true
+          },
+          "pem": {
+            "expected": "644 €/m², 2025",
+            "shown": true
+          }
+        },
+        "pemLink": 1
+      },
+      "parcel": {
+        "links": 1,
+        "allMethodLinks": [
+          "/como-lo-calculamos «Cómo lo calculamos»",
+          "/como-lo-calculamos#inversores «Cómo lo calculamos: la ficha para inversores»",
+          "/como-lo-calculamos «Datos: 39 conjuntos de la Comunidad de Madrid (con los del Consorcio Regional de Transportes) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda»"
+        ],
+        "accessibleName": "Cómo lo calculamos: la ficha para inversores",
+        "visibleOnScreen": true,
+        "visibleInPrint": false,
+        "clickHeadingTopPx": -0.3,
+        "clickLandsOnSection": true
+      },
+      "barrio": {
+        "links": 1,
+        "visibleInPrint": false
+      },
+      "consoleErrors": []
+    },
+    "1440": {
+      "method": {
+        "heading": "Cómo calculamos la ficha para inversores",
+        "headingTopPx": 0,
+        "headingInView": true,
+        "figures": {
+          "pilot": {
+            "expected": "uno de los 108 del piloto",
+            "shown": true
+          },
+          "veda": {
+            "expected": "(1.109 parcelas, de vivienda y de otros usos)",
+            "shown": true
+          },
+          "portal": {
+            "expected": "(50 parcelas de Madrid capital)",
+            "shown": true
+          },
+          "pem": {
+            "expected": "644 €/m², 2025",
+            "shown": true
+          }
+        },
+        "pemLink": 1
+      },
+      "parcel": {
+        "links": 1,
+        "allMethodLinks": [
+          "/como-lo-calculamos «Cómo lo calculamos»",
+          "/como-lo-calculamos#inversores «Cómo lo calculamos: la ficha para inversores»",
+          "/como-lo-calculamos «Datos: 39 conjuntos de la Comunidad de Madrid (con los del Consorcio Regional de Transportes) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda»"
+        ],
+        "accessibleName": "Cómo lo calculamos: la ficha para inversores",
+        "visibleOnScreen": true,
+        "visibleInPrint": false,
+        "clickHeadingTopPx": 0,
+        "clickLandsOnSection": true
+      },
+      "barrio": {
+        "links": 1,
+        "visibleInPrint": false
+      },
+      "developers": {
+        "cloneLines": [
+          "git clone <REPO_URL>.git"
+        ],
+        "repoLinks": [
+          "<REPO_URL>/blob/main/LICENSE",
+          "<REPO_URL>/blob/main/docs/LICENSE",
+          "<REPO_URL>/tree/main/data/catalog/datasets",
+          "<REPO_URL>/issues",
+          "<REPO_URL>",
+          "<REPO_URL>/blob/main/docs/04_technical_architecture/31_public_api_routes.md",
+          "<REPO_URL>/blob/main/docs/04_technical_architecture/32_mcp_server.md",
+          "<REPO_URL>/tree/main/data/schemas/api"
+        ]
+      },
+      "consoleErrors": []
+    }
+  }
+}
