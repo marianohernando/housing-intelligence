@@ -1,0 +1,13 @@
+The two new examples of /desarrolladores (D-250), copied from the live page (each <pre>) and run verbatim with bash, 2026-11-19 ~15:33Z.
+The page lists 15 routes now (13 before). The other 13 examples did not change (J8 checks the 15 commands point at the public API).
+
+## Una parcela exacta
+curl -s "https://vidafacil-madrid.vercel.app/api/v1/investors/parcels?rc=2122202VK4722A"
+→ 69402 B, parcels-0.1, data_version 2026-11-19
+  Calle Mendez Alvaro 47, 28045 Madrid · 2122202VK4722A · Atocha (Arganzuela), in the pilot: true
+  fallback none · degraded none · planning APR.02.06 · buildability oficial 13121.0 m²
+
+## Los portales de una dirección
+curl -s "https://vidafacil-madrid.vercel.app/api/v1/investors/parcels/candidates?q=mendez%20alvaro%2047"
+→ 783 B, parcels-0.1
+  1 candidate: Calle Mendez Alvaro 47, Madrid · 28045 · 2122202VK4722A · needs_number false · ign_cartociudad
