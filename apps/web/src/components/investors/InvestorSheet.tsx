@@ -14,6 +14,7 @@ import { errorMessage } from "@/lib/errors";
 import { notComparable, peopleAffectedText, rowComparison } from "@/lib/gaps";
 import {
   COMMERCE_LABEL,
+  uniqueDatasets,
   INVESTOR_TEXT as TEXT,
   landArea,
   landName,
@@ -120,7 +121,7 @@ function LandList({ items }: { items: LandItem[] }) {
       {items.map((item) => (
         <li key={`${item.kind}-${item.code ?? item.name}`}>
           <strong>{landName(item)}</strong>
-          <span>{[landArea(item), item.regime ? REGIME_TEXT[item.regime] : null, item.manager].filter(Boolean).join(" · ")}</span>
+          <span>{[landArea(item), item.use, item.regime ? REGIME_TEXT[item.regime] : null, item.manager].filter(Boolean).join(" · ")}</span>
           {item.url?.startsWith("https://") && (
             <a href={item.url} target="_blank" rel="noopener noreferrer" className={styles.external}>
               {item.kind === "parcela" ? SHEET_TEXT.viewer : SHEET_TEXT.record}
@@ -156,6 +157,9 @@ function Land({ sheet }: { sheet: InvestorZone }) {
 }
 
 function Sources({ sheet, version }: { sheet: InvestorZone; version: string | null }) {
+  const datasets = uniqueDatasets(sheet.datasets);
+  // The PEM's dataset is in the list once loaded; before, its versioned figure cites the portal page
+  const pemFallback = (sheet.defaults.pem_m2.source.dataset_ids ?? []).length === 0 && Boolean(sheet.defaults.pem_m2.source.url);
   return (
     <Section id="fuentes" title={TEXT.sections.sources}>
       <ul className={styles.notices}>
@@ -165,9 +169,9 @@ function Sources({ sheet, version }: { sheet: InvestorZone; version: string | nu
       </ul>
       <p className={styles.note}>{SHEET_TEXT.version(version)}</p>
       <details className={styles.parts} open>
-        <summary>{SHEET_TEXT.datasets(sheet.datasets.length + 1)}</summary>
+        <summary>{SHEET_TEXT.datasets(datasets.length + (pemFallback ? 1 : 0))}</summary>
         <ul className={styles.datasets}>
-          {sheet.datasets.map((d) => (
+          {datasets.map((d) => (
             <li key={d.dataset_id}>
               {d.publisher}: {d.name}
               {d.version ? ` (versión ${d.version})` : ""}
@@ -183,14 +187,16 @@ function Sources({ sheet, version }: { sheet: InvestorZone; version: string | nu
               )}
             </li>
           ))}
-          <li>
-            {SHEET_TEXT.pemDataset} ·{" "}
-            <a href={sheet.defaults.pem_m2.source.url ?? undefined} target="_blank" rel="noopener noreferrer">
-              {SHEET_TEXT.open}
-              <span className="visually-hidden">: {SHEET_TEXT.pemDataset} (se abre en una pestaña nueva)</span>
-            </a>
-            <span className={styles.printOnly}>{sheet.defaults.pem_m2.source.url}</span>
-          </li>
+          {pemFallback && (
+            <li>
+              {SHEET_TEXT.pemDataset} ·{" "}
+              <a href={sheet.defaults.pem_m2.source.url ?? undefined} target="_blank" rel="noopener noreferrer">
+                {SHEET_TEXT.open}
+                <span className="visually-hidden">: {SHEET_TEXT.pemDataset} (se abre en una pestaña nueva)</span>
+              </a>
+              <span className={styles.printOnly}>{sheet.defaults.pem_m2.source.url}</span>
+            </li>
+          )}
         </ul>
       </details>
     </Section>

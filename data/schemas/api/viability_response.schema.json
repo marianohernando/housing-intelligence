@@ -226,6 +226,7 @@
               "type": "null"
             }
           ],
+          "description": "Annual rent over construction plus land; null without rent or when not even free land reaches the target margin",
           "title": "Rental Yield Pct"
         },
         "residual_land_value": {
@@ -267,9 +268,21 @@
           ],
           "description": "Only with a land price; without it, null: the headline is the residual land value"
         },
-        "yield_includes_land": {
-          "title": "Yield Includes Land",
-          "type": "boolean"
+        "yield_land": {
+          "anyOf": [
+            {
+              "enum": [
+                "precio",
+                "valor_residual"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The land the yield counts: the price given, or without one the residual land value (paying the most the target margin allows); never no land",
+          "title": "Yield Land"
         }
       },
       "required": [
@@ -288,7 +301,7 @@
         "residual_land_value_m2",
         "annual_rent",
         "rental_yield_pct",
-        "yield_includes_land",
+        "yield_land",
         "verdict",
         "headline"
       ],

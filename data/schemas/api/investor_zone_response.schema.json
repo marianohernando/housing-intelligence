@@ -775,6 +775,19 @@
           "default": null,
           "description": "The official viewer or record",
           "title": "Url"
+        },
+        "use": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Line A's planning areas: their use, as the source writes it",
+          "title": "Use"
         }
       },
       "required": [

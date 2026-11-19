@@ -7,7 +7,7 @@ null with its reason, never 0. Nothing here changes `/search` or `/gaps`.
 """
 
 from enum import StrEnum
-from typing import Self
+from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
@@ -186,6 +186,9 @@ class LandItem(BaseModel):
     regime: str | None = Field(default=None, description="venta | concesion")
     manager: str | None = None
     stage: str | None = None
+    use: str | None = Field(
+        default=None, description="Line A's planning areas: their use, as the source writes it"
+    )
     url: str | None = Field(default=None, description="The official viewer or record")
 
 
@@ -258,7 +261,7 @@ class ViabilityRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    buildable_m2: float = Field(gt=0, le=500_000)
+    buildable_m2: float = Field(ge=50, le=500_000, description="m² built; 50 at least")
     sale_price_m2: float = Field(ge=500, le=30_000, description="€/m², before the premium")
     new_build_premium_pct: float = Field(default=0, ge=-20, le=50)
     rent_m2_month: float | None = Field(default=None, ge=1, le=100)
@@ -270,15 +273,15 @@ class ViabilityRequest(BaseModel):
     )
     sales_costs_pct: float = Field(default=8, ge=0, le=30)
     target_margin_pct: float = Field(default=20, ge=1, le=50)
-    adjust_floor_pct: float = Field(default=10, ge=0, le=50)
+    adjust_floor_pct: float = Field(
+        default=10, ge=0, le=50, description="Lowered to the target margin when above it"
+    )
     demand: DemandRequest | None = None
 
     @model_validator(mode="after")
     def _one_land_price(self) -> Self:
         if self.land_eur is not None and self.land_eur_m2 is not None:
             raise ValueError("land as a total or per m² buildable, not both")
-        if self.adjust_floor_pct > self.target_margin_pct:
-            raise ValueError("the floor of «ajustar» is at most the target margin")
         return self
 
 
@@ -299,8 +302,14 @@ class ScenarioOutcome(BaseModel):
     residual_land_value: float
     residual_land_value_m2: float
     annual_rent: float | None
-    rental_yield_pct: float | None
-    yield_includes_land: bool
+    rental_yield_pct: float | None = Field(
+        description="Annual rent over construction plus land; null without rent or when not "
+        "even free land reaches the target margin"
+    )
+    yield_land: Literal["precio", "valor_residual"] | None = Field(
+        description="The land the yield counts: the price given, or without one the residual "
+        "land value (paying the most the target margin allows); never no land"
+    )
     verdict: Verdict | None = Field(
         description="Only with a land price; without it, null: the headline is the residual "
         "land value"

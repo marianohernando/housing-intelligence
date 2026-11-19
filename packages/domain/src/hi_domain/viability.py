@@ -11,7 +11,9 @@ appraised value shared out by the cadastral value per built m², D-234) and the 
     land           S, given by the person (total or per m² buildable), or unknown
     margin         m = (I − C − G − S) / I                         (on sales, before financing)
     residual land  V = I × (1 − m*) − C − G                        (the most land can cost)
-    rent           R = A × r × 12 × fp;  gross yield = R / (S + C)  (without S if unknown)
+    rent           R = A × r × 12 × fp;  gross yield = R / (S + C)
+                   (without a land price, S = V: paying for the land the most the target allows;
+                    no yield when V ≤ 0)
 
 `fp` and `fc` are the scenario's price and cost factors: base (1, 1), optimistic (1,10, 0,95),
 pessimistic (0,90, 1,05), as Nestra's sensitivity. The verdict compares the margin with the
@@ -37,6 +39,11 @@ class Mark(StrEnum):
     DATO = "dato"
     SUPUESTO = "supuesto"
     USUARIO = "usuario"
+
+
+class YieldLand(StrEnum):
+    PRECIO = "precio"  # the land price the person gave
+    VALOR_RESIDUAL = "valor_residual"  # without one, the most the target margin allows
 
 
 class Verdict(StrEnum):
@@ -141,7 +148,11 @@ EFFORT_THRESHOLD = 0.30
 EFFORT_SOURCE = (
     "Ley 12/2023 por el derecho a la vivienda, art. 18.2 a): una zona está tensionada si la "
     "hipoteca o el alquiler, con los gastos y suministros básicos, superan el 30 % de la renta "
-    "media de los hogares"
+    "media de los hogares. Aquí solo se cuenta la cuota o el alquiler, sin gastos ni "
+    "suministros: la cuenta es optimista"
+)
+EFFORT_CAVEAT = (
+    "Solo cuenta la cuota o el alquiler, sin gastos ni suministros: la cuenta es optimista."
 )
 
 NOTICES: tuple[str, ...] = (
@@ -186,7 +197,9 @@ class ScenarioResult:
     residual_land_value_m2: float
     annual_rent: float | None
     rental_yield: float | None
-    yield_includes_land: bool
+    # What the yield counts as land: the person's price, or the residual land value without
+    # one (paying the most the target margin allows); None when there is no yield
+    yield_land: YieldLand | None
     verdict: Verdict | None  # only with a land price
     headline: str  # the verdict in words, or without land the residual land value
 
@@ -211,6 +224,26 @@ def pct(share: float, decimals: int = 0) -> str:
 
 def sale_price_with_premium(inputs: ViabilityInputs) -> float:
     return inputs.sale_price_m2 * (1 + inputs.new_build_premium)
+
+
+def adjust_floor(inputs: ViabilityInputs) -> float:
+    """The floor of «ajustar» never above the target: a target of 8 % leaves no «ajustar» band."""
+    return min(inputs.adjust_floor, inputs.target_margin)
+
+
+def gross_yield(
+    rent: float | None, construction: float, land: float | None, residual: float
+) -> tuple[float | None, YieldLand | None]:
+    """Annual rent over what is invested to build. Never without land: without a price, the land
+    is the residual value (the most the target margin allows); if even free land misses the
+    target, there is no land value to count and no yield."""
+    if rent is None:
+        return None, None
+    if land is not None:
+        return rent / (construction + land), YieldLand.PRECIO
+    if residual <= 0:
+        return None, None
+    return rent / (construction + residual), YieldLand.VALOR_RESIDUAL
 
 
 def residual_land_value(revenue: float, construction: float, sales: float, margin: float) -> float:
@@ -267,11 +300,11 @@ def run_scenario(inputs: ViabilityInputs, scenario: Scenario) -> ScenarioResult:
         total = construction + sales + land
         profit = revenue - total
         margin = profit / revenue
-        verdict, text = margin_verdict(margin, inputs.target_margin, inputs.adjust_floor)
+        verdict, text = margin_verdict(margin, inputs.target_margin, adjust_floor(inputs))
     rent = None
     if inputs.rent_m2_month is not None:
         rent = area * inputs.rent_m2_month * 12 * scenario.price_factor
-    invested = construction + (land or 0.0)
+    rental_yield, yield_land = gross_yield(rent, construction, land, residual)
     return ScenarioResult(
         scenario=scenario,
         revenue=revenue,
@@ -284,8 +317,8 @@ def run_scenario(inputs: ViabilityInputs, scenario: Scenario) -> ScenarioResult:
         residual_land_value=residual,
         residual_land_value_m2=residual / area,
         annual_rent=rent,
-        rental_yield=None if rent is None else rent / invested,
-        yield_includes_land=land is not None,
+        rental_yield=rental_yield,
+        yield_land=yield_land,
         verdict=verdict,
         headline=text,
     )
@@ -378,6 +411,7 @@ def demand_check(inputs: DemandInputs) -> DemandCheck:
         lines.append(
             effort_line(f"El alquiler ({money(rent)} al mes)", rent_effort, inputs.effort_threshold)
         )
+    lines.append(EFFORT_CAVEAT)
     lines.append("Es la renta media: no dice cuántos hogares ganan más o menos que ella.")
     return DemandCheck(
         home_price=price,

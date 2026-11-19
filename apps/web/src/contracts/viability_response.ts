@@ -32,6 +32,9 @@ export type Land = number | null;
 export type MarginPct = number | null;
 export type PriceFactor = number;
 export type Profit = number | null;
+/**
+ * Annual rent over construction plus land; null without rent or when not even free land reaches the target margin
+ */
 export type RentalYieldPct = number | null;
 export type ResidualLandValue = number;
 export type ResidualLandValueM2 = number;
@@ -42,7 +45,10 @@ export type SalesCosts = number;
  */
 export type TotalCost = number | null;
 export type Verdict = "sale" | "ajustar" | "no_sale";
-export type YieldIncludesLand = boolean;
+/**
+ * The land the yield counts: the price given, or without one the residual land value (paying the most the target margin allows); never no land
+ */
+export type YieldLand = ("precio" | "valor_residual") | null;
 export type Scenarios = ScenarioOutcome[];
 export type Version = string;
 export type ApiVersion = string;
@@ -103,7 +109,7 @@ export interface ScenarioOutcome {
    * Only with a land price; without it, null: the headline is the residual land value
    */
   verdict: Verdict | null;
-  yield_includes_land: YieldIncludesLand;
+  yield_land: YieldLand;
 }
 export interface Meta {
   api_version?: ApiVersion;

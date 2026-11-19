@@ -4,7 +4,13 @@
  * `npm run -w apps/web contracts`.
  */
 
+/**
+ * Lowered to the target margin when above it
+ */
 export type AdjustFloorPct = number;
+/**
+ * m² built; 50 at least
+ */
 export type BuildableM2 = number;
 export type CostCoefficient = number;
 export type EffortThresholdPct = number;

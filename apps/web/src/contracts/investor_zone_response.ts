@@ -186,6 +186,10 @@ export type Stage = string | null;
  * The official viewer or record
  */
 export type Url2 = string | null;
+/**
+ * Line A's planning areas: their use, as the source writes it
+ */
+export type Use = string | null;
 export type Parcels = LandItem[];
 export type Remaining = LandItem[];
 export type Notices = string[];
@@ -406,6 +410,7 @@ export interface LandItem {
   regime?: Regime;
   stage?: Stage;
   url?: Url2;
+  use?: Use;
 }
 export interface PricesBlock {
   new_build_premium_pct: SourcedValue;

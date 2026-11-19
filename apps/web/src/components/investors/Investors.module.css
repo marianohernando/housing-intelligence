@@ -234,6 +234,10 @@
   border-style: dashed;
 }
 
+.mark_sin_dato {
+  border-style: dotted;
+}
+
 .mark_usuario {
   background: var(--violet-soft);
   color: var(--ink);
@@ -402,6 +406,20 @@
 
 .unit {
   color: var(--ink-soft);
+}
+
+/* An input out of its range: said in words under it, without alarm colours */
+.fieldError {
+  padding-left: var(--space-2);
+  border-left: 3px solid var(--ink);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.inputRow input[aria-invalid="true"] {
+  border-width: 2px;
+  border-color: var(--ink);
 }
 
 .fieldHelp {

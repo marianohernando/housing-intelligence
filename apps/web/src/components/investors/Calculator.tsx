@@ -16,6 +16,8 @@ import {
   landArea,
   landKey,
   landName,
+  fieldErrors,
+  landCaution,
   missingFields,
   money,
   parseNumber,
@@ -42,14 +44,19 @@ interface FieldProps {
   help?: string;
   /** The mark when the field has no default of its own (the area of the chosen land is data) */
   mark?: SourcedValue["mark"];
+  /** What is wrong with the value (out of range, not a whole number): said under the field */
+  error?: string;
 }
 
 /** A number the person can edit, with its unit, its mark (data, assumption or theirs) and its source. */
-function NumberField({ name, label, unit, fields, initial, onChange, source, help, mark: own }: FieldProps) {
+function NumberField({ name, label, unit, fields, initial, onChange, source, help, mark: own, error }: FieldProps) {
   const id = useId();
   const value = fields[name] as string;
   const edited = own === undefined && value !== initial[name];
-  const mark = edited ? "usuario" : (own ?? source?.mark ?? "usuario");
+  // A default without its data says so («Sin dato»), never «Dato»
+  const unknown = !edited && own === undefined && source !== undefined && (source.value === null || source.value === undefined);
+  const mark = edited ? "usuario" : unknown ? "sin_dato" : (own ?? source?.mark ?? "usuario");
+  const described = error ? `${id}-error ${id}-help` : `${id}-help`;
   return (
     <div className={styles.field}>
       <label htmlFor={id}>{label}</label>
@@ -62,10 +69,16 @@ function NumberField({ name, label, unit, fields, initial, onChange, source, hel
           autoComplete="off"
           value={value}
           onChange={(event) => onChange(name, event.target.value)}
-          aria-describedby={`${id}-help`}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={described}
         />
         <span className={styles.unit}>{unit}</span>
       </span>
+      {error && (
+        <span id={`${id}-error`} className={styles.fieldError}>
+          {error}
+        </span>
+      )}
       <span id={`${id}-help`} className={styles.fieldHelp}>
         <MarkTag mark={mark} /> {edited ? TEXT.edited : (help ?? (source ? withoutMark(source.source.text) : ""))}
       </span>
@@ -141,8 +154,11 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
     TEXT.residual,
     `${money(scenario.residual_land_value)} (${formatNumber(Math.round(scenario.residual_land_value_m2), 0)} €/m² edificable)`,
   ]);
+  // Never without land: with the price given, or without one at the residual land value
   if (scenario.rental_yield_pct !== null && scenario.rental_yield_pct !== undefined) {
-    rows.push([scenario.yield_includes_land ? TEXT.yield : TEXT.yieldNoLand, percent(scenario.rental_yield_pct)]);
+    rows.push([scenario.yield_land === "valor_residual" ? TEXT.yieldResidual : TEXT.yield, percent(scenario.rental_yield_pct)]);
+  } else if (scenario.annual_rent !== null && scenario.annual_rent !== undefined) {
+    rows.push([TEXT.noYield, "—"]);
   }
   return (
     <article className={styles.scenario} aria-labelledby={`escenario-${scenario.key}`}>
@@ -239,12 +255,23 @@ export default function Calculator({ defaults, parcels, remaining }: Props) {
   const chosenItem = land.find((item) => landKey(item) === chosen) ?? null;
   const fromLand = chosenItem?.buildable_m2 != null && parseNumber(fields.buildable_m2) === Math.round(chosenItem.buildable_m2);
   const missing = missingFields(fields);
+  const errors = fieldErrors(fields);
+  const invalid = Object.keys(errors).length > 0;
+  const caution = landCaution(chosenItem);
+  const ready = missing.length === 0 && !invalid;
   const common = { fields, initial, onChange: set };
+  const err = (name: keyof CalculatorFields) => ({ error: errors[name] });
 
   return (
     <div className={styles.calculator}>
       <p className={styles.lead}>{TEXT.intro}</p>
       {land.length > 0 && <LandPicker items={land} chosen={chosen} onChoose={choose} />}
+      {caution && (
+        <p className={styles.caution}>
+          <Info size={18} aria-hidden="true" />
+          <span>{caution}</span>
+        </p>
+      )}
       <div className={styles.fieldGroups}>
         <fieldset className={styles.group}>
           <legend>{TEXT.groupRevenue}</legend>
@@ -253,25 +280,26 @@ export default function Calculator({ defaults, parcels, remaining }: Props) {
             label={TEXT.buildable}
             unit="m²"
             {...common}
+            {...err("buildable_m2")}
             mark={fromLand ? "dato" : "usuario"}
             help={fromLand ? TEXT.buildableFrom : TEXT.buildableHelp}
           />
-          <NumberField name="sale_price_m2" label={TEXT.price} unit="€/m²" source={defaults.sale_price_m2} {...common} />
-          <NumberField name="new_build_premium_pct" label={TEXT.premium} unit="%" source={defaults.new_build_premium_pct} {...common} />
-          <NumberField name="rent_m2_month" label={TEXT.rent} unit="€/m² al mes" source={defaults.rent_m2_month} {...common} />
+          <NumberField name="sale_price_m2" label={TEXT.price} unit="€/m²" source={defaults.sale_price_m2} {...common} {...err("sale_price_m2")} />
+          <NumberField name="new_build_premium_pct" label={TEXT.premium} unit="%" source={defaults.new_build_premium_pct} {...common} {...err("new_build_premium_pct")} />
+          <NumberField name="rent_m2_month" label={TEXT.rent} unit="€/m² al mes" source={defaults.rent_m2_month} {...common} {...err("rent_m2_month")} />
         </fieldset>
         <fieldset className={styles.group}>
           <legend>{TEXT.groupCosts}</legend>
-          <NumberField name="pem_m2" label={TEXT.pem} unit="€/m²" source={defaults.pem_m2} {...common} />
+          <NumberField name="pem_m2" label={TEXT.pem} unit="€/m²" source={defaults.pem_m2} {...common} {...err("pem_m2")} />
           <p className={styles.caution}>
             <Info size={18} aria-hidden="true" />
             <span>{TEXT.costCaution}</span>
           </p>
-          <NumberField name="cost_coefficient" label={TEXT.coefficient} unit="×" source={defaults.cost_coefficient} {...common} />
+          <NumberField name="cost_coefficient" label={TEXT.coefficient} unit="×" source={defaults.cost_coefficient} {...common} {...err("cost_coefficient")} />
           <PartsList title={TEXT.coefficientParts} parts={defaults.cost_parts} />
-          <NumberField name="sales_costs_pct" label={TEXT.salesCostsField} unit="% de las ventas" source={defaults.sales_costs_pct} {...common} />
+          <NumberField name="sales_costs_pct" label={TEXT.salesCostsField} unit="% de las ventas" source={defaults.sales_costs_pct} {...common} {...err("sales_costs_pct")} />
           <PartsList title={TEXT.salesParts} parts={defaults.sales_cost_parts} />
-          <NumberField name="land" label={TEXT.landField} unit={fields.land_unit === "m2" ? "€/m² edificable" : "€ en total"} {...common} help={TEXT.landHelp} />
+          <NumberField name="land" label={TEXT.landField} unit={fields.land_unit === "m2" ? "€/m² edificable" : "€ en total"} {...common} {...err("land")} help={TEXT.landHelp} />
           <label className={styles.selectRow}>
             <span>{TEXT.landUnit}</span>
             <select value={fields.land_unit} onChange={(event) => set("land_unit", event.target.value)}>
@@ -279,15 +307,15 @@ export default function Calculator({ defaults, parcels, remaining }: Props) {
               <option value="m2">{TEXT.landPerM2}</option>
             </select>
           </label>
-          <NumberField name="target_margin_pct" label={TEXT.target} unit="%" source={defaults.target_margin_pct} {...common} />
+          <NumberField name="target_margin_pct" label={TEXT.target} unit="%" source={defaults.target_margin_pct} {...common} {...err("target_margin_pct")} />
         </fieldset>
         <fieldset className={styles.group}>
           <legend>{TEXT.groupDemand}</legend>
-          <NumberField name="household_income" label={TEXT.income} unit="€ al año" source={defaults.household_income} {...common} />
-          <NumberField name="home_m2" label={TEXT.home} unit="m²" source={defaults.home_m2} {...common} />
-          <NumberField name="ltv_pct" label={TEXT.ltv} unit="%" source={defaults.ltv_pct} {...common} />
-          <NumberField name="loan_years" label={TEXT.years} unit="años" source={defaults.loan_years} {...common} />
-          <NumberField name="loan_rate_pct" label={TEXT.rate} unit="%" source={defaults.loan_rate_pct} {...common} />
+          <NumberField name="household_income" label={TEXT.income} unit="€ al año" source={defaults.household_income} {...common} {...err("household_income")} />
+          <NumberField name="home_m2" label={TEXT.home} unit="m²" source={defaults.home_m2} {...common} {...err("home_m2")} />
+          <NumberField name="ltv_pct" label={TEXT.ltv} unit="%" source={defaults.ltv_pct} {...common} {...err("ltv_pct")} />
+          <NumberField name="loan_years" label={TEXT.years} unit="años" source={defaults.loan_years} {...common} {...err("loan_years")} />
+          <NumberField name="loan_rate_pct" label={TEXT.rate} unit="%" source={defaults.loan_rate_pct} {...common} {...err("loan_rate_pct")} />
           <p className={styles.fieldHelp}>
             <MarkTag mark={defaults.effort_threshold_pct.mark} /> {TEXT.threshold(defaults.effort_threshold_pct)}
           </p>
@@ -297,9 +325,10 @@ export default function Calculator({ defaults, parcels, remaining }: Props) {
         <h3 id="resultado">{TEXT.results}</h3>
         <div aria-live="polite" aria-busy={state.busy}>
           {missing.length > 0 && <p className={styles.lead}>{TEXT.missing}</p>}
-          {missing.length === 0 && state.error && <p role="alert">{errorMessage(state.error)}</p>}
-          {missing.length === 0 && !state.error && !state.result && <p>{TEXT.calculating}</p>}
-          {missing.length === 0 && state.result && <Results result={state.result} />}
+          {missing.length === 0 && invalid && <p className={styles.lead}>{TEXT.invalid}</p>}
+          {ready && state.error && <p role="alert">{errorMessage(state.error)}</p>}
+          {ready && !state.error && !state.result && <p>{TEXT.calculating}</p>}
+          {ready && state.result && <Results result={state.result} />}
         </div>
       </section>
     </div>

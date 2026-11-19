@@ -17,6 +17,7 @@ from hi_domain.viability import (
     ScenarioResult,
     Verdict,
     ViabilityInputs,
+    YieldLand,
     demand_check,
     monthly_payment,
     viability,
@@ -120,15 +121,51 @@ def test_without_land_there_is_no_verdict_but_the_residual_land_value() -> None:
     )
 
 
-def test_rental_yield_counts_the_land_only_when_known() -> None:
+def test_rental_yield_never_leaves_out_the_land() -> None:
+    """With a price, rent over construction and land; without one, the land at its residual
+    value (the most the target margin allows); never over construction alone."""
     with_land = _run(land_eur=1_800_000)["base"]
     assert with_land.annual_rent == pytest.approx(180_000)  # 1.000 m² × 15 € × 12
     assert with_land.rental_yield == pytest.approx(180_000 / 2_700_000)
-    assert with_land.yield_includes_land
+    assert with_land.yield_land is YieldLand.PRECIO
     without = _run(land_eur=None)["base"]
-    assert without.rental_yield == pytest.approx(180_000 / 900_000)
-    assert not without.yield_includes_land
+    # Residual land value 1.900.000: 180.000 / (900.000 + 1.900.000)
+    assert without.rental_yield == pytest.approx(180_000 / 2_800_000)
+    assert without.yield_land is YieldLand.VALOR_RESIDUAL
+    # Not even free land reaches the target: no land value to count, no yield
+    short = _run(land_eur=None, pem_m2=2000.0)["base"]
+    assert short.rental_yield is None and short.yield_land is None
     assert _run(rent_m2_month=None)["base"].rental_yield is None
+
+
+def _edges(land: float, **changes: float) -> ScenarioResult:
+    """Exact figures: 1.000 m² at 4.000 €/m², construction 900.000 and sales costs 12,5 %
+    (500.000), so revenue minus both is 2.600.000 and the margins are exact."""
+    return _run(land_eur=land, sales_costs_share=0.125, **changes)["base"]
+
+
+def test_verdict_edges_at_exactly_20_and_10_percent() -> None:
+    at_target = _edges(1_800_000)  # 800.000 / 4.000.000 = 20 %
+    assert at_target.margin == 0.2
+    assert at_target.verdict is Verdict.SALE
+    at_floor = _edges(2_200_000)  # 400.000 / 4.000.000 = 10 %
+    assert at_floor.margin == 0.1
+    assert at_floor.verdict is Verdict.AJUSTAR
+
+
+def test_no_sale_with_a_small_positive_margin() -> None:
+    small = _edges(2_400_000)  # 200.000 / 4.000.000 = 5 %
+    assert small.margin == pytest.approx(0.05)
+    assert small.verdict is Verdict.NO_SALE
+    assert small.headline == "No sale: margen del 5,0 %, por debajo del 10 %."
+
+
+def test_the_ajustar_floor_never_rises_above_the_target() -> None:
+    """A target of 5 % leaves no «ajustar» band: 6 % works, 4 % does not (never a 422)."""
+    assert _edges(2_360_000, target_margin=0.05).verdict is Verdict.SALE  # 6 %
+    low = _edges(2_440_000, target_margin=0.05)  # 4 %
+    assert low.verdict is Verdict.NO_SALE
+    assert low.headline == "No sale: margen del 4,0 %, por debajo del 5 %."
 
 
 def test_the_new_build_premium_raises_the_revenue() -> None:
@@ -195,6 +232,9 @@ def test_demand_check_with_the_mean_income() -> None:
         "La cuota de la hipoteca (1.349 € al mes) sería el 40 % de la renta media de los "
         "hogares del barrio: por encima del 30 %."
     )
+    assert check.lines[-2] == (
+        "Solo cuenta la cuota o el alquiler, sin gastos ni suministros: la cuenta es optimista."
+    )
     assert check.lines[-1].startswith("Es la renta media")
 
 
@@ -204,4 +244,4 @@ def test_demand_check_without_rent() -> None:
     )
     assert check.purchase_within
     assert check.rent_effort is None and check.rent_within is None
-    assert not any("alquiler" in line for line in check.lines)
+    assert not any(line.startswith("El alquiler") for line in check.lines)

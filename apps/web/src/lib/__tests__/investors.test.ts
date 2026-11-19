@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
 import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
@@ -5,6 +8,11 @@ import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/inve
 import {
   adminUnitId,
   defaultLand,
+  FIELD_LIMITS,
+  fieldErrors,
+  LAND_LIMITS,
+  landCaution,
+  uniqueDatasets,
   figure,
   gapsLine,
   initialFields,
@@ -139,6 +147,51 @@ describe("the calculator", () => {
     const total = viabilityRequest({ ...fields, land_unit: "total" });
     expect(total).toMatchObject({ land_eur: 3200 });
     expect(viabilityRequest({ ...fields, land: "" })).not.toHaveProperty("land_eur_m2");
+  });
+
+  it("checks each field against the same range and step as the API", () => {
+    const fields = initialFields(defaults, parcel("c", 12192));
+    expect(fieldErrors(fields)).toEqual({});
+    expect(fieldErrors({ ...fields, buildable_m2: "40" })).toEqual({ buildable_m2: "Pon un número entre 50 y 500.000." });
+    expect(fieldErrors({ ...fields, loan_years: "30,5" })).toEqual({ loan_years: "Pon un número entero entre 5 y 40." });
+    expect(fieldErrors({ ...fields, sale_price_m2: "mucho" })).toHaveProperty("sale_price_m2");
+    // A target under 10 % is fine: the floor of «ajustar» comes down to it (never a 422)
+    expect(fieldErrors({ ...fields, target_margin_pct: "5" })).toEqual({});
+    // The land's range follows its unit
+    expect(fieldErrors({ ...fields, land: "40000", land_unit: "m2" })).toHaveProperty("land");
+    expect(fieldErrors({ ...fields, land: "40000", land_unit: "total" })).toEqual({});
+    expect(viabilityRequest({ ...fields, loan_years: "30,5" })).toBeNull();
+  });
+
+  it("uses the ranges of the API's JSON Schema", () => {
+    const path = fileURLToPath(new URL("../../../../../data/schemas/api/viability_request.schema.json", import.meta.url));
+    const schema = JSON.parse(readFileSync(path, "utf8"));
+    const demand = schema.$defs.DemandRequest.properties;
+    const bounds = (prop: { minimum?: number; maximum?: number; anyOf?: { minimum?: number; maximum?: number }[] }) => {
+      const own = prop.anyOf?.[0] ?? prop;
+      return { min: own.minimum, max: own.maximum };
+    };
+    for (const [name, limit] of Object.entries(FIELD_LIMITS)) {
+      const prop = schema.properties[name] ?? demand[name];
+      expect(prop, name).toBeDefined();
+      expect({ min: limit.min, max: limit.max }, name).toEqual(bounds(prop));
+      expect(Boolean(limit.integer), name).toBe(prop.type === "integer");
+    }
+    expect(LAND_LIMITS.total).toEqual(bounds(schema.properties.land_eur));
+    expect(LAND_LIMITS.m2).toEqual(bounds(schema.properties.land_eur_m2));
+  });
+
+  it("warns that free prices do not hold for protected housing or a concession", () => {
+    const avs = { ...parcel("a", 12192), manager: "AVS- Agencia de Vivienda Social (antes, IVIMA)" };
+    expect(landCaution(avs)).toMatch(/^Es de la Agencia de Vivienda Social: suele ir a vivienda protegida/);
+    const concession = { ...parcel("b", 1000), regime: "concesion", manager: "Ayuntamiento de Alcobendas" };
+    expect(landCaution(concession)).toMatch(/^Se ofrece en concesión.*no valen para vivienda protegida ni para una concesión/);
+    expect(landCaution({ ...parcel("c", 328), regime: "venta", manager: "Ayuntamiento de Madrid" })).toBeNull();
+    expect(landCaution(null)).toBeNull();
+  });
+
+  it("lists each dataset once", () => {
+    expect(uniqueDatasets([{ dataset_id: "a" }, { dataset_id: "b" }, { dataset_id: "a" }])).toEqual([{ dataset_id: "a" }, { dataset_id: "b" }]);
   });
 
   it("waits for the area, the price and the PEM", () => {

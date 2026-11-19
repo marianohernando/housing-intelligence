@@ -7,7 +7,7 @@ import { figure, MARK_TEXT, sourceLine, VERDICT_TEXT } from "@/lib/investors";
 import styles from "./Investors.module.css";
 
 /** «Dato», «Supuesto» or «Lo pones tú»: a word on a quiet tag, never a state colour. */
-export function MarkTag({ mark }: { mark: SourcedValue["mark"] }) {
+export function MarkTag({ mark }: { mark: SourcedValue["mark"] | "sin_dato" }) {
   return <span className={`${styles.mark} ${styles[`mark_${mark}`]}`}>{MARK_TEXT[mark]}</span>;
 }
 

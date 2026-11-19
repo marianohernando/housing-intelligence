@@ -61,14 +61,16 @@
   "properties": {
     "adjust_floor_pct": {
       "default": 10,
+      "description": "Lowered to the target margin when above it",
       "maximum": 50,
       "minimum": 0,
       "title": "Adjust Floor Pct",
       "type": "number"
     },
     "buildable_m2": {
-      "exclusiveMinimum": 0,
+      "description": "m² built; 50 at least",
       "maximum": 500000,
+      "minimum": 50,
       "title": "Buildable M2",
       "type": "number"
     },

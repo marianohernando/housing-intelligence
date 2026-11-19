@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import Engine
+from sqlalchemy import Engine, event
 
 from hi_api.deps import get_engine
 from hi_api.main import app
@@ -116,3 +116,22 @@ def test_the_pem_comes_from_its_cm_dataset_once_loaded(
     listed = DatasetListResponse.model_validate(client.get("/api/v1/datasets").json()).data
     visados = [d for d in listed.datasets if d.dataset_id == "cm_visados_presupuesto_obra"]
     assert len(visados) == 1 and visados[0].is_cm_open_data
+
+
+def test_the_pilot_list_takes_a_handful_of_queries_whatever_its_size(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """Review of #94: the list asked for each zone's name one at a time (~216 queries for the
+    108 pilot barrios). Now a fixed number, with the gap maps cached as in GET /gaps."""
+    client.get("/api/v1/investors/zones")  # warms the cached row maps
+    statements: list[str] = []
+
+    def count(*args: object) -> None:
+        statements.append(str(args[2]))
+
+    event.listen(migrated_engine, "before_cursor_execute", count)
+    try:
+        assert client.get("/api/v1/investors/zones").status_code == 200
+    finally:
+        event.remove(migrated_engine, "before_cursor_execute", count)
+    assert len(statements) <= 8, statements

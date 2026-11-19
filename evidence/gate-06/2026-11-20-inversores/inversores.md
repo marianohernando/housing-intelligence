@@ -46,3 +46,24 @@ Las features de la línea A (comercio, remanente y suelo vacante) aún no están
 - Vitest de `lib/investors.ts`.
 - `make test-db` sobre una base de tests vacía con las migraciones (`housing_inv_b_test`): **162 tests**, entre ellos los 5 de `tests/integration/test_api_investors.py`, incluida la carga del dataset de los visados y su paso por `/datasets`.
 - Números: Python 1084 (unitarios y de datos) y vitest 591.
+
+## Revisión del #94 (20 nov)
+
+Arreglos en la misma rama, sin esperar a A:
+- La rentabilidad bruta ya no se da nunca sin suelo. Sin precio, cuenta como suelo el valor residual: en Pinar del Rey, un 5,0 % en el escenario base, frente al 21,8 % de «sin contar el suelo».
+- El suelo de «ajustar» es el menor entre el 10 % y el objetivo.
+- Rangos y pasos en cada campo, iguales que los de la API: un test los compara con el JSON Schema, y el error sale bajo su campo.
+- Las fuentes, sin duplicados.
+- La lista de barrios hace 6 consultas en lugar de ~216.
+- Superficie mínima: 50 m².
+- La comprobación de demanda avisa de que no cuenta gastos ni suministros.
+- La etiqueta «Sin dato» sale en los valores por defecto que no tienen cifra.
+- Aviso para las parcelas de la AVS y para las de concesión.
+- La superficie del visado, documentada en D-248 y en el aviso del coste.
+- Tests de los bordes del 10 % y el 20 %.
+
+Comprobaciones:
+- `make lint typecheck test-unit`: Python 1088 y vitest 595.
+- `make test-db`: 163.
+
+**Las capturas y el e2e de arriba son anteriores a estos arreglos.** Con 2,2 GB libres no se rehace el build: el build, el e2e, `check-inversores.mjs` y las capturas se repiten, una sola vez, después del rebase sobre la línea A.

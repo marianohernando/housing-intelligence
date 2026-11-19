@@ -4,7 +4,7 @@
  * (GET /api/v1/investors/zones/{id}); this module never adds a number of its own.
  */
 import type { InvestorZoneSummary } from "@/contracts/investor_zone_list_response";
-import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
+import type { DatasetRef, LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 import type { ViabilityRequest } from "@/contracts/viability_request";
 import type { Verdict } from "@/contracts/viability_response";
 import { formatEuros, formatNumber } from "@/lib/format";
@@ -42,10 +42,11 @@ export const INVESTOR_TEXT = {
 } as const;
 
 /** «dato», «supuesto», «lo pones tú» next to a figure (never a colour alone). */
-export const MARK_TEXT: Record<SourcedValue["mark"], string> = {
+export const MARK_TEXT: Record<SourcedValue["mark"] | "sin_dato", string> = {
   dato: "Dato",
   supuesto: "Supuesto",
   usuario: "Lo pones tú",
+  sin_dato: "Sin dato",
 };
 
 /** The semaphore: icon + word + colour (WCAG 1.4.1), the only state colours on these pages. */
@@ -110,6 +111,26 @@ export function landArea(item: LandItem): string {
   return item.buildable_m2 === null || item.buildable_m2 === undefined
     ? "Superficie edificable sin publicar"
     : `${formatNumber(item.buildable_m2, 0)} m² edificables`;
+}
+
+const PROTECTED_MANAGER = /vivienda social|\bAVS\b|IVIMA/i;
+
+/**
+ * A caution for land whose homes are not sold at a free price: a parcel of the Agencia de
+ * Vivienda Social (protected housing, with a maximum price) or one in concession (the land is
+ * not bought). The free-market price and the residual land value do not apply to them.
+ */
+export function landCaution(item: LandItem | null): string | null {
+  if (!item) return null;
+  const notes: string[] = [];
+  if (item.manager && PROTECTED_MANAGER.test(item.manager)) {
+    notes.push("Es de la Agencia de Vivienda Social: suele ir a vivienda protegida, con precio máximo de venta o alquiler.");
+  }
+  if (item.regime === "concesion") {
+    notes.push("Se ofrece en concesión, derecho de superficie o alquiler: el suelo no se compra.");
+  }
+  if (notes.length === 0) return null;
+  return `${notes.join(" ")} El precio libre y el valor residual del suelo de esta cuenta no valen para vivienda protegida ni para una concesión: tómalos solo como referencia de mercado.`;
 }
 
 export const REGIME_TEXT: Record<string, string> = {
@@ -182,18 +203,72 @@ export function parseNumber(raw: string): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-/** Which fields are missing to calculate: the area, the price and the PEM. */
-export function missingFields(fields: CalculatorFields): (keyof CalculatorFields)[] {
-  const required: (keyof CalculatorFields)[] = ["buildable_m2", "sale_price_m2", "pem_m2"];
-  return required.filter((key) => {
-    const value = parseNumber(fields[key] as string);
-    return value === null || value <= 0;
-  });
+/** The range and step of a field: the same as POST /api/v1/investors/viability accepts (a test reads its JSON Schema). */
+export interface FieldLimit {
+  min: number;
+  max: number;
+  integer?: boolean;
 }
 
-/** The POST body; null while a required field is missing. Optional fields left empty are left out. */
+type NumberFieldName = Exclude<keyof CalculatorFields, "land_unit" | "land">;
+
+export const FIELD_LIMITS: Record<NumberFieldName, FieldLimit> = {
+  buildable_m2: { min: 50, max: 500_000 },
+  sale_price_m2: { min: 500, max: 30_000 },
+  new_build_premium_pct: { min: -20, max: 50 },
+  rent_m2_month: { min: 1, max: 100 },
+  pem_m2: { min: 200, max: 5_000 },
+  cost_coefficient: { min: 1, max: 3 },
+  sales_costs_pct: { min: 0, max: 30 },
+  target_margin_pct: { min: 1, max: 50 },
+  household_income: { min: 5_000, max: 500_000 },
+  home_m2: { min: 20, max: 300 },
+  ltv_pct: { min: 0, max: 100 },
+  loan_years: { min: 5, max: 40, integer: true },
+  loan_rate_pct: { min: 0, max: 15 },
+};
+
+/** The land price's range depends on its unit: in total or per m² buildable. */
+export const LAND_LIMITS: Record<CalculatorFields["land_unit"], FieldLimit> = {
+  total: { min: 0, max: 1_000_000_000 },
+  m2: { min: 0, max: 30_000 },
+};
+
+const REQUIRED: NumberFieldName[] = ["buildable_m2", "sale_price_m2", "pem_m2"];
+
+export function limitOf(fields: CalculatorFields, key: keyof CalculatorFields): FieldLimit | null {
+  if (key === "land") return LAND_LIMITS[fields.land_unit];
+  return key === "land_unit" ? null : FIELD_LIMITS[key];
+}
+
+/** «Pon un número entre 50 y 500.000.», «Pon un número entero entre 5 y 40.» */
+function rangeText({ min, max, integer }: FieldLimit): string {
+  const n = (v: number) => formatNumber(v, Number.isInteger(v) ? 0 : 2);
+  return `Pon un número${integer ? " entero" : ""} entre ${n(min)} y ${n(max)}.`;
+}
+
+/** What is wrong with each field, by name: out of range, not a whole number, or not a number. Empty optional fields are fine. */
+export function fieldErrors(fields: CalculatorFields): Partial<Record<keyof CalculatorFields, string>> {
+  const errors: Partial<Record<keyof CalculatorFields, string>> = {};
+  for (const key of [...(Object.keys(FIELD_LIMITS) as NumberFieldName[]), "land" as const]) {
+    const raw = fields[key];
+    const limit = limitOf(fields, key) as FieldLimit;
+    if (raw.trim() === "") continue;
+    const value = parseNumber(raw);
+    const wrong = value === null || value < limit.min || value > limit.max || (limit.integer && !Number.isInteger(value));
+    if (wrong) errors[key] = rangeText(limit);
+  }
+  return errors;
+}
+
+/** Which required fields are empty: the area, the price and the PEM. */
+export function missingFields(fields: CalculatorFields): (keyof CalculatorFields)[] {
+  return REQUIRED.filter((key) => fields[key].trim() === "");
+}
+
+/** The POST body; null while a required field is empty or any field is out of its range. Optional fields left empty are left out. */
 export function viabilityRequest(fields: CalculatorFields): ViabilityRequest | null {
-  if (missingFields(fields).length > 0) return null;
+  if (missingFields(fields).length > 0 || Object.keys(fieldErrors(fields)).length > 0) return null;
   const n = (key: keyof CalculatorFields) => parseNumber(fields[key] as string);
   const optional = <K extends string>(key: K, value: number | null) => (value === null ? {} : ({ [key]: value } as Record<K, number>));
   const land = n("land");
@@ -312,7 +387,8 @@ export const CALCULATOR_TEXT = {
     "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale.",
   thresholds:
     "Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %.",
-  costCaution: "Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente.",
+  costCaution:
+    "Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente. Además, el PEM del visado se reparte entre toda la superficie a construir (probablemente con sótanos y garajes) y aquí se multiplica solo por la edificable sobre rasante.",
   revenue: "Ingresos por ventas",
   construction: "Construcción (PEM × coeficiente)",
   salesCosts: "Comercialización y otros",
@@ -322,7 +398,9 @@ export const CALCULATOR_TEXT = {
   margin: "Margen sobre ventas",
   residual: "Lo máximo que se puede pagar por el suelo",
   yield: "Rentabilidad bruta si se alquila",
-  yieldNoLand: "Rentabilidad bruta si se alquila (sin contar el suelo)",
+  yieldResidual: "Rentabilidad bruta si se alquila, pagando por el suelo lo máximo que deja el margen objetivo",
+  noYield: "Rentabilidad bruta si se alquila: ni con el suelo gratis se llega al margen objetivo, así que no hay precio de suelo con el que calcularla",
+  invalid: "Revisa los campos marcados: hay alguno fuera de su rango.",
   demandTitle: "¿Lo pueden pagar los hogares del barrio?",
 } as const;
 
@@ -374,3 +452,9 @@ export const COMMERCE_LABEL: Record<string, string> = {
   locales_cerrados_pct: "Locales cerrados",
   unidades_comerciales_1000hab: "Inmuebles comerciales del Catastro por cada 1.000 habitantes",
 };
+
+/** Each dataset once, by its id, in the order given. */
+export function uniqueDatasets<T extends Pick<DatasetRef, "dataset_id">>(datasets: T[]): T[] {
+  const seen = new Set<string>();
+  return datasets.filter((d) => !seen.has(d.dataset_id) && Boolean(seen.add(d.dataset_id)));
+}

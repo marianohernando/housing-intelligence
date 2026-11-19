@@ -40,9 +40,10 @@ from hi_contracts.pro.investors import (
     ViabilityRequest,
     ViabilityResult,
 )
-from hi_contracts.public import DatasetRef, GapStatus
+from hi_contracts.public import DatasetRef, GapStatus, ZoneRef
 from hi_domain import viability as v
 from hi_domain.gaps import es_number
+from hi_domain.geo.names import display_name
 from hi_domain.investors_pilot import PILOT_BARRIOS
 from hi_domain.viability_data import PEM_DATASET_URL, PEM_EUR_M2, PEM_YEAR
 
@@ -64,6 +65,7 @@ LEVEL_WORDS = {
 
 # The features the sheet reads, by id (the brief: line A's are consumed by their id)
 POPULATION = "poblacion_total"
+BARRIO_POPULATION = "poblacion_padron_barrio"  # line A (D-247): the barrio's own padrón
 HOUSEHOLD_SIZE = "tamano_medio_hogar"
 ONE_PERSON = "hogares_unipersonales_pct"
 FIVE_PLUS = "hogares_5_mas_pct"
@@ -96,6 +98,7 @@ COMMERCE_SUMMARY = "comercio_proximidad_1000hab"
 PEM = "pem_visado_vivienda_bloque_m2"
 SHEET_FEATURES = (
     PEM,
+    BARRIO_POPULATION,
     POPULATION,
     HOUSEHOLD_SIZE,
     ONE_PERSON,
@@ -147,6 +150,18 @@ _VALUES = text(
      WHERE v.feature_id = ANY(:features)
        AND v.territory_level = ANY(:levels)
        AND v.territory_code = ANY(:codes)
+    """
+)
+_ZONE_REFS = text(
+    """
+    SELECT u.level, u.admin_unit_id, u.code_official AS code, u.name,
+           m.code_official AS municipio_ine, m.name AS municipio_name,
+           ST_X(u.c) AS lon, ST_Y(u.c) AS lat
+      FROM (SELECT *, ST_PointOnSurface(geom_4326) AS c FROM geo_admin_unit
+             WHERE (level = 'barrio' AND code_official = ANY(:barrios))
+                OR (level = 'distrito' AND code_official = ANY(:districts))) u
+      LEFT JOIN geo_admin_unit m
+        ON m.level = 'municipio' AND m.code_official = left(u.code_official, 5)
     """
 )
 _UNITS_OF = text("SELECT feature_id, unit FROM feature_registry WHERE feature_id = ANY(:ids)")
@@ -320,14 +335,44 @@ def value_of(row: dict[str, Any] | None) -> float | None:
     return None if row is None or row["value"] is None else float(row["value"])
 
 
+def batch_zone_refs(
+    conn: Connection, places: Iterable[Place]
+) -> dict[tuple[TerritoryLevel, str], ZoneRef]:
+    """The ZoneRef of every barrio and district of the list in one query (zone_ref of
+    services/gaps.py, which asks one zone at a time, made ~216 queries for the pilot)."""
+    chosen = list(places)
+    params = {
+        "barrios": sorted({p.code for p in chosen}),
+        "districts": sorted({p.district for p in chosen}),
+    }
+    refs: dict[tuple[TerritoryLevel, str], ZoneRef] = {}
+    for row in conn.execute(_ZONE_REFS, params).mappings():
+        level = TerritoryLevel(row["level"])
+        refs[(level, row["code"])] = ZoneRef(
+            level=level,
+            code=row["code"],
+            admin_unit_id=row["admin_unit_id"],
+            name=display_name(row["name"]) if row["name"] else row["code"],
+            municipio_ine=row["municipio_ine"],
+            municipio_name=display_name(row["municipio_name"]) if row["municipio_name"] else None,
+            center_lon=round(row["lon"], 5),
+            center_lat=round(row["lat"], 5),
+        )
+    return refs
+
+
 def summary(
-    conn: Connection, code: str, place: Place, values: Values, gaps: dict[str, GapCount]
+    code: str,
+    place: Place,
+    values: Values,
+    gaps: dict[str, GapCount],
+    refs: dict[tuple[TerritoryLevel, str], ZoneRef],
 ) -> InvestorZoneSummary:
     parcels_row = values.get((PARCELS, BARRIO.value, code))
     parcels = items_of(parcels_row)
     return InvestorZoneSummary(
-        zone=zone_ref(conn, BARRIO, code),
-        district=zone_ref(conn, DISTRITO, place.district),
+        zone=refs[(BARRIO, code)],
+        district=refs[(DISTRITO, place.district)],
         gaps=gaps.get(place.district),
         parcels=None if parcels is None else len(parcels),
         parcels_m2=value_of(parcels_row),
@@ -352,7 +397,8 @@ def zone_list(conn: Connection) -> tuple[InvestorZoneList, list[str], str | None
         warnings.append("INSUFFICIENT_DATA: the pilot list (D-247) is not loaded yet")
     values = load_values(conn, LIST_FEATURES, places.values())
     gaps = district_gaps(conn, (p.district for p in places.values()))
-    zones = [summary(conn, c, places[c], values, gaps) for c in codes if c in places]
+    refs = batch_zone_refs(conn, places.values())
+    zones = [summary(c, places[c], values, gaps, refs) for c in codes if c in places]
     zones.sort(key=lambda z: (z.district.name, z.zone.name))
     data = InvestorZoneList(
         pilot=PILOT_TEXT, zones=zones, datasets=dataset_refs(conn, versions_of(values.values()))
@@ -371,12 +417,20 @@ def find_place(conn: Connection, admin_unit_id: str) -> Place:
     return Place(row["code"], row["district_code"])
 
 
+def population(values: Values, place: Place, sources: Sources) -> SourcedValue:
+    """The barrio's own padrón (line A) when loaded; else the finest of the total population."""
+    row = values.get((BARRIO_POPULATION, BARRIO.value, place.code))
+    if row is not None and row["value"] is not None:
+        return sourced(row, sources, "personas")
+    return sourced(finest(values, POPULATION, place), sources, "personas")
+
+
 def demand_block(values: Values, place: Place, sources: Sources) -> DemandBlock:
     def get(feature: str, unit: str) -> SourcedValue:
         return sourced(finest(values, feature, place), sources, unit)
 
     return DemandBlock(
-        population=get(POPULATION, "personas"),
+        population=population(values, place, sources),
         household_size=get(HOUSEHOLD_SIZE, "personas/hogar"),
         one_person_pct=get(ONE_PERSON, "%"),
         five_plus_pct=get(FIVE_PLUS, "%"),
@@ -466,6 +520,7 @@ def land_items(row: dict[str, Any] | None, kind: str) -> list[LandItem]:
             regime=item.get("regime"),
             manager=item.get("manager"),
             stage=item.get("stage"),
+            use=item.get("use"),
             url=item.get("url"),
         )
         for item in items_of(row) or []
@@ -646,7 +701,7 @@ def outcome(s: v.ScenarioResult) -> ScenarioOutcome:
         residual_land_value_m2=s.residual_land_value_m2,
         annual_rent=s.annual_rent,
         rental_yield_pct=as_pct(s.rental_yield),
-        yield_includes_land=s.yield_includes_land,
+        yield_land=None if s.yield_land is None else s.yield_land.value,
         verdict=None if s.verdict is None else Verdict(s.verdict.value),
         headline=s.headline,
     )
