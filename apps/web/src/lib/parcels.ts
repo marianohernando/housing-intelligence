@@ -117,7 +117,7 @@ export const SHEET_TEXT = {
     urbanParcel ? `Según el plan, la parcela urbanística ${urbanParcel} tiene:` : "Según el plan, la parcela urbanística tiene:",
   planUsesNone: "El plan no publica la edificabilidad por uso de esta parcela.",
   planUsesCaveats:
-    "La parcela urbanística del plan puede no coincidir con la catastral, y es lo que el plan permite en total, no lo que queda por construir. Los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art. 7.2.8).",
+    "La parcela urbanística del plan puede no coincidir con la catastral, y es lo que el plan permite en total, no lo que queda por construir. Salvo excepciones, los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art. 7.2.8).",
   planUsesSource: "Ayuntamiento de Madrid, Urbanismo (usos del suelo, uso cualificado principal y otros usos cualificados): información urbanística sin valor jurídico.",
   planUsesDown: "No hemos podido leer ahora la edificabilidad por uso del plan; el resto de la ficha sí. Vuelve a intentarlo en un rato.",
   ambit: "Estado del ámbito",

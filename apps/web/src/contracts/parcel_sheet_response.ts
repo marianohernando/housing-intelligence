@@ -81,7 +81,7 @@ export type ValueM21 = number | null;
  * D-252: what keeps the sheet's figures from passing for free housing ready to build.
  */
 export type ParcelCautionKey =
-  "otro_uso" | "ambito_pendiente" | "vivienda_protegida" | "unifamiliar";
+  "otro_uso" | "ambito_pendiente" | "vivienda_protegida" | "unifamiliar" | "ambito_sin_estado";
 export type Text = string;
 /**
  * D-252: shown before the figures
@@ -284,7 +284,7 @@ export type BuiltM2 = number | null;
 export type CurrentUse = string | null;
 export type HorizontalDivision = boolean;
 /**
- * A plot with nothing built (solar); null unknown
+ * Parcela sin edificar según su uso en el Catastro; no implica solar (a legal condition with services). null unknown
  */
 export type IsVacant = boolean | null;
 export type Lat = number | null;

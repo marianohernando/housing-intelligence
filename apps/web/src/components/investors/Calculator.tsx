@@ -128,6 +128,7 @@ function CostReferences() {
               {ref.link}
               <span className="visually-hidden"> (se abre en una pestaña nueva)</span>
             </a>
+            <span className={styles.printOnly}>{ref.href}</span>
           </li>
         ))}
       </ul>

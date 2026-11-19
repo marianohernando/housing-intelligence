@@ -38,7 +38,7 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     expect(t).toContain(`de ${n(M.costReferences.crg.defaultPem)} €/m², el punto medio del bloque abierto en Madrid`);
     expect(t).toContain(`Comunidad de Madrid (${M.pem.year}): ${n(M.pem.eurM2)} €/m²`);
     expect(n(M.costCoefficient)).toBe("1,3575");
-    expect(t).toContain(`el ICIO de Madrid es del ${n(M.icioPct)} % desde 2024`);
+    expect(t).toContain(`el ICIO de Madrid es del ${n(M.icioPct)} %: Ordenanza fiscal 7/2023, art. 25, tipo aprobado para 2024 y vigente en 2025`);
     expect(t).toContain(`margen mínimo del ${n(M.appraisalMinMarginPct)} % en vivienda de primera residencia`);
     expect(t).not.toContain("pero no una cifra de m²");
     expect(t).not.toMatch(/\bsolar\b/);

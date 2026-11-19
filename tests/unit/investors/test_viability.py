@@ -199,6 +199,7 @@ def test_defaults_are_documented_assumptions() -> None:
     assert sum(p.share for p in COST_PARTS) == pytest.approx(COST_COEFFICIENT - 1)
     assert pytest.approx(ICIO_RATE + 0.01) == COST_PARTS[2].share
     assert "3,75 %" in COST_PARTS[2].source and "Ordenanza fiscal 7/2023" in COST_PARTS[2].source
+    assert "aprobado para 2024 y vigente en 2025" in COST_PARTS[2].source
     assert pytest.approx(0.08) == SALES_COSTS_SHARE
     # D-252 (D8): «ajustar» from 15 %, under the 18 % the appraisal asks (ECO/805/2003, DA 6.ª)
     assert (TARGET_MARGIN, ADJUST_FLOOR, APPRAISAL_MIN_MARGIN) == (0.20, 0.15, 0.18)
@@ -220,6 +221,7 @@ def test_defaults_are_documented_assumptions() -> None:
         (12_345_678, "unos 12,3 millones de €"),
         (900_091, "unos 900.000 €"),
         (4_297.4, "unos 4.300 €"),
+        (1_002_000, "alrededor de 1 millón de €"),  # review of #109, R-10
     ],
 )
 def test_the_residual_is_said_with_three_figures(amount: float, words: str) -> None:

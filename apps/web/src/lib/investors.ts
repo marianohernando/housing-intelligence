@@ -477,7 +477,10 @@ export function breakEvenValue(be: BreakEven): string {
 export function breakEvenText(be: BreakEven): string {
   const land = be.land_counted ? "Con el precio del suelo que has puesto" : "Sin pagar nada por el suelo";
   if (!be.reachable) return `${land}, ni con la construcción gratis llega la promoción al margen objetivo.`;
-  return `${land}, la promoción llega al margen objetivo mientras la construcción cueste menos de ${breakEvenValue(be)} (PEM × coeficiente). Es un PEM de hasta ${eurM2(be.pem_m2)} con tu coeficiente, o un coeficiente de hasta ${formatNumber(be.coefficient, 2)} sobre tu PEM.`;
+  const lead = `${land}, la promoción llega al margen objetivo mientras la construcción cueste menos de ${breakEvenValue(be)} (PEM × coeficiente).`;
+  // Review of #109, R-04: a coefficient under 1 is not a cost a builder can quote
+  if (be.coefficient < 1) return `${lead} Con tu PEM, ni con el PEM solo (coeficiente 1) llega.`;
+  return `${lead} Es un PEM de hasta ${eurM2(be.pem_m2)} con tu coeficiente, o un coeficiente de hasta ${formatNumber(be.coefficient, 2)} sobre tu PEM.`;
 }
 
 /** The same with free land, when a land price is given. */
@@ -531,7 +534,7 @@ function costReferenceLines(): { text: string; href: string; link: string }[] {
       link: "Ver los costes de referencia",
     },
     {
-      text: `Sociedad de Tasación, ${st.period}, media de España: ${plain(st.eurM2)} €/m² de coste de construcción de obra nueva (${plain(st.aboveGround)} sobre rasante y ${plain(st.belowGround)} bajo rasante), según la prensa. No es un PEM: según la misma serie, es el presupuesto de contrata, con gastos generales y beneficio del constructor.`,
+      text: `Sociedad de Tasación, ${st.period}, media de España: ${plain(st.eurM2)} €/m² de coste de construcción de obra nueva (${plain(st.aboveGround)} sobre rasante y ${plain(st.belowGround)} bajo rasante), según la prensa. No sabemos si incluye gastos generales y beneficio: no hemos podido leer el informe original.`,
       href: st.url,
       link: "Ver la noticia",
     },
@@ -547,7 +550,9 @@ export function roughMoney(amount: number): string {
   if (Math.abs(rounded) >= MILLION) {
     const millions = rounded / MILLION;
     const decimals = Math.abs(millions) >= 100 ? 0 : Math.abs(millions) >= 10 ? 1 : 2;
-    return `unos ${formatNumber(millions, decimals).replace(/(,\d*?)0+$/, "$1").replace(/,$/, "")} millones de €`;
+    const text = formatNumber(millions, decimals).replace(/(,\d*?)0+$/, "$1").replace(/,$/, "");
+    // Review of #109, R-10: never «unos 1 millones»
+    return text === "1" ? "alrededor de 1 millón de €" : `unos ${text} millones de €`;
   }
   return `unos ${formatEuros(rounded)}`;
 }

@@ -137,8 +137,8 @@ export default function InvestorMethod() {
         <strong>Por uso, según el plan.</strong> El Ayuntamiento publica, para muchas parcelas urbanísticas (la parcela que dibuja el
         plan), los m² de su uso principal y de sus otros usos, en m² o en m² por m² de parcela; en m² por m², los multiplicamos por la
         superficie de la parcela urbanística y lo marcamos como supuesto. Es lo que el plan permite en total, no lo que queda por
-        construir, y la parcela urbanística puede no coincidir con la catastral. Cuando no la publica, lo decimos. Los usos asociados y
-        complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art.
+        construir, y la parcela urbanística puede no coincidir con la catastral. Cuando no la publica, lo decimos. Salvo excepciones,
+        los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art.
         7.2.8). Público o privado solo existe en el dotacional: el básico y el singular son de titularidad pública, y el privado, de
         titularidad privada (art. 7.7.2). El terciario no se divide así (art. 7.6.1): un «terciario público» no existe en el plan, y los
         servicios de la Administración son dotacionales.
@@ -188,7 +188,7 @@ export default function InvestorMethod() {
           <External href={crg.url}>Costes de Referencia General de la Comunidad de Madrid</External>, actualizados al año {crg.year}{" "}
           (supuesto: los costes han subido desde entonces). Por un coeficiente de {n(M.costCoefficient)}: el PEM más, sobre el PEM,{" "}
           {M.costParts.map((p) => `un ${pct(p.pct)} de ${lower(p.label)}`).join("; ")} (supuesto; el ICIO de Madrid es del{" "}
-          {pct(M.icioPct)} desde 2024, Ordenanza fiscal 7/2023, art. 25).
+          {pct(M.icioPct)}: Ordenanza fiscal 7/2023, art. 25, tipo aprobado para 2024 y vigente en 2025).
         </li>
         <li>
           <strong>Comercialización y otros gastos:</strong> un {pct(M.salesCostsPct)} de las ventas (supuesto:{" "}

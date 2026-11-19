@@ -53,6 +53,10 @@ USOS_SUELO = f"{USOS_SUELO_SERVICE}/3/query"
 # D-252: the plan's buildable m² of the urban parcel, by its UBOV_ID (= CODIGO): table 4 for
 # the principal use («Uso cualificado principal»), table 5 for the others
 PLAN_USES = (f"{USOS_SUELO_SERVICE}/4/query", f"{USOS_SUELO_SERVICE}/5/query")
+# Review of #109, R-01: tables 4 and 5 run after layer 3, so they get their own time, never past
+# the sheet's deadline: out of time they degrade only the plan's uses, never the planning
+PLAN_USES_TIMEOUT_S = 4.0
+DEADLINE_MARGIN_S = 0.5
 PLANEAMIENTO = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/PLANEAMIENTO_URBANISTICO/MapServer/3/query"
 CONDICIONES = f"{SIGMA}/PGOUM97/PG_CONDICIONES_EDIFICACION/MapServer/6/query"
 CARTOCIUDAD = "https://www.cartociudad.es/geocoder/api/geocoder/candidates"
@@ -563,9 +567,38 @@ def instrument_url(value: Any) -> str | None:
     return https_url(clean(value))
 
 
-async def fetch_planning(client: httpx.AsyncClient, x: float, y: float) -> PlanningRecord | None:
+async def bounded_plan_rows(
+    client: httpx.AsyncClient, urban_parcel_id: int, deadline: float | None
+) -> tuple[PlanRow, ...]:
+    """Tables 4 and 5 within PLAN_USES_TIMEOUT_S and before the sheet's deadline; out of time,
+    UpstreamError (so FAILED: only `plan_uses` is degraded)."""
+    budget = PLAN_USES_TIMEOUT_S
+    if deadline is not None:
+        budget = min(budget, deadline - asyncio.get_running_loop().time() - DEADLINE_MARGIN_S)
+    if budget <= 0:
+        raise UpstreamError("planning", "no time left for the plan's uses")
+    try:
+        async with asyncio.timeout(budget):
+            return await plan_rows(client, urban_parcel_id)
+    except TimeoutError as exc:
+        raise UpstreamError("planning", "the plan's uses out of time") from exc
+
+
+def urban_parcel_id(uses: Mapping[str, Any]) -> int:
+    """The UBOV_ID of the urban parcel; a planning without it is the layer failing (R-07)."""
+    with parsing("planning"):
+        value = catastro_number(uses.get("UBOV_ID"))
+        if value is None:
+            raise ValueError("UBOV_ID")
+        return int(value)
+
+
+async def fetch_planning(
+    client: httpx.AsyncClient, x: float, y: float, deadline: float | None = None
+) -> PlanningRecord | None:
     """The planning at the parcel's reference point, its three layers in parallel; None when no
-    layer covers it. The Z of norma zonal 1 is asked always (one cheap call) and read only there."""
+    layer covers it. The Z of norma zonal 1 is asked always (one cheap call) and read only there.
+    Tables 4 and 5 follow layer 3 (they need its UBOV_ID), within their own time."""
 
     async def uses_and_rows() -> tuple[dict[str, Any] | None, Any]:
         uses = await arcgis_point(
@@ -575,9 +608,13 @@ async def fetch_planning(client: httpx.AsyncClient, x: float, y: float) -> Plann
             y,
             "AMB_TX_ETIQ,AMB_TX_DENOM,ZURV_TX_NOMBRE,UBOV_TX_ETIQ,USP_TX_DENOM,UBOV_ID,SHAPE.STArea()",
         )
-        ubov = catastro_number((uses or {}).get("UBOV_ID"))
-        rows = () if ubov is None else await optional(plan_rows(client, int(ubov)))
-        return uses, rows
+        if uses is None or clean(uses.get("AMB_TX_ETIQ")) is None:
+            return uses, ()
+        try:
+            ubov = urban_parcel_id(uses)
+        except UpstreamError:
+            return uses, FAILED
+        return uses, await optional(bounded_plan_rows(client, ubov, deadline))
 
     (uses, rows), instrument, conditions = await asyncio.gather(
         uses_and_rows(),

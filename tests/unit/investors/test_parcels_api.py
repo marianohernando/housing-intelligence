@@ -21,6 +21,7 @@ from hi_api import privacy
 from hi_api.deps import get_engine
 from hi_api.main import app
 from hi_api.services import parcel_sheet
+from hi_api.services import parcels as parcels_service
 from hi_api.services.parcels import (
     CALLEJERO,
     CARTOCIUDAD,
@@ -163,6 +164,7 @@ USES_NZ8 = {
     "ZURV_TX_NOMBRE": "",
     "UBOV_TX_ETIQ": "M00001",
     "USP_TX_DENOM": "RESIDENCIAL VIVIENDA UNIFAMILIAR  ",
+    "UBOV_ID": 1,
 }
 
 
@@ -176,13 +178,29 @@ def mock_catastro(router: respx.MockRouter, dnprc: Any = None) -> None:
 
 
 def mock_sigma(
-    router: respx.MockRouter, uses: Any = USES_NZ8, instrument: Any = None, z: Any = None
+    router: respx.MockRouter,
+    uses: Any = USES_NZ8,
+    instrument: Any = None,
+    z: Any = None,
+    tables: Any = None,
 ) -> None:
+    """D-252: tables 4 and 5 answer with no rows unless `tables` gives their two side effects."""
     router.get(url__startswith=USOS_SUELO).mock(return_value=httpx.Response(200, json=arcgis(uses)))
+    for url, effect in zip(PLAN_USES, tables or (None, None), strict=True):
+        empty = httpx.Response(200, json={"features": []})
+        router.get(url__startswith=url).mock(side_effect=effect, return_value=empty)
     router.get(url__startswith=PLANEAMIENTO).mock(
         return_value=httpx.Response(200, json=arcgis(instrument))
     )
     router.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(z)))
+
+
+def mock_tables(router: respx.MockRouter) -> None:
+    """D-252: tables 4 and 5 with no rows, for tests that mock the other layers by hand."""
+    for url in PLAN_USES:
+        router.get(url__startswith=url).mock(
+            return_value=httpx.Response(200, json={"features": []})
+        )
 
 
 def sheet_of(response: Any) -> ParcelSheetResponse:  # the test client's response
@@ -392,6 +410,7 @@ def test_an_arcgis_error_is_the_ayuntamiento_failing() -> None:
 @respx.mock
 def test_the_instrument_layer_failing_keeps_the_planning() -> None:
     mock_catastro(respx.mock)
+    mock_tables(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(
         return_value=httpx.Response(200, json=arcgis(USES_NZ8))
     )
@@ -805,6 +824,7 @@ def test_another_code_of_the_reference_point_is_the_catastro_failing() -> None:
 @pytest.mark.usefixtures("with_context")
 def test_a_complete_sheet_is_cached_by_the_cdn_and_an_incomplete_one_is_not() -> None:
     mock_catastro(respx.mock)
+    mock_tables(respx.mock)
     instrument = respx.get(url__startswith=PLANEAMIENTO)
     instrument.side_effect = [httpx.ConnectError("down"), httpx.Response(200, json=arcgis(None))]
     respx.get(url__startswith=USOS_SUELO).mock(
@@ -824,6 +844,7 @@ def test_a_complete_sheet_is_cached_by_the_cdn_and_an_incomplete_one_is_not() ->
 @respx.mock
 def test_norma_zonal_1_without_its_z_is_not_a_complete_answer() -> None:
     mock_catastro(respx.mock)
+    mock_tables(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(
         return_value=httpx.Response(200, json=arcgis(USES_NZ8 | {"AMB_TX_ETIQ": "1.2"}))
     )
@@ -966,28 +987,15 @@ def table(rows: list[dict[str, Any]]) -> dict[str, Any]:
 def test_the_plan_gives_the_urban_parcel_its_m2_by_use() -> None:
     """MANZANA B: 60.230,88 m² residential (table 4) and 21.299,91 m² terciario (table 5)."""
     mock_catastro(respx.mock)
-    mock_sigma(respx.mock, USES_AREA)
-    principal = respx.get(url__startswith=PLAN_USES[0]).mock(
-        return_value=httpx.Response(
-            200,
-            json=table(
-                [
-                    {
-                        "USO": "RESIDENCIAL VIVIENDA COLECTIVA  ",
-                        "EDIFICABIL": 60230.88,
-                        "UNIDAD": "m²",
-                    }
-                ]
-            ),
-        )
-    )
-    respx.get(url__startswith=PLAN_USES[1]).mock(
-        return_value=httpx.Response(
-            200,
-            json=table(
-                [{"USO": "SERVICIOS TERCIARIOS    ", "EDIFICABIL": 21299.91, "UNIDAD": "m²"}]
-            ),
-        )
+    housing = {"USO": "RESIDENCIAL VIVIENDA COLECTIVA  ", "EDIFICABIL": 60230.88, "UNIDAD": "m²"}
+    offices = {"USO": "SERVICIOS TERCIARIOS    ", "EDIFICABIL": 21299.91, "UNIDAD": "m²"}
+    mock_sigma(
+        respx.mock,
+        USES_AREA,
+        tables=(
+            [httpx.Response(200, json=table([housing]))],
+            [httpx.Response(200, json=table([offices]))],
+        ),
     )
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
     planning = sheet.planning
@@ -997,7 +1005,8 @@ def test_the_plan_gives_the_urban_parcel_its_m2_by_use() -> None:
         ("residencial", 60230.88, True),
         ("terciario", 21299.91, False),
     ]
-    assert "CODIGO=68695" in str(principal.calls.last.request.url).replace("%3D", "=")
+    asked = [str(c.request.url) for c in respx.calls if "/MapServer/4/query" in str(c.request.url)]
+    assert len(asked) == 1 and "CODIGO%3D68695" in asked[0]
     assert planning.ambit is not None and planning.ambit.code == "APR.02.06"
     assert not planning.ambit.pending and len(planning.ambit.phases) == 4
     assert "plan_uses" not in sheet.degraded
@@ -1006,9 +1015,8 @@ def test_the_plan_gives_the_urban_parcel_its_m2_by_use() -> None:
 @respx.mock
 def test_the_tables_failing_degrade_only_their_part_and_are_not_cached() -> None:
     mock_catastro(respx.mock)
-    mock_sigma(respx.mock, USES_AREA)
-    for url in PLAN_USES:
-        respx.get(url__startswith=url).mock(side_effect=httpx.ConnectError("down"))
+    down = httpx.ConnectError("down")
+    mock_sigma(respx.mock, USES_AREA, tables=(down, down))
     response = client.get("/api/v1/investors/parcels", params={"rc": RC})
     sheet = sheet_of(response).data
     assert sheet.planning is not None and sheet.planning.plan_uses is None
@@ -1030,3 +1038,35 @@ def test_an_industrial_norma_zonal_9_is_never_housing_and_says_so() -> None:
     assert sheet.buildability.kind.value == "sin_dato" and sheet.buildability.value_m2 is None
     assert "no de vivienda" in sheet.buildability.source
     assert [c.key.value for c in sheet.cautions] == ["otro_uso"]
+
+
+@respx.mock
+def test_slow_tables_degrade_only_the_plan_uses_never_the_planning(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Review of #109, R-01: tables 4 and 5 out of their time leave the planning in place."""
+    monkeypatch.setattr(parcels_service, "PLAN_USES_TIMEOUT_S", 0.2)
+
+    async def slow(request: httpx.Request) -> httpx.Response:
+        await asyncio.sleep(2)
+        return httpx.Response(200, json={"features": []})
+
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA, tables=(slow, slow))
+    response = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(response).data
+    assert sheet.planning is not None and sheet.planning.code == "APR.02.06"
+    assert sheet.planning.plan_uses is None
+    assert sheet.degraded == ["plan_uses", "context"]
+    assert response.headers["cache-control"] == "no-store"
+
+
+@respx.mock
+def test_a_planning_without_its_urban_parcel_is_the_tables_failing() -> None:
+    """R-07: no UBOV_ID with a code is not «the plan publishes nothing»: it is degraded."""
+    mock_catastro(respx.mock)
+    no_id = {k: v for k, v in USES_AREA.items() if k != "UBOV_ID"}
+    mock_sigma(respx.mock, no_id)
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert sheet.planning is not None and sheet.planning.plan_uses is None
+    assert "plan_uses" in sheet.degraded

@@ -452,7 +452,10 @@ class ParcelBlock(BaseModel):
     lon: float | None = Field(default=None, ge=-3.95, le=-3.45)
     area_m2: float | None = Field(ge=0, description="Surface of the parcel (land)")
     rustic: bool | None = Field(description="Rustic land: a reduced sheet, no buildability")
-    is_vacant: bool | None = Field(description="A plot with nothing built (solar); null unknown")
+    is_vacant: bool | None = Field(
+        description="Parcela sin edificar según su uso en el Catastro; no implica solar (a legal "
+        "condition with services). null unknown"
+    )
     horizontal_division: bool
     units: ParcelUnits | None = Field(description="Only in horizontal division")
     built_m2: float | None = Field(ge=0, description="Built today: context, not buildability")
@@ -690,6 +693,7 @@ class ParcelCautionKey(StrEnum):
     AMBITO_PENDIENTE = "ambito_pendiente"
     VIVIENDA_PROTEGIDA = "vivienda_protegida"
     UNIFAMILIAR = "unifamiliar"
+    AMBITO_SIN_ESTADO = "ambito_sin_estado"
 
 
 class ParcelCaution(BaseModel):

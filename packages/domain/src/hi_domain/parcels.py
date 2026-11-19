@@ -621,8 +621,10 @@ def parcel_cautions(
     use: str | None, official: Iterable[OfficialFigure], ambit: AmbitState | None
 ) -> list[tuple[str, str]]:
     """(key, text) of what keeps the sheet's figures from passing for free housing ready to
-    build: another use in the plan, a planning area not finished, protected housing (the plan's
-    use or an official figure's) and a single-family home."""
+    build: another use in the plan, a planning area not finished or whose state is not
+    published (with an official figure), protected housing (the plan's use or an official
+    figure's) and a single-family home."""
+    official = list(official)
     uses = [u for u in (use, *(f.use for f in official)) if u]
     cautions: list[tuple[str, str]] = []
     if (other := other_use(use)) is not None:
@@ -636,6 +638,14 @@ def parcel_cautions(
         )
     if ambit is not None and ambit.pending:
         cautions.append(("ambito_pendiente", ambit_pending_text(ambit)))
+    if ambit is not None and not ambit.tracked and official:  # review of #109, R-05
+        cautions.append(
+            (
+                "ambito_sin_estado",
+                f"El Ayuntamiento no publica el estado del ámbito {ambit.code}: la cifra "
+                "oficial no está contrastada con su desarrollo.",
+            )
+        )
     if any(_says(u, "proteg", "proteccion") for u in uses):
         cautions.append(("vivienda_protegida", PROTECTED))
     if any(_says(u, "unifamiliar") for u in uses):

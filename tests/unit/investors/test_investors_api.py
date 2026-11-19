@@ -113,6 +113,8 @@ def test_request_defaults_are_the_domain_assumptions() -> None:
     assert request.sales_costs_pct == pytest.approx(v.SALES_COSTS_SHARE * 100)
     assert request.target_margin_pct == pytest.approx(v.TARGET_MARGIN * 100)
     assert request.adjust_floor_pct == pytest.approx(v.ADJUST_FLOOR * 100)
+    # Review of #109, R-08: the values D-252 pins, so a change in either side fails here
+    assert (request.cost_coefficient, request.adjust_floor_pct) == (1.3575, 15)
     demand = DemandRequest(household_income=30_000)
     assert demand.home_m2 == pytest.approx(v.HOME_M2)
     assert demand.ltv_pct == pytest.approx(v.LOAN_TO_VALUE * 100)

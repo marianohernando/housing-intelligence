@@ -264,6 +264,9 @@ describe("the cost and its break-even (D-252)", () => {
     expect(breakEvenValue(none)).toBe("Ni gratis");
     expect(breakEvenText(none)).toBe("Con el precio del suelo que has puesto, ni con la construcción gratis llega la promoción al margen objetivo.");
     expect(breakEvenFreeText({ ...none, land_counted: false })).toBe("Ni con el suelo gratis llega al margen objetivo.");
+    // Review of #109, R-04: never «un coeficiente de hasta 0,8»
+    const tight = { ...free, construction_m2: 700, pem_m2: 515.65, coefficient: 0.79, land_counted: true };
+    expect(breakEvenText(tight)).toMatch(/\(PEM × coeficiente\)\. Con tu PEM, ni con el PEM solo \(coeficiente 1\) llega\.$/);
   });
 
   it("says what the cost counts and what it leaves out, and that the calculator is for housing", () => {
@@ -280,6 +283,7 @@ describe("the cost and its break-even (D-252)", () => {
     expect(roughMoney(1_234_567)).toBe("unos 1,23 millones de €");
     expect(roughMoney(900_091)).toBe("unos 900.000 €");
     expect(roughMoney(4297.4)).toBe("unos 4.300 €");
+    expect(roughMoney(1_002_000)).toBe("alrededor de 1 millón de €"); // review of #109, R-10
   });
 
   it("gives the semaphore and the scenarios from the code's figures (D-252, D8)", () => {
@@ -296,6 +300,7 @@ describe("the cost and its break-even (D-252)", () => {
     expect(crg?.text).toContain(`punto medio del bloque abierto: ${M.costReferences.crg.defaultPem} €/m² (supuesto)`);
     expect(st?.text).toContain("1.360 €/m²");
     expect(st?.text).toContain("según la prensa");
+    expect(st?.text).toContain("No sabemos si incluye gastos generales y beneficio"); // R-03
     expect(JSON.stringify(CALCULATOR_TEXT)).not.toContain("Mínimo oficial");
   });
 });

@@ -63,8 +63,9 @@ class Part:
     source: str
 
 
-# ICIO of Madrid since 1 January 2024 (Ordenanza fiscal 7/2023, art. 25; 4 % before), on the
-# PEM; the licence fee and other taxes, about 1 % («supuesto»).
+# ICIO of Madrid: 3,75 % (Ordenanza fiscal 7/2023, art. 25; the rate approved for 2024 and still
+# in the 2025 book of fiscal ordinances; 4 % before), on the PEM; the licence fee and other taxes,
+# about 1 % («supuesto»). Review of #109, R-02: the 2026 rate is not verified at the source.
 ICIO_RATE = 0.0375
 LICENCE_FEES_SHARE = 0.01
 
@@ -89,9 +90,9 @@ COST_PARTS: tuple[Part, ...] = (
         "licencias_icio",
         "Licencia, ICIO y tasas",
         ICIO_RATE + LICENCE_FEES_SHARE,
-        f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto desde 2024 "
-        "(Ordenanza fiscal 7/2023, art. 25), y la tasa de la licencia y otros tributos, "
-        f"alrededor de un {es_number(LICENCE_FEES_SHARE * 100, 0)} % (supuesto)",
+        f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto (Ordenanza fiscal "
+        "7/2023, art. 25: tipo aprobado para 2024 y vigente en 2025), y la tasa de la licencia y "
+        f"otros tributos, alrededor de un {es_number(LICENCE_FEES_SHARE * 100, 0)} % (supuesto)",
     ),
     Part(
         "otros",
@@ -274,6 +275,8 @@ def rough_money(amount: float) -> str:
         text = es_number(millions, decimals)
         if "," in text:
             text = text.rstrip("0").rstrip(",")
+        if text == "1":  # review of #109, R-10: never «unos 1 millones»
+            return "alrededor de 1 millón de €"
         return f"unos {text} millones de €"
     return f"unos {es_number(rounded, 0)} €"
 

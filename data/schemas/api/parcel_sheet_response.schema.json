@@ -1242,7 +1242,7 @@
               "type": "null"
             }
           ],
-          "description": "A plot with nothing built (solar); null unknown",
+          "description": "Parcela sin edificar según su uso en el Catastro; no implica solar (a legal condition with services). null unknown",
           "title": "Is Vacant"
         },
         "lat": {
@@ -1393,7 +1393,8 @@
         "otro_uso",
         "ambito_pendiente",
         "vivienda_protegida",
-        "unifamiliar"
+        "unifamiliar",
+        "ambito_sin_estado"
       ],
       "title": "ParcelCautionKey",
       "type": "string"

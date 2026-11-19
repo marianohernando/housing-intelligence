@@ -488,7 +488,9 @@ async def catastro_parcel(rc14: str, lookup: Lookup) -> CatastroParcel:
     return parcel
 
 
-async def planning_record(parcel: CatastroParcel, lookup: Lookup) -> PlanningRecord | None:
+async def planning_record(
+    parcel: CatastroParcel, lookup: Lookup, deadline: float | None = None
+) -> PlanningRecord | None:
     """The planning at the parcel's point (cached); UpstreamError when the Ayuntamiento fails."""
     if parcel.x is None or parcel.y is None:
         return None
@@ -496,7 +498,7 @@ async def planning_record(parcel: CatastroParcel, lookup: Lookup) -> PlanningRec
     if (cached := CACHE.get(key)) is not MISSING:
         return cached
     lookup.spend()
-    record = await timed(lookup, fetch_planning(CLIENTS.get(), parcel.x, parcel.y))
+    record = await timed(lookup, fetch_planning(CLIENTS.get(), parcel.x, parcel.y, deadline))
     if record is None or record.complete:  # a secondary layer that failed is asked again
         CACHE.set(key, record, TTL_S["planning"])
     return record
@@ -679,7 +681,7 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
     degraded: list[DegradedPart] = []
     try:
         async with asyncio.timeout_at(deadline):
-            record = await planning_record(parcel, lookup)
+            record = await planning_record(parcel, lookup, deadline)
     except (UpstreamError, TimeoutError):
         record = None
         degraded.append("planning")

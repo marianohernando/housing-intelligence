@@ -484,3 +484,12 @@ def test_the_cautions_say_what_the_figures_are_not() -> None:
         "unifamiliar"
     ]
     assert parcel_cautions("RESIDENCIAL VIVIENDA COLECTIVA", [], ambit_state("APR.02.06")) == []
+
+
+def test_an_official_figure_in_an_area_whose_state_is_not_published_says_so() -> None:
+    """Review of #109, R-05: APE.00.01 (the historic centre) is not followed by the Ayuntamiento."""
+    centre = ambit_state("APE.00.01")
+    figure = OfficialFigure(500.0, "VEDA", "x", "RESIDENCIAL VIVIENDA COLECTIVA")
+    texts = dict(parcel_cautions("RESIDENCIAL VIVIENDA COLECTIVA", [figure], centre))
+    assert texts["ambito_sin_estado"].startswith("El Ayuntamiento no publica el estado del ámbito")
+    assert "ambito_sin_estado" not in dict(parcel_cautions("RESIDENCIAL", [], centre))

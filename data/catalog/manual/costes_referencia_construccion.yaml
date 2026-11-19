@@ -32,5 +32,5 @@ st:
   eur_m2: 1360  # «El coste de construcción de obra nueva ha alcanzado los 1.360 euros por metro cuadrado»
   above_ground_eur_m2: 1273
   below_ground_eur_m2: 489
-  nature: Presupuesto de contrata (con gastos generales y beneficio industrial) entre los m² sobre rasante,
-    según notas anteriores de la misma serie; el informe original no lo hemos podido leer
+  nature: No sabemos si incluye gastos generales y beneficio industrial; no hemos podido leer el informe
+    original
