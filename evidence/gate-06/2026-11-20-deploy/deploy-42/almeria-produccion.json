@@ -1,0 +1,331 @@
+{
+  "base": "production",
+  "widths": {
+    "360": {
+      "parcels": {
+        "3959601VK4735H": {
+          "h1": "Calle Almeria 1, 28028 Madrid",
+          "vacant": "¿Está sin edificar? (según su uso en el Catastro) No División horizontal No Ver la parcela en la Sede Electrónica del Catastro (se",
+          "oldSolarText": false,
+          "planning": "2. Planeamiento Calificación Área de planeamiento remitido APR.04.09: Cocheras Metro Pte. de Ventas Uso pormenorizado Sin uso pormenorizado El plan aún no le ha fijado un uso concreto; lo fija el plan propio de su ámbito. La calculadora calcula solo vivienda. Parcela urbanística 231123 Estado del ámbito Planeamiento: sin iniciar · Gestión: sin iniciar · Proyecto de urbanización: sin iniciar · Obras de urbanización: sin iniciar · VEDA: pendiente de planeamiento de desarrollo APR.04.09, según el Ayuntamiento a 1 de julio de 2026 Ver en el visor del Geoportal del Ayuntamiento (se abre en una pestaña nueva) Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial. Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.",
+          "buildability": "3. Edificabilidad Edificabilidad de partida Sin dato Sin dato Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela: 32.697 m² edificables de vivienda, pero el ámbito APR.04.09 no está terminado. El ámbito no está terminado: la cifra es una referencia, no los m² de partida. Pon tú los m² si quieres hacer números. Construido hoy 6.573 m² Es lo que hay, no lo que se puede construir. Edificabilidad publicada, por uso El plan no publica la edificabilidad por uso de esta parcela. Lo que publica cada fuente para esta parcela catastral Residencial: 32.697 m² edificables Uso en la fuente: residencial · Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela Cada fuente publica una sola cifra por parcela, con un solo uso: la enseñamos tal cual, sin repartirla entre usos. Parcela del Portal del Suelo de la Comunidad de Madrid: En venta, la ofrece Metro de Madrid, sin urbanizar. La calculadora calcula solo vivienda: parte de la edificabilidad residencial, porque sus precios y alquileres son de vivienda. Una cifra de otro uso (terciario, industrial) la enseñamos como referencia y no la usamos. Siempre la puedes cambiar en la calculadora. Cómo lo calculamos : la ficha para inversores",
+          "planUsesDown": false,
+          "ambitUntracked": false,
+          "ambitPending": "El ámbito APR.04.09 no está terminado según el Ayuntamiento: planeamiento sin iniciar; gestión sin iniciar; proyecto de urbanización sin iniciar; obras de urbanización sin iniciar; en VEDA, pendiente de planeamiento de desarrollo. Faltan planeamiento, gestión o urbanización.",
+          "reference32697": true,
+          "byUseTitle": true,
+          "pem": {
+            "value": "968",
+            "help": "Supuesto Referencia de la Comunidad de Madrid de 2022; los costes han subido desde entonces (Costes de Referencia General, bloque abierto en Madrid: 871–1.064 €/m², punto medio). El PEM medio que declaran los visados de obra nueva de viviendas en bloque (2025), 644 €/m², es la referencia baja."
+          },
+          "coefficient": {
+            "value": "1,3575",
+            "help": "Supuesto El PEM más un 35,75 % (gastos generales y beneficio, honorarios, licencia e ICIO, y otros; desglose debajo)"
+          },
+          "costReferencesCount": 1,
+          "costReferences": [
+            {
+              "text": "Dato PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (2025): 644 €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja. Fuente: Comunidad de Madrid · 2025 · dato de toda la Comunidad. Visados de obra nueva de viviendas en bloque: presupuesto de ejecución material entre la superficie a construir. Ver los visados (se abre en una pestañ",
+              "href": "https://datos.comunidad.madrid/dataset/1006022"
+            },
+            {
+              "text": "Costes de Referencia General de la Comunidad de Madrid (actualizados al año 2022), en Madrid (área 1): bloque abierto, 871–1.064 €/m²; manzana cerrada, 856–1.046 €/m²; garaje o trastero bajo rasante, 482–590 €/m². Son PEM, sin gastos generales ni beneficio industrial, y los costes han subido desde entonces. La calculadora parte del punto medio del bloque abierto: 968 €/m² (supuesto). Ver los costes de referencia (se ",
+              "href": "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf"
+            },
+            {
+              "text": "Sociedad de Tasación, diciembre de 2025, media de España: 1.360 €/m² de coste de construcción de obra nueva (1.273 sobre rasante y 489 bajo rasante), según la prensa. No sabemos si incluye gastos generales y beneficio: no hemos podido leer el informe original. Ver la noticia (se abre en una pestaña nueva)",
+              "href": "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+            }
+          ],
+          "scenarios": [],
+          "thresholds": {
+            "adjust15": false,
+            "eco805": true,
+            "pct18": true
+          },
+          "overflow": {
+            "pageScroll": 0,
+            "outside": 0,
+            "first": []
+          }
+        }
+      },
+      "method": {
+        "costTitle": {
+          "expected": "De dónde sale el coste y cuánto varía",
+          "shown": true
+        },
+        "permits": {
+          "expected": "PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (2025): 644 €/m²",
+          "shown": true
+        },
+        "crg": {
+          "expected": "Costes de Referencia General de la Comunidad de Madrid (actualizados al año 2022)",
+          "shown": true
+        },
+        "crgBlock": {
+          "expected": "bloque abierto, 871–1.064 €/m²",
+          "shown": true
+        },
+        "crgDefault": {
+          "expected": "La calculadora parte del punto medio del bloque abierto: 968 €/m² (supuesto)",
+          "shown": true
+        },
+        "st": {
+          "expected": "Sociedad de Tasación, diciembre de 2025, media de España: 1.360 €/m²",
+          "shown": true
+        },
+        "eco805": {
+          "expected": "Orden ECO/805/2003, disposición adicional sexta",
+          "shown": true
+        },
+        "eco805pct": {
+          "expected": "un margen mínimo del 18 % en vivienda de primera residencia",
+          "shown": true
+        },
+        "adjust": {
+          "expected": "«Ajustar» entre el 15 % y el objetivo",
+          "shown": true
+        },
+        "costLinks": [
+          "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+          "https://datos.comunidad.madrid/dataset/1006022",
+          "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+          "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+        ],
+        "overflow": {
+          "pageScroll": 0,
+          "outside": 0,
+          "first": []
+        }
+      },
+      "consoleErrors": []
+    },
+    "390": {
+      "parcels": {
+        "3959601VK4735H": {
+          "h1": "Calle Almeria 1, 28028 Madrid",
+          "vacant": "¿Está sin edificar? (según su uso en el Catastro) No División horizontal No Ver la parcela en la Sede Electrónica del Catastro (se",
+          "oldSolarText": false,
+          "planning": "2. Planeamiento Calificación Área de planeamiento remitido APR.04.09: Cocheras Metro Pte. de Ventas Uso pormenorizado Sin uso pormenorizado El plan aún no le ha fijado un uso concreto; lo fija el plan propio de su ámbito. La calculadora calcula solo vivienda. Parcela urbanística 231123 Estado del ámbito Planeamiento: sin iniciar · Gestión: sin iniciar · Proyecto de urbanización: sin iniciar · Obras de urbanización: sin iniciar · VEDA: pendiente de planeamiento de desarrollo APR.04.09, según el Ayuntamiento a 1 de julio de 2026 Ver en el visor del Geoportal del Ayuntamiento (se abre en una pestaña nueva) Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial. Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.",
+          "buildability": "3. Edificabilidad Edificabilidad de partida Sin dato Sin dato Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela: 32.697 m² edificables de vivienda, pero el ámbito APR.04.09 no está terminado. El ámbito no está terminado: la cifra es una referencia, no los m² de partida. Pon tú los m² si quieres hacer números. Construido hoy 6.573 m² Es lo que hay, no lo que se puede construir. Edificabilidad publicada, por uso El plan no publica la edificabilidad por uso de esta parcela. Lo que publica cada fuente para esta parcela catastral Residencial: 32.697 m² edificables Uso en la fuente: residencial · Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela Cada fuente publica una sola cifra por parcela, con un solo uso: la enseñamos tal cual, sin repartirla entre usos. Parcela del Portal del Suelo de la Comunidad de Madrid: En venta, la ofrece Metro de Madrid, sin urbanizar. La calculadora calcula solo vivienda: parte de la edificabilidad residencial, porque sus precios y alquileres son de vivienda. Una cifra de otro uso (terciario, industrial) la enseñamos como referencia y no la usamos. Siempre la puedes cambiar en la calculadora. Cómo lo calculamos : la ficha para inversores",
+          "planUsesDown": false,
+          "ambitUntracked": false,
+          "ambitPending": "El ámbito APR.04.09 no está terminado según el Ayuntamiento: planeamiento sin iniciar; gestión sin iniciar; proyecto de urbanización sin iniciar; obras de urbanización sin iniciar; en VEDA, pendiente de planeamiento de desarrollo. Faltan planeamiento, gestión o urbanización.",
+          "reference32697": true,
+          "byUseTitle": true,
+          "pem": {
+            "value": "968",
+            "help": "Supuesto Referencia de la Comunidad de Madrid de 2022; los costes han subido desde entonces (Costes de Referencia General, bloque abierto en Madrid: 871–1.064 €/m², punto medio). El PEM medio que declaran los visados de obra nueva de viviendas en bloque (2025), 644 €/m², es la referencia baja."
+          },
+          "coefficient": {
+            "value": "1,3575",
+            "help": "Supuesto El PEM más un 35,75 % (gastos generales y beneficio, honorarios, licencia e ICIO, y otros; desglose debajo)"
+          },
+          "costReferencesCount": 1,
+          "costReferences": [
+            {
+              "text": "Dato PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (2025): 644 €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja. Fuente: Comunidad de Madrid · 2025 · dato de toda la Comunidad. Visados de obra nueva de viviendas en bloque: presupuesto de ejecución material entre la superficie a construir. Ver los visados (se abre en una pestañ",
+              "href": "https://datos.comunidad.madrid/dataset/1006022"
+            },
+            {
+              "text": "Costes de Referencia General de la Comunidad de Madrid (actualizados al año 2022), en Madrid (área 1): bloque abierto, 871–1.064 €/m²; manzana cerrada, 856–1.046 €/m²; garaje o trastero bajo rasante, 482–590 €/m². Son PEM, sin gastos generales ni beneficio industrial, y los costes han subido desde entonces. La calculadora parte del punto medio del bloque abierto: 968 €/m² (supuesto). Ver los costes de referencia (se ",
+              "href": "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf"
+            },
+            {
+              "text": "Sociedad de Tasación, diciembre de 2025, media de España: 1.360 €/m² de coste de construcción de obra nueva (1.273 sobre rasante y 489 bajo rasante), según la prensa. No sabemos si incluye gastos generales y beneficio: no hemos podido leer el informe original. Ver la noticia (se abre en una pestaña nueva)",
+              "href": "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+            }
+          ],
+          "scenarios": [],
+          "thresholds": {
+            "adjust15": false,
+            "eco805": true,
+            "pct18": true
+          },
+          "overflow": {
+            "pageScroll": 0,
+            "outside": 0,
+            "first": []
+          }
+        }
+      },
+      "method": {
+        "costTitle": {
+          "expected": "De dónde sale el coste y cuánto varía",
+          "shown": true
+        },
+        "permits": {
+          "expected": "PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (2025): 644 €/m²",
+          "shown": true
+        },
+        "crg": {
+          "expected": "Costes de Referencia General de la Comunidad de Madrid (actualizados al año 2022)",
+          "shown": true
+        },
+        "crgBlock": {
+          "expected": "bloque abierto, 871–1.064 €/m²",
+          "shown": true
+        },
+        "crgDefault": {
+          "expected": "La calculadora parte del punto medio del bloque abierto: 968 €/m² (supuesto)",
+          "shown": true
+        },
+        "st": {
+          "expected": "Sociedad de Tasación, diciembre de 2025, media de España: 1.360 €/m²",
+          "shown": true
+        },
+        "eco805": {
+          "expected": "Orden ECO/805/2003, disposición adicional sexta",
+          "shown": true
+        },
+        "eco805pct": {
+          "expected": "un margen mínimo del 18 % en vivienda de primera residencia",
+          "shown": true
+        },
+        "adjust": {
+          "expected": "«Ajustar» entre el 15 % y el objetivo",
+          "shown": true
+        },
+        "costLinks": [
+          "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+          "https://datos.comunidad.madrid/dataset/1006022",
+          "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+          "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+        ],
+        "overflow": {
+          "pageScroll": 0,
+          "outside": 0,
+          "first": []
+        }
+      },
+      "consoleErrors": []
+    },
+    "1440": {
+      "parcels": {
+        "3959601VK4735H": {
+          "h1": "Calle Almeria 1, 28028 Madrid",
+          "vacant": "¿Está sin edificar? (según su uso en el Catastro) No División horizontal No Ver la parcela en la Sede Electrónica del Catastro (se",
+          "oldSolarText": false,
+          "planning": "2. Planeamiento Calificación Área de planeamiento remitido APR.04.09: Cocheras Metro Pte. de Ventas Uso pormenorizado Sin uso pormenorizado El plan aún no le ha fijado un uso concreto; lo fija el plan propio de su ámbito. La calculadora calcula solo vivienda. Parcela urbanística 231123 Estado del ámbito Planeamiento: sin iniciar · Gestión: sin iniciar · Proyecto de urbanización: sin iniciar · Obras de urbanización: sin iniciar · VEDA: pendiente de planeamiento de desarrollo APR.04.09, según el Ayuntamiento a 1 de julio de 2026 Ver en el visor del Geoportal del Ayuntamiento (se abre en una pestaña nueva) Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial. Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.",
+          "buildability": "3. Edificabilidad Edificabilidad de partida Sin dato Sin dato Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela: 32.697 m² edificables de vivienda, pero el ámbito APR.04.09 no está terminado. El ámbito no está terminado: la cifra es una referencia, no los m² de partida. Pon tú los m² si quieres hacer números. Construido hoy 6.573 m² Es lo que hay, no lo que se puede construir. Edificabilidad publicada, por uso El plan no publica la edificabilidad por uso de esta parcela. Lo que publica cada fuente para esta parcela catastral Residencial: 32.697 m² edificables Uso en la fuente: residencial · Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela Cada fuente publica una sola cifra por parcela, con un solo uso: la enseñamos tal cual, sin repartirla entre usos. Parcela del Portal del Suelo de la Comunidad de Madrid: En venta, la ofrece Metro de Madrid, sin urbanizar. La calculadora calcula solo vivienda: parte de la edificabilidad residencial, porque sus precios y alquileres son de vivienda. Una cifra de otro uso (terciario, industrial) la enseñamos como referencia y no la usamos. Siempre la puedes cambiar en la calculadora. Cómo lo calculamos : la ficha para inversores",
+          "planUsesDown": false,
+          "ambitUntracked": false,
+          "ambitPending": "El ámbito APR.04.09 no está terminado según el Ayuntamiento: planeamiento sin iniciar; gestión sin iniciar; proyecto de urbanización sin iniciar; obras de urbanización sin iniciar; en VEDA, pendiente de planeamiento de desarrollo. Faltan planeamiento, gestión o urbanización.",
+          "reference32697": true,
+          "byUseTitle": true,
+          "pem": {
+            "value": "968",
+            "help": "Supuesto Referencia de la Comunidad de Madrid de 2022; los costes han subido desde entonces (Costes de Referencia General, bloque abierto en Madrid: 871–1.064 €/m², punto medio). El PEM medio que declaran los visados de obra nueva de viviendas en bloque (2025), 644 €/m², es la referencia baja."
+          },
+          "coefficient": {
+            "value": "1,3575",
+            "help": "Supuesto El PEM más un 35,75 % (gastos generales y beneficio, honorarios, licencia e ICIO, y otros; desglose debajo)"
+          },
+          "costReferencesCount": 1,
+          "costReferences": [
+            {
+              "text": "Dato PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (2025): 644 €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja. Fuente: Comunidad de Madrid · 2025 · dato de toda la Comunidad. Visados de obra nueva de viviendas en bloque: presupuesto de ejecución material entre la superficie a construir. Ver los visados (se abre en una pestañ",
+              "href": "https://datos.comunidad.madrid/dataset/1006022"
+            },
+            {
+              "text": "Costes de Referencia General de la Comunidad de Madrid (actualizados al año 2022), en Madrid (área 1): bloque abierto, 871–1.064 €/m²; manzana cerrada, 856–1.046 €/m²; garaje o trastero bajo rasante, 482–590 €/m². Son PEM, sin gastos generales ni beneficio industrial, y los costes han subido desde entonces. La calculadora parte del punto medio del bloque abierto: 968 €/m² (supuesto). Ver los costes de referencia (se ",
+              "href": "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf"
+            },
+            {
+              "text": "Sociedad de Tasación, diciembre de 2025, media de España: 1.360 €/m² de coste de construcción de obra nueva (1.273 sobre rasante y 489 bajo rasante), según la prensa. No sabemos si incluye gastos generales y beneficio: no hemos podido leer el informe original. Ver la noticia (se abre en una pestaña nueva)",
+              "href": "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+            }
+          ],
+          "scenarios": [],
+          "thresholds": {
+            "adjust15": false,
+            "eco805": true,
+            "pct18": true
+          },
+          "overflow": {
+            "pageScroll": 0,
+            "outside": 0,
+            "first": []
+          }
+        }
+      },
+      "method": {
+        "costTitle": {
+          "expected": "De dónde sale el coste y cuánto varía",
+          "shown": true
+        },
+        "permits": {
+          "expected": "PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (2025): 644 €/m²",
+          "shown": true
+        },
+        "crg": {
+          "expected": "Costes de Referencia General de la Comunidad de Madrid (actualizados al año 2022)",
+          "shown": true
+        },
+        "crgBlock": {
+          "expected": "bloque abierto, 871–1.064 €/m²",
+          "shown": true
+        },
+        "crgDefault": {
+          "expected": "La calculadora parte del punto medio del bloque abierto: 968 €/m² (supuesto)",
+          "shown": true
+        },
+        "st": {
+          "expected": "Sociedad de Tasación, diciembre de 2025, media de España: 1.360 €/m²",
+          "shown": true
+        },
+        "eco805": {
+          "expected": "Orden ECO/805/2003, disposición adicional sexta",
+          "shown": true
+        },
+        "eco805pct": {
+          "expected": "un margen mínimo del 18 % en vivienda de primera residencia",
+          "shown": true
+        },
+        "adjust": {
+          "expected": "«Ajustar» entre el 15 % y el objetivo",
+          "shown": true
+        },
+        "costLinks": [
+          "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+          "https://datos.comunidad.madrid/dataset/1006022",
+          "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+          "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+        ],
+        "overflow": {
+          "pageScroll": 0,
+          "outside": 0,
+          "first": []
+        }
+      },
+      "consoleErrors": []
+    }
+  },
+  "sheetResponses": [
+    {
+      "width": "360",
+      "path": "/api/v1/investors/parcels",
+      "rc": "3959601VK4735H",
+      "status": 200,
+      "cache": "HIT",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "width": "390",
+      "path": "/api/v1/investors/parcels",
+      "rc": "3959601VK4735H",
+      "status": 200,
+      "cache": "HIT",
+      "cacheControl": "public, max-age=3600"
+    },
+    {
+      "width": "1440",
+      "path": "/api/v1/investors/parcels",
+      "rc": "3959601VK4735H",
+      "status": 200,
+      "cache": "HIT",
+      "cacheControl": "public, max-age=3600"
+    }
+  ]
+}
