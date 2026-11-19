@@ -7,6 +7,8 @@
 //   J6 the zone in the address (second delivery of the UX mobile audit): ?zona=, «Volver a la lista»,
 //      the back and forward buttons, the zone screen folded and its «Volver a la lista», a wrong ?zona=
 //   J7 a barrio's card becomes its district's, in the address too, when the search leaves the capital
+//   J8 «Para desarrolladores» (D-249), from the link of «Para inversores»: each route with its copyable
+//      example against the public API, the 7 MCP tools, the planned items marked as not available yet
 // Every figure on screen is compared with the API response the page itself received: no fixed
 // numbers, so the checks survive a data sync. Browser console errors and horizontal overflow fail.
 //
@@ -639,6 +641,40 @@ async function journeyZoneList(run, page) {
   await run.overflow(page, J);
 }
 
+/** The API that the developers page documents: always the public one, also on a local run. */
+const PUBLIC_API = "https://vidafacil-madrid.vercel.app/api/v1";
+const DEV_ROUTES = 13; // apps/web/src/lib/developers.ts, API_GROUPS (its vitest lists them)
+const MCP_TOOLS = ["buscar_zonas", "que_falta", "explicar_zona", "encontrar_zona", "fuentes_de_datos", "ficha_inversor", "viabilidad"];
+
+async function journeyDevelopers(run, page) {
+  const J = "J8 developers";
+  await page.goto(`${BASE}/inversores`);
+  await Promise.all([
+    page.waitForURL(/\/desarrolladores$/, { timeout: WAIT }),
+    page.getByRole("link", { name: "¿Integrarlo en tu sistema? API y MCP gratis" }).click(),
+  ]);
+  await page.getByRole("heading", { level: 1, name: "API y MCP para desarrolladores" }).waitFor({ timeout: WAIT });
+  run.check(J, "«Para inversores» links to /desarrolladores", true, page.url());
+  const section = (name) => page.locator("section").filter({ has: page.getByRole("heading", { level: 2, name }) }).first();
+  const api = section(/^Funciona hoy: la API/);
+  const routes = api.locator("article");
+  const commands = await routes.locator("pre").allInnerTexts();
+  run.check(J, `${DEV_ROUTES} routes, each with its curl against the public API`,
+    (await routes.count()) === DEV_ROUTES && commands.length === DEV_ROUTES && commands.every((c) => c.startsWith("curl -s") && c.includes(`${PUBLIC_API}/`)),
+    `${await routes.count()} routes, ${commands.length} commands`);
+  run.check(J, "every example has its «Copiar»", (await api.getByRole("button", { name: /^Copiar/ }).count()) === DEV_ROUTES);
+  const tools = squash(await section(/^El MCP/).innerText());
+  run.check(J, "the MCP: 7 tools, local", MCP_TOOLS.every((t) => tools.includes(t)) && tools.includes("Funciona en local") && tools.includes("hi-mcp"),
+    MCP_TOOLS.filter((t) => !tools.includes(t)).join(", "));
+  const planned = section(/^Planteado/).locator("li");
+  const labels = await planned.filter({ hasText: "Aún no disponible" }).count();
+  run.check(J, "planned items say «Aún no disponible»", (await planned.count()) === 4 && labels === 4, `${labels}/${await planned.count()}`);
+  const footer = page.locator("footer").last().getByRole("link", { name: "API y MCP gratis, para desarrolladores" });
+  run.check(J, "the footer links to /desarrolladores", (await footer.getAttribute("href")) === "/desarrolladores");
+  await run.shot(page, "j8-developers");
+  await run.overflow(page, J);
+}
+
 async function runCombination(browserName, device) {
   const run = new Run(browserName, device);
   const options = { ...DEVICES[device], locale: "es-ES" };
@@ -648,7 +684,8 @@ async function runCombination(browserName, device) {
   try {
     for (const [name, journey] of [["J1 search", journeySearch], ["J2 Qué falta Madrid", journeyMadrid],
       ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList], ["J5 Somos mayores", journeySeniors],
-      ["J6 zone in the address", journeyZoneAddress], ["J7 barrio to district", journeyBarrioToDistrict]]) {
+      ["J6 zone in the address", journeyZoneAddress], ["J7 barrio to district", journeyBarrioToDistrict],
+      ["J8 developers", journeyDevelopers]]) {
       const context = await browser.newContext(options);
       if (opts["block-external"]) {
         await context.route("**/*", (route) => {

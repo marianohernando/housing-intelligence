@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import InvestorList from "@/components/investors/InvestorList";
 import styles from "@/components/investors/Investors.module.css";
@@ -18,6 +19,9 @@ export default function InversoresPage() {
           <p className={styles.lead}>{TEXT.intro}</p>
           <p className={styles.note}>
             {TEXT.pilot} {TEXT.model}
+          </p>
+          <p className={`${styles.devLink} no-print`}>
+            <Link href="/desarrolladores">{TEXT.developers}</Link>
           </p>
         </header>
         <InvestorList />

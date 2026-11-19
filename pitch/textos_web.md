@@ -942,6 +942,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 | `pie.proyecto` | Vida Fácil · Proyecto para DATAMAD 2026 | | Cambia el 12 nov: un solo nombre visible, «Vida Fácil» (jurado simulado). «Housing Intelligence» solo queda en el nombre del repositorio, que se ve en el enlace del código. **Pendiente de B** (`SiteFooter.tsx`, `TEXT.project`) |
 | `pie.codigo` | Código abierto (Apache-2.0) | https://github.com/marianohernando/housing-intelligence | D-191 |
 | `pie.como` | Cómo lo calculamos | Pestaña | |
+| `pie.desarrolladores` | API y MCP gratis, para desarrolladores | `/desarrolladores` | **Nuevo (19 nov, D-249).** Debajo de `inversores.enlace`, igual de discreto, 44 px de alto; no se imprime. No va en la cabecera (medida a 360 px) |
 
 ---
 
@@ -959,6 +960,7 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 | `inversores.intro` | Qué le falta a cada barrio, dónde hay suelo y si una promoción sale. Con datos abiertos y la fuente de cada cifra. | |
 | `inversores.piloto` | Piloto: los barrios de Madrid capital dentro de la M-40. | |
 | `inversores.modelo` | Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro. | |
+| `inversores.desarrolladores` | ¿Integrarlo en tu sistema? API y MCP gratis | **Nuevo (19 nov, D-249).** Enlace a `/desarrolladores` bajo `inversores.modelo`, en la lista; 44 px de alto; no se imprime |
 
 ### Lista de barrios
 
@@ -1031,3 +1033,72 @@ En este orden: 1. Quién vive aquí; 2. Precios; 3. Qué falta; 4. Suelo; 5. ¿S
 - Sin dato no es 0: lo que no sabemos se dice, nunca se rellena.
 - La financiación (intereses y comisiones del préstamo) no entra en esta versión: el margen es antes de financiación e impuestos.
 - El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. Ajusta el coeficiente si tienes un presupuesto.
+
+---
+
+## 12. Para desarrolladores: la API y el MCP (D-249)
+
+**Nueva (19 nov).** Una página, `/desarrolladores`, para quien quiere meter Vida Fácil en su sistema: el técnico de una empresa o de un ayuntamiento. Decisión de Mariano del 19 nov: la API y el MCP son gratis para todos, igual que los datos (`pitch/modelo_negocio.md`). Separa lo que **funciona hoy** de lo **planteado**, sin fechas. Se llega desde el pie (`pie.desarrolladores`) y desde la lista de inversores (`inversores.desarrolladores`). Mismas reglas que el resto: letra de 16 px o más, objetivos de 44 px (también los enlaces dentro de una frase) y el código se desplaza dentro de su caja, nunca la página. Los textos viven en `apps/web/src/lib/developers.ts`; los ejemplos con `curl`, también: se probaron uno a uno contra producción el 19 nov (`evidence/gate-06/2026-11-19-desarrolladores/`).
+
+### Cabecera
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.etiqueta` | Gratis · sin clave · solo lectura | Etiqueta arriba del título |
+| `desarrolladores.titulo` | API y MCP para desarrolladores | Título de la página y de la pestaña del navegador |
+| `desarrolladores.intro` | Las mismas cifras que ves en Vida Fácil, para tu sistema o para tu agente de IA: qué falta en cada zona, qué zonas encajan con un hogar, el suelo público y si una promoción sale. Gratis para todos, también para empresas y ayuntamientos, igual que los datos. | |
+| `desarrolladores.indice` | En esta página: Qué es · Datos y licencias · Funciona hoy: la API · El MCP, para agentes de IA · Planteado · Uso justo · Más información | Enlaces a cada sección |
+
+### Qué es
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.que_es` | Una API pública y abierta, de solo lectura. No pide clave ni registro: haces la petición y recibes JSON. Está en el mismo dominio que la web: https://vidafacil-madrid.vercel.app/api/v1. | |
+| `desarrolladores.openapi` | Cada ruta, con sus campos y sus tipos, está descrita en formato OpenAPI: https://vidafacil-madrid.vercel.app/api/v1/openapi.json | El enlace, en su propia línea |
+| `desarrolladores.sobre` | Todas las respuestas tienen la misma forma | Con el ejemplo del sobre `{data, meta, warnings}` y una línea por campo: `data`, la respuesta; `meta.methodology_version`, la versión del método («Si cambia el método, cambia la versión»); `meta.data_version`, de cuándo son los datos; `warnings`, avisos que son parte de la respuesta («Léelos») |
+| `desarrolladores.sin_dato` | Si no sabemos una cifra, llega como null con su motivo en null_reason, o con el estado SIN_DATOS o UNKNOWN. Nunca la rellenamos con un 0: un 0 es un dato real, por ejemplo ninguna parcela pública en una zona. Muchas cifras traen confidence, de 0 a 1: cuánto nos fiamos de ellas. | Título: «Sin dato no es 0» |
+| `desarrolladores.errores` | Una entrada que no vale responde 422 y dice qué campo falla; una zona que no existe, 404. El detalle va en detail. | |
+
+### Datos y licencias
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.datos` | Los datos salen sobre todo del Portal de Datos Abiertos de la Comunidad de Madrid: hoy, {n} de sus conjuntos de datos. La lista completa, con la versión, la licencia y el enlace de cada uno, está en GET /api/v1/datasets (más abajo). | {n} = `cm_open_data_count` de `/datasets`, como el pie |
+| `desarrolladores.licencias` | Código: Apache-2.0 · Documentación y catálogo de datos: CC BY 4.0 · Cada conjunto de datos conserva su licencia: Comunidad de Madrid y Ayuntamiento de Madrid, CC BY 4.0; Consorcio Regional de Transportes de Madrid, su licencia de datos abiertos («Powered by CRTM»); OpenStreetMap, ODbL (también el anillo de la M-40 que delimita el piloto para inversores, que es un derivado de OpenStreetMap); CartoCiudad (Instituto Geográfico Nacional), CC BY 4.0 scne.es; Ministerio de Sanidad, Ministerio de Vivienda y Agencia Tributaria, reutilización citando la fuente y la fecha de su última actualización. | Las del README y de `data/catalog/sources/` |
+| `desarrolladores.citar` | Cada conjunto de datos de una respuesta (datasets) trae su license, su url y su attribution_text: el texto con el que pide que lo cites. Si reutilizas las cifras, cítalo. | Y el enlace «La ficha de cada conjunto de datos, en el repositorio» |
+
+### Funciona hoy: la API
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.funciona` | Funciona hoy | Etiqueta junto al título de la sección (texto, no solo color) |
+| `desarrolladores.funciona.intro` | Estas rutas están en producción. Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026. Copia el ejemplo y pégalo en un terminal. Las respuestas son JSON; con jq puedes quedarte con una parte, por ejemplo \| jq .meta. | |
+| `desarrolladores.ruta` | {título} · {método} {ruta} · {descripción} · ejemplo con curl · Qué devuelve: {…} | Una tarjeta por ruta, en cinco grupos: «Buscar zonas para un hogar» (`POST /search` y `/search/barrios`), «Qué falta en cada zona» (`/gaps/{level}/{code}`, `/gaps?level=&row=` y `/gaps/impact`), «Fuentes e indicadores» (`/datasets`, `/features` y `/features/{id}/values`), «Zonas y lugares en el mapa» (`/geo/admin-units` y `/places`) y «Para inversores y promotores (piloto: Madrid capital dentro de la M-40)» (`/investors/zones`, `/investors/zones/{admin_unit_id}` y `/investors/viability`). Los títulos, descripciones y «Qué devuelve» de cada una, en `API_GROUPS` de `lib/developers.ts` |
+| `desarrolladores.copiar` | Copiar | Botón de cada ejemplo (44 px); para el lector de pantalla, «Copiar: {método} {ruta}». Al copiar, al lado: «Copiado»; si el navegador no deja: «No se ha podido copiar: selecciona el texto y cópialo.» |
+
+### El MCP
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.mcp` | El MCP (Model Context Protocol) deja que un asistente de IA, como Claude Desktop o Claude Code, pregunte a Vida Fácil lo mismo que la API y reciba las mismas cifras y las mismas fuentes. Sus herramientas son de solo lectura, llaman a las mismas funciones que la API y nunca ejecutan SQL. | Etiqueta «Funciona en local» junto al título |
+| `desarrolladores.mcp.local` | Hoy funciona en tu ordenador, no en remoto. El servidor se arranca en local y habla con tu asistente por stdio. Necesita una copia del repositorio y una base de datos Postgres con los datos cargados. | Recuadro, a la vista |
+| `desarrolladores.mcp.herramientas` | Sus 7 herramientas: buscar_zonas, que_falta, explicar_zona, encontrar_zona, fuentes_de_datos, ficha_inversor (Nueva) y viabilidad (Nueva) | Cada una con una línea y su ruta equivalente |
+| `desarrolladores.mcp.conectar` | Cómo conectarlo: 1. Necesitas git, Docker y uv, con Python 3.12 (cómo instalar uv). Clona el repositorio y carga los datos. La carga tarda: descarga los datos abiertos, los valida y calcula los indicadores. 2. Claude Code: cambia la ruta por la de tu copia del repositorio. 3. Claude Desktop: añádelo a claude_desktop_config.json, con la ruta completa de tu copia. uv tiene que estar en el PATH de la aplicación (o pon su ruta completa). | Cada paso con su bloque de código: `git clone --branch claude/sprint-1-public …`, `make dev`, `make ingest-all`; `claude mcp add vida-facil …`; el JSON con `uv run --quiet --directory /ruta/a/housing-intelligence hi-mcp` y `DATABASE_URL` |
+| `desarrolladores.mcp.pregunta` | DATABASE_URL apunta a la base que crea make dev, con el usuario y la contraseña de .env. Después, pregúntale por ejemplo «¿Qué le falta a Chamartín?» o «¿Sale una promoción de 1.000 m² en Pinar del Rey con el suelo a 3.200 € el m² edificable?». | |
+
+### Planteado
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.planteado` | Ideas en las que trabajamos. Hoy no existen, así que no cuentes con ellas todavía. No damos fechas. | Etiqueta «Aún no disponible» junto al título y en cada idea (texto, borde discontinuo, sin colores de estado) |
+| `desarrolladores.planteado.mcp_remoto` | El MCP en remoto (HTTP), en este mismo dominio. Para conectar tu asistente sin instalar nada ni cargar una base de datos. | |
+| `desarrolladores.planteado.avisos` | Avisos de suelo público nuevo. Un aviso cuando aparezca una parcela para vivienda nueva en el Portal del Suelo de la Comunidad de Madrid. | |
+| `desarrolladores.planteado.claves` | Claves opcionales para integraciones con mucho tráfico. Con una cuota de uso justo. La API seguirá funcionando sin clave. | |
+| `desarrolladores.planteado.descargas` | Descargas en CSV y GeoJSON. Las tablas y los mapas de una vez, para abrirlos en una hoja de cálculo o en un SIG. | |
+
+### Uso justo y más información
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `desarrolladores.uso_justo` | La API es gratis y la mantiene un proyecto pequeño. Para que siga así, te pedimos: guarda en caché lo que pidas (los datos cambian pocas veces, y meta.data_version te dice cuándo); no la llames en bucle ni pidas lo mismo una y otra vez; si vas a hacer muchas peticiones, cuéntanoslo antes en el repositorio. Gracias. | No dice si hay o no un límite de peticiones (lo decide coordinación aparte) |
+| `desarrolladores.mas` | El código, en GitHub (Apache-2.0) · Las rutas y sus contratos · El servidor MCP: herramientas, pruebas y tiempos · Los JSON Schema de cada respuesta, para generar tus tipos | Enlaces al repositorio, rama `claude/sprint-1-public` |
