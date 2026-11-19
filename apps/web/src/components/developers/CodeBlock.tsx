@@ -44,8 +44,9 @@ export default function CodeBlock({ code, caption, label }: { code: string; capt
           </button>
         </span>
       </figcaption>
-      {/* Focusable: a box that scrolls must scroll with the keyboard too (WCAG 2.1.1) */}
-      <pre className={styles.pre} tabIndex={0}>
+      {/* Focusable: a box that scrolls must scroll with the keyboard too (WCAG 2.1.1), and what
+          takes the focus says what it is (review R-03 of #97) */}
+      <pre className={styles.pre} tabIndex={0} role="region" aria-label={label}>
         <code>{code}</code>
       </pre>
     </figure>
