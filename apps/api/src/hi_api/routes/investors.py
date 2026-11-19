@@ -118,6 +118,7 @@ def parcel_query(
                     "type": "value_error",
                 }
             ],
+            headers={"Cache-Control": PRIVATE},  # it may carry an address (D-252b)
         )
     if rc is not None:
         return ParcelQuery(ParcelInput.RC, rc=rc)
@@ -126,10 +127,13 @@ def parcel_query(
     return ParcelQuery(ParcelInput.POINT, lat=lat, lon=lon)
 
 
-def lookup_failure(exc: Exception) -> HTTPException:
+def lookup_failure(exc: Exception, typed: bool = False) -> HTTPException:
+    """The error of a lookup; one that carries a typed address in its URL (?address=, ?q=) is
+    never kept by a shared cache (D-252b): private, no-store."""
+    private = {"Cache-Control": PRIVATE} if typed else {}
     if isinstance(exc, ParcelLookupError):
         detail = {"code": exc.code.value, "message": exc.message, "details": exc.details}
-        return HTTPException(status_code=exc.status, detail=detail)
+        return HTTPException(status_code=exc.status, detail=detail, headers=private or None)
     if isinstance(exc, RateLimitedError):
         return HTTPException(
             status_code=429,
@@ -138,13 +142,13 @@ def lookup_failure(exc: Exception) -> HTTPException:
                 "message": "Too many new parcel lookups from this address: wait and retry",
                 "details": {"retry_after_s": exc.retry_after_s},
             },
-            headers={"Retry-After": str(exc.retry_after_s)},
+            headers={"Retry-After": str(exc.retry_after_s), **private},
         )
     source = exc.source if isinstance(exc, UpstreamError) else "catastro"
     return HTTPException(
         status_code=503,
         detail={"code": ErrorCode.SOURCE_DEGRADED.value, "message": SOURCE_DOWN[source]},
-        headers={"Retry-After": "30"},
+        headers={"Retry-After": "30", **private},
     )
 
 
@@ -162,7 +166,7 @@ async def get_parcel(
     try:
         sheet, warnings, data_version = await parcel_sheet(query, client_ip(request), engine)
     except (ParcelLookupError, RateLimitedError, UpstreamError) as exc:
-        raise lookup_failure(exc) from exc
+        raise lookup_failure(exc, typed=query.kind is ParcelInput.ADDRESS) from exc
     complete = sheet.fallback is None and not sheet.degraded
     if query.kind is ParcelInput.ADDRESS:
         response.headers["Cache-Control"] = PRIVATE
@@ -184,7 +188,7 @@ async def get_parcel_candidates(
     try:
         found, _ = await candidates_for(q, client_ip(request))
     except (RateLimitedError, UpstreamError) as exc:
-        raise lookup_failure(exc) from exc
+        raise lookup_failure(exc, typed=True) from exc
     response.headers["Cache-Control"] = PRIVATE_BOX
     return ParcelCandidatesResponse(
         data=ParcelCandidates(
