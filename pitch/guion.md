@@ -162,7 +162,7 @@ Ahora cambio de usuario: un ayuntamiento. A esta familia no le falta nada en Pue
 ---
 
 ## Bloque 4 · 3:30–4:25 · Datos, código abierto, API y MCP gratis, quién paga y la versión para inversores
-**Pantalla:** la slide 2 en «Treinta y nueve conjuntos…» y la slide 3 en «¿Quién paga?». Su columna «Viabilidad» dice «Código abierto, y API y MCP gratis.», lo mismo que la frase de la API y el MCP, y acaba con «Ya está, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.». La voz concreta esa línea sin contradecirla: la búsqueda llega a toda Madrid capital, y el piloto es donde el barrio tiene su contexto completo.
+**Pantalla:** la slide 2 en «Treinta y nueve conjuntos…» y la slide 3 en «¿Quién paga?». Su columna «Viabilidad» dice «Código abierto, y API y MCP gratis.», lo mismo que la frase de la API y el MCP, y acaba con «Ya está, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.», lo mismo que la frase de los inversores (aprobada por Mariano el 19 nov por la tarde).
 
 **«¿Quién paga?»:** el modelo que decidió Mariano el 19 nov, que sustituye al del 12 nov (`pitch/modelo_negocio.md`). Personas y ayuntamientos, gratis; pagarán inversores y promotores privados, con un plan de precios. «Pagarán» porque hoy no se cobra: durante el concurso la versión para inversores es de acceso libre, sin cuentas ni cobro (D-248 §1). Los precios son hipótesis y no se dicen en voz alta; si preguntan, pregunta 6 de `pitch/preguntas.md`.
 
