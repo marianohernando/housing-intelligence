@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_catastro_inmuebles_distrito_uso",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_catastro_inmuebles_distrito_uso/2fd4b2b36bee/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.csv",
+      "sha256": "2fd4b2b36beedfc3dddffbc02a0463a5f74a55c9e36fa615d3b9e4bb1ccf6e6e",
+      "bytes": 301814,
+      "url": "https://datos.comunidad.madrid/dataset/bfe645b6-79c7-487e-8615-e9c95eb556da/resource/da59a208-17ef-4eeb-bef9-0403e967c278/download/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.csv",
+      "retrieved_at": "2026-11-19T00:37:07.703792+00:00"
+    }
+  ]
+}

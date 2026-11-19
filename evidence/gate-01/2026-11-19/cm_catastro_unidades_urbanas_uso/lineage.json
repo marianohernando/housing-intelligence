@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_catastro_unidades_urbanas_uso",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_catastro_unidades_urbanas_uso/fec7c9f82752/catastro-inmobiliario.-unidades-urbanas-por-uso.-municipios.csv",
+      "sha256": "fec7c9f82752ea9dee8d00f691edea9f606ef2ce0ae059ed378106a8780c82c0",
+      "bytes": 7997560,
+      "url": "https://datos.comunidad.madrid/dataset/01d38f5f-2277-491b-a2b2-ee6b64c44fbd/resource/73066586-6e8c-4fb8-ac64-3e04885cdc39/download/catastro-inmobiliario.-unidades-urbanas-por-uso.-municipios.csv",
+      "retrieved_at": "2026-11-19T00:35:34.444355+00:00"
+    }
+  ],
+  "checksum": "bdcced72b2c3a405190b2e864d29fd43a1371ca59e6350d0e275cd84e757a874",
+  "parser_version": "stat_tables-1.1.0",
+  "dataset_version": "2026-11-19-bdcced72b2c3",
+  "correlation_id": "4960614cf05a435f98912f0eadd200a7",
+  "silver": "data/silver/cm_catastro_unidades_urbanas_uso/bdcced72b2c3/observations.csv.gz"
+}

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_catastro_inmuebles_distrito_uso",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_catastro_inmuebles_distrito_uso/2fd4b2b36bee/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.csv",
+      "sha256": "2fd4b2b36beedfc3dddffbc02a0463a5f74a55c9e36fa615d3b9e4bb1ccf6e6e",
+      "bytes": 301814,
+      "url": "https://datos.comunidad.madrid/dataset/bfe645b6-79c7-487e-8615-e9c95eb556da/resource/da59a208-17ef-4eeb-bef9-0403e967c278/download/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.csv",
+      "retrieved_at": "2026-11-19T00:37:07.703792+00:00"
+    }
+  ],
+  "checksum": "1824bb422681a1600ae041acfa6143c276e3c22d7d391bd8f008e7a7808d9298",
+  "parser_version": "cm_district_concept-1.0.0",
+  "dataset_version": "2026-11-19-1824bb422681",
+  "correlation_id": "1d8e7692d5c84fa08d73ba3ec466a529",
+  "silver": "data/silver/cm_catastro_inmuebles_distrito_uso/1824bb422681/observations.csv.gz"
+}

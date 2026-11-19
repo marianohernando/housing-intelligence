@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "ayto_edificabilidad_remanente_ambitos",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_edificabilidad_remanente_ambitos/8aab3114713f/edificabilidad-remanente-01_07_2026_datos-abiertos.xls",
+      "sha256": "8aab3114713f983fa1bef6be4975877e9b0648ac6959127468af90facdb92f37",
+      "bytes": 99840,
+      "url": "https://datos.madrid.es/dataset/203182-0-ambitos-remanente/resource/203182-16-ambitos-remanente/download/edificabilidad-remanente-01_07_2026_datos-abiertos.xls",
+      "retrieved_at": "2026-11-19T00:33:30.446955+00:00"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "osm_m40",
+      "role": "primary",
+      "path": "data/catalog/manual/inversores_barrios_m40.yaml",
+      "sha256": "d931287d40243836dc1cd6f0bad33b14a78aa664f7a47db8b19ad7ba2fa434bd",
+      "bytes": 21752,
+      "url": "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A120%5D%3Barea%5B%22ISO3166-2%22%3D%22ES-MD%22%5D-%3E.a%3Bway%5B%22highway%22%3D%22motorway%22%5D%5B%22ref%22~%22%28%5E%7C%3B%29M-40%28%3B%7C%24%29%22%5D%28area.a%29%3Bout+geom%3B",
+      "retrieved_at": "2026-11-19T00:00:00+00:00"
+    }
+  ],
+  "checksum": "2642ba34b6bd2c25898bb4250bc8c83fc8a95677e189bba4239c0a9d41495bb4",
+  "parser_version": "pilot_zones-1.0.0",
+  "dataset_version": "2026-11-19-2642ba34b6bd",
+  "correlation_id": "0676fd385f5d4f10b8d6d454d0904753",
+  "silver": "data/silver/osm_m40/2642ba34b6bd/observations.csv.gz"
+}
