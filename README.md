@@ -46,7 +46,9 @@ Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»
 
 ## Para agentes de IA (MCP)
 
-Un servidor MCP local deja que un asistente (Claude Desktop, Claude Code u otro cliente MCP) pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Tiene 5 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre y listar las fuentes. Nunca ejecuta SQL. Se arranca con `make mcp` y funciona solo en tu ordenador, contra tu base local; no está desplegado. Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225).
+Un servidor MCP local deja que un asistente (Claude Desktop, Claude Code u otro cliente MCP) pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Tiene 7 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre, listar las fuentes y, para inversores, la ficha de un barrio y la viabilidad de una promoción. Nunca ejecuta SQL. Se arranca con `make mcp` y funciona solo en tu ordenador, contra tu base local; no está desplegado. Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225, D-249).
+
+La API pública y el MCP son gratis para todos, sin clave. Rutas, ejemplos con `curl` y cómo conectar el MCP: [vidafacil-madrid.vercel.app/desarrolladores](https://vidafacil-madrid.vercel.app/desarrolladores).
 
 ## Arráncalo en tu ordenador
 
