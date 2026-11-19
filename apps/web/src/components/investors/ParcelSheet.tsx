@@ -26,6 +26,7 @@ import {
 
 import Calculator, { type ParcelStart } from "./Calculator";
 import { MarkTag } from "./Figures";
+import MethodLink from "./MethodLink";
 import { Demand, Gaps, Land, Prices, Section } from "./InvestorSheet";
 import styles from "./Investors.module.css";
 import own from "./Parcels.module.css";
@@ -152,6 +153,7 @@ function BuildabilitySection({ sheet }: { sheet: Sheet }) {
       </dl>
       {b.article && b.article_url && <External href={b.article_url}>{TEXT.article(b.article)}</External>}
       <p className={styles.note}>{TEXT.buildableEditable}</p>
+      <MethodLink />
     </Section>
   );
 }

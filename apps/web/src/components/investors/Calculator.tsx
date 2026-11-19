@@ -27,6 +27,7 @@ import {
 } from "@/lib/investors";
 
 import { MarkTag, VerdictBadge } from "./Figures";
+import MethodLink from "./MethodLink";
 import styles from "./Investors.module.css";
 
 const DEBOUNCE_MS = 400;
@@ -346,6 +347,7 @@ export default function Calculator({ defaults, parcels, remaining, parcel }: Pro
           {ready && state.result && <Results result={state.result} />}
         </div>
       </section>
+      <MethodLink />
     </div>
   );
 }

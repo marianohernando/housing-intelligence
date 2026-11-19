@@ -93,6 +93,16 @@
   }
 }
 
+/*
+ * Narrow phones (360 px) with four tabs (D-251, «Inversores»): a slimmer side padding keeps them in
+ * one row inside the screen, every one still 44 px wide and high, the long one wrapping as above.
+ */
+@media (max-width: 380px) {
+  .tab {
+    padding: 0 var(--space-1);
+  }
+}
+
 /* Short desktop screens (1440×900): a slimmer header leaves room for the search card */
 @media (min-width: 1101px) and (max-height: 960px) {
   .header {
