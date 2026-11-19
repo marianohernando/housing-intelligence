@@ -1,0 +1,97 @@
+The two investor answers that change with f806850 (D-252), before (e3e85b6) → after, without `meta`. Every other field is identical.
+
+== GET /api/v1/investors/zones/ES.28.BAR.28079164 (Pinar del Rey): 16 changed, 13 added, 1 removed
+  ~ data.defaults.pem_m2.feature_id: pem_visado_vivienda_bloque_m2 → None
+  ~ data.defaults.pem_m2.value: 644.0 → 968.0
+  ~ data.defaults.pem_m2.mark: dato → supuesto
+  ~ data.defaults.pem_m2.source.text: Comunidad de Madrid · 2025 · dato de toda la Comunidad. Visados de obra nueva de viviendas en bloque: presupuesto de ejecución material entre la superficie a co → Supuesto: referencia de la Comunidad de Madrid de 2022; los costes han subido desde entonces (Costes de Referencia General, bloque abierto en Madrid: 871–1.064 €/m², punto medio). El PEM medio que dec
+  ~ data.defaults.pem_m2.source.level: ccaa → None
+  ~ data.defaults.pem_m2.source.period: 2025 → None
+  ~ data.defaults.pem_m2.source.url: https://datos.comunidad.madrid/dataset/1006022 → https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf
+  ~ data.defaults.pem_m2.confidence: 1.0 → None
+  ~ data.defaults.cost_coefficient.value: 1.36 → 1.3575
+  ~ data.defaults.cost_coefficient.source.text: Supuesto: el PEM más un 36 % (gastos generales y beneficio, honorarios, licencia e ICIO, y otros; desglose debajo) → Supuesto: el PEM más un 35,75 % (gastos generales y beneficio, honorarios, licencia e ICIO, y otros; desglose debajo)
+  ~ data.defaults.cost_parts[2].pct: 5.0 → 4.75
+  ~ data.defaults.cost_parts[2].source: ICIO de Madrid, 4 % del presupuesto (Ordenanza fiscal del impuesto), y la tasa de la licencia y otros tributos, alrededor de un 1 % (supuesto) → ICIO de Madrid, 3,75 % del presupuesto (Ordenanza fiscal 7/2023, art. 25: tipo aprobado para 2024 y vigente en 2025), y la tasa de la licencia y otros tributos, alrededor de un 1 % (supuesto)
+  ~ data.defaults.target_margin_pct.source.text: supuesto: un promotor suele pedir entre el 15 % y el 20 % sobre ventas, o más; como la financiación no entra, se toma el 20 %. Por debajo del 10 %, no sale → supuesto: un promotor suele pedir entre el 15 % y el 20 % sobre ventas, o más; como la financiación no entra, se toma el 20 %. La tasación hipotecaria pide al menos un 18 % en vivienda de primera resi
+  ~ data.defaults.adjust_floor_pct.value: 10.0 → 15.0
+  ~ data.defaults.adjust_floor_pct.source.text: supuesto: un promotor suele pedir entre el 15 % y el 20 % sobre ventas, o más; como la financiación no entra, se toma el 20 %. Por debajo del 10 %, no sale → supuesto: un promotor suele pedir entre el 15 % y el 20 % sobre ventas, o más; como la financiación no entra, se toma el 20 %. La tasación hipotecaria pide al menos un 18 % en vivienda de primera resi
+  ~ data.notices[4]: El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. Ajusta el coeficiente si tienes un presupuesto. → El coste de construcción es un supuesto: el PEM de referencia de la Comunidad de Madrid (2022) por un coeficiente. Cámbialo si tienes un presupuesto.
+  - data.defaults.pem_m2.source.dataset_ids[0]: cm_visados_presupuesto_obra
+  + data.defaults.pem_permits_m2.feature_id: pem_visado_vivienda_bloque_m2
+  + data.defaults.pem_permits_m2.value: 644.0
+  + data.defaults.pem_permits_m2.unit: €/m²
+  + data.defaults.pem_permits_m2.mark: dato
+  + data.defaults.pem_permits_m2.source.text: Comunidad de Madrid · 2025 · dato de toda la Comunidad. Visados de obra nueva de viviendas en bloque: presupuesto de ejecución material entre la superficie a construir
+  + data.defaults.pem_permits_m2.source.level: ccaa
+  + data.defaults.pem_permits_m2.source.period: 2025
+  + data.defaults.pem_permits_m2.source.dataset_ids[0]: cm_visados_presupuesto_obra
+  + data.defaults.pem_permits_m2.source.url: https://datos.comunidad.madrid/dataset/1006022
+  + data.defaults.pem_permits_m2.null_reason: None
+  + data.defaults.pem_permits_m2.confidence: 1.0
+  + data.defaults.pem_permits_m2.low: None
+  + data.defaults.pem_permits_m2.high: None
+
+== POST /api/v1/investors/viability {buildable_m2 1000, sale_price_m2 4000, rent_m2_month 15, pem_m2 600, land_eur_m2 2200, demand.household_income 40000}: 26 changed, 36 added, 0 removed
+  ~ data.version: viability-0.1 → viability-0.2
+  ~ data.scenarios[0].construction: 816000.0000000001 → 814500.0
+  ~ data.scenarios[0].total_cost: 3336000.0 → 3334500.0
+  ~ data.scenarios[0].profit: 664000.0 → 665500.0
+  ~ data.scenarios[0].margin_pct: 16.6 → 16.6375
+  ~ data.scenarios[0].residual_land_value: 2064000.0 → 2065500.0
+  ~ data.scenarios[0].residual_land_value_m2: 2064.0 → 2065.5
+  ~ data.scenarios[0].rental_yield_pct: 5.968169761273209 → 5.971139492453143
+  ~ data.scenarios[1].construction: 775200.0000000001 → 773775.0
+  ~ data.scenarios[1].total_cost: 3327200.0 → 3325775.0
+  ~ data.scenarios[1].profit: 1072800.0 → 1074225.0
+  ~ data.scenarios[1].margin_pct: 24.381818181818183 → 24.414204545454545
+  ~ data.scenarios[1].residual_land_value: 2392800.0 → 2394225.0
+  ~ data.scenarios[1].residual_land_value_m2: 2392.8 → 2394.225
+  ~ data.scenarios[1].rental_yield_pct: 6.655014788921754 → 6.6582037982026225
+  ~ data.scenarios[2].label: Pesimista (−10 % precio, +5 % coste) → Pesimista (−10 % precio, +15 % coste)
+  ~ data.scenarios[2].cost_factor: 1.05 → 1.15
+  ~ data.scenarios[2].construction: 856800.0000000001 → 936674.9999999999
+  ~ data.scenarios[2].total_cost: 3344800.0 → 3424675.0
+  ~ data.scenarios[2].profit: 255200.0 → 175325.0
+  ~ data.scenarios[2].margin_pct: 7.088888888888889 → 4.8701388888888895
+  ~ data.scenarios[2].residual_land_value: 1735200.0 → 1655325.0
+  ~ data.scenarios[2].residual_land_value_m2: 1735.2 → 1655.325
+  ~ data.scenarios[2].rental_yield_pct: 5.299659774928029 → 5.164704663377622
+  ~ data.scenarios[2].headline: No sale: margen del 7,1 %, por debajo del 10 %. → No sale: margen del 4,9 %, por debajo del 15 %.
+  ~ data.notices[4]: El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. Ajusta el coeficiente si tienes un presupuesto. → El coste de construcción es un supuesto: el PEM de referencia de la Comunidad de Madrid (2022) por un coeficiente. Cámbialo si tienes un presupuesto.
+  + data.scenarios[0].break_even.construction_m2: 680.0
+  + data.scenarios[0].break_even.pem_m2: 500.92081031307555
+  + data.scenarios[0].break_even.coefficient: 1.1333333333333333
+  + data.scenarios[0].break_even.current_construction_m2: 814.5
+  + data.scenarios[0].break_even.land_counted: True
+  + data.scenarios[0].break_even.reachable: True
+  + data.scenarios[0].break_even_free_land.construction_m2: 2880.0
+  + data.scenarios[0].break_even_free_land.pem_m2: 2121.546961325967
+  + data.scenarios[0].break_even_free_land.coefficient: 4.8
+  + data.scenarios[0].break_even_free_land.current_construction_m2: 814.5
+  + data.scenarios[0].break_even_free_land.land_counted: False
+  + data.scenarios[0].break_even_free_land.reachable: True
+  + data.scenarios[1].break_even.construction_m2: 1018.9473684210526
+  + data.scenarios[1].break_even.pem_m2: 750.6057962586024
+  + data.scenarios[1].break_even.coefficient: 1.6982456140350877
+  + data.scenarios[1].break_even.current_construction_m2: 814.5
+  + data.scenarios[1].break_even.land_counted: True
+  + data.scenarios[1].break_even.reachable: True
+  + data.scenarios[1].break_even_free_land.construction_m2: 3334.7368421052633
+  + data.scenarios[1].break_even_free_land.pem_m2: 2456.528060482699
+  + data.scenarios[1].break_even_free_land.coefficient: 5.557894736842106
+  + data.scenarios[1].break_even_free_land.current_construction_m2: 814.5
+  + data.scenarios[1].break_even_free_land.land_counted: False
+  + data.scenarios[1].break_even_free_land.reachable: True
+  + data.scenarios[2].break_even.construction_m2: 340.8695652173913
+  + data.scenarios[2].break_even.pem_m2: 251.10096885259028
+  + data.scenarios[2].break_even.coefficient: 0.5681159420289855
+  + data.scenarios[2].break_even.current_construction_m2: 814.5
+  + data.scenarios[2].break_even.land_counted: True
+  + data.scenarios[2].break_even.reachable: True
+  + data.scenarios[2].break_even_free_land.construction_m2: 2253.913043478261
+  + data.scenarios[2].break_even_free_land.pem_m2: 1660.3411001681482
+  + data.scenarios[2].break_even_free_land.coefficient: 3.756521739130435
+  + data.scenarios[2].break_even_free_land.current_construction_m2: 814.5
+  + data.scenarios[2].break_even_free_land.land_counted: False
+  + data.scenarios[2].break_even_free_land.reachable: True
