@@ -1,0 +1,5 @@
+kind: permit_budget_table
+dataset_id: cm_visados_presupuesto_obra
+metric_id: pem_visado_m2
+# D-248: written from the portal's CSV by scripts/pem_visados_cm.py, with the file's sha256
+table: pem_visados_cm.yaml

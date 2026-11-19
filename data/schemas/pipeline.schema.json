@@ -2177,6 +2177,46 @@
       "title": "OsmWalkNetworkPipeline",
       "type": "object"
     },
+    "PermitBudgetPipeline": {
+      "additionalProperties": false,
+      "description": "D-248: the PEM per m² of the building permits of the Comunidad de Madrid, by year and kind\nof building, from its versioned table (data/catalog/manual/<table>, written from the portal's\nCSV by scripts/pem_visados_cm.py). Each year and kind becomes one regional observation of\n`metric_id` with the dimension `tipo`. The run reads the versioned file, never the portal;\nits lineage keeps the CSV's URL and the day it was read.",
+      "properties": {
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "permit_budget_table",
+          "title": "Kind",
+          "type": "string"
+        },
+        "metric_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Metric Id",
+          "type": "string"
+        },
+        "resource_role": {
+          "default": "primary",
+          "title": "Resource Role",
+          "type": "string"
+        },
+        "table": {
+          "description": "file in data/catalog/manual",
+          "pattern": "^[a-z0-9_]+\\.yaml$",
+          "title": "Table",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "dataset_id",
+        "metric_id",
+        "table"
+      ],
+      "title": "PermitBudgetPipeline",
+      "type": "object"
+    },
     "PilotZonesPipeline": {
       "additionalProperties": false,
       "description": "D-247: the pilot barrios of the investor version (Madrid inside the M-40), from their\nversioned table in data/catalog/manual (`PilotZonesTable`, built from OpenStreetMap by\nscripts/m40_barrios.py). Each pilot barrio becomes one observation of `metric_id` (value 1)\nwith its name, whether it is on the edge of the ring and the note of its review. The run\nreads the versioned file, never the network; its lineage keeps the query and the day it was\nread. Every barrio of the geography must be accounted for by the table, or the run blocks.",
@@ -3003,6 +3043,7 @@
       "osm_parks": "#/$defs/OsmParksPipeline",
       "osm_pois": "#/$defs/OsmPoisPipeline",
       "osm_walk_network": "#/$defs/OsmWalkNetworkPipeline",
+      "permit_budget_table": "#/$defs/PermitBudgetPipeline",
       "pilot_zones": "#/$defs/PilotZonesPipeline",
       "points_csv": "#/$defs/PointsPipeline",
       "public_land_parcels": "#/$defs/PublicLandParcelsPipeline",
@@ -3062,6 +3103,9 @@
     },
     {
       "$ref": "#/$defs/CuratedZoneItemsPipeline"
+    },
+    {
+      "$ref": "#/$defs/PermitBudgetPipeline"
     },
     {
       "$ref": "#/$defs/PublicLandParcelsPipeline"

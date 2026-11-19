@@ -847,6 +847,25 @@ class CuratedZoneItemsPipeline(BaseModel):
         return [self.metric_id]
 
 
+class PermitBudgetPipeline(BaseModel):
+    """D-248: the PEM per m² of the building permits of the Comunidad de Madrid, by year and kind
+    of building, from its versioned table (data/catalog/manual/<table>, written from the portal's
+    CSV by scripts/pem_visados_cm.py). Each year and kind becomes one regional observation of
+    `metric_id` with the dimension `tipo`. The run reads the versioned file, never the portal;
+    its lineage keeps the CSV's URL and the day it was read."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["permit_budget_table"]
+    dataset_id: str = Field(pattern=DATASET_ID_PATTERN)
+    resource_role: str = "primary"
+    metric_id: str = Field(pattern=METRIC_ID_PATTERN)
+    table: str = Field(pattern=r"^[a-z0-9_]+\.yaml$", description="file in data/catalog/manual")
+
+    def metric_ids(self) -> list[str]:
+        return [self.metric_id]
+
+
 CODE_SLUG = r"^[a-z][a-z_]*$"
 
 
@@ -1208,6 +1227,7 @@ PipelineSpec = Annotated[
     | CmMunicipioNameTablePipeline
     | MadridDevelopmentAreasPipeline
     | CuratedZoneItemsPipeline
+    | PermitBudgetPipeline
     | PublicLandParcelsPipeline
     | MadridPremisesCensusPipeline
     | MadridBuildableAreasPipeline
