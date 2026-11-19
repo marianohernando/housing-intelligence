@@ -50,7 +50,7 @@
 - Las entrevistas de disposición a pagar con inversores y promotores.
 
 ## Qué se dice en el pitch
-- **Slide 3, columna «Viabilidad»:** «Gratis para personas y ayuntamientos. Pagarán inversores y promotores.», «Código abierto, y API y MCP gratis.» (decisión de Mariano del 19 nov) y, al pie, «Ya está, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.». La línea del pie sigue igual: no exagera, porque la búsqueda llega a toda Madrid capital y el piloto es donde el barrio tiene su contexto completo. Una versión más concreta, medida y pendiente de Mariano, está en `pitch/slides.md`.
+- **Slide 3, columna «Viabilidad»:** «Gratis para personas y ayuntamientos. Pagarán inversores y promotores.», «Código abierto, y API y MCP gratis.» (decisión de Mariano del 19 nov) y, al pie, «Ya está, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.» (aprobada por Mariano el 19 nov por la tarde; medida en 3 líneas a 1920 × 1080). Dice lo mismo que el bloque 4 del guion.
 - **Guion, bloque 4:** «Gratis para personas y ayuntamientos: cada ayuntamiento ve qué le falta a su municipio. Nunca vendemos datos personales: solo zonas, siempre sumadas. Pagarán inversores y promotores, y su versión ya está: buscar una parcela de Madrid capital y calcular si una promoción sale, con la demanda de la zona.».
 - **No se dice «de dónde vivir a dónde construir»** como algo hecho (revisión del #98): hoy ninguna parcela se cruza con la vivienda que le falta a su zona. Es el paso siguiente (pregunta 60).
 - **«Pagarán», no «pagan»:** hoy no se cobra nada.
