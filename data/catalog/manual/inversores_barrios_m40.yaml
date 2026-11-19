@@ -1,0 +1,911 @@
+# D-247: barrios piloto de la versión para inversores, Madrid dentro de la M-40. Un barrio entra
+# si su centroide cae dentro del anillo de la M-40 de OpenStreetMap (© OpenStreetMap
+# contributors, ODbL 1.0), leído una vez el día `consulted` por scripts/m40_barrios.py. Los
+# barrios del borde, dentro o fuera (centroide a menos de `edge_m` del anillo, o un barrio que la
+# M-40 cruza), llevan la nota de su revisión a mano (`review`). No editar a mano salvo las notas:
+# volver a lanzar el script, que las conserva.
+title: 'Barrios piloto de la versión para inversores: Madrid dentro de la M-40'
+publisher: OpenStreetMap contributors (Overpass API)
+license: ODbL 1.0 (© OpenStreetMap contributors)
+url: https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A120%5D%3Barea%5B%22ISO3166-2%22%3D%22ES-MD%22%5D-%3E.a%3Bway%5B%22highway%22%3D%22motorway%22%5D%5B%22ref%22~%22%28%5E%7C%3B%29M-40%28%3B%7C%24%29%22%5D%28area.a%29%3Bout+geom%3B
+query: '[out:json][timeout:120];area["ISO3166-2"="ES-MD"]->.a;way["highway"="motorway"]["ref"~"(^|;)M-40(;|$)"](area.a);out
+  geom;'
+osm_timestamp: '2026-11-19T00:12:49Z'
+consulted: '2026-11-19'
+crs: EPSG:25830
+method: 'Vías highway=motorway con ref=M-40 (308), unidas con un búfer de 25 m; el hueco interior mayor,
+  devuelto al eje con otros 25 m y simplificado a 5 m, es el anillo. Un barrio entra si su centroide (ST_Centroid
+  de su polígono en geo_admin_unit) cae dentro. margin_m: distancia del centroide al anillo (positiva
+  dentro); area_inside_pct: % de su superficie dentro.'
+municipio_ine: '28079'
+edge_m: 500
+crossing_pct: 5
+ring:
+  ways: 308
+  area_km2: 238.58
+  sha256: bb5359faa91f07e5285a2e526489ffc9667eef5efd923440b9f69af47edc3339
+  coordinates:
+  - [429086, 4476032]
+  - [429124, 4476144]
+  - [429180, 4476267]
+  - [429419, 4476696]
+  - [429460, 4476789]
+  - [429481, 4476883]
+  - [429495, 4477049]
+  - [429507, 4477113]
+  - [429546, 4477214]
+  - [429577, 4477263]
+  - [429607, 4477303]
+  - [429683, 4477376]
+  - [429933, 4477549]
+  - [430069, 4477659]
+  - [430240, 4477813]
+  - [430375, 4477953]
+  - [430507, 4478111]
+  - [430663, 4478330]
+  - [430884, 4478720]
+  - [430954, 4478820]
+  - [431080, 4478959]
+  - [431230, 4479078]
+  - [431319, 4479133]
+  - [431417, 4479181]
+  - [431546, 4479226]
+  - [432058, 4479326]
+  - [432174, 4479366]
+  - [432315, 4479440]
+  - [432429, 4479526]
+  - [432662, 4479764]
+  - [432854, 4479889]
+  - [433229, 4480214]
+  - [433323, 4480308]
+  - [433448, 4480456]
+  - [433545, 4480549]
+  - [433648, 4480618]
+  - [433751, 4480665]
+  - [433844, 4480690]
+  - [433931, 4480702]
+  - [434404, 4480702]
+  - [434622, 4480693]
+  - [434842, 4480661]
+  - [435232, 4480518]
+  - [435345, 4480492]
+  - [435402, 4480487]
+  - [435513, 4480494]
+  - [435568, 4480505]
+  - [435658, 4480539]
+  - [435753, 4480590]
+  - [435795, 4480620]
+  - [435880, 4480710]
+  - [436050, 4480933]
+  - [436147, 4481027]
+  - [436244, 4481096]
+  - [436502, 4481240]
+  - [436569, 4481286]
+  - [436662, 4481355]
+  - [436781, 4481471]
+  - [436870, 4481576]
+  - [436964, 4481715]
+  - [437187, 4482147]
+  - [437254, 4482260]
+  - [437367, 4482407]
+  - [437432, 4482479]
+  - [437600, 4482631]
+  - [437701, 4482701]
+  - [437796, 4482757]
+  - [438153, 4482896]
+  - [438215, 4482928]
+  - [438334, 4483008]
+  - [438508, 4483150]
+  - [438616, 4483255]
+  - [438698, 4483348]
+  - [438864, 4483566]
+  - [438999, 4483705]
+  - [439075, 4483763]
+  - [440814, 4484887]
+  - [441014, 4485048]
+  - [441400, 4485430]
+  - [441509, 4485520]
+  - [441569, 4485559]
+  - [441688, 4485614]
+  - [441790, 4485644]
+  - [441939, 4485665]
+  - [442178, 4485664]
+  - [442360, 4485640]
+  - [442566, 4485587]
+  - [442686, 4485544]
+  - [442838, 4485478]
+  - [443002, 4485381]
+  - [443104, 4485310]
+  - [443216, 4485220]
+  - [443414, 4485020]
+  - [443656, 4484743]
+  - [443785, 4484633]
+  - [443910, 4484564]
+  - [444024, 4484524]
+  - [444133, 4484504]
+  - [444387, 4484477]
+  - [444592, 4484417]
+  - [444735, 4484340]
+  - [444813, 4484276]
+  - [444883, 4484201]
+  - [444931, 4484136]
+  - [444980, 4484048]
+  - [445003, 4484001]
+  - [445033, 4483902]
+  - [445093, 4483461]
+  - [445154, 4483149]
+  - [445213, 4482915]
+  - [445382, 4482377]
+  - [445405, 4482231]
+  - [445409, 4482077]
+  - [445373, 4481764]
+  - [445381, 4481628]
+  - [445421, 4481465]
+  - [445499, 4481304]
+  - [445607, 4481170]
+  - [446244, 4480568]
+  - [446432, 4480364]
+  - [446573, 4480199]
+  - [446730, 4479987]
+  - [447188, 4479209]
+  - [447254, 4479117]
+  - [447321, 4479039]
+  - [447593, 4478826]
+  - [448051, 4478494]
+  - [448194, 4478420]
+  - [448514, 4478287]
+  - [448625, 4478220]
+  - [448665, 4478182]
+  - [448709, 4478126]
+  - [448753, 4478033]
+  - [448826, 4477670]
+  - [448854, 4477599]
+  - [448898, 4477526]
+  - [449004, 4477412]
+  - [449492, 4477000]
+  - [449573, 4476923]
+  - [449625, 4476851]
+  - [449651, 4476798]
+  - [449675, 4476719]
+  - [449683, 4476638]
+  - [449673, 4476529]
+  - [449628, 4476318]
+  - [449591, 4476192]
+  - [449539, 4476061]
+  - [449395, 4475745]
+  - [449179, 4474969]
+  - [449147, 4474881]
+  - [449087, 4474789]
+  - [449019, 4474726]
+  - [448944, 4474680]
+  - [447609, 4474072]
+  - [447493, 4473993]
+  - [447413, 4473899]
+  - [447375, 4473832]
+  - [446909, 4472686]
+  - [446849, 4472498]
+  - [446782, 4472141]
+  - [446739, 4471990]
+  - [446485, 4471395]
+  - [446402, 4471226]
+  - [446167, 4470808]
+  - [445861, 4470381]
+  - [445757, 4470270]
+  - [445675, 4470201]
+  - [445567, 4470127]
+  - [445472, 4470074]
+  - [445386, 4470036]
+  - [445266, 4469995]
+  - [444930, 4469933]
+  - [444847, 4469909]
+  - [444743, 4469848]
+  - [444647, 4469756]
+  - [444570, 4469626]
+  - [444489, 4469371]
+  - [444429, 4469118]
+  - [444387, 4469046]
+  - [444349, 4469004]
+  - [444133, 4468855]
+  - [443841, 4468594]
+  - [443487, 4468328]
+  - [443312, 4468213]
+  - [443201, 4468161]
+  - [443078, 4468116]
+  - [442864, 4468066]
+  - [442773, 4468054]
+  - [442701, 4468058]
+  - [442655, 4468070]
+  - [442526, 4468135]
+  - [442439, 4468161]
+  - [442351, 4468163]
+  - [442147, 4468131]
+  - [442076, 4468130]
+  - [442004, 4468143]
+  - [441470, 4468384]
+  - [441326, 4468424]
+  - [441146, 4468451]
+  - [440962, 4468457]
+  - [440783, 4468448]
+  - [440698, 4468435]
+  - [440403, 4468363]
+  - [440245, 4468356]
+  - [439964, 4468394]
+  - [439510, 4468429]
+  - [439059, 4468495]
+  - [438878, 4468507]
+  - [438644, 4468499]
+  - [438467, 4468480]
+  - [438335, 4468456]
+  - [437897, 4468337]
+  - [437704, 4468269]
+  - [437599, 4468239]
+  - [437423, 4468204]
+  - [437341, 4468196]
+  - [437206, 4468195]
+  - [436917, 4468207]
+  - [436718, 4468183]
+  - [436442, 4468099]
+  - [436125, 4468015]
+  - [435755, 4467888]
+  - [435654, 4467864]
+  - [435553, 4467851]
+  - [435352, 4467860]
+  - [435016, 4467935]
+  - [434932, 4467944]
+  - [434796, 4467949]
+  - [434592, 4467942]
+  - [434423, 4467964]
+  - [434372, 4467976]
+  - [434223, 4468033]
+  - [433986, 4468182]
+  - [433860, 4468241]
+  - [433701, 4468283]
+  - [433606, 4468293]
+  - [433487, 4468290]
+  - [433382, 4468270]
+  - [433225, 4468222]
+  - [433129, 4468209]
+  - [433013, 4468216]
+  - [432899, 4468254]
+  - [432812, 4468309]
+  - [432727, 4468399]
+  - [432484, 4468795]
+  - [432430, 4468864]
+  - [431530, 4469770]
+  - [431450, 4469876]
+  - [431417, 4469933]
+  - [431293, 4470198]
+  - [431224, 4470298]
+  - [431155, 4470377]
+  - [431014, 4470488]
+  - [430857, 4470576]
+  - [430661, 4470631]
+  - [430446, 4470651]
+  - [430306, 4470675]
+  - [430162, 4470729]
+  - [430090, 4470763]
+  - [430013, 4470813]
+  - [429892, 4470918]
+  - [429799, 4471035]
+  - [429440, 4471656]
+  - [429389, 4471761]
+  - [429353, 4471868]
+  - [429321, 4472013]
+  - [429312, 4472112]
+  - [429311, 4472207]
+  - [429324, 4472337]
+  - [429340, 4472417]
+  - [429375, 4472532]
+  - [429423, 4472642]
+  - [429650, 4473087]
+  - [429727, 4473194]
+  - [429784, 4473251]
+  - [429866, 4473316]
+  - [430026, 4473403]
+  - [430131, 4473470]
+  - [430168, 4473502]
+  - [430227, 4473574]
+  - [430277, 4473661]
+  - [430309, 4473747]
+  - [430324, 4473889]
+  - [430312, 4473991]
+  - [430288, 4474075]
+  - [430233, 4474182]
+  - [430188, 4474238]
+  - [430134, 4474298]
+  - [429387, 4475010]
+  - [429248, 4475173]
+  - [429186, 4475267]
+  - [429109, 4475433]
+  - [429064, 4475607]
+  - [429052, 4475784]
+  - [429057, 4475884]
+  - [429086, 4476032]
+barrios:
+- code: '28079011'
+  name: Palacio
+  distrito: Centro
+  margin_m: 5627
+  area_inside_pct: 100
+- code: '28079012'
+  name: Embajadores
+  distrito: Centro
+  margin_m: 4986
+  area_inside_pct: 100
+- code: '28079013'
+  name: Cortes
+  distrito: Centro
+  margin_m: 5581
+  area_inside_pct: 100
+- code: '28079014'
+  name: Justicia
+  distrito: Centro
+  margin_m: 6438
+  area_inside_pct: 100
+- code: '28079015'
+  name: Universidad
+  distrito: Centro
+  margin_m: 6817
+  area_inside_pct: 100
+- code: '28079016'
+  name: Sol
+  distrito: Centro
+  margin_m: 5891
+  area_inside_pct: 100
+- code: '28079021'
+  name: Imperial
+  distrito: Arganzuela
+  margin_m: 4587
+  area_inside_pct: 100
+- code: '28079022'
+  name: Acacias
+  distrito: Arganzuela
+  margin_m: 4105
+  area_inside_pct: 100
+- code: '28079023'
+  name: Chopera
+  distrito: Arganzuela
+  margin_m: 3358
+  area_inside_pct: 100
+- code: '28079024'
+  name: Legazpi
+  distrito: Arganzuela
+  margin_m: 2746
+  area_inside_pct: 100
+- code: '28079025'
+  name: Delicias
+  distrito: Arganzuela
+  margin_m: 3583
+  area_inside_pct: 100
+- code: '28079026'
+  name: Palos de la Frontera
+  distrito: Arganzuela
+  margin_m: 4318
+  area_inside_pct: 100
+- code: '28079027'
+  name: Atocha
+  distrito: Arganzuela
+  margin_m: 3648
+  area_inside_pct: 100
+- code: '28079031'
+  name: Pacífico
+  distrito: Retiro
+  margin_m: 3810
+  area_inside_pct: 100
+- code: '28079032'
+  name: Adelfas
+  distrito: Retiro
+  margin_m: 3139
+  area_inside_pct: 100
+- code: '28079033'
+  name: Estrella
+  distrito: Retiro
+  margin_m: 3602
+  area_inside_pct: 100
+- code: '28079034'
+  name: Ibiza
+  distrito: Retiro
+  margin_m: 4486
+  area_inside_pct: 100
+- code: '28079035'
+  name: Los Jerónimos
+  distrito: Retiro
+  margin_m: 4973
+  area_inside_pct: 100
+- code: '28079036'
+  name: Niño Jesús
+  distrito: Retiro
+  margin_m: 4153
+  area_inside_pct: 100
+- code: '28079041'
+  name: Recoletos
+  distrito: Salamanca
+  margin_m: 5627
+  area_inside_pct: 100
+- code: '28079042'
+  name: Goya
+  distrito: Salamanca
+  margin_m: 4746
+  area_inside_pct: 100
+- code: '28079043'
+  name: Fuente del Berro
+  distrito: Salamanca
+  margin_m: 3898
+  area_inside_pct: 100
+- code: '28079044'
+  name: Guindalera
+  distrito: Salamanca
+  margin_m: 4665
+  area_inside_pct: 100
+- code: '28079045'
+  name: Lista
+  distrito: Salamanca
+  margin_m: 5142
+  area_inside_pct: 100
+- code: '28079046'
+  name: Castellana
+  distrito: Salamanca
+  margin_m: 5873
+  area_inside_pct: 100
+- code: '28079051'
+  name: El Viso
+  distrito: Chamartín
+  margin_m: 5296
+  area_inside_pct: 100
+- code: '28079052'
+  name: Prosperidad
+  distrito: Chamartín
+  margin_m: 4388
+  area_inside_pct: 100
+- code: '28079053'
+  name: Ciudad Jardín
+  distrito: Chamartín
+  margin_m: 4338
+  area_inside_pct: 100
+- code: '28079054'
+  name: Hispanoamérica
+  distrito: Chamartín
+  margin_m: 4022
+  area_inside_pct: 100
+- code: '28079055'
+  name: Nueva España
+  distrito: Chamartín
+  margin_m: 3581
+  area_inside_pct: 100
+- code: '28079056'
+  name: Castilla
+  distrito: Chamartín
+  margin_m: 3160
+  area_inside_pct: 100
+- code: '28079061'
+  name: Bellas Vistas
+  distrito: Tetuán
+  margin_m: 4574
+  area_inside_pct: 100
+- code: '28079062'
+  name: Cuatro Caminos
+  distrito: Tetuán
+  margin_m: 5312
+  area_inside_pct: 100
+- code: '28079063'
+  name: Castillejos
+  distrito: Tetuán
+  margin_m: 4821
+  area_inside_pct: 100
+- code: '28079064'
+  name: Almenara
+  distrito: Tetuán
+  margin_m: 3934
+  area_inside_pct: 100
+- code: '28079065'
+  name: Valdeacederas
+  distrito: Tetuán
+  margin_m: 3736
+  area_inside_pct: 100
+- code: '28079066'
+  name: Berruguete
+  distrito: Tetuán
+  margin_m: 4229
+  area_inside_pct: 100
+- code: '28079071'
+  name: Gaztambide
+  distrito: Chamberí
+  margin_m: 5634
+  area_inside_pct: 100
+- code: '28079072'
+  name: Arapiles
+  distrito: Chamberí
+  margin_m: 6055
+  area_inside_pct: 100
+- code: '28079073'
+  name: Trafalgar
+  distrito: Chamberí
+  margin_m: 6578
+  area_inside_pct: 100
+- code: '28079074'
+  name: Almagro
+  distrito: Chamberí
+  margin_m: 6572
+  area_inside_pct: 100
+- code: '28079075'
+  name: Ríos Rosas
+  distrito: Chamberí
+  margin_m: 5956
+  area_inside_pct: 100
+- code: '28079076'
+  name: Vallehermoso
+  distrito: Chamberí
+  margin_m: 5170
+  area_inside_pct: 100
+- code: '28079082'
+  name: Fuentelarreina
+  distrito: Fuencarral-El Pardo
+  margin_m: 274
+  area_inside_pct: 89
+  review: 'Revisado: la M-40 corta el norte del barrio (quedan fuera 0,17 de sus 1,51 km²); el centroide
+    está 274 m dentro y el 89 % del barrio también. Entra.'
+- code: '28079083'
+  name: Peñagrande
+  distrito: Fuencarral-El Pardo
+  margin_m: 1607
+  area_inside_pct: 100
+- code: '28079084'
+  name: Pilar
+  distrito: Fuencarral-El Pardo
+  margin_m: 2551
+  area_inside_pct: 100
+- code: '28079085'
+  name: La Paz
+  distrito: Fuencarral-El Pardo
+  margin_m: 2985
+  area_inside_pct: 100
+- code: '28079086'
+  name: Valverde
+  distrito: Fuencarral-El Pardo
+  margin_m: 1702
+  area_inside_pct: 93
+  review: 'Revisado: solo queda fuera el extremo noreste (0,66 de sus 9,00 km²); el centroide está a 1,7
+    km dentro. Entra.'
+- code: '28079087'
+  name: Mirasierra
+  distrito: Fuencarral-El Pardo
+  margin_m: 426
+  area_inside_pct: 71
+  review: 'Revisado: la M-40 deja fuera el noroeste del barrio (2,03 de sus 6,90 km²); el centroide está
+    426 m dentro y el 71 % del barrio también. Entra, con esa parte fuera.'
+- code: '28079091'
+  name: Casa de Campo
+  distrito: Moncloa-Aravaca
+  margin_m: 5477
+  area_inside_pct: 100
+- code: '28079092'
+  name: Argüelles
+  distrito: Moncloa-Aravaca
+  margin_m: 6072
+  area_inside_pct: 100
+- code: '28079093'
+  name: Ciudad Universitaria
+  distrito: Moncloa-Aravaca
+  margin_m: 2572
+  area_inside_pct: 99
+- code: '28079094'
+  name: Valdezarza
+  distrito: Moncloa-Aravaca
+  margin_m: 3019
+  area_inside_pct: 100
+- code: '28079095'
+  name: Valdemarín
+  distrito: Moncloa-Aravaca
+  margin_m: 684
+  area_inside_pct: 82
+  review: 'Revisado: queda fuera el oeste del barrio (0,57 de sus 3,25 km²); el centroide está 684 m dentro.
+    Entra.'
+- code: '28079097'
+  name: Aravaca
+  distrito: Moncloa-Aravaca
+  margin_m: 1748
+  area_inside_pct: 98
+- code: '28079101'
+  name: Los Cármenes
+  distrito: Latina
+  margin_m: 4198
+  area_inside_pct: 100
+- code: '28079102'
+  name: Puerta del Ángel
+  distrito: Latina
+  margin_m: 5048
+  area_inside_pct: 100
+- code: '28079103'
+  name: Lucero
+  distrito: Latina
+  margin_m: 4513
+  area_inside_pct: 100
+- code: '28079104'
+  name: Aluche
+  distrito: Latina
+  margin_m: 3482
+  area_inside_pct: 100
+- code: '28079105'
+  name: Campamento
+  distrito: Latina
+  margin_m: 761
+  area_inside_pct: 79
+  review: 'Revisado: queda fuera el suroeste del barrio (1,95 de sus 9,17 km²); el centroide está 761
+    m dentro. Entra.'
+- code: '28079106'
+  name: Cuatro Vientos
+  distrito: Latina
+  margin_m: 685
+  area_inside_pct: 81
+  review: 'Revisado: queda fuera el suroeste del barrio (1,02 de sus 5,42 km²); el centroide está 685
+    m dentro. Entra.'
+- code: '28079107'
+  name: Águilas
+  distrito: Latina
+  margin_m: 2286
+  area_inside_pct: 100
+- code: '28079111'
+  name: Comillas
+  distrito: Carabanchel
+  margin_m: 3224
+  area_inside_pct: 100
+- code: '28079112'
+  name: Opañel
+  distrito: Carabanchel
+  margin_m: 2815
+  area_inside_pct: 100
+- code: '28079113'
+  name: San Isidro
+  distrito: Carabanchel
+  margin_m: 3562
+  area_inside_pct: 100
+- code: '28079114'
+  name: Vista Alegre
+  distrito: Carabanchel
+  margin_m: 2484
+  area_inside_pct: 100
+- code: '28079115'
+  name: Puerta Bonita
+  distrito: Carabanchel
+  margin_m: 1928
+  area_inside_pct: 100
+- code: '28079116'
+  name: Buenavista
+  distrito: Carabanchel
+  margin_m: 590
+  area_inside_pct: 93
+  review: 'Revisado: queda fuera el suroeste del barrio (0,37 de sus 5,62 km²); el centroide está 590 m dentro. Entra.'
+- code: '28079117'
+  name: Abrantes
+  distrito: Carabanchel
+  margin_m: 1595
+  area_inside_pct: 100
+- code: '28079121'
+  name: Orcasitas
+  distrito: Usera
+  margin_m: 489
+  area_inside_pct: 100
+  review: 'Revisado: todo el barrio está dentro; el centroide queda a 489 m del anillo porque el barrio
+    linda con la M-40 por el sur. Entra.'
+- code: '28079122'
+  name: Orcasur
+  distrito: Usera
+  margin_m: 858
+  area_inside_pct: 100
+- code: '28079123'
+  name: San Fermín
+  distrito: Usera
+  margin_m: 724
+  area_inside_pct: 100
+- code: '28079124'
+  name: Almendrales
+  distrito: Usera
+  margin_m: 2136
+  area_inside_pct: 100
+- code: '28079125'
+  name: Moscardó
+  distrito: Usera
+  margin_m: 2775
+  area_inside_pct: 100
+- code: '28079126'
+  name: Zofío
+  distrito: Usera
+  margin_m: 1630
+  area_inside_pct: 100
+- code: '28079127'
+  name: Pradolongo
+  distrito: Usera
+  margin_m: 1572
+  area_inside_pct: 100
+- code: '28079131'
+  name: Entrevías
+  distrito: Puente de Vallecas
+  margin_m: 1394
+  area_inside_pct: 100
+- code: '28079132'
+  name: San Diego
+  distrito: Puente de Vallecas
+  margin_m: 2010
+  area_inside_pct: 100
+- code: '28079133'
+  name: Palomeras Bajas
+  distrito: Puente de Vallecas
+  margin_m: 1056
+  area_inside_pct: 100
+- code: '28079134'
+  name: Palomeras Sureste
+  distrito: Puente de Vallecas
+  margin_m: 150
+  area_inside_pct: 56
+  review: 'Revisado, el borde más ajustado: la M-40 cruza el barrio y deja fuera su parte este (1,35 de
+    sus 3,07 km², el 44 %); el centroide está 150 m dentro. Entra por la regla del centroide, con casi
+    la mitad del barrio fuera.'
+- code: '28079135'
+  name: Portazgo
+  distrito: Puente de Vallecas
+  margin_m: 1256
+  area_inside_pct: 100
+- code: '28079136'
+  name: Numancia
+  distrito: Puente de Vallecas
+  margin_m: 2509
+  area_inside_pct: 100
+- code: '28079141'
+  name: Pavones
+  distrito: Moratalaz
+  margin_m: 430
+  area_inside_pct: 100
+  review: 'Revisado: todo el barrio está dentro; el centroide queda a 430 m del anillo porque el barrio
+    linda con la M-40 por el sureste. Entra.'
+- code: '28079142'
+  name: Horcajo
+  distrito: Moratalaz
+  margin_m: 330
+  area_inside_pct: 100
+  review: 'Revisado: todo el barrio está dentro; el centroide queda a 330 m del anillo porque el barrio
+    linda con la M-40. Entra.'
+- code: '28079143'
+  name: Marroquina
+  distrito: Moratalaz
+  margin_m: 1492
+  area_inside_pct: 100
+- code: '28079144'
+  name: Media Legua
+  distrito: Moratalaz
+  margin_m: 2823
+  area_inside_pct: 100
+- code: '28079145'
+  name: Fontarrón
+  distrito: Moratalaz
+  margin_m: 1710
+  area_inside_pct: 100
+- code: '28079146'
+  name: Vinateros
+  distrito: Moratalaz
+  margin_m: 1436
+  area_inside_pct: 100
+- code: '28079151'
+  name: Ventas
+  distrito: Ciudad Lineal
+  margin_m: 2508
+  area_inside_pct: 100
+- code: '28079152'
+  name: Pueblo Nuevo
+  distrito: Ciudad Lineal
+  margin_m: 1885
+  area_inside_pct: 100
+- code: '28079153'
+  name: Quintana
+  distrito: Ciudad Lineal
+  margin_m: 3279
+  area_inside_pct: 100
+- code: '28079154'
+  name: La Concepción
+  distrito: Ciudad Lineal
+  margin_m: 3334
+  area_inside_pct: 100
+- code: '28079155'
+  name: San Pascual
+  distrito: Ciudad Lineal
+  margin_m: 3343
+  area_inside_pct: 100
+- code: '28079156'
+  name: San Juan Bautista
+  distrito: Ciudad Lineal
+  margin_m: 3076
+  area_inside_pct: 100
+- code: '28079157'
+  name: Colina
+  distrito: Ciudad Lineal
+  margin_m: 2813
+  area_inside_pct: 100
+- code: '28079158'
+  name: Atalaya
+  distrito: Ciudad Lineal
+  margin_m: 2592
+  area_inside_pct: 100
+- code: '28079159'
+  name: Costillares
+  distrito: Ciudad Lineal
+  margin_m: 2179
+  area_inside_pct: 100
+- code: '28079161'
+  name: Palomas
+  distrito: Hortaleza
+  margin_m: 413
+  area_inside_pct: 98
+  review: 'Revisado: solo queda fuera un borde al este (0,03 de sus 1,14 km²); el centroide está 413 m
+    dentro. Entra.'
+- code: '28079162'
+  name: Piovera
+  distrito: Hortaleza
+  margin_m: 1243
+  area_inside_pct: 100
+- code: '28079163'
+  name: Canillas
+  distrito: Hortaleza
+  margin_m: 1372
+  area_inside_pct: 100
+- code: '28079164'
+  name: Pinar del Rey
+  distrito: Hortaleza
+  margin_m: 878
+  area_inside_pct: 100
+- code: '28079165'
+  name: Apóstol Santiago
+  distrito: Hortaleza
+  margin_m: 1458
+  area_inside_pct: 100
+- code: '28079201'
+  name: Simancas
+  distrito: San Blas-Canillejas
+  margin_m: 2253
+  area_inside_pct: 100
+- code: '28079202'
+  name: Hellín
+  distrito: San Blas-Canillejas
+  margin_m: 1517
+  area_inside_pct: 100
+- code: '28079203'
+  name: Amposta
+  distrito: San Blas-Canillejas
+  margin_m: 1218
+  area_inside_pct: 100
+- code: '28079204'
+  name: Arcos
+  distrito: San Blas-Canillejas
+  margin_m: 569
+  area_inside_pct: 100
+- code: '28079207'
+  name: Canillejas
+  distrito: San Blas-Canillejas
+  margin_m: 774
+  area_inside_pct: 100
+- code: '28079208'
+  name: El Salvador
+  distrito: San Blas-Canillejas
+  margin_m: 1824
+  area_inside_pct: 100
+reviewed_outside:
+- code: '28079088'
+  name: El Goloso
+  distrito: Fuencarral-El Pardo
+  margin_m: -1931
+  area_inside_pct: 11
+  review: 'Revisado: solo el sur del barrio queda dentro (2,78 de sus 26,38 km², el 11 %); el centroide
+    está a 1,9 km fuera. No entra.'
+- code: '28079166'
+  name: Valdefuentes
+  distrito: Hortaleza
+  margin_m: -812
+  area_inside_pct: 29
+  review: 'Revisado: queda dentro el oeste del barrio (4,79 de sus 16,79 km², el 29 %) y fuera el este;
+    el centroide está 812 m fuera. No entra.'
+- code: '28079205'
+  name: Rosas
+  distrito: San Blas-Canillejas
+  margin_m: -284
+  area_inside_pct: 32
+  review: 'Revisado: la M-40 cruza el barrio y deja fuera su parte sureste (6,35 de sus 9,28 km², el 68
+    %); el centroide está 284 m fuera. No entra.'
+outside: 20
