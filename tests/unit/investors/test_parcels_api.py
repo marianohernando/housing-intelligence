@@ -6,6 +6,7 @@ licence does not allow redistributing them, and the repo is public). The databas
 here (as in CI): the sheet comes without its barrio and says so.
 """
 
+import asyncio
 import logging
 from collections.abc import Iterator
 from typing import Any
@@ -14,8 +15,10 @@ import httpx
 import pytest
 import respx
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
 
 from hi_api import privacy
+from hi_api.deps import get_engine
 from hi_api.main import app
 from hi_api.services import parcel_sheet
 from hi_api.services.parcels import (
@@ -36,19 +39,33 @@ OTHER_RC = "3333333VK3333C"
 DEMO_RC = "2122202VK4722A"  # one of the four saved demo sheets
 POINT = {"x": 440000.5, "y": 4475000.5}
 RAW_KEYS = ("bico", "lrcdnp", "rcdnp", "debi", "lcons", "loint", "ldt", "cuerr", "lerr")
+# Hermetic: whatever DATABASE_URL says, these tests reach no database (R-10)
+NOWHERE = create_engine("postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests")
 
 
 @pytest.fixture(autouse=True)
 def fresh(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     for name in ("PARCEL_UPSTREAMS", "PARCEL_GUARD_PER_MINUTE", "GEOCODER_GUARD_PER_MINUTE"):
         monkeypatch.delenv(name, raising=False)
+    app.dependency_overrides[get_engine] = lambda: NOWHERE
     parcel_sheet.CACHE.clear()
     parcel_sheet.settings.cache_clear()
     parcel_sheet.guards.cache_clear()
     yield
+    app.dependency_overrides.pop(get_engine, None)
     parcel_sheet.CACHE.clear()
     parcel_sheet.settings.cache_clear()
     parcel_sheet.guards.cache_clear()
+
+
+@pytest.fixture
+def with_context(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The barrio read (no barrio at the point): a sheet complete but for its sources."""
+
+    async def context(engine: Any, parcel: Any) -> parcel_sheet.Context:
+        return parcel_sheet.Context(None, None, None, [], None)
+
+    monkeypatch.setattr(parcel_sheet, "context_at", context)
 
 
 # --- Synthetic answers, shaped like the services' ---
@@ -157,11 +174,14 @@ def mock_catastro(router: respx.MockRouter, dnprc: Any = None) -> None:
     )
 
 
-def mock_sigma(router: respx.MockRouter, uses: Any = USES_NZ8, instrument: Any = None) -> None:
+def mock_sigma(
+    router: respx.MockRouter, uses: Any = USES_NZ8, instrument: Any = None, z: Any = None
+) -> None:
     router.get(url__startswith=USOS_SUELO).mock(return_value=httpx.Response(200, json=arcgis(uses)))
     router.get(url__startswith=PLANEAMIENTO).mock(
         return_value=httpx.Response(200, json=arcgis(instrument))
     )
+    router.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(z)))
 
 
 def sheet_of(response: Any) -> ParcelSheetResponse:  # the test client's response
@@ -340,6 +360,7 @@ def test_the_ayuntamiento_down_leaves_the_rest_of_the_sheet() -> None:
     mock_catastro(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(side_effect=httpx.ReadTimeout("slow"))
     respx.get(url__startswith=PLANEAMIENTO).mock(side_effect=httpx.ReadTimeout("slow"))
+    respx.get(url__startswith=CONDICIONES).mock(side_effect=httpx.ReadTimeout("slow"))
     body = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC}))
     sheet = body.data
     assert sheet.planning is None
@@ -359,6 +380,7 @@ def test_an_arcgis_error_is_the_ayuntamiento_failing() -> None:
     respx.get(url__startswith=PLANEAMIENTO).mock(
         return_value=httpx.Response(200, json=arcgis(None))
     )
+    respx.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(None)))
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
     assert sheet.planning is None and "planning" in sheet.degraded
 
@@ -370,9 +392,11 @@ def test_the_instrument_layer_failing_keeps_the_planning() -> None:
         return_value=httpx.Response(200, json=arcgis(USES_NZ8))
     )
     respx.get(url__startswith=PLANEAMIENTO).mock(side_effect=httpx.ConnectError("down"))
+    respx.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(None)))
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    # The qualification stays; the instrument is missing, and the sheet says so (R-03)
     assert sheet.planning is not None and sheet.planning.instrument is None
-    assert "planning" not in sheet.degraded
+    assert "planning" in sheet.degraded
 
 
 @respx.mock
@@ -398,10 +422,8 @@ def test_an_area_brings_its_instrument_and_its_official_record() -> None:
 @respx.mock
 def test_norma_zonal_1_asks_for_its_z() -> None:
     mock_catastro(respx.mock)
-    mock_sigma(respx.mock, USES_NZ8 | {"AMB_TX_ETIQ": "1.2", "AMB_TX_DENOM": "ZONA 1 GRADO 2º"})
-    respx.get(url__startswith=CONDICIONES).mock(
-        return_value=httpx.Response(200, json=arcgis({"COEF_Z": 4}))
-    )
+    nz1 = USES_NZ8 | {"AMB_TX_ETIQ": "1.2", "AMB_TX_DENOM": "ZONA 1 GRADO 2º"}
+    mock_sigma(respx.mock, nz1, z={"COEF_Z": 4})
     built = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data.buildability
     assert built.kind.value == "supuesto" and built.value_m2 == pytest.approx(500 * 4 * 0.66)
 
@@ -685,11 +707,11 @@ def test_only_cache_misses_spend_the_guard(monkeypatch: pytest.MonkeyPatch) -> N
     assert third.status_code == 429
     assert third.json()["detail"]["code"] == "RATE_LIMITED"
     assert 1 <= int(third.headers["retry-after"]) <= 60
-    # Another client has its own budget; a demo parcel is served from its saved sheet
+    # Another client has its own budget; over it, not even a demo parcel (R-09): its 429
     other_ip = {"X-Forwarded-For": "198.51.100.4, 10.0.0.1"}
     sheet_of(client.get("/api/v1/investors/parcels", params={"rc": DH_RC}, headers=other_ip))
     demo = client.get("/api/v1/investors/parcels", params={"rc": DEMO_RC}, headers=ip)
-    assert sheet_of(demo).data.fallback == "demo_snapshot"
+    assert demo.status_code == 429
 
 
 # --- The demo sheets ---
@@ -711,3 +733,197 @@ def test_the_demo_sheets_are_our_fields_for_the_four_parcels() -> None:
     divided = snapshot.parcels[3].parcel
     assert divided.horizontal_division and divided.units is not None
     assert all(set(u.model_dump()) == {"use", "count", "built_m2"} for u in divided.units.by_use)
+
+
+# --- Review of #101 (R-01 to R-09) ---
+
+
+@respx.mock
+def test_a_single_candidate_of_another_street_is_never_picked() -> None:
+    # Spike §9: CartoCiudad matched «calle abegondo 1» with «BEGONIAS 1» (made-up parcel)
+    respx.get(url__startswith=CARTOCIUDAD).mock(
+        return_value=httpx.Response(200, json=[portal(RC, 1, "CALLE BEGONIAS 1, Madrid")])
+    )
+    response = client.get("/api/v1/investors/parcels", params={"address": "calle abegondo 1"})
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["code"] == "AMBIGUOUS_INPUT"
+    assert [c["rc14"] for c in detail["details"]["candidates"]] == [RC]
+
+
+@respx.mock
+def test_a_single_candidate_with_another_number_is_never_picked() -> None:
+    respx.get(url__startswith=CARTOCIUDAD).mock(
+        return_value=httpx.Response(200, json=[portal(RC, 3, "CALLE DE PRUEBA 3, Madrid")])
+    )
+    response = client.get("/api/v1/investors/parcels", params={"address": "calle de prueba 1"})
+    assert response.json()["detail"]["code"] == "AMBIGUOUS_INPUT"
+
+
+@respx.mock
+def test_a_parcel_without_cartography_goes_without_point_and_is_not_cached() -> None:
+    dnprc = respx.get(url__startswith=f"{CALLEJERO}/Consulta_DNPRC").mock(
+        return_value=httpx.Response(200, json=dnprc_single())
+    )
+    respx.get(url__startswith=f"{COORDENADAS}/Consulta_CPMRC").mock(
+        return_value=httpx.Response(200, json=catastro_error("Consulta_CPMRCResult", "72"))
+    )
+    for _ in range(2):
+        sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+        assert sheet.parcel.lat is None and sheet.planning is None
+    assert dnprc.call_count == 2  # asked again: a parcel without its point is not cached
+
+
+@respx.mock
+def test_another_code_of_the_reference_point_is_the_catastro_failing() -> None:
+    mock_catastro(respx.mock)
+    respx.get(url__startswith=f"{COORDENADAS}/Consulta_CPMRC").mock(
+        return_value=httpx.Response(200, json=catastro_error("Consulta_CPMRCResult", "1"))
+    )
+    response = client.get("/api/v1/investors/parcels", params={"rc": OTHER_RC})
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "SOURCE_DEGRADED"
+
+
+@respx.mock
+@pytest.mark.usefixtures("with_context")
+def test_a_complete_sheet_is_cached_by_the_cdn_and_an_incomplete_one_is_not() -> None:
+    mock_catastro(respx.mock)
+    instrument = respx.get(url__startswith=PLANEAMIENTO)
+    instrument.side_effect = [httpx.ConnectError("down"), httpx.Response(200, json=arcgis(None))]
+    respx.get(url__startswith=USOS_SUELO).mock(
+        return_value=httpx.Response(200, json=arcgis(USES_NZ8))
+    )
+    respx.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(None)))
+    first = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(first).data
+    assert sheet.degraded == ["planning"] and sheet.planning is not None
+    assert first.headers["cache-control"] == "no-store"
+    second = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    assert sheet_of(second).data.degraded == []  # the failed layer was asked again
+    assert second.headers["cache-control"] == "public, max-age=3600, s-maxage=86400"
+    assert instrument.call_count == 2
+
+
+@respx.mock
+def test_norma_zonal_1_without_its_z_is_not_a_complete_answer() -> None:
+    mock_catastro(respx.mock)
+    respx.get(url__startswith=USOS_SUELO).mock(
+        return_value=httpx.Response(200, json=arcgis(USES_NZ8 | {"AMB_TX_ETIQ": "1.2"}))
+    )
+    respx.get(url__startswith=PLANEAMIENTO).mock(
+        return_value=httpx.Response(200, json=arcgis(None))
+    )
+    respx.get(url__startswith=CONDICIONES).mock(side_effect=httpx.ReadTimeout("slow"))
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert "buildability" in sheet.degraded
+    assert sheet.buildability.kind.value == "sin_dato"
+
+
+@pytest.mark.parametrize(
+    "answer",
+    [
+        {"consulta_dnprcResult": {"control": {"cudnp": 1}, "bico": []}},  # bico as a list
+        {"consulta_dnprcResult": {"control": [], "bico": {}}},  # control as a list
+        {"consulta_dnprcResult": "unexpected"},
+    ],
+)
+def test_an_answer_of_another_shape_is_the_source_failing_not_a_500(answer: Any) -> None:
+    with respx.mock(assert_all_called=False) as router:
+        mock_catastro(router, answer)
+        mock_sigma(router)
+        other = client.get("/api/v1/investors/parcels", params={"rc": OTHER_RC})
+        assert other.status_code == 503 and other.json()["detail"]["code"] == "SOURCE_DEGRADED"
+        demo = client.get("/api/v1/investors/parcels", params={"rc": DEMO_RC})
+        assert sheet_of(demo).data.fallback == "demo_snapshot"
+
+
+@respx.mock
+def test_a_point_with_an_empty_reference_is_the_catastro_failing() -> None:
+    respx.get(url__startswith=f"{COORDENADAS}/Consulta_RCCOOR").mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "Consulta_RCCOORResult": {
+                    "control": {"cucoor": 1},
+                    "coordenadas": {"coord": [{"pc": {"pc1": "", "pc2": ""}}]},
+                }
+            },
+        )
+    )
+    response = client.get("/api/v1/investors/parcels", params={"lat": "40.45", "lon": "-3.68"})
+    assert response.status_code == 503
+
+
+@respx.mock
+def test_a_record_link_with_spaces_is_dropped_not_an_error() -> None:
+    mock_catastro(respx.mock)
+    instrument = {
+        "EXP_TX_NUMERO": "000/0000/00000",
+        "EXP_TX_DENOM": "Plan de prueba",
+        "FIG_TX_ETIQ": "X.1",
+        "ENLACE": "https://servpub.madrid.es/ficha de prueba?figura=X 1",
+    }
+    mock_sigma(respx.mock, USES_NZ8 | {"AMB_TX_ETIQ": "APR.99.01"}, instrument)
+    planning = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data.planning
+    assert planning is not None and planning.instrument is not None
+    assert planning.instrument.url is None and planning.instrument.figure == "X.1"
+    assert planning.sheet_url is None
+
+
+@respx.mock
+def test_cartociudad_answering_no_list_falls_back_and_is_not_cached() -> None:
+    geocoder = respx.get(url__startswith=CARTOCIUDAD).mock(
+        return_value=httpx.Response(200, json={"error": "unexpected"})
+    )
+    street_index = respx.get(url__startswith=f"{CALLEJERO}/ObtenerNumerero").mock(
+        return_value=httpx.Response(
+            200, json=catastro_error("consulta_numereroResult", "43", "dict")
+        )
+    )
+    response = client.get("/api/v1/investors/parcels", params={"address": "calle de prueba 999"})
+    assert response.status_code == 404 and street_index.called
+    box = client.get("/api/v1/investors/parcels/candidates", params={"q": "calle de prueba 999"})
+    assert box.status_code == 503
+    assert geocoder.call_count == 2  # «no portals» was never cached for a failure
+
+
+def test_the_geocoder_cache_key_never_holds_the_text() -> None:
+    key = parcel_sheet.geocoder_key("Calle  de Prueba 1")
+    assert key == parcel_sheet.geocoder_key("calle de prueba 1")
+    assert "prueba" not in "".join(key).lower()
+
+
+@respx.mock
+def test_a_typed_address_is_kept_by_no_shared_cache() -> None:
+    respx.get(url__startswith=CARTOCIUDAD).mock(
+        return_value=httpx.Response(200, json=[portal(RC, 1, "CALLE DE PRUEBA 1, Madrid")])
+    )
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock)
+    sheet = client.get("/api/v1/investors/parcels", params={"address": "calle de prueba 1"})
+    assert sheet_of(sheet).data.parcel.rc14 == RC
+    assert sheet.headers["cache-control"] == "private, no-store"
+    box = client.get("/api/v1/investors/parcels/candidates", params={"q": "calle de prueba"})
+    assert box.headers["cache-control"] == "private, max-age=600"
+
+
+@respx.mock
+@pytest.mark.usefixtures("with_context")
+def test_the_ayuntamiento_out_of_the_time_budget_degrades_the_sheet(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(parcel_sheet, "BUDGET_S", 0.5)
+    mock_catastro(respx.mock)
+
+    async def slow(request: httpx.Request) -> httpx.Response:
+        await asyncio.sleep(2)
+        return httpx.Response(200, json=arcgis(USES_NZ8))
+
+    respx.get(url__startswith=USOS_SUELO).mock(side_effect=slow)
+    respx.get(url__startswith=PLANEAMIENTO).mock(
+        return_value=httpx.Response(200, json=arcgis(None))
+    )
+    respx.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(None)))
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert sheet.planning is None and sheet.degraded == ["planning"]

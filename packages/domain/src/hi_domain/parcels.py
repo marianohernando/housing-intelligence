@@ -259,6 +259,22 @@ def typed_number(text: str) -> int | None:
     return int(numbers[-1]) if numbers else None
 
 
+def street_words(text: str) -> list[str]:
+    """The words of a street as typed or written, without its type, number, postal code or what
+    follows a comma: «Calle de Abegondo 1, Madrid» -> ["de", "abegondo"]."""
+    head = fold(text.split(",")[0])
+    words = [w for w in re.split(r"[\s./]+", head) if w and not w.isdigit()]
+    return words[1:] if words and words[0] in _TYPED_TYPES else words
+
+
+def same_street(typed: str, candidate: str) -> bool:
+    """Whether a candidate's street has every word typed (accents, case, particles and the street
+    type aside). A geocoder's fuzzy match («calle abegondo 1» -> «BEGONIAS 1») is not."""
+    wanted = [w for w in street_words(typed) if w not in LOWER_PARTICLES]
+    found = set(street_words(candidate))
+    return bool(wanted) and all(w in found for w in wanted)
+
+
 def parse_address(text: str) -> TypedAddress | None:
     """«calle mayor 61, madrid» -> CL, MAYOR, 61 (upper case, without accents, as the Catastro's
     street index wants it). The street type defaults to «calle». None without a street or a
@@ -328,6 +344,7 @@ AREA_PLAN = (
 )
 NON_BUILDABLE = "Suelo no urbanizable de protección: no es edificable para vivienda."
 TYPE_IT = "Pon tú los m² edificables."
+OTHER_USE = "La calculadora es para vivienda: pon tú los m² residenciales que quieras estudiar."
 ASSUMED_NOTE = (
     "La norma aplica el coeficiente a la parcela edificable, que puede ser menor que la "
     "superficie del Catastro (cesiones, retranqueos)."
@@ -396,7 +413,8 @@ def initial_buildability(
 ) -> BuildabilityResult:
     """The buildable m² the calculator starts from (D-250, spike §1.4), by priority:
 
-    1. the parcel's official figure (the first given: VEDA, then the Portal del Suelo);
+    1. the parcel's official residential figure (the first given: VEDA, then the Portal del
+       Suelo); a figure of other uses only is a reference, and the start is «sin dato»;
     2. the coefficient of its norma zonal and grado on the Catastro's area (NZ 5, 7, 8, 9);
     3. NZ 1 grados 1º–4º: area × Z × C, approximate;
     4. none («sin dato»), with the reason: the person types it.
@@ -404,6 +422,7 @@ def initial_buildability(
     When an official figure wins and the norm would give another, the assumption goes in the note.
     """
     official = list(official)
+    residential = [f for f in official if f.residential]
     kind, zone = classify_planning(planning_code) if planning_code else (None, None)
     assumption, reason = None, None
     if zone is not None and area_m2:
@@ -411,26 +430,30 @@ def initial_buildability(
             reason = DOTACIONAL
         else:
             assumption, reason = assume(zone, area_m2, coef_z)
-    if official:
-        first = official[0]
-        notes = []
-        if not first.residential:
-            notes.append(
-                f"Es edificabilidad de uso {fold(first.use or '')}, no residencial: la calculadora "
-                "la toma como si lo fuera; cámbiala si haces vivienda."
-            )
+    if residential:
+        first = residential[0]
+        note = None
         if assumption is not None and abs(assumption.value_m2 - first.value_m2) >= 1:
-            notes.append(
+            note = (
                 f"La norma zonal daría unos {m2_text(assumption.value_m2)} m² "
                 f"({assumption.formula}); manda la cifra oficial."
             )
-        note = " ".join(notes) or None
         return BuildabilityResult(
             value_m2=first.value_m2,
             kind=BuildabilityKind.OFICIAL,
             source=first.source,
             note=note,
             assumed_m2=None if assumption is None else round(assumption.value_m2, 1),
+            dataset_ids=tuple(f.dataset_id for f in official),
+        )
+    if official:  # only of other uses: a reference, never the calculator's start for housing
+        first = official[0]
+        return BuildabilityResult(
+            value_m2=None,
+            kind=BuildabilityKind.SIN_DATO,
+            source=f"{first.source}: {m2_text(first.value_m2)} m² edificables de uso "
+            f"{fold(first.use or 'no residencial')}, no residencial.",
+            note=OTHER_USE,
             dataset_ids=tuple(f.dataset_id for f in official),
         )
     if rustic:

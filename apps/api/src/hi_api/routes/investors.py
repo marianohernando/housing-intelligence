@@ -93,6 +93,9 @@ def post_viability(request: ViabilityRequest) -> ViabilityResponse:
 # --- Search by parcel (D-250) ---
 
 CACHED = "public, max-age=3600, s-maxage=86400"
+# A typed address travels in the URL: no shared cache (the CDN) keeps it, only the browser
+PRIVATE = "private, no-store"
+PRIVATE_BOX = "private, max-age=600"
 SOURCE_DOWN = {
     "catastro": "The Catastro does not answer now",
     "planning": "The Ayuntamiento does not answer now",
@@ -161,7 +164,10 @@ async def get_parcel(
     except (ParcelLookupError, RateLimitedError, UpstreamError) as exc:
         raise lookup_failure(exc) from exc
     complete = sheet.fallback is None and not sheet.degraded
-    response.headers["Cache-Control"] = CACHED if complete else "no-store"
+    if query.kind is ParcelInput.ADDRESS:
+        response.headers["Cache-Control"] = PRIVATE
+    else:
+        response.headers["Cache-Control"] = CACHED if complete else "no-store"
     return ParcelSheetResponse(
         data=sheet,
         meta=Meta(methodology_version=PARCELS_VERSION, data_version=data_version),
@@ -179,7 +185,7 @@ async def get_parcel_candidates(
         found, _ = await candidates_for(q, client_ip(request))
     except (RateLimitedError, UpstreamError) as exc:
         raise lookup_failure(exc) from exc
-    response.headers["Cache-Control"] = "public, max-age=3600"
+    response.headers["Cache-Control"] = PRIVATE_BOX
     return ParcelCandidatesResponse(
         data=ParcelCandidates(
             candidates=[c.candidate for c in found.portals],

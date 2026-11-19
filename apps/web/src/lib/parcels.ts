@@ -101,6 +101,10 @@ export const SHEET_TEXT = {
   buildableEditable: "Siempre la puedes cambiar en la calculadora.",
   article: (n: string) => `Ver el artículo ${n} de las Normas Urbanísticas`,
   contextDown: "No hemos podido leer el barrio ahora; el resto de la ficha sí. La calculadora empieza sin los precios del barrio.",
+  instrumentDown:
+    "El Ayuntamiento no nos ha dado ahora el planeamiento en vigor de la parcela; el resto de la ficha sí. Vuelve a intentarlo en un rato.",
+  zDown:
+    "No hemos podido leer ahora el plano de condiciones de la edificación de la norma zonal 1: la edificabilidad queda sin dato. Vuelve a intentarlo en un rato.",
   noBarrio: "Esta parcela no cae en ningún barrio de Madrid que tengamos.",
   fallback: (day: string) =>
     `El Catastro o el Ayuntamiento no responden ahora: te enseñamos los datos guardados el ${day} de esta parcela de demostración.`,
@@ -209,9 +213,13 @@ export function buildableText(b: Buildability): string {
 }
 
 /** The parts of the sheet that could not be read now, in words, in the sheet's order. */
-export function degradedLines(sheet: Pick<ParcelSheet, "degraded" | "fallback" | "parcel">): string[] {
+export function degradedLines(sheet: Pick<ParcelSheet, "degraded" | "fallback" | "parcel" | "planning">): string[] {
   const lines: string[] = [];
+  const degraded = sheet.degraded ?? [];
   if (sheet.fallback === "demo_snapshot") lines.push(SHEET_TEXT.fallback(isoInWords(sheet.parcel.observed_at)));
-  if (sheet.degraded?.includes("context")) lines.push(SHEET_TEXT.contextDown);
+  // Without any planning its own section says so; with it, a layer of it is missing
+  if (degraded.includes("planning") && sheet.planning) lines.push(SHEET_TEXT.instrumentDown);
+  if (degraded.includes("buildability")) lines.push(SHEET_TEXT.zDown);
+  if (degraded.includes("context")) lines.push(SHEET_TEXT.contextDown);
   return lines;
 }

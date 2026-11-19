@@ -1348,6 +1348,7 @@
             "enum": [
               "catastro",
               "planning",
+              "buildability",
               "context"
             ],
             "type": "string"

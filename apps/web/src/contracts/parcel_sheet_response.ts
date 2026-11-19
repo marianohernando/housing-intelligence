@@ -225,7 +225,7 @@ export type Notices = string[];
 /**
  * The parts that could not be read now
  */
-export type Degraded = ("catastro" | "planning" | "context")[];
+export type Degraded = ("catastro" | "planning" | "buildability" | "context")[];
 /**
  * Served from the saved demo sheet because a source failed
  */

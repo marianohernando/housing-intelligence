@@ -6,6 +6,7 @@ Rama `claude/f11-investor-parcel`. `/inversores` abre con «Busca tu parcela» (
 
 - **Solo las 4 parcelas de demostración**, sin llamar a ninguna fuente: la API de la rama en el 8096 con `PARCEL_UPSTREAMS=false`, que sirve sus fichas guardadas (`fallback: "demo_snapshot"`, por eso cada ficha lleva el aviso «te enseñamos los datos guardados el 19 de noviembre de 2026»), y la base `housing` en **solo lectura** para el barrio.
 - Web: `next dev` en el 3096 (sin `next build` local, por el disco), con `NEXT_PUBLIC_FEATURE_SEARCH=true` como en producción. El botón «N · 1 Insight» de las capturas es la barra de desarrollo de Next: no está en producción.
+- Los dos ejemplos nuevos de `/desarrolladores` (`?rc=2122202VK4722A` y `/parcels/candidates?q=mendez alvaro 47`) se probaron aparte, una vez, con la API de la rama **en proceso y con las fuentes oficiales en vivo** (unas 5 peticiones): ficha completa, barrio de Atocha (piloto), sin `fallback` y con `Cache-Control` público; y un portal, el de esa referencia. Todo lo demás de esta carpeta es con `PARCEL_UPSTREAMS=false`.
 - Las 4 parcelas: Méndez Álvaro 47–49 (2122202VK4722A, solar, edificabilidad oficial de VEDA: 13.121 m²), Almería 1 (3959601VK4735H, Portal del Suelo: 32.697 m²), Luis Misson 2 (0390314VK4709A, solar en NZ 4: sin coeficiente, «Sin dato») y Mayor 61 (9943003VK3794D, división horizontal de 6 inmuebles, NZ 1 grado 2º: 68 × 5 × 0,66 = 224 m², «Supuesto»). Sus fichas las escribió `scripts/parcel_demo_snapshot.py` el 19 nov con unas 20 peticiones en serie; en todo el desarrollo, unas 27 a los servicios oficiales.
 
 ## Capturas
@@ -22,4 +23,4 @@ Rama `claude/f11-investor-parcel`. `/inversores` abre con «Busca tu parcela» (
 - `check-inversores.mjs` (D-248) sigue verde con «Explorar barrios»: la lista, la ficha de Pinar del Rey, la calculadora con suelo y la impresión, a 390 y 1440 px.
 - e2e (`infra/deploy/e2e/e2e_prod.mjs` contra `next dev`): **145/145 a 1440 px y 121/121 a 390 px** (antes 123 y 99; J9 suma 22 en cada uno y J8 pasa a 15 rutas).
 - Golden (`scripts/golden_search.py`, `housing` en solo lectura): 10 de 10, con una salida idéntica byte a byte a la del código de la base (20b46d9).
-- Python: `make lint`, `make typecheck`, las pruebas unitarias (57 de reglas puras, 36 de la API con respuestas sintéticas y 6 de la caché y el límite) y `make test-db` (173, con 3 nuevas del barrio).
+- Python: `make lint`, `make typecheck`, las pruebas unitarias (60 de reglas puras, 51 de la API con respuestas sintéticas y 6 de la caché y el límite) y `make test-db` (173, con 3 nuevas del barrio).

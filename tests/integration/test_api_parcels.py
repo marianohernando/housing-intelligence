@@ -68,7 +68,9 @@ def stub_parcel_at(monkeypatch: pytest.MonkeyPatch, engine: Engine, barrio: str 
     )
     built = Buildability(value_m2=None, kind=BuildabilityKind.SIN_DATO, source="x")
 
-    async def parts(rc14: str, lookup: parcel_sheet.Lookup) -> parcel_sheet.Parts:
+    async def parts(
+        rc14: str, lookup: parcel_sheet.Lookup, deadline: float | None = None
+    ) -> parcel_sheet.Parts:
         return parcel_sheet.Parts(parcel, None, built, [])
 
     monkeypatch.setattr(parcel_sheet, "live_parts", parts)

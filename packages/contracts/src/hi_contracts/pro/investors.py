@@ -550,7 +550,9 @@ class ParcelContext(BaseModel):
     sheet: InvestorZone
 
 
-DegradedPart = Literal["catastro", "planning", "context"]
+# planning: the Ayuntamiento or its layer of instruments did not answer; buildability: the Z of
+# norma zonal 1 could not be read; context: the barrio (the database)
+DegradedPart = Literal["catastro", "planning", "buildability", "context"]
 
 
 class ParcelSheet(BaseModel):

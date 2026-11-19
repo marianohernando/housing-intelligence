@@ -19,6 +19,7 @@ from hi_domain.parcels import (
     is_vacant,
     normalize_rc,
     parse_address,
+    same_street,
     street_address,
     summarize_units,
     typed_number,
@@ -269,3 +270,39 @@ def test_nz4_cites_its_article() -> None:
     result = initial_buildability(area_m2=601, planning_code="4", use=None, rustic=False)
     assert result.article == "8.4.9"
     assert result.article_url is not None and result.article_url.endswith("#page=349")
+
+
+def test_a_fuzzy_street_is_not_the_typed_one() -> None:
+    # The geocoder matched «calle abegondo 1» with «BEGONIAS 1» (spike §9): never the same street
+    assert not same_street("calle abegondo 1", "CALLE BEGONIAS 1, Madrid")
+    assert same_street("calle mayor 61", "CALLE MAYOR 61, Madrid")
+    assert same_street("Méndez Álvaro 47, 28045", "Calle Mendez Alvaro 47, Madrid")
+    assert same_street("c/ mayor 61", "Calle de Mayor 61, Madrid")  # type and particles aside
+    assert not same_street("calle mayor 61", "CALLE MAYO 61, Madrid")
+    assert not same_street("61", "CALLE MAYOR 61, Madrid")  # no street typed
+
+
+def test_a_residential_official_figure_wins_over_one_of_other_uses() -> None:
+    industrial = OfficialFigure(3465.3, "VEDA Madrid", "ayto_veda_parcelas", "INDUSTRIAL")
+    housing = OfficialFigure(
+        800.0, "Portal del Suelo 4.0", "cm_parcelas_portal_suelo", "Residencial"
+    )
+    result = initial_buildability(
+        area_m2=4000,
+        planning_code="APE.20.10",
+        use=None,
+        rustic=False,
+        official=[industrial, housing],
+    )
+    assert result.kind is BuildabilityKind.OFICIAL and result.value_m2 == 800
+    assert result.dataset_ids == ("ayto_veda_parcelas", "cm_parcelas_portal_suelo")
+
+
+def test_an_official_figure_of_other_uses_only_is_a_reference() -> None:
+    industrial = OfficialFigure(3465.3, "VEDA Madrid", "ayto_veda_parcelas", "INDUSTRIAL")
+    result = initial_buildability(
+        area_m2=4000, planning_code="9.3", use="INDUSTRIAL", rustic=False, official=[industrial]
+    )
+    assert result.kind is BuildabilityKind.SIN_DATO and result.value_m2 is None
+    assert "3.465 m² edificables de uso industrial, no residencial" in result.source
+    assert result.dataset_ids == ("ayto_veda_parcelas",)

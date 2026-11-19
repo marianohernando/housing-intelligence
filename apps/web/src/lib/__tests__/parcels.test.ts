@@ -122,11 +122,15 @@ describe("«Busca tu parcela» (D-250)", () => {
   });
 
   it("says what could not be read now and that the rest of the sheet is there", () => {
-    expect(degradedLines({ parcel: PARCEL, degraded: [], fallback: null })).toEqual([]);
-    const lines = degradedLines({ parcel: PARCEL, degraded: ["context"], fallback: "demo_snapshot" });
+    expect(degradedLines({ parcel: PARCEL, degraded: [], fallback: null, planning: null })).toEqual([]);
+    const lines = degradedLines({ parcel: PARCEL, degraded: ["context"], fallback: "demo_snapshot", planning: null });
     expect(lines[0]).toContain("19 de noviembre de 2026");
     expect(lines[1]).toBe(SHEET_TEXT.contextDown);
     expect(SHEET_TEXT.planningDown).toContain("el resto de la ficha sí");
+    // No planning at all: its own section says so; a layer of it missing: a line up top (R-03)
+    expect(degradedLines({ parcel: PARCEL, degraded: ["planning"], fallback: null, planning: null })).toEqual([]);
+    const partial = degradedLines({ parcel: PARCEL, degraded: ["planning", "buildability"], fallback: null, planning: planning({}) });
+    expect(partial).toEqual([SHEET_TEXT.instrumentDown, SHEET_TEXT.zDown]);
   });
 
   it("never calls our data «información catastral» and never under its own name", () => {

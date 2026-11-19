@@ -18,12 +18,14 @@ a request (a second try would break the time budget): a failure degrades the she
 
 import asyncio
 import re
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import Any, Literal
 
 import httpx
+from pydantic import HttpUrl, ValidationError
 from pyproj import Transformer
 
 from hi_contracts.pro.investors import NearbyParcel, ParcelCandidate
@@ -66,6 +68,7 @@ Upstream = Literal["catastro", "planning", "geocoder"]
 MALFORMED_CODES = frozenset({3, 4})  # 14, 18 or 20 positions; badly formed (control letters)
 MISSING_CODES = frozenset({5, 9, 33, 43})  # no such parcel, reference, street or number
 ON_THE_STREET = 16  # no parcel at those coordinates
+NO_CARTOGRAPHY = 72  # a parcel without cartography: its sheet goes without a point
 
 
 class UpstreamError(RuntimeError):
@@ -86,6 +89,31 @@ class CatastroAnswerError(RuntimeError):
 
 class OutOfMadridError(RuntimeError):
     """The parcel exists but is not in Madrid capital."""
+
+
+SHAPE_ERRORS = (AttributeError, TypeError, ValueError, KeyError, IndexError)
+
+
+@contextmanager
+def parsing(source: "Upstream") -> Iterator[None]:
+    """An answer of an unexpected shape (a list where an object was, an empty reference) is the
+    source failing, as an HTML page is: the sheet degrades or serves its demo copy, never a 500."""
+    try:
+        yield
+    except SHAPE_ERRORS as exc:
+        raise UpstreamError(source, f"unexpected answer ({type(exc).__name__})") from exc
+
+
+def https_url(value: Any) -> str | None:
+    """A link a source gives, when it is a valid https address (else None, never an error)."""
+    text = str(value or "").strip()
+    if not text.startswith("https://") or re.search(r"\s", text):
+        return None
+    try:
+        HttpUrl(text)
+    except ValidationError:
+        return None
+    return text
 
 
 _TO_LONLAT = Transformer.from_crs("EPSG:25830", "EPSG:4326", always_xy=True)
@@ -156,11 +184,19 @@ async def get_json(
 def catastro_result(payload: Any) -> dict[str, Any]:
     """The body inside the root key («consulta_dnprcResult», «Consulta_RCCOORResult»…), with its
     error code raised as CatastroAnswerError."""
+    with parsing("catastro"):
+        return catastro_body(payload)
+
+
+def catastro_body(payload: Any) -> dict[str, Any]:
     if not isinstance(payload, dict) or len(payload) != 1:
         raise UpstreamError("catastro", "unexpected answer")
     result = next(iter(payload.values()))
     if not isinstance(result, dict):
         raise UpstreamError("catastro", "unexpected answer")
+    for key in ("control", "bico", "lrcdnp", "coordenadas"):
+        if result.get(key) is not None and not isinstance(result[key], dict):
+            raise TypeError(key)  # an object of another shape: the source failing
     errors = result.get("lerr")
     if isinstance(errors, dict):  # ObtenerNumerero: {"err": [...]}
         errors = errors.get("err")
@@ -229,8 +265,7 @@ def finca_of(result: Mapping[str, Any]) -> Mapping[str, Any]:
 
 
 def official_url(finca: Mapping[str, Any]) -> str | None:
-    url = str((finca.get("infgraf") or {}).get("igraf") or "").strip()
-    return url if url.startswith("https://") else None
+    return https_url((finca.get("infgraf") or {}).get("igraf"))
 
 
 def single_parcel(rc14: str, result: Mapping[str, Any]) -> dict[str, Any]:
@@ -312,11 +347,15 @@ async def reference_point(client: httpx.AsyncClient, rc14: str) -> tuple[float, 
         client, "catastro", f"{COORDENADAS}/Consulta_CPMRC", params, CATASTRO_TIMEOUT
     )
     try:
-        coords = (catastro_result(payload).get("coordenadas") or {}).get("coord") or []
-    except CatastroAnswerError:  # a parcel without cartography (code 72): the sheet goes without it
-        return None
-    geo = (coords[0] if coords else {}).get("geo") or {}
-    x, y = catastro_number(geo.get("xcen")), catastro_number(geo.get("ycen"))
+        result = catastro_result(payload)
+    except CatastroAnswerError as exc:
+        if exc.code == NO_CARTOGRAPHY:  # the sheet goes without a point (and is not cached)
+            return None
+        raise UpstreamError("catastro", f"reference point: code {exc.code}") from exc
+    with parsing("catastro"):
+        coords = (result.get("coordenadas") or {}).get("coord") or []
+        geo = (coords[0] if coords else {}).get("geo") or {}
+        x, y = catastro_number(geo.get("xcen")), catastro_number(geo.get("ycen"))
     return (x, y) if x and y else None
 
 
@@ -324,20 +363,23 @@ async def fetch_parcel(client: httpx.AsyncClient, rc14: str) -> CatastroParcel:
     """The parcel of a reference: its data and its reference point, in parallel; a building in
     horizontal division asks once more, for one unit, to get the parcel's area and link."""
     result, point = await asyncio.gather(dnprc(client, rc14), reference_point(client, rc14))
-    units = (result.get("lrcdnp") or {}).get("rcdnp") or []
-    if units:
-        fields, rc20 = divided_parcel(units)
+    with parsing("catastro"):
+        units = (result.get("lrcdnp") or {}).get("rcdnp") or []
+        if units:
+            fields, rc20 = divided_parcel(units)
+        elif result.get("bico"):
+            fields, rc20 = single_parcel(rc14, result), None
+        else:
+            raise CatastroAnswerError(5, "no parcel in the answer")
+    if rc20 is not None:
         unit = await dnprc(client, rc20)
-        finca = finca_of(unit)
-        fields |= {
-            "area_m2": catastro_number((finca.get("dff") or {}).get("ss")),
-            "rustic": rustic_of((unit.get("bico") or {}).get("bi") or {}),
-            "official_url": official_url(finca),
-        }
-    elif result.get("bico"):
-        fields = single_parcel(rc14, result)
-    else:
-        raise CatastroAnswerError(5, "no parcel in the answer")
+        with parsing("catastro"):
+            finca = finca_of(unit)
+            fields |= {
+                "area_m2": catastro_number((finca.get("dff") or {}).get("ss")),
+                "rustic": rustic_of((unit.get("bico") or {}).get("bi") or {}),
+                "official_url": official_url(finca),
+            }
     x, y = point or (None, None)
     return CatastroParcel(rc14=rc14, x=x, y=y, observed_at=today(), **fields)
 
@@ -348,10 +390,12 @@ async def parcel_at(client: httpx.AsyncClient, lat: float, lon: float) -> str:
     payload = await get_json(
         client, "catastro", f"{COORDENADAS}/Consulta_RCCOOR", params, CATASTRO_TIMEOUT
     )
-    coords = (catastro_result(payload).get("coordenadas") or {}).get("coord") or []
-    if not coords:
-        raise CatastroAnswerError(ON_THE_STREET, "no parcel at the point")
-    return pc_of(coords[0])
+    result = catastro_result(payload)
+    with parsing("catastro"):
+        coords = (result.get("coordenadas") or {}).get("coord") or []
+        if not coords:
+            raise CatastroAnswerError(ON_THE_STREET, "no parcel at the point")
+        return pc_of(coords[0])
 
 
 async def parcels_near(client: httpx.AsyncClient, lat: float, lon: float) -> list[NearbyParcel]:
@@ -359,17 +403,18 @@ async def parcels_near(client: httpx.AsyncClient, lat: float, lon: float) -> lis
     params = {"CoorX": f"{lon:.6f}", "CoorY": f"{lat:.6f}", "SRS": "EPSG:4326"}
     url = f"{COORDENADAS}/Consulta_RCCOOR_Distancia"
     result = catastro_result(await get_json(client, "catastro", url, params, CATASTRO_TIMEOUT))
-    groups = (result.get("coordenadas_distancias") or {}).get("coordd") or []
-    items = (groups[0] if groups else {}).get("lpcd") or []
     nearby = []
-    for item in items:
-        try:
-            rc14 = pc_of(item)
-        except ValueError:
-            continue
-        distance = catastro_number(item.get("dis"))
-        address = re.sub(r"\s+", " ", str(item.get("ldt") or "")).strip() or None
-        nearby.append(NearbyParcel(rc14=rc14, address=address, distance_m=distance))
+    with parsing("catastro"):
+        groups = (result.get("coordenadas_distancias") or {}).get("coordd") or []
+        items = (groups[0] if groups else {}).get("lpcd") or []
+        for item in items:
+            try:
+                rc14 = pc_of(item)
+            except ValueError:
+                continue
+            distance = catastro_number(item.get("dis"))
+            address = re.sub(r"\s+", " ", str(item.get("ldt") or "")).strip() or None
+            nearby.append(NearbyParcel(rc14=rc14, address=address, distance_m=distance))
     return sorted(nearby, key=lambda p: p.distance_m or 0)[:3]
 
 
@@ -385,10 +430,11 @@ async def parcels_at_number(client: httpx.AsyncClient, address: TypedAddress) ->
     url = f"{CALLEJERO}/ObtenerNumerero"
     result = catastro_result(await get_json(client, "catastro", url, params, CATASTRO_TIMEOUT))
     found = []
-    for item in result.get("nump") or []:
-        number = str((item.get("num") or {}).get("pnp") or "").strip().lstrip("0")
-        if number == str(address.number):
-            found.append(pc_of(item))
+    with parsing("catastro"):
+        for item in result.get("nump") or []:
+            number = str((item.get("num") or {}).get("pnp") or "").strip().lstrip("0")
+            if number == str(address.number):
+                found.append(pc_of(item))
     return list(dict.fromkeys(found))
 
 
@@ -397,7 +443,7 @@ async def parcels_at_number(client: httpx.AsyncClient, address: TypedAddress) ->
 
 @dataclass(frozen=True)
 class PlanningRecord:
-    """Our fields of the planning at a point."""
+    """Our fields of the planning at a point, and which secondary layer did not answer."""
 
     code: str
     name: str | None
@@ -410,6 +456,12 @@ class PlanningRecord:
     instrument_url: str | None
     coef_z: float | None
     observed_at: date
+    instrument_failed: bool = False  # PLANEAMIENTO_URBANISTICO did not answer
+    z_failed: bool = False  # the 1997 plan of building conditions did not answer (NZ 1 only)
+
+    @property
+    def complete(self) -> bool:
+        return not (self.instrument_failed or self.z_failed)
 
 
 def clean(value: Any) -> str | None:
@@ -433,16 +485,23 @@ async def arcgis_point(
     payload = await get_json(client, "planning", url, params, SIGMA_TIMEOUT)
     if not isinstance(payload, dict) or "error" in payload:
         raise UpstreamError("planning", "ArcGIS error")
-    features = payload.get("features") or []
-    return (features[0] or {}).get("attributes") if features else None
+    with parsing("planning"):
+        features = payload.get("features") or []
+        attributes = (features[0] or {}).get("attributes") if features else None
+        if attributes is not None and not isinstance(attributes, dict):
+            raise TypeError("attributes")
+        return attributes
 
 
-async def optional(task: Any) -> dict[str, Any] | None:
-    """A secondary layer: its failure leaves its fields empty, not the whole planning."""
+FAILED = object()
+
+
+async def optional(task: Any) -> Any:
+    """A secondary layer: its failure (FAILED) leaves its fields empty, not the whole planning."""
     try:
         return await task
     except UpstreamError:
-        return None
+        return FAILED
 
 
 def needs_z(code: str) -> bool:
@@ -451,13 +510,13 @@ def needs_z(code: str) -> bool:
 
 
 def instrument_url(value: Any) -> str | None:
-    url = clean(value)
-    return url if url and url.startswith("https://") else None
+    return https_url(clean(value))
 
 
 async def fetch_planning(client: httpx.AsyncClient, x: float, y: float) -> PlanningRecord | None:
-    """The planning at the parcel's reference point; None when no layer covers it."""
-    uses, instrument = await asyncio.gather(
+    """The planning at the parcel's reference point, its three layers in parallel; None when no
+    layer covers it. The Z of norma zonal 1 is asked always (one cheap call) and read only there."""
+    uses, instrument, conditions = await asyncio.gather(
         arcgis_point(
             client,
             USOS_SUELO,
@@ -470,27 +529,30 @@ async def fetch_planning(client: httpx.AsyncClient, x: float, y: float) -> Plann
                 client, PLANEAMIENTO, x, y, "EXP_TX_NUMERO,EXP_TX_DENOM,FIG_TX_ETIQ,ENLACE"
             )
         ),
+        optional(arcgis_point(client, CONDICIONES, x, y, "COEF_Z")),
     )
     code = clean((uses or {}).get("AMB_TX_ETIQ"))
     if uses is None or code is None:
         return None
-    conditions = None
-    if needs_z(code):
-        conditions = await optional(arcgis_point(client, CONDICIONES, x, y, "COEF_Z"))
-    instrument = instrument or {}
-    return PlanningRecord(
-        code=code,
-        name=clean(uses.get("AMB_TX_DENOM")),
-        use=clean(uses.get("USP_TX_DENOM")),
-        urban_parcel=clean(uses.get("UBOV_TX_ETIQ")),
-        zone_name=clean(uses.get("ZURV_TX_NOMBRE")),
-        figure=clean(instrument.get("FIG_TX_ETIQ")),
-        instrument_name=clean(instrument.get("EXP_TX_DENOM")),
-        file_number=clean(instrument.get("EXP_TX_NUMERO")),
-        instrument_url=instrument_url(instrument.get("ENLACE")),
-        coef_z=catastro_number((conditions or {}).get("COEF_Z")),
-        observed_at=today(),
-    )
+    z_layer = needs_z(code)
+    with parsing("planning"):
+        found = {} if instrument is FAILED or instrument is None else instrument
+        z = {} if conditions is FAILED or conditions is None or not z_layer else conditions
+        return PlanningRecord(
+            code=code,
+            name=clean(uses.get("AMB_TX_DENOM")),
+            use=clean(uses.get("USP_TX_DENOM")),
+            urban_parcel=clean(uses.get("UBOV_TX_ETIQ")),
+            zone_name=clean(uses.get("ZURV_TX_NOMBRE")),
+            figure=clean(found.get("FIG_TX_ETIQ")),
+            instrument_name=clean(found.get("EXP_TX_DENOM")),
+            file_number=clean(found.get("EXP_TX_NUMERO")),
+            instrument_url=instrument_url(found.get("ENLACE")),
+            coef_z=catastro_number(z.get("COEF_Z")),
+            observed_at=today(),
+            instrument_failed=instrument is FAILED,
+            z_failed=z_layer and conditions is FAILED,
+        )
 
 
 # --- CartoCiudad ---
@@ -542,8 +604,11 @@ async def geocode(client: httpx.AsyncClient, query: str) -> Candidates:
     """The portals of Madrid capital that match the text, with their parcel (never picked here)."""
     params = {"q": query, "limit": str(GEOCODER_LIMIT), "municipio_filter": "Madrid"}
     payload = await get_json(client, "geocoder", CARTOCIUDAD, params, GEOCODER_TIMEOUT)
-    items = payload if isinstance(payload, list) else []
-    portals = [c for item in items if isinstance(item, dict) and (c := as_candidate(item))]
-    unique = list({c.candidate.rc14 + c.candidate.address: c for c in portals}.values())
-    streets = any(isinstance(i, dict) and i.get("type") == "callejero" for i in items)
+    if not isinstance(payload, list):  # its answer is a list, even an empty one
+        raise UpstreamError("geocoder", "unexpected answer")
+    with parsing("geocoder"):
+        items = [i for i in payload if isinstance(i, dict)]
+        portals = [c for item in items if (c := as_candidate(item))]
+        unique = list({c.candidate.rc14 + c.candidate.address: c for c in portals}.values())
+        streets = any(i.get("type") == "callejero" for i in items)
     return Candidates(tuple(unique[:MAX_CANDIDATES]), streets_only=streets and not unique)

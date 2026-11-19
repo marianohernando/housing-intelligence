@@ -20,7 +20,7 @@ export const DEV_TEXT = {
     "Las mismas cifras que ves en Vida Fácil, para tu sistema o para tu agente de IA: qué falta en cada zona, qué zonas encajan con un hogar, el suelo público y si una promoción sale. Gratis para todos, también para empresas y ayuntamientos, igual que los datos.",
   tocLabel: "En esta página",
   verified:
-    "Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026, salvo los dos de la búsqueda por parcela, probados contra la API local ese día: se comprueban en producción al desplegarlos.",
+    "Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026, salvo los dos de la búsqueda por parcela, probados ese día contra la API local con las fuentes oficiales en vivo: se comprueban en producción al desplegarlos.",
   copy: "Copiar",
   copied: "Copiado",
   copyFailed: "No se ha podido copiar: selecciona el texto y cópialo.",

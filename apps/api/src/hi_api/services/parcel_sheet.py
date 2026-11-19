@@ -15,6 +15,8 @@ off (offline demo, e2e), only the demo parcels are served, from their saved shee
 typed is never logged nor kept: only the reference, the kind of input and the times.
 """
 
+import asyncio
+import hashlib
 import json
 import logging
 import time
@@ -41,6 +43,7 @@ from hi_api.services.parcels import (
     MALFORMED_CODES,
     MISSING_CODES,
     ON_THE_STREET,
+    SHAPE_ERRORS,
     SIGMA,
     Candidates,
     CatastroAnswerError,
@@ -58,7 +61,7 @@ from hi_api.services.parcels import (
     to_lonlat,
     to_metres,
 )
-from hi_api.services.upstream_guard import MISSING, RateLimitedError, TTLCache, UpstreamGuard
+from hi_api.services.upstream_guard import MISSING, TTLCache, UpstreamGuard
 from hi_api.settings import ApiSettings
 from hi_contracts.api.envelope import ErrorCode
 from hi_contracts.catalog.enums import TerritoryLevel
@@ -88,6 +91,7 @@ from hi_domain.parcels import (
     initial_buildability,
     normalize_rc,
     parse_address,
+    same_street,
     street_address,
     typed_number,
 )
@@ -96,6 +100,8 @@ from hi_domain.zonal_norms import NNUU_CITATION, RULES
 log = logging.getLogger(__name__)
 
 DAY_S = 86_400
+# The whole lookup: past it, the Catastro counts as failed and the planning as not read (R-06)
+BUDGET_S = 15.0
 TTL_S = {"catastro": 7 * DAY_S, "planning": DAY_S, "geocoder": 30 * DAY_S, "point": 7 * DAY_S}
 CACHE = TTLCache(maxsize=2000)
 CLIENTS = ClientHolder()
@@ -357,9 +363,15 @@ def query_key(query: str) -> str:
     return " ".join(query.lower().split())
 
 
+def geocoder_key(query: str) -> tuple[str, str]:
+    """The cache key of a typed address: a hash of the normalised text, never the text itself."""
+    return ("geocoder", hashlib.sha256(query_key(query).encode()).hexdigest()[:24])
+
+
 async def address_candidates(query: str, lookup: Lookup) -> Candidates:
-    """CartoCiudad's portals for a typed address (cached); UpstreamError when it fails."""
-    key = ("geocoder", query_key(query))
+    """CartoCiudad's portals for a typed address (cached); UpstreamError when it fails, and then
+    nothing is cached («no portals» is never a failure's answer)."""
+    key = geocoder_key(query)
     if (cached := CACHE.get(key)) is not MISSING:
         return cached
     lookup.spend("geocoder")
@@ -383,9 +395,10 @@ async def rc_at_address(address: str, lookup: Lookup) -> str:
     except UpstreamError:
         return await rc_by_street_index(address, lookup)
     number = typed_number(address)
-    matching = {c.candidate.rc14 for c in found.portals if number and c.number == number}
-    if len(matching) == 1:
-        return matching.pop()
+    if len(found.portals) == 1:
+        only = found.portals[0]
+        if number and only.number == number and same_street(address, only.candidate.address):
+            return only.candidate.rc14
     if not found.portals:
         raise ParcelLookupError(
             404,
@@ -442,7 +455,8 @@ async def catastro_parcel(rc14: str, lookup: Lookup) -> CatastroParcel:
         raise catastro_failure(exc) from exc
     except OutOfMadridError as exc:
         raise OUT_OF_MADRID from exc
-    CACHE.set(key, parcel, TTL_S["catastro"])
+    if parcel.x is not None and parcel.y is not None:  # without its point, asked again next time
+        CACHE.set(key, parcel, TTL_S["catastro"])
     return parcel
 
 
@@ -455,7 +469,8 @@ async def planning_record(parcel: CatastroParcel, lookup: Lookup) -> PlanningRec
         return cached
     lookup.spend()
     record = await timed(lookup, fetch_planning(CLIENTS.get(), parcel.x, parcel.y))
-    CACHE.set(key, record, TTL_S["planning"])
+    if record is None or record.complete:  # a secondary layer that failed is asked again
+        CACHE.set(key, record, TTL_S["planning"])
     return record
 
 
@@ -565,18 +580,37 @@ class Parts(NamedTuple):
     degraded: list[DegradedPart]
 
 
-async def live_parts(rc14: str, lookup: Lookup) -> Parts:
-    parcel = await catastro_parcel(rc14, lookup)
-    block = parcel_block(parcel)
+async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -> Parts:
+    """The parcel (the Catastro) and its planning (the Ayuntamiento), within the deadline: a
+    Catastro out of time is UpstreamError (demo sheet or 503); an Ayuntamiento out of time, or
+    one of its layers failing, degrades the sheet."""
+    try:
+        async with asyncio.timeout_at(deadline):
+            parcel = await catastro_parcel(rc14, lookup)
+    except TimeoutError as exc:
+        raise UpstreamError("catastro", "out of the time budget") from exc
+    try:
+        block = parcel_block(parcel)
+    except SHAPE_ERRORS as exc:  # a coordinate or link out of the contract
+        raise UpstreamError("catastro", f"unexpected answer ({type(exc).__name__})") from exc
     degraded: list[DegradedPart] = []
     try:
-        record = await planning_record(parcel, lookup)
-    except UpstreamError:
+        async with asyncio.timeout_at(deadline):
+            record = await planning_record(parcel, lookup)
+    except (UpstreamError, TimeoutError):
         record = None
         degraded.append("planning")
     planning = None
     if record is not None and block.lat is not None and block.lon is not None:
-        planning = planning_block(record, block.lat, block.lon)
+        try:
+            planning = planning_block(record, block.lat, block.lon)
+        except SHAPE_ERRORS:
+            record = None
+            degraded.append("planning")
+    if record is not None and record.instrument_failed:
+        degraded.append("planning")
+    if record is not None and record.z_failed:
+        degraded.append("buildability")
     coef_z = None if record is None else record.coef_z
     return Parts(block, planning, buildability(rc14, block, planning, coef_z), degraded)
 
@@ -729,10 +763,16 @@ async def parcel_sheet(
         if not settings().parcel_upstreams:  # offline: only a reference, only a demo sheet
             rc14 = checked_rc(query.rc) if query.rc is not None else None
             raise UpstreamError("catastro", "upstreams off (PARCEL_UPSTREAMS)")
-        rc14 = await resolve(query, lookup, engine)
-        parts = await live_parts(rc14, lookup)
+        deadline = asyncio.get_running_loop().time() + BUDGET_S
+        try:
+            async with asyncio.timeout_at(deadline):
+                rc14 = await resolve(query, lookup, engine)
+        except TimeoutError as exc:
+            raise UpstreamError("catastro", "out of the time budget") from exc
+        parts = await live_parts(rc14, lookup, deadline)
     except Exception as exc:
-        demo = demo_parts(rc14) if isinstance(exc, UpstreamError | RateLimitedError) else None
+        # A failed source serves the demo sheet; a client over its limit gets its 429 (R-09)
+        demo = demo_parts(rc14) if isinstance(exc, UpstreamError) else None
         if demo is None:
             log.info(
                 "parcel input=%s rc14=%s error=%s ms=%d",

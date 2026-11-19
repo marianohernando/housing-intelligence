@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type FormEvent, useCallback, useEffect, useId, useState } from "react";
+import { type FormEvent, useCallback, useEffect, useId, useRef, useState } from "react";
 
 import type { ParcelCandidates } from "@/contracts/parcel_candidates_response";
 import GlassCard from "@/components/ui/GlassCard";
@@ -159,13 +159,22 @@ function ByMap() {
   const id = useId();
   const router = useRouter();
   const [picked, setPicked] = useState<Picked | null>(null);
+  // One lookup at a time: a new click cancels the previous one, and only the last one navigates
+  const inFlight = useRef<AbortController | null>(null);
+  useEffect(() => () => inFlight.current?.abort(), []);
   const pick = useCallback(
     (lat: number, lon: number) => {
+      inFlight.current?.abort();
+      const controller = new AbortController();
+      inFlight.current = controller;
       setPicked({ state: "finding" });
       createApi()
-        .parcel({ lat, lon }, { timeoutMs: 30_000 })
-        .then((response) => router.push(parcelHref(response.data.parcel.rc14)))
+        .parcel({ lat, lon }, { timeoutMs: 30_000, signal: controller.signal })
+        .then((response) => {
+          if (!controller.signal.aborted) router.push(parcelHref(response.data.parcel.rc14));
+        })
         .catch((exc: unknown) => {
+          if (controller.signal.aborted) return;
           const error = exc instanceof ApiError ? exc : new ApiError(0, "NETWORK", String(exc));
           const nearest = (error.details.nearest as NearbyParcel[] | undefined) ?? [];
           const message =
