@@ -46,6 +46,15 @@ class TTLCache:
         while len(self._data) > self._maxsize:
             self._data.popitem(last=False)
 
+    def update(self, key: Hashable, value: Any) -> bool:
+        """Replace a live value keeping its expiry (review of #111, R-02: a repair never renews
+        the TTL of what it did not fetch again); False when absent or expired."""
+        if self.get(key) is MISSING:
+            return False
+        expires, _ = self._data[key]
+        self._data[key] = (expires, value)
+        return True
+
     def clear(self) -> None:
         self._data.clear()
 

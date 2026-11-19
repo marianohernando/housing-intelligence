@@ -12,8 +12,9 @@
 - **CartoCiudad** (IGN): the portals that match a typed address, with their parcel.
 
 Every answer is turned into our own fields here (licence of the Catastro: only transformed
-information, never its raw answer): nothing raw leaves this module or is kept. No retries inside
-a request (a second try would break the time budget): a failure degrades the sheet.
+information, never its raw answer): nothing raw leaves this module or is kept. A failure degrades
+the sheet; the only retry is one more try of tables 4 and 5 after a quick error, when the sheet's
+deadline leaves time for it (D-252b).
 """
 
 import asyncio
@@ -538,9 +539,18 @@ async def arcgis_rows(
 async def plan_rows(client: httpx.AsyncClient, urban_parcel_id: int) -> tuple[PlanRow, ...]:
     """D-252: tables 4 and 5 of the urban parcel, in parallel."""
     where = f"CODIGO={int(urban_parcel_id)}"
-    principal, others = await asyncio.gather(
-        *(arcgis_rows(client, url, where, "USO,EDIFICABIL,UNIDAD") for url in PLAN_USES)
-    )
+    try:  # review of #111, R-08: one table failing cancels its sibling
+        async with asyncio.TaskGroup() as group:
+            asked = [
+                group.create_task(arcgis_rows(client, url, where, "USO,EDIFICABIL,UNIDAD"))
+                for url in PLAN_USES
+            ]
+    except ExceptionGroup as failed:
+        first = failed.exceptions[0]
+        if isinstance(first, UpstreamError):
+            raise first from first.__cause__
+        raise
+    principal, others = (task.result() for task in asked)
     with parsing("planning"):
         return tuple(
             PlanRow(
@@ -664,6 +674,12 @@ def failures_of(**parts: Any) -> tuple[tuple[str, str, int], ...]:
     return tuple((stage, f.error, f.ms) for stage, f in parts.items() if isinstance(f, Failure))
 
 
+def repairable(record: PlanningRecord) -> bool:
+    """A kept record whose failed parts can be asked again on their own (review of #111, R-01):
+    not when tables 4 and 5 failed for lack of a UBOV_ID, which only layer 3 can give."""
+    return not (record.uses_failed and record.urban_parcel_id is None)
+
+
 async def fetch_planning(
     client: httpx.AsyncClient,
     x: float,
@@ -722,8 +738,8 @@ async def fetch_planning(
             plan_rows=None if isinstance(rows, Failure) else rows,
             uses_failed=isinstance(rows, Failure),
             failures=failures_of(
-                planning=instrument,
-                buildability=conditions if z_layer else None,
+                instrument=instrument,
+                z=conditions if z_layer else None,
                 plan_uses=rows,
             ),
         )
@@ -771,7 +787,7 @@ async def repair_planning(
             }
         if base.uses_failed and not isinstance(rows, Failure):
             updates |= {"plan_rows": rows, "uses_failed": False}
-    failures = failures_of(planning=instrument, buildability=conditions, plan_uses=rows)
+    failures = failures_of(instrument=instrument, z=conditions, plan_uses=rows)
     return replace(base, **updates, failures=failures)
 
 

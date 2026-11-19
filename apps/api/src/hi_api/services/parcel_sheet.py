@@ -59,6 +59,7 @@ from hi_api.services.parcels import (
     parcel_at,
     parcels_at_number,
     parcels_near,
+    repairable,
     to_lonlat,
     to_metres,
 )
@@ -515,7 +516,8 @@ async def planning_record(
     cached = CACHE.get(key)
     if cached is not MISSING and (cached is None or cached.complete):
         return cached
-    base = None if cached is MISSING else cached
+    # A kept record is repaired by parts; one that cannot be (no UBOV_ID) is asked again whole
+    base = None if cached is MISSING or not repairable(cached) else cached
     lookup.spend()
     record = await timed(
         lookup,
@@ -523,7 +525,9 @@ async def planning_record(
             CLIENTS.get(), parcel.x, parcel.y, deadline, rows_cache=KEPT_ROWS, base=base
         ),
     )
-    CACHE.set(key, record, TTL_S["planning"])
+    # A full answer gets a fresh TTL; a repair still incomplete keeps the kept one's expiry
+    if base is None or record is None or record.complete or not CACHE.update(key, record):
+        CACHE.set(key, record, TTL_S["planning"])
     return record
 
 
@@ -712,7 +716,8 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
     except (UpstreamError, TimeoutError) as exc:
         record = None
         degraded.append("planning")
-        cause = exc.__cause__ if exc.__cause__ is not None else exc
+        # Review of #111, R-03: the deadline running out says TimeoutError, not its CancelledError
+        cause = exc if isinstance(exc, TimeoutError) else (exc.__cause__ or exc)
         ms = round((time.perf_counter() - started) * 1000)
         failures.append(f"planning:{type(cause).__name__}:{ms}")
     if record is not None:

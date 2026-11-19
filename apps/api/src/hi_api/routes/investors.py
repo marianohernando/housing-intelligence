@@ -118,6 +118,7 @@ def parcel_query(
                     "type": "value_error",
                 }
             ],
+            headers={"Cache-Control": PRIVATE},  # it may carry an address (D-252b)
         )
     if rc is not None:
         return ParcelQuery(ParcelInput.RC, rc=rc)

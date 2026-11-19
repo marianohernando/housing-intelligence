@@ -2235,4 +2235,12 @@ Hotfix de producción. En frío, las cuatro fichas de demostración salían con 
 2. **Caché por partes.** El planeamiento se guarda aunque falle una parte secundaria (las tablas, el plan en vigor o la Z), y la visita siguiente pide solo lo que falló. Las filas de las tablas se guardan por `UBOV_ID` con el TTL del planeamiento. Nada incompleto llega a la CDN: la ruta sigue mandando `no-store` a toda ficha degradada.
 3. **Logs.** Los loggers de `hi_api` no tenían nivel, heredaban WARNING de la raíz y en producción no salía ningún `log.info`. `hi_api.logs.install()` los pone a INFO, con salida a stdout y el filtro que tapa la dirección tecleada. La línea de cada ficha añade `parts=`, con la etapa, la clase de error y los ms de cada parte que falló; no lleva dirección ni coordenadas.
 4. **Cache-Control:** los errores de `?address=` y `?q=` van `private, no-store`, porque la dirección viaja en la URL.
-5. **Cómo volver atrás:** revertir el PR.
+5. **Revisión del #111:**
+   - Un registro al que le faltó el `UBOV_ID` no se repara por partes: se vuelve a pedir entero, así que no se queda congelado.
+   - Una reparación que sigue incompleta conserva la caducidad que tenía.
+   - Las tablas 4 y 5 van en un `TaskGroup`: si una falla, la otra se cancela.
+   - Un plazo agotado se registra como `TimeoutError`, no como `CancelledError`.
+   - Las etapas del log son `instrument`, `z`, `plan_uses` y `planning`.
+   - Los 422 de la búsqueda por parcela salen `private, no-store` y sin el `input` que FastAPI repite.
+   - Los avisos de `search.py` registran valores cerrados (claves de la API o del catálogo), nunca texto tecleado, y se quedan como están.
+6. **Cómo volver atrás:** revertir el PR.

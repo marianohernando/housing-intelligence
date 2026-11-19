@@ -1145,3 +1145,102 @@ def test_a_planning_without_its_urban_parcel_is_the_tables_failing() -> None:
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
     assert sheet.planning is not None and sheet.planning.plan_uses is None
     assert "plan_uses" in sheet.degraded
+
+
+# --- Review of #111 ---
+
+
+@respx.mock
+def test_a_layer_without_urban_parcel_id_is_asked_again_whole_never_frozen() -> None:
+    """R-01: the first answer has no UBOV_ID (degraded); the second one has it: complete."""
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA)
+    no_id = {k: v for k, v in USES_AREA.items() if k != "UBOV_ID"}
+    respx.get(url__startswith=USOS_SUELO).mock(
+        side_effect=[
+            httpx.Response(200, json=arcgis(no_id)),
+            httpx.Response(200, json=arcgis(USES_AREA)),
+        ]
+    )
+    first = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert "plan_uses" in first.degraded
+    second = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert "plan_uses" not in second.degraded
+    assert second.planning is not None and second.planning.plan_uses == []
+
+
+@respx.mock
+def test_the_deadline_running_out_is_logged_as_a_timeout(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """R-03: «planning:TimeoutError:ms», not the CancelledError behind it."""
+    monkeypatch.setattr(parcel_sheet, "BUDGET_S", 0.5)
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA)
+    respx.get(url__startswith=USOS_SUELO).mock(side_effect=late(2))
+    with caplog.at_level(logging.INFO, logger="hi_api"):
+        sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert sheet.planning is None and "planning" in sheet.degraded
+    line = next(r.getMessage() for r in caplog.records if r.getMessage().startswith("parcel input"))
+    assert "parts=planning:TimeoutError:" in line
+
+
+@respx.mock
+def test_the_rows_kept_by_urban_parcel_serve_another_cadastral_parcel() -> None:
+    """R-06: two cadastral parcels on the same urban parcel ask tables 4 and 5 once."""
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA)
+    sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC}))
+    respx.get(url__startswith=f"{CALLEJERO}/Consulta_DNPRC").mock(
+        return_value=httpx.Response(200, json=dnprc_single(rc=OTHER_RC))
+    )
+    other = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": OTHER_RC})).data
+    assert other.parcel.rc14 == OTHER_RC and "plan_uses" not in other.degraded
+    layer3 = [c for c in respx.calls if "/USOS_SUELO/MapServer/3/query" in str(c.request.url)]
+    tables = [c for c in respx.calls if "/USOS_SUELO/MapServer/4/query" in str(c.request.url)]
+    assert (len(layer3), len(tables)) == (2, 1)
+
+
+@respx.mock
+def test_tables_out_of_time_are_not_asked_again(monkeypatch: pytest.MonkeyPatch) -> None:
+    """R-06: only a quick error is retried; the time running out is not."""
+    monkeypatch.setattr(parcel_sheet, "BUDGET_S", 1.5)
+    asked: list[str] = []
+
+    async def slow(request: httpx.Request) -> httpx.Response:
+        asked.append(str(request.url))  # counted on entry: a cancelled call is not recorded
+        await asyncio.sleep(3)
+        return httpx.Response(200, json=table([]))
+
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA, tables=(slow, slow))
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert "plan_uses" in sheet.degraded
+    assert len(asked) == 2  # table 4 and table 5, once each
+
+
+def test_a_validation_error_of_the_parcel_search_is_private_and_never_echoes_the_text() -> None:
+    """R-05: FastAPI's 422 echoes the `input`; for the parcel search it must not."""
+    typed = "Ab1"  # shorter than the 4 letters: a 422
+    for path, key in (
+        ("/api/v1/investors/parcels", "address"),
+        ("/api/v1/investors/parcels/candidates", "q"),
+    ):
+        response = client.get(path, params={key: typed})
+        assert response.status_code == 422
+        assert response.headers["cache-control"] == "private, no-store"
+        assert typed not in response.text and '"input"' not in response.text
+    neither = client.get("/api/v1/investors/parcels")
+    assert neither.status_code == 422 and neither.headers["cache-control"] == "private, no-store"
+
+
+def test_the_log_handler_redacts_a_typed_address() -> None:
+    """R-06: the handler that reaches stdout carries the privacy filter."""
+    from hi_api import logs, privacy
+
+    logs.install()
+    handlers = [
+        h for h in logging.getLogger("hi_api").handlers if isinstance(h, logging.StreamHandler)
+    ]
+    assert len(handlers) == 1
+    assert any(isinstance(f, privacy.RedactTypedAddress) for f in handlers[0].filters)
