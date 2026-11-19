@@ -1,0 +1,34 @@
+The four demo parcels after the deploy of c4eaab1 (D-252b, dpl_9DWhMMGTHhzAoBiATNMPvd98tJbV). Only the demo references, asked by
+reference with curl, once each, to warm the CDN; no address, point or candidate lookup.
+
+Lookups of this run that reached the API's parcel code (CDN «MISS»): 4 of the 20 allowed
+  4 to warm the CDN right after the deploy (23:28 UTC)
+  then stopped, as datamad-10 asked if any sheet stayed degraded: no second pass, no retry
+  Almería 1 was read 3 more times from the CDN («HIT», the probe at 360, 390 and 1440 px); the others were not asked again
+
+Each lookup: the CDN's record of the request → uvicorn's access line of the answer (two clocks: about ±0.1 s), and D-252b's timing line
+parcel | reference | request → answer (UTC) | s | buildability | Cache-Control | timing line
+Méndez Álvaro 47 | 2122202VK4722A | 23:28:07.8 → 23:28:22.5 | 14.8 | oficial, 13,121 m² | no-store | degraded=plan_uses ms=14737 upstream_ms=14472 parts=plan_uses:TimeoutError:6557
+Almería 1 | 3959601VK4735H | 23:28:22.7 → 23:28:36.2 | 13.5 | sin dato (32,697 m² as reference) | public, max-age=3600 | degraded=- ms=13411 upstream_ms=13293 parts=-
+Luis Misson 2 | 0390314VK4709A | 23:28:36.4 → 23:28:51.1 | 14.7 | sin dato | no-store | degraded=plan_uses ms=14623 upstream_ms=14501 parts=plan_uses:TimeoutError:4648
+Mayor 61 | 9943003VK3794D | 23:28:51.3 → 23:29:06.0 | 14.7 | supuesto, 224.4 m² | no-store | degraded=plan_uses ms=14617 upstream_ms=14500 parts=plan_uses:TimeoutError:7017
+
+How to read the timing line (D-252b): `ms` is the whole sheet, `upstream_ms` the time spent waiting for the sources, and `parts`
+names each part that failed as stage:error class:ms. A part that worked is not listed, so a complete sheet says `parts=-`
+and gives no time per step.
+
+What it says:
+  - The three degraded sheets failed only in the plan's tables 4 and 5 (`plan_uses`), by time (TimeoutError), not by a quick error,
+    so D-252b's one retry never applied.
+  - With D-252b the tables had the time left before the sheet's 15 s deadline: 6.6, 4.6 and 7.0 s, not a fixed 4 s, and still did
+    not answer. The fixed 4 s of D-252 was not the cause, or not the only one.
+  - Before the tables, the Catastro and layer 3 took about 8.2, 10.0 and 7.6 s (ms minus the tables' ms).
+  - A degraded sheet now takes the whole budget (14.6–14.7 s), against 8.5–11.7 s with f806850; Almería 1 came complete in 13.4 s.
+
+The cause (datamad-10, measured from Madrid after this run): the Ayuntamiento's ArcGIS server itself. A query of tables 4 and 5 with
+a CODIGO it does not hold in its cache takes 6.5–10 s on the server (time to first byte 8.4, 10.4 and 7.0 s), and about 0.2 s once
+the query is in its cache. That fits deploy-41's local diagnosis, where the tables answered in under 0.3 s: those queries had just
+been made from Dublin. Line F is preparing D-252c: the two tables (40,021 + 1,328 rows) in a versioned snapshot, so the sheet no
+longer asks for them live.
+
+At the end, Almería 1 is in the CDN; Méndez Álvaro, Luis Misson and Mayor 61 are not (`no-store`).
