@@ -86,6 +86,8 @@ from hi_contracts.pro.investors import (
     PlanningBlock,
     PlanningInstrument,
     PlanUseFigure,
+    PowerEstimate,
+    ProtectedBuilding,
     UnitUse,
     UseFigure,
 )
@@ -98,6 +100,8 @@ from hi_domain.parcels import (
     PHASE_LABELS,
     PLAN_USES_AS_OF,
     AmbitState,
+    CatalogEntry,
+    ExistingBuilding,
     OfficialFigure,
     ambit_state,
     classify_planning,
@@ -112,6 +116,7 @@ from hi_domain.parcels import (
     street_address,
     typed_number,
 )
+from hi_domain.supplies import power_estimate
 from hi_domain.zonal_norms import NNUU_CITATION, RULES
 
 log = logging.getLogger(__name__)
@@ -579,6 +584,21 @@ def ambit_block(state: AmbitState | None) -> AmbitStatus | None:
     )
 
 
+def protected_building(record: PlanningRecord) -> ProtectedBuilding | None:
+    """D-253: the catalogued building at the parcel's point, with its level (NNUU art. 4.3.4)."""
+    row = record.catalog
+    if row is None:
+        return None
+    entry = CatalogEntry(row.number, row.name, row.protection, row.url)
+    return ProtectedBuilding(
+        number=row.number,
+        name=row.name,
+        protection=row.protection,
+        level=entry.level,
+        url=HttpUrl(row.url) if row.url else None,
+    )
+
+
 def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBlock:
     kind, zone = classify_planning(record.code)
     sheet_url, sheet_label = None, None
@@ -607,6 +627,7 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         plan_uses_as_of=date.fromisoformat(PLAN_USES_AS_OF),
         plan_use_without_figure=record.use_without_figure,
         ambit=ambit_block(ambit_state(record.code)),
+        protected_building=protected_building(record),
         instrument=PlanningInstrument(
             figure=record.figure,
             name=record.instrument_name,
@@ -727,6 +748,8 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
         degraded.append("buildability")
     if record is not None and record.uses_failed:
         degraded.append("plan_uses")
+    if record is not None and record.catalog_failed:
+        degraded.append("catalog")
     coef_z = None if record is None else record.coef_z
     built = buildability(rc14, block, planning, coef_z)
     return Parts(block, planning, built, degraded, tuple(failures), tuple(stages))
@@ -842,14 +865,39 @@ def sources_of(kind: ParcelInput, parts: Parts) -> list[ParcelSource]:
     return sources
 
 
-def cautions_of(rc14: str, planning: PlanningBlock | None) -> list[ParcelCaution]:
-    """D-252: what keeps the figures from passing for free housing ready to build."""
+def cautions_of(parcel: ParcelBlock, planning: PlanningBlock | None) -> list[ParcelCaution]:
+    """D-252, D-253: what keeps the figures from passing for free housing ready to build."""
     use = None if planning is None else planning.use
     ambit = None if planning is None else ambit_state(planning.code)
+    found = None if planning is None else planning.protected_building
+    catalog = None
+    if found is not None:
+        url = str(found.url) if found.url else None
+        catalog = CatalogEntry(found.number, found.name, found.protection, url)
+    building = None
+    if parcel.built_m2:
+        units = parcel.units.total if parcel.horizontal_division and parcel.units else None
+        building = ExistingBuilding(parcel.built_m2, parcel.year_built, units)
     return [
         ParcelCaution(key=ParcelCautionKey(key), text=text)
-        for key, text in parcel_cautions(use, official_figures(rc14), ambit)
+        for key, text in parcel_cautions(
+            use, official_figures(parcel.rc14), ambit, catalog=catalog, building=building
+        )
     ]
+
+
+def power_of(buildability: Buildability) -> PowerEstimate | None:
+    """D-253: the least power the starting buildable m² need (ITC-BT-10), an assumption."""
+    found = power_estimate(buildability.value_m2)
+    if found is None:
+        return None
+    return PowerEstimate(
+        homes=found.homes,
+        simultaneity=found.simultaneity,
+        kw_per_home=found.kw_per_home,
+        kw=found.kw,
+        over_transformer_threshold=found.over_transformer_threshold,
+    )
 
 
 def public_land_of(rc14: str, context: ParcelContext | None) -> LandItem | None:
@@ -883,7 +931,8 @@ def assemble(
         sources=sources_of(kind, parts),
         notices=list(PARCEL_NOTICES),
         degraded=degraded,
-        cautions=cautions_of(parts.parcel.rc14, parts.planning),
+        cautions=cautions_of(parts.parcel, parts.planning),
+        power=power_of(parts.buildability),
         public_land=public_land_of(parts.parcel.rc14, barrio),
         fallback="demo_snapshot" if fallback else None,
     )

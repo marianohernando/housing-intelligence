@@ -25,6 +25,7 @@ from hi_api.services import parcel_sheet
 from hi_api.services.parcels import (
     CALLEJERO,
     CARTOCIUDAD,
+    CATALOGO,
     CONDICIONES,
     COORDENADAS,
     PLANEAMIENTO,
@@ -182,13 +183,25 @@ def mock_sigma(
     uses: Any = USES_NZ8,
     instrument: Any = None,
     z: Any = None,
+    catalog: Any = None,
 ) -> None:
-    """D-252c: tables 4 and 5 are never asked: they come from the snapshot."""
+    """D-252c: tables 4 and 5 are never asked: they come from the snapshot. D-253: the
+    catalogue answers with no building unless `catalog` gives its attributes or an error."""
     router.get(url__startswith=USOS_SUELO).mock(return_value=httpx.Response(200, json=arcgis(uses)))
+    mock_catalog(router, catalog)
     router.get(url__startswith=PLANEAMIENTO).mock(
         return_value=httpx.Response(200, json=arcgis(instrument))
     )
     router.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(z)))
+
+
+def mock_catalog(router: respx.MockRouter, catalog: Any = None) -> None:
+    """D-253: the catalogue of protected buildings at the point (no building by default)."""
+    if isinstance(catalog, Exception) or callable(catalog):
+        router.get(url__startswith=CATALOGO).mock(side_effect=catalog)
+    else:
+        found = httpx.Response(200, json=arcgis(catalog))
+        router.get(url__startswith=CATALOGO).mock(return_value=found)
 
 
 def sheet_of(response: Any) -> ParcelSheetResponse:  # the test client's response
@@ -368,6 +381,7 @@ def test_exactly_one_way_in(params: dict[str, str]) -> None:
 @respx.mock
 def test_the_ayuntamiento_down_leaves_the_rest_of_the_sheet() -> None:
     mock_catastro(respx.mock)
+    mock_catalog(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(side_effect=httpx.ReadTimeout("slow"))
     respx.get(url__startswith=PLANEAMIENTO).mock(side_effect=httpx.ReadTimeout("slow"))
     respx.get(url__startswith=CONDICIONES).mock(side_effect=httpx.ReadTimeout("slow"))
@@ -384,6 +398,7 @@ def test_the_ayuntamiento_down_leaves_the_rest_of_the_sheet() -> None:
 @respx.mock
 def test_an_arcgis_error_is_the_ayuntamiento_failing() -> None:
     mock_catastro(respx.mock)
+    mock_catalog(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(
         return_value=httpx.Response(200, json={"error": {"code": 500, "message": "x"}})
     )
@@ -398,6 +413,7 @@ def test_an_arcgis_error_is_the_ayuntamiento_failing() -> None:
 @respx.mock
 def test_the_instrument_layer_failing_keeps_the_planning() -> None:
     mock_catastro(respx.mock)
+    mock_catalog(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(
         return_value=httpx.Response(200, json=arcgis(USES_NZ8))
     )
@@ -811,6 +827,7 @@ def test_another_code_of_the_reference_point_is_the_catastro_failing() -> None:
 @pytest.mark.usefixtures("with_context")
 def test_a_complete_sheet_is_cached_by_the_cdn_and_an_incomplete_one_is_not() -> None:
     mock_catastro(respx.mock)
+    mock_catalog(respx.mock)
     instrument = respx.get(url__startswith=PLANEAMIENTO)
     instrument.side_effect = [httpx.ConnectError("down"), httpx.Response(200, json=arcgis(None))]
     respx.get(url__startswith=USOS_SUELO).mock(
@@ -830,6 +847,7 @@ def test_a_complete_sheet_is_cached_by_the_cdn_and_an_incomplete_one_is_not() ->
 @respx.mock
 def test_norma_zonal_1_without_its_z_is_not_a_complete_answer() -> None:
     mock_catastro(respx.mock)
+    mock_catalog(respx.mock)
     respx.get(url__startswith=USOS_SUELO).mock(
         return_value=httpx.Response(200, json=arcgis(USES_NZ8 | {"AMB_TX_ETIQ": "1.2"}))
     )
@@ -937,6 +955,7 @@ def test_the_ayuntamiento_out_of_the_time_budget_degrades_the_sheet(
 ) -> None:
     monkeypatch.setattr(parcel_sheet, "BUDGET_S", 0.5)
     mock_catastro(respx.mock)
+    mock_catalog(respx.mock)
 
     async def slow(request: httpx.Request) -> httpx.Response:
         await asyncio.sleep(2)
@@ -981,7 +1000,7 @@ def test_an_industrial_norma_zonal_9_is_never_housing_and_says_so() -> None:
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
     assert sheet.buildability.kind.value == "sin_dato" and sheet.buildability.value_m2 is None
     assert "no de vivienda" in sheet.buildability.source
-    assert [c.key.value for c in sheet.cautions] == ["otro_uso"]
+    assert sheet.cautions[0].key.value == "otro_uso"  # then what is built
 
 
 def late(seconds: float, body: dict[str, Any] | None = None) -> Any:
@@ -1188,3 +1207,48 @@ def test_a_failed_instrument_is_the_only_part_asked_again(
     assert second.degraded == ["context"]
     layer3 = [c for c in respx.calls if "/USOS_SUELO/MapServer/3/query" in str(c.request.url)]
     assert len(layer3) == 1 and instrument.call_count == 2
+
+
+# --- D-253: the catalogue, the building there and the power ---
+
+
+@respx.mock
+def test_a_catalogued_building_with_what_is_built_says_the_new_build_account_does_not_hold() -> (
+    None
+):
+    """Mayor 61's case (audit B5): catalogued «Parcial», 800 m² built in division."""
+    mock_catastro(respx.mock)
+    entry = {"N_CATALOGO": "02933", "NOMBRE": "VIVIENDAS", "PROTECCION_ACTUAL": "Parcial"}
+    mock_sigma(respx.mock, catalog=entry)
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert sheet.planning is not None and sheet.planning.protected_building is not None
+    found = sheet.planning.protected_building
+    assert (found.number, found.protection, found.level) == ("02933", "Parcial", 3)
+    texts = {c.key.value: c.text for c in sheet.cautions}
+    assert texts["edificio_catalogado"].startswith(
+        "Edificio catalogado por el Plan General, protección parcial (nº 02933)"
+    )
+    assert "arts. 4.3.4 y 4.3.7" in texts["edificio_catalogado"]
+    assert texts["edificio_existente"].startswith("Hay un edificio de 800 m² construidos (de 1975)")
+
+
+@respx.mock
+def test_the_catalogue_failing_degrades_only_its_part() -> None:
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, catalog=httpx.ConnectError("down"))
+    response = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(response).data
+    assert sheet.planning is not None and sheet.planning.protected_building is None
+    assert "catalog" in sheet.degraded
+    assert response.headers["cache-control"] == "no-store"
+
+
+@respx.mock
+def test_the_power_comes_from_the_starting_m2() -> None:
+    """NZ 8 grado 3º on 500 m²: 350 m² assumed, about 4 homes, 3,8 × 5,75 = 21,9 kW."""
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock)
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert sheet.power is not None
+    assert (sheet.power.homes, sheet.power.simultaneity, sheet.power.kw) == (4, 3.8, 21.9)
+    assert not sheet.power.over_transformer_threshold

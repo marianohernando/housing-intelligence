@@ -654,13 +654,97 @@ def ambit_pending_text(ambit: AmbitState) -> str:
     )
 
 
+# D-253: the catalogue of protected buildings (NNUU, título 4, art. 4.3.4: nivel 1 singular e
+# integral, nivel 2 estructural y volumétrico, nivel 3 parcial y ambiental)
+CATALOG_LEVELS: Mapping[str, int] = {
+    "singular": 1,
+    "integral": 1,
+    "estructural": 2,
+    "volumetrico": 2,
+    "parcial": 3,
+    "ambiental": 3,
+}
+
+
+@dataclass(frozen=True)
+class CatalogEntry:
+    """D-253: the building of the parcel in the Plan General's catalogue (300158)."""
+
+    number: str | None
+    name: str | None
+    protection: str | None
+    url: str | None
+
+    @property
+    def level(self) -> int | None:
+        words = fold(self.protection or "").split()
+        return next((CATALOG_LEVELS[w] for w in words if w in CATALOG_LEVELS), None)
+
+
+@dataclass(frozen=True)
+class ExistingBuilding:
+    """D-253: what is built on the parcel today, as the Catastro says it."""
+
+    built_m2: float
+    year: int | None = None
+    units: int | None = None
+
+
+def catalog_text(entry: CatalogEntry) -> str:
+    """What a catalogued building means for a new-build account (NNUU arts. 4.3.4 and 4.3.7)."""
+    protection = f", protección {entry.protection.lower()}" if entry.protection else ""
+    number = f" (nº {entry.number})" if entry.number else ""
+    head = f"Edificio catalogado por el Plan General{protection}{number}"
+    if entry.level in (1, 2):
+        return (
+            f"{head}: está protegido en su conjunto, y ni siquiera en ruina puede tener orden o "
+            "licencia de demolición (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). La cuenta de "
+            "obra nueva no vale."
+        )
+    if entry.level == 3:
+        return (
+            f"{head}: se protegen elementos concretos. En ruina, se puede rehabilitar o derribar, "
+            "pero la licencia puede obligar a mantener esos elementos en el edificio nuevo "
+            "(Normas Urbanísticas, arts. 4.3.4 y 4.3.7). La cuenta de obra nueva sobre suelo "
+            "libre no vale tal cual."
+        )
+    return (
+        f"{head}: las obras que se pueden hacer dependen de su protección (Normas Urbanísticas, "
+        "título 4). La cuenta de obra nueva no vale tal cual."
+    )
+
+
+def existing_text(building: ExistingBuilding) -> str:
+    """«Hay un edificio de 376 m² construidos (de 1890), con 6 inmuebles…»: data, no rule."""
+    year = f" (de {building.year})" if building.year else ""
+    units = (
+        f", con {building.units} inmuebles en división horizontal"
+        if building.units and building.units > 1
+        else ""
+    )
+    left_out = (
+        "el derribo, el desalojo ni la compra a los propietarios de sus inmuebles"
+        if units
+        else "el derribo ni el desalojo"
+    )
+    return (
+        f"Hay un edificio de {m2_text(building.built_m2)} m² construidos{year}{units}. La "
+        f"calculadora es de obra nueva sobre suelo libre: no cuenta {left_out}."
+    )
+
+
 def _says(words: str, *needles: str) -> bool:
     folded = fold(words)
     return any(n in folded for n in needles)
 
 
 def parcel_cautions(
-    use: str | None, official: Iterable[OfficialFigure], ambit: AmbitState | None
+    use: str | None,
+    official: Iterable[OfficialFigure],
+    ambit: AmbitState | None,
+    *,
+    catalog: CatalogEntry | None = None,
+    building: ExistingBuilding | None = None,
 ) -> list[tuple[str, str]]:
     """(key, text) of what keeps the sheet's figures from passing for free housing ready to
     build: another use in the plan, a planning area not finished or whose state is not
@@ -692,6 +776,10 @@ def parcel_cautions(
         cautions.append(("vivienda_protegida", PROTECTED))
     if any(_says(u, "unifamiliar") for u in uses):
         cautions.append(("unifamiliar", SINGLE_FAMILY))
+    if catalog is not None:  # D-253 (audit D5)
+        cautions.append(("edificio_catalogado", catalog_text(catalog)))
+    if building is not None and building.built_m2 > 0:
+        cautions.append(("edificio_existente", existing_text(building)))
     return cautions
 
 

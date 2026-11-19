@@ -36,6 +36,7 @@ import yaml
 from hi_contracts.pro.investors import UseClass
 from hi_domain import viability as v
 from hi_domain.parcels import LOOKUP_BUDGET_S, classify_use
+from hi_domain.supplies import BASIC_KW, SIMULTANEITY, STEP, TRANSFORMER_KW
 from hi_domain.zonal_norms import (
     NNUU_CITATION,
     NZ1_FACTORS,
@@ -411,6 +412,15 @@ def method_figures(
             "factors": [{"grado": g, "value": c} for g, c in sorted(NZ1_FACTORS.items())],
         },
         "lookupBudgetS": LOOKUP_BUDGET_S,
+        # D-253: the power estimate (ITC-BT-10) and the transformer threshold (RD 1048/2013)
+        "supplies": {
+            "kwPerHome": BASIC_KW,
+            "transformerKw": TRANSFORMER_KW,
+            "simultaneityOne": SIMULTANEITY[1],
+            "simultaneityMax": SIMULTANEITY[max(SIMULTANEITY)],
+            "tableHomes": max(SIMULTANEITY),
+            "stepPastTable": STEP,
+        },
     }
 
 

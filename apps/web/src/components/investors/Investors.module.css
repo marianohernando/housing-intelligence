@@ -74,8 +74,8 @@
   display: none;
 }
 
-/* On paper a link cannot be followed: its address is printed after it */
-.datasets .printOnly {
+/* On paper a link cannot be followed: its address is printed after it, and a long one wraps */
+.printOnly {
   overflow-wrap: anywhere;
 }
 

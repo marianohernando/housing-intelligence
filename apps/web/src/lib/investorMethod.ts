@@ -263,5 +263,13 @@ export const INVESTOR_METHOD = {
       }
     ]
   },
-  "lookupBudgetS": 15.0
+  "lookupBudgetS": 15.0,
+  "supplies": {
+    "kwPerHome": 5.75,
+    "transformerKw": 100.0,
+    "simultaneityOne": 1.0,
+    "simultaneityMax": 15.3,
+    "tableHomes": 21,
+    "stepPastTable": 0.5
+  }
 } as const;

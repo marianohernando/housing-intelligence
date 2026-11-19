@@ -8,6 +8,7 @@ import {
   buildabilityMark,
   buildableText,
   byUseSource,
+  catalogText,
   byUseText,
   dayMonthYear,
   DEMO_PARCELS,
@@ -23,6 +24,8 @@ import {
   SEARCH_TEXT,
   SHEET_TEXT,
   sentence,
+  SERVICES_TEXT,
+  servicesSignal,
   USE_TEXT,
   landUseLabel,
   landUseNote,
@@ -228,5 +231,37 @@ describe("Edificabilidad por uso (D-252)", () => {
     expect(byUseSource({ ...industrial, use: "Residencial", use_class: "residencial" })).toMatch(/^Uso en la fuente: residencial · /);
     expect(SHEET_TEXT.byUseNote).toContain("sin repartirla entre usos");
     expect(SHEET_TEXT.housingOnly).toMatch(/^La calculadora calcula solo vivienda/);
+  });
+});
+
+describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
+  it("says the planning's signal: a norma zonal, the area's works, or that it is not published", () => {
+    expect(servicesSignal(planning({}))).toEqual([SERVICES_TEXT.zonal]);
+    const phases = ["Planeamiento", "Gestión", "Proyecto de urbanización", "Obras de urbanización"].map((label) => ({ label, state: "Sin Iniciar" }));
+    const ambit = { code: "APR.04.09", tracked: true, pending: true, phases, as_of: "2026-07-01", url: "https://datos.madrid.es/" };
+    const area = planning({ code: "APR.04.09", kind: "APR", norma_zonal: null, ambit });
+    expect(servicesSignal(area)).toEqual([
+      "Obras de urbanización del APR.04.09: sin iniciar, según el Ayuntamiento.",
+      SERVICES_TEXT.worksPending,
+    ]);
+    const done = { ...ambit, pending: false, phases: phases.map((p) => ({ ...p, state: "Finalizado" })) };
+    expect(servicesSignal(planning({ ...area, ambit: done }))).toEqual(["Obras de urbanización del APR.04.09: finalizado, según el Ayuntamiento."]);
+    expect(servicesSignal(planning({ ...area, ambit: { ...ambit, tracked: false, phases: [] } }))).toEqual([SERVICES_TEXT.untracked]);
+    expect(servicesSignal(null)).toEqual([]);
+  });
+
+  it("says the power as an assumption from the rule, and only links the CNMC's map", () => {
+    const power = { homes: 164, simultaneity: 86.8, kw_per_home: 5.75, kw: 499.1, over_transformer_threshold: true };
+    expect(SERVICES_TEXT.power(power)).toMatch(/^Con unas 164 viviendas .* al menos 499,1 kW: 5,75 kW por vivienda .*\(86,8 para 164 viviendas\)/);
+    expect(SERVICES_TEXT.solar).toContain("art. 14.1.a");
+    expect(SERVICES_TEXT.cnmcUrl).toMatch(/^https:\/\/experience\.arcgis\.com\//);
+    expect(SERVICES_TEXT.words.map((w) => w.term)).toEqual(["CUPS", "Acometida", "Derechos de acometida", "Quién paga la red", "Centro de transformación", "Plazos de la norma"]);
+  });
+
+  it("names the catalogued building with its protection, number and level", () => {
+    expect(catalogText({ number: "02933", name: null, protection: "Parcial", level: 3 })).toBe("Protección parcial, nº 02933 (nivel 3 de 3)");
+    expect(catalogText(null)).toBe("Sin edificio catalogado en el punto de la parcela");
+    expect(SHEET_TEXT.firstFilter).toMatch(/^Esto es un primer filtro/);
+    expect(SHEET_TEXT.studyItems).toHaveLength(8);
   });
 });

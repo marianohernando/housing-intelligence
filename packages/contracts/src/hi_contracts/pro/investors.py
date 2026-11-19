@@ -51,7 +51,9 @@ __all__ = [
     "PlanningBlock",
     "PlanningInstrument",
     "PlanningKind",
+    "PowerEstimate",
     "PricesBlock",
+    "ProtectedBuilding",
     "ScenarioOutcome",
     "SourcedValue",
     "UnitUse",
@@ -594,6 +596,18 @@ class AmbitStatus(BaseModel):
     url: HttpUrl
 
 
+class ProtectedBuilding(BaseModel):
+    """D-253: the Plan General's catalogue of protected buildings (datos.madrid.es 300158)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    number: str | None = Field(examples=["02933"])
+    name: str | None
+    protection: str | None = Field(examples=["Parcial", "Integral"])
+    level: int | None = Field(default=None, ge=1, le=3, description="NNUU art. 4.3.4")
+    url: HttpUrl | None = None
+
+
 class PlanningBlock(BaseModel):
     """«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point."""
 
@@ -628,6 +642,9 @@ class PlanningBlock(BaseModel):
     )
     ambit: AmbitStatus | None = Field(
         default=None, description="D-252: the state of the planning area; null for a norma zonal"
+    )
+    protected_building: ProtectedBuilding | None = Field(
+        default=None, description="D-253: the building in the catalogue at the parcel's point"
     )
     instrument: PlanningInstrument | None
     sheet_url: HttpUrl | None = Field(
@@ -700,7 +717,20 @@ class ParcelContext(BaseModel):
 
 # planning: the Ayuntamiento or its layer of instruments did not answer; buildability: the Z of
 # norma zonal 1 could not be read; context: the barrio (the database)
-DegradedPart = Literal["catastro", "planning", "buildability", "context", "plan_uses"]
+DegradedPart = Literal["catastro", "planning", "buildability", "context", "plan_uses", "catalog"]
+
+
+class PowerEstimate(BaseModel):
+    """D-253: the least power the homes of the starting buildable m² need (ITC-BT-10), an
+    assumption: homes ≈ m² / 80, 5,75 kW each, times the coefficient of simultaneity."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    homes: int = Field(ge=1)
+    simultaneity: float
+    kw_per_home: float
+    kw: float
+    over_transformer_threshold: bool = Field(description="Above 100 kW (RD 1048/2013, art. 26.1)")
 
 
 class ParcelCautionKey(StrEnum):
@@ -711,6 +741,8 @@ class ParcelCautionKey(StrEnum):
     VIVIENDA_PROTEGIDA = "vivienda_protegida"
     UNIFAMILIAR = "unifamiliar"
     AMBITO_SIN_ESTADO = "ambito_sin_estado"
+    EDIFICIO_CATALOGADO = "edificio_catalogado"
+    EDIFICIO_EXISTENTE = "edificio_existente"
 
 
 class ParcelCaution(BaseModel):
@@ -740,6 +772,9 @@ class ParcelSheet(BaseModel):
     )
     cautions: list[ParcelCaution] = Field(
         default_factory=list[ParcelCaution], description="D-252: shown before the figures"
+    )
+    power: PowerEstimate | None = Field(
+        default=None, description="D-253: from the starting buildable m²; null without them"
     )
     public_land: LandItem | None = Field(
         default=None,

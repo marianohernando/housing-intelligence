@@ -4,7 +4,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { formatNumber } from "@/lib/format";
 import { CALCULATOR_TEXT } from "@/lib/investors";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
-import { USE_TEXT } from "@/lib/parcels";
+import { SERVICES_TEXT, SHEET_TEXT, USE_TEXT } from "@/lib/parcels";
 
 import styles from "../../app/(vida)/section.module.css";
 
@@ -272,9 +272,48 @@ export default function InvestorMethod() {
         no dice cuántos hogares ganan más o menos.
       </p>
 
-      <h3>4. Lo que no te dice</h3>
+      <h3 id="inversores-servicios">4. Servicios y suministros</h3>
+      <p className={styles.para}>{SERVICES_TEXT.solar}</p>
       <ul className={styles.text}>
-        <li>No es una tasación ni un informe vinculante ni una garantía de rentabilidad.</li>
+        <li>
+          <strong>Señal del planeamiento.</strong> En una norma zonal: {lower(SERVICES_TEXT.zonal.replace(/^Norma zonal: /, ""))} En
+          un ámbito, el estado de sus obras de urbanización según el Ayuntamiento (el estado de desarrollo de los ámbitos); si no están
+          terminadas: {lower(SERVICES_TEXT.worksPending)} Si es suelo del Portal del Suelo, si lo da por urbanizado.
+        </li>
+        <li>
+          <strong>Potencia (supuesto).</strong> Las viviendas, como los m² edificables de partida entre {n(M.homeM2)} m² (la vivienda
+          tipo); la potencia, {n(M.supplies.kwPerHome)} kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de
+          la tabla 1 de la ITC-BT-10 del Reglamento de Baja Tensión: de {n(M.supplies.simultaneityOne)} con una vivienda a{" "}
+          {n(M.supplies.simultaneityMax)} con {M.supplies.tableHomes}, y {n(M.supplies.stepPastTable)} más por cada una a partir de
+          ahí. Sin servicios comunes ni garaje, que se suman aparte, así que es un mínimo. Por encima de {n(M.supplies.transformerKw)}{" "}
+          kW: {lower(SERVICES_TEXT.transformer.replace(/^Por encima de 100 kW, /, ""))}
+        </li>
+        <li>
+          <strong>Capacidad de la red.</strong> {SERVICES_TEXT.capacity} {SERVICES_TEXT.cnmc} Solo enlazamos su mapa: no copiamos sus
+          cifras.
+        </li>
+        <li>
+          <strong>Agua.</strong> {SERVICES_TEXT.canal}
+        </li>
+        <li>
+          <strong>Edificio catalogado.</strong> Leemos el catálogo de edificios protegidos del Plan General en el punto de la parcela
+          (Ayuntamiento de Madrid, datos abiertos). En los niveles 1 y 2 (singular, integral, estructural y volumétrico) el edificio
+          está protegido en su conjunto y ni siquiera en ruina puede tener orden o licencia de demolición; en el nivel 3 (parcial y
+          ambiental), en ruina se puede rehabilitar o derribar, pero la licencia puede obligar a mantener los elementos protegidos
+          (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). En los dos casos, la cuenta de obra nueva no vale tal cual.
+        </li>
+        <li>
+          <strong>Lo que hay construido.</strong> Si el Catastro dice que hay un edificio, la ficha lo recuerda: la calculadora es de
+          obra nueva sobre suelo libre y no cuenta el derribo, el desalojo ni la compra a los propietarios.
+        </li>
+      </ul>
+
+      <h3>5. Lo que no te dice</h3>
+      <ul className={styles.text}>
+        <li>No es una tasación ni un informe vinculante ni una garantía de rentabilidad. {SHEET_TEXT.firstFilter}</li>
+        <li>
+          {SHEET_TEXT.sections.study}: {SHEET_TEXT.studyItems.map((item) => lower(item).replace(/\.$/, "")).join("; ")}. {SHEET_TEXT.takeIt}
+        </li>
         <li>
           No decimos qué se puede construir con toda la normativa (alturas, ocupación, retranqueos, usos o cargas): solo una
           edificabilidad de partida, con su fuente, para hacer números.
@@ -305,6 +344,11 @@ export default function InvestorMethod() {
         {(Object.keys(USE_TEXT) as (keyof typeof USE_TEXT)[]).map((kind) => (
           <li key={kind}>
             <strong>{USE_TEXT[kind].label}:</strong> {lower(USE_TEXT[kind].plain)}
+          </li>
+        ))}
+        {SERVICES_TEXT.words.map((w) => (
+          <li key={w.term}>
+            <strong>{w.term}:</strong> {lower(w.text)}
           </li>
         ))}
         <li>

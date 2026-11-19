@@ -1,0 +1,38 @@
+dataset_id: cm_costes_referencia_edificacion
+source_id: comunidad_madrid_web
+name: Costes de Referencia General de la edificación (actualizados al año 2022)
+domain: housing
+owner: Comunidad de Madrid (Dirección General de Vivienda y Rehabilitación)
+format: PDF
+geography: table
+geo:
+  resolution: municipio
+temporal_resolution: irregular
+refresh_policy: manual
+landing_url: https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf
+resources:
+- name: Método para la determinación de los costes de referencia de la edificación (2022)
+  format: PDF
+  url: https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 3
+  product_impact: 4
+  geographic_granularity: 2
+  freshness: 2
+  license_clarity: 3
+  ingestion_ease: 5
+  notes: >-
+    D-252. Documento público de la Comunidad de Madrid sin licencia propia: se citan tres
+    rangos con su fuente (el aviso legal de comunidad.madrid permite reutilizar citando la
+    fuente y la fecha). Madrid capital es el área 1 (coeficiente 1,00). Son PEM por m²
+    construido, sin gastos generales ni beneficio industrial. Las cifras están copiadas a mano
+    en data/catalog/manual/costes_referencia_construccion.yaml; el PEM de partida de la
+    calculadora es el punto medio del bloque abierto.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T22:00:00+00:00'
+notes: >-
+  No es un conjunto del portal de datos abiertos de la Comunidad: no cuenta como dataset CM
+  para DATAMAD. Referencia de coste, nunca dato de la parcela.
