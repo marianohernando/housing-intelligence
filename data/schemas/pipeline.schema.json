@@ -1097,6 +1097,13 @@
           "title": "District Column",
           "type": "string"
         },
+        "expected_districts": {
+          "default": 21,
+          "description": "districts of the register",
+          "exclusiveMinimum": 0,
+          "title": "Expected Districts",
+          "type": "integer"
+        },
         "keep_upper": {
           "items": {
             "type": "string"
@@ -1701,6 +1708,25 @@
           "default": "desc_epigrafe",
           "title": "Epigrafe Label Column",
           "type": "string"
+        },
+        "expected_barrios": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 131,
+          "title": "Expected Barrios"
+        },
+        "expected_districts": {
+          "default": 21,
+          "exclusiveMinimum": 0,
+          "title": "Expected Districts",
+          "type": "integer"
         },
         "kind": {
           "const": "madrid_premises_census",

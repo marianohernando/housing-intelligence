@@ -1015,6 +1015,7 @@ class MadridBuildableAreasPipeline(BaseModel):
     whole_area_pct: int = Field(
         default=90, ge=50, le=100, description="below this share in its barrio, a note says so"
     )
+    expected_districts: int = Field(default=21, gt=0, description="districts of the register")
     min_rows: int = Field(gt=0, description="fewer rows -> the register changed or is cut")
     max_rows: int = Field(gt=0)
 
@@ -1092,6 +1093,8 @@ class MadridPremisesCensusPipeline(BaseModel):
     ] = Field(min_length=1)
     pending_epigrafes: dict[str, str] = Field(default_factory=dict[str, str])
     max_unplaced: int = Field(ge=0)
+    expected_districts: int = Field(default=21, gt=0)
+    expected_barrios: int | None = Field(default=131, gt=0)
     min_rows: int = Field(gt=0, description="fewer rows -> the file changed or is cut")
     max_rows: int = Field(gt=0)
 

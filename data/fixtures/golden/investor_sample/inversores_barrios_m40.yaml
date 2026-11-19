@@ -1,0 +1,41 @@
+title: Barrios piloto de la versión para inversores (muestra)
+publisher: OpenStreetMap contributors (Overpass API)
+license: ODbL 1.0 (© OpenStreetMap contributors)
+url: https://overpass-api.de/api/interpreter
+query: '[out:json];way[ref=M-40];out geom; (muestra)'
+osm_timestamp: '2026-11-19T00:12:49Z'
+consulted: '2026-11-19'
+crs: EPSG:25830
+method: Anillo de muestra alrededor de las secciones de Tetuán de la muestra, no la M-40.
+municipio_ine: '28079'
+edge_m: 500
+crossing_pct: 5
+ring:
+  ways: 1
+  area_km2: 9.0
+  sha256: 61781d6437a106fafce1673e22f9165fe4fccefeed7db22b7667dfabf34f8d5e
+  coordinates:
+  - - 440000
+    - 4478000
+  - - 443000
+    - 4478000
+  - - 443000
+    - 4481000
+  - - 440000
+    - 4481000
+  - - 440000
+    - 4478000
+barrios:
+- code: '28079063'
+  name: Castillejos
+  distrito: Tetuán
+  margin_m: 1200
+  area_inside_pct: 100
+- code: '28079064'
+  name: Almenara
+  distrito: Tetuán
+  margin_m: 300
+  area_inside_pct: 100
+  review: 'Muestra: un barrio del borde, con su nota de revisión.'
+reviewed_outside: []
+outside: 4

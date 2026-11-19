@@ -40,7 +40,6 @@ from hi_ingestion.pipelines.zone_context.run import (
 )
 
 PARSER_VERSION = "madrid_buildable_areas-1.0.0"
-MADRID_DISTRICTS = 21
 
 
 def load_area_points(
@@ -94,7 +93,7 @@ def areas_quality(
         CheckResult(
             "register_districts",
             True,
-            len(result.districts) == MADRID_DISTRICTS and result.districts <= districts,
+            len(result.districts) == spec.expected_districts and result.districts <= districts,
             {"districts": len(result.districts), "unknown": sorted(result.districts - districts)},
         ),
         CheckResult(

@@ -31,8 +31,6 @@ from hi_ingestion.pipelines.stat_tables.quality import (
 from hi_ingestion.pipelines.stat_tables.run import write_silver
 
 PARSER_VERSION = "madrid_premises_census-1.0.0"
-MADRID_DISTRICTS = 21
-MADRID_BARRIOS = 131
 
 
 def proximity_labels_check(
@@ -88,8 +86,8 @@ def premises_quality(
             {"unplaced": result.unplaced, "max": spec.max_unplaced},
         ),
         *proximity_labels_check(result, spec),
-        *district_checks(frame, districts, MADRID_DISTRICTS),
-        *barrio_checks(frame, barrios, MADRID_BARRIOS),
+        *district_checks(frame, districts, spec.expected_districts),
+        *barrio_checks(frame, barrios, spec.expected_barrios),
     ]
     return QualityReport([*base.checks, *extra])
 

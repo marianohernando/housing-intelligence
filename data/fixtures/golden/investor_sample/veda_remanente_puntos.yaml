@@ -1,0 +1,37 @@
+title: 'Ámbitos de la edificabilidad remanente: un punto dentro de cada ámbito (muestra)'
+publisher: Ayuntamiento de Madrid (VEDA Madrid, Departamento de Análisis Urbano)
+url: https://sigma.madrid.es/hosted/rest/services/ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual/FeatureServer/2/query?where=1%3D1&outFields=AMB_TX_ETI&outSR=25830&f=geojson
+layer: 'ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual: Ambitos_Vigentes_julio26'
+crs: EPSG:25830
+consulted: '2026-11-19'
+method: Puntos de secciones de la muestra (Tetuán), no de los ámbitos.
+municipio_ine: '28079'
+points:
+- ref: APE.06.01
+  x: 441457
+  y: 4479494
+  share_pct: 70
+- ref: APE.06.04
+  x: 441100
+  y: 4479928
+  share_pct: 100
+- ref: API.06.02
+  x: 441457
+  y: 4479494
+  share_pct: 100
+- ref: API.06.10
+  x: 441100
+  y: 4479928
+  share_pct: 100
+- ref: APR.06.02
+  x: 441457
+  y: 4479494
+  share_pct: 100
+- ref: APR.06.04
+  x: 441100
+  y: 4479928
+  share_pct: 100
+- ref: APR.06.05
+  x: 441457
+  y: 4479494
+  share_pct: 100
