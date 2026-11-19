@@ -7,7 +7,7 @@
 
 **La API pública y el MCP: gratis para todos, igual que los datos** (otra decisión de Mariano, del 19 nov). También para empresas y ayuntamientos, que pueden meter «Qué falta» y el encaje de cada zona en sus propias herramientas o en un agente de IA. Lo que hay hoy:
 - **La API pública** (`/api/v1`) está en producción y no pide claves. Tiene 10 rutas de datos y 2 de salud, con su descripción OpenAPI en `/api/v1/openapi.json` (leída por D en producción el 19 nov). Las rutas y sus contratos están en `docs/04_technical_architecture/31_public_api_routes.md`.
-- **El MCP** tiene cinco herramientas de solo lectura: buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos (D-225, `docs/04_technical_architecture/32_mcp_server.md`). Hoy funciona en local (`make mcp`) y no está desplegado; como el código es abierto (Apache-2.0), cualquiera puede arrancarlo.
+- **El MCP** tiene cinco herramientas de solo lectura: buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos (D-225, `docs/04_technical_architecture/32_mcp_server.md`). Hoy funciona en local (`make mcp`) y no está desplegado. Como el código es abierto (Apache-2.0), cualquiera puede arrancarlo, pero necesita su propia base Postgres con los datos cargados («Arrancarlo en local» en `32_mcp_server.md`). Servirlo en remoto está planteado.
 
 **Lo único de pago:** los planes para inversores (Inversor y Equipo) y el estudio a medida.
 
@@ -85,7 +85,7 @@ El texto completo, con las tres opciones que se compararon, está en el historia
   - CPU activa desde 0,128 $ por hora;
   - memoria desde 0,0106 $ por GB y hora.
 - Con unos miles de búsquedas al día debería caber en el crédito incluido, pero no está medido: hay que vigilar el panel de uso el primer mes.
-- Con la API gratis para todos, ese cómputo es lo primero que se vigila. Hoy la API no pide claves ni pone un límite de llamadas propio (su OpenAPI no tiene `securitySchemes` y `apps/api/` no tiene limitador, 19 nov).
+- Con la API gratis para todos, ese cómputo es lo primero que se vigila. Hoy no pide claves; si el uso crece, se añade un límite por IP (`docs/04_technical_architecture/29_api_mcp_security_rate_limits.md`).
 - La recarga de datos se hace en local (`make ingest`, `make supabase-sync`), así que no cuesta nada en la nube.
 
 ## Mantenimiento con una sola persona

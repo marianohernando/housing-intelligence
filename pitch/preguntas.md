@@ -22,11 +22,12 @@
 Con una API pública versionada (`/api/v1`) cuyos contratos están publicados como JSON Schema. Las zonas se identifican con el código INE del municipio, así que se cruzan con cualquier otra fuente oficial.
 - Evidencia: `docs/04_technical_architecture/31_public_api_routes.md` · `data/schemas/api/*.schema.json` (10 esquemas el 19 nov) · `GET /api/v1/gaps/municipio/28092`.
 - Si preguntan cuánto cuesta integrarla: nada. La API y el MCP son abiertos y gratuitos para todos, también para empresas y ayuntamientos, igual que los datos (decisión de Mariano del 19 nov, `pitch/modelo_negocio.md`). La API está en producción, sin claves, con 10 rutas de datos y su descripción OpenAPI en `/api/v1/openapi.json` (leída por D el 19 nov).
+- Límite, si preguntan por integrarla en su web: en producción, el navegador solo deja llamar a la API desde nuestro dominio (CORS, `cors_origins` en `apps/api/src/hi_api/settings.py`). Se integra desde un servidor o un agente, no desde el JavaScript de la web de un tercero. Comprobado por D el 19 nov: con otro origen, la respuesta no trae `Access-Control-Allow-Origin`.
 
 **2. ¿Tenéis MCP para agentes de IA?**
-Sí: un servidor MCP con cinco herramientas de solo lectura (buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos). Llaman a los mismos servicios que la API, nunca a SQL libre, así que un agente no puede inventar ni cambiar datos, y los tests comprueban que cada herramienta responde lo mismo que su ruta de la API. Hoy funciona en local (`make mcp`); el siguiente paso es servirlo en remoto.
+Sí: un servidor MCP con cinco herramientas de solo lectura (buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos). Llaman a los mismos servicios que la API, nunca a SQL libre, así que un agente no puede inventar ni cambiar datos, y los tests comprueban que cada herramienta responde lo mismo que su ruta de la API. Hoy funciona en local (`make mcp`); servirlo en remoto está planteado.
 - Evidencia: D-225 · `services/mcp/` · `docs/04_technical_architecture/32_mcp_server.md` · `make mcp` · `CLAUDE.md` §3 (Arquitectura).
-- Si preguntan si se cobra: no. El MCP y la API son abiertos y gratuitos para todos (decisión de Mariano del 19 nov, `pitch/modelo_negocio.md`). Hoy el MCP se arranca en local con el código abierto (Apache-2.0); servirlo en remoto es el siguiente paso.
+- Si preguntan si se cobra: no. El MCP y la API son abiertos y gratuitos para todos (decisión de Mariano del 19 nov, `pitch/modelo_negocio.md`). Hoy el MCP se arranca en local con el código abierto (Apache-2.0) y una base Postgres propia con los datos cargados (`32_mcp_server.md`, «Arrancarlo en local»).
 - Si quieren verlo: un clip de 20 s con un agente preguntando «¿qué le falta a Parla?» (**pendiente de A**).
 
 **3. ¿Vuestro catálogo de datos es reutilizable?**
