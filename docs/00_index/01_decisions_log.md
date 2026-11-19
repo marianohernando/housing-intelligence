@@ -2244,3 +2244,28 @@ Hotfix de producción. En frío, las cuatro fichas de demostración salían con 
    - Los 422 de la búsqueda por parcela salen `private, no-store` y sin el `input` que FastAPI repite.
    - Los avisos de `search.py` registran valores cerrados (claves de la API o del catálogo), nunca texto tecleado, y se quedan como están.
 6. **Cómo volver atrás:** revertir el PR.
+
+## D-252c — Usos del plan precargados (2026-11-20)
+Hotfix de producción tras D-252b. Ya con los logs de D-252b en producción, Méndez, Luis Misson y Mayor 61 seguían saliendo con `plan_uses:TimeoutError` (4,6–7,0 s en las tablas), después de 7,6–10 s de Catastro y capa 3; Almería salió completa.
+
+1. **Medición** (coordinador, desde Madrid): una consulta a la tabla 4 o 5 de USOS_SUELO con un CODIGO que sigma no tiene en caché tarda **6,5–10 s en su servidor** (TTFB de 8,4, 10,4, 7,0, 8,0 y 6,5 s). Solo responde en 0,2 s si ya se ha pedido antes. En local se medían 0,08–0,27 s porque eran consultas calientes. Con 15 s de presupuesto para todo, no caben.
+2. **Decisión: precargar las tablas.** `scripts/usos_suelo_tablas.py` las descarga enteras, una vez, en unas 26 peticiones en serie y con pausas:
+   - por cada tabla, el recuento y los ids;
+   - después, ventanas de como mucho 2.000 OBJECTID, que es su maxRecordCount;
+   - comprueba que las filas leídas cuadran con el recuento: 40.021 en la tabla 4 y 1.328 en la 5.
+   
+   El fichero bruto va a bronze, con su manifiesto, la URL y la licencia (CC BY 4.0 del Ayuntamiento, conjunto 300744; comprobada en su CKAN el 19 nov; el portal no respondió el 20). Luego se escriben dos tablas versionadas:
+   - `usos_suelo_edificabilidad.csv`: las 10.545 filas con cifra, por CODIGO;
+   - `usos_suelo_parcelas.csv`: los CODIGO de la tabla 4 en 7.651 tramos.
+3. **Módulo generado** `hi_domain.plan_uses_data` (506 KB, con `--check` en `make lint` y test en `tests/data`):
+   - Es un `.py` y no un `.json.gz` porque la imagen de la API instala los paquetes como wheels de hatchling (que incluyen todo `src/hi_domain`) con `UV_COMPILE_BYTECODE=1`: el bytecode se compila al construir.
+   - Importarlo en frío sin compilar tarda 78 ms.
+4. **La API ya no pide las tablas.** `plan_uses` sale del snapshot por el UBOV_ID de la capa 3, con la fecha «del plan a fecha 20/11/2026», y ya no se degrada por las tablas: solo si la capa 3 no da UBOV_ID (R-07 de #109).
+   - **Uso sin cifra.** Cada parcela urbanística tiene en la tabla 4 una fila con su uso principal, casi siempre sin cifra (30.759 de 40.021). Si la parcela está en la tabla 4 sin cifra, la ficha dice «El plan fija el uso principal de esta parcela urbanística, pero sin cifra de edificabilidad». Es el caso de Almería 1 (CODIGO 50282, «SIN USO PORMENORIZADO»). Si no está en la tabla, dice «El plan no publica la edificabilidad por uso».
+   - **Código retirado.** Se quita el de las tablas en vivo: consulta, reintento, presupuesto propio y caché de filas por UBOV_ID.
+   - **Caché por partes.** La de D-252b se queda para el plan en vigor y la Z.
+5. **El plan en vigor y la Z, acotados** (deuda señalada en la revisión del #110): se piden con el tiempo que queda hasta el plazo de la ficha. Si se pasan, solo se degrada su parte. La capa 3 es la única cuyo fallo tumba el planeamiento.
+6. **Tiempos en el log.** La línea `parcel …` añade `stages=` con los ms de cada etapa (catastro, planning, layer3, instrument, z), también en las fichas completas, para ver dónde se van los segundos.
+7. **Catálogo (para #110), medido:** 3 consultas en frío a EDIFICIOS_PROTEGIDOS/MapServer/5 en puntos de Sol y la Gran Vía tardaron 81–313 ms. No hace falta precargarlo.
+8. **Llamadas en vivo:** 26 para la descarga y 3 para medir el catálogo. **Cómo volver atrás:** revertir el PR.
+

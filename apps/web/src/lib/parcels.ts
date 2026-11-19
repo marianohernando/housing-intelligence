@@ -116,9 +116,13 @@ export const SHEET_TEXT = {
   planUsesTitle: (urbanParcel: string | null | undefined) =>
     urbanParcel ? `Según el plan, la parcela urbanística ${urbanParcel} tiene:` : "Según el plan, la parcela urbanística tiene:",
   planUsesNone: "El plan no publica la edificabilidad por uso de esta parcela.",
+  // D-252c: table 4 has the urban parcel with its principal use but no figure (Almería 1)
+  planUsesWithoutFigure: "El plan fija el uso principal de esta parcela urbanística, pero sin cifra de edificabilidad.",
   planUsesCaveats:
     "La parcela urbanística del plan puede no coincidir con la catastral, y es lo que el plan permite en total, no lo que queda por construir. Salvo excepciones, los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art. 7.2.8).",
-  planUsesSource: "Ayuntamiento de Madrid, Urbanismo (usos del suelo, uso cualificado principal y otros usos cualificados): información urbanística sin valor jurídico.",
+  /** D-252c: from the snapshot of tables 4 and 5, with its date (DD/MM/AAAA) */
+  planUsesSource: (day: string | null) =>
+    `Ayuntamiento de Madrid, Urbanismo (usos del suelo: uso cualificado principal y otros usos cualificados)${day ? `, del plan a fecha ${day}` : ""}. Información urbanística sin valor jurídico.`,
   planUsesDown: "No hemos podido leer ahora la edificabilidad por uso del plan; el resto de la ficha sí. Vuelve a intentarlo en un rato.",
   ambit: "Estado del ámbito",
   ambitUntracked: "El Ayuntamiento no publica su estado.",
@@ -339,4 +343,10 @@ export function publicLandText(item: LandItem): string {
   const facts = [regime, item.manager ? `la ofrece ${item.manager}` : null, stage].filter(Boolean).join(", ");
   const caution = landCaution(item);
   return `Parcela del Portal del Suelo de la Comunidad de Madrid${facts ? `: ${facts}` : ""}.${caution ? ` ${caution}` : ""}`;
+}
+
+/** «2026-11-20» → «20/11/2026». */
+export function dayMonthYear(iso: string | null | undefined): string | null {
+  const match = iso ? /^(\d{4})-(\d{2})-(\d{2})/.exec(iso) : null;
+  return match ? `${match[3]}/${match[2]}/${match[1]}` : null;
 }

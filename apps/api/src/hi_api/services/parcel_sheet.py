@@ -20,7 +20,7 @@ import hashlib
 import json
 import logging
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
@@ -51,7 +51,6 @@ from hi_api.services.parcels import (
     ClientHolder,
     OutOfMadridError,
     PlanningRecord,
-    PlanRow,
     UpstreamError,
     fetch_parcel,
     fetch_planning,
@@ -97,6 +96,7 @@ from hi_domain import viability as v
 from hi_domain.parcels import (
     LOOKUP_BUDGET_S,
     PHASE_LABELS,
+    PLAN_USES_AS_OF,
     AmbitState,
     OfficialFigure,
     ambit_state,
@@ -490,20 +490,6 @@ async def catastro_parcel(rc14: str, lookup: Lookup) -> CatastroParcel:
     return parcel
 
 
-class KeptRows:
-    """D-252b: the rows of tables 4 and 5, kept by UBOV_ID with the planning's TTL."""
-
-    def rows(self, urban_parcel_id: int) -> tuple[PlanRow, ...] | None:
-        kept = CACHE.get(("plan_rows", urban_parcel_id))
-        return None if kept is MISSING else kept
-
-    def keep(self, urban_parcel_id: int, rows: tuple[PlanRow, ...]) -> None:
-        CACHE.set(("plan_rows", urban_parcel_id), rows, TTL_S["planning"])
-
-
-KEPT_ROWS = KeptRows()
-
-
 async def planning_record(
     parcel: CatastroParcel, lookup: Lookup, deadline: float | None = None
 ) -> PlanningRecord | None:
@@ -515,15 +501,13 @@ async def planning_record(
     key = ("planning", parcel.rc14)
     cached = CACHE.get(key)
     if cached is not MISSING and (cached is None or cached.complete):
-        return cached
+        return cached if cached is None else replace(cached, timings=())  # nothing asked now
     # A kept record is repaired by parts; one that cannot be (no UBOV_ID) is asked again whole
     base = None if cached is MISSING or not repairable(cached) else cached
     lookup.spend()
     record = await timed(
         lookup,
-        fetch_planning(
-            CLIENTS.get(), parcel.x, parcel.y, deadline, rows_cache=KEPT_ROWS, base=base
-        ),
+        fetch_planning(CLIENTS.get(), parcel.x, parcel.y, deadline, base=base),
     )
     # A full answer gets a fresh TTL; a repair still incomplete keeps the kept one's expiry
     if base is None or record is None or record.complete or not CACHE.update(key, record):
@@ -620,6 +604,8 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         urban_parcel=" · ".join(p for p in (record.urban_parcel, record.zone_name) if p) or None,
         urban_parcel_area_m2=record.urban_parcel_area_m2,
         plan_uses=plan_uses(record),
+        plan_uses_as_of=date.fromisoformat(PLAN_USES_AS_OF),
+        plan_principal_without_figure=record.principal_without_figure,
         ambit=ambit_block(ambit_state(record.code)),
         instrument=PlanningInstrument(
             figure=record.figure,
@@ -692,17 +678,21 @@ class Parts(NamedTuple):
     degraded: list[DegradedPart]
     # D-252b: «stage:ErrorClass:ms» of each part that failed, for the logs (no address, no point)
     failures: tuple[str, ...] = ()
+    # D-252c: «stage:ms» of every stage, failed or not (catastro, planning and its layers)
+    stages: tuple[str, ...] = ()
 
 
 async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -> Parts:
     """The parcel (the Catastro) and its planning (the Ayuntamiento), within the deadline: a
     Catastro out of time is UpstreamError (demo sheet or 503); an Ayuntamiento out of time, or
     one of its layers failing, degrades the sheet."""
+    started = time.perf_counter()
     try:
         async with asyncio.timeout_at(deadline):
             parcel = await catastro_parcel(rc14, lookup)
     except TimeoutError as exc:
         raise UpstreamError("catastro", "out of the time budget") from exc
+    stages = [f"catastro:{round((time.perf_counter() - started) * 1000)}"]
     try:
         block = parcel_block(parcel)
     except SHAPE_ERRORS as exc:  # a coordinate or link out of the contract
@@ -720,8 +710,10 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
         cause = exc if isinstance(exc, TimeoutError) else (exc.__cause__ or exc)
         ms = round((time.perf_counter() - started) * 1000)
         failures.append(f"planning:{type(cause).__name__}:{ms}")
+    stages.append(f"planning:{round((time.perf_counter() - started) * 1000)}")
     if record is not None:
         failures.extend(f"{stage}:{error}:{ms}" for stage, error, ms in record.failures)
+        stages.extend(f"{stage}:{ms}" for stage, ms in record.timings)
     planning = None
     if record is not None and block.lat is not None and block.lon is not None:
         try:
@@ -737,7 +729,7 @@ async def live_parts(rc14: str, lookup: Lookup, deadline: float | None = None) -
         degraded.append("plan_uses")
     coef_z = None if record is None else record.coef_z
     built = buildability(rc14, block, planning, coef_z)
-    return Parts(block, planning, built, degraded, tuple(failures))
+    return Parts(block, planning, built, degraded, tuple(failures), tuple(stages))
 
 
 # --- The demo sheets ---
@@ -933,7 +925,7 @@ async def parcel_sheet(
     context = await context_at(engine, parts.parcel)
     sheet, warnings, version = assemble(query.kind, parts, context, fallback)
     log.info(
-        "parcel input=%s rc14=%s fallback=%s degraded=%s ms=%d upstream_ms=%d parts=%s",
+        "parcel input=%s rc14=%s fallback=%s degraded=%s ms=%d upstream_ms=%d parts=%s stages=%s",
         query.kind.value,
         rc14,
         fallback,
@@ -941,6 +933,7 @@ async def parcel_sheet(
         round((time.perf_counter() - started) * 1000),
         lookup.upstream_ms,
         ",".join(parts.failures) or "-",
+        ",".join(parts.stages) or "-",
     )
     return sheet, warnings, version
 

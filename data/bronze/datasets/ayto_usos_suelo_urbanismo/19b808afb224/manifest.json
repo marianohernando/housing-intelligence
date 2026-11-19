@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "dataset_id": "ayto_usos_suelo_urbanismo",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_usos_suelo_urbanismo/19b808afb224/tabla_4.json",
+      "sha256": "90cae3bb0cf9f29aadb843242c2ee61bb3c5f320c096a32ae7709cf322efc1fb",
+      "bytes": 5776896,
+      "rows": 40021,
+      "url": "https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/4/query",
+      "retrieved_at": "2026-11-19T23:36:21.815422+00:00"
+    },
+    {
+      "dataset_id": "ayto_usos_suelo_urbanismo",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_usos_suelo_urbanismo/19b808afb224/tabla_5.json",
+      "sha256": "2fd826277f4bcf378d95d0fc151843675eba913678665c77d8df3ec872803214",
+      "bytes": 187852,
+      "rows": 1328,
+      "url": "https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/5/query",
+      "retrieved_at": "2026-11-19T23:36:21.815422+00:00"
+    }
+  ],
+  "landing_url": "https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo",
+  "license": "CC BY 4.0"
+}

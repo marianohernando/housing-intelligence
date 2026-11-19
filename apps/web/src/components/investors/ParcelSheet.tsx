@@ -17,6 +17,7 @@ import {
   buildableText,
   byUseSource,
   byUseText,
+  dayMonthYear,
   degradedLines,
   divisionText,
   instrumentText,
@@ -147,11 +148,15 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
 function PlanUses({ planning }: { planning: Sheet["planning"] }) {
   if (!planning || planning.plan_uses === null || planning.plan_uses === undefined) return null;
   const uses = planning.plan_uses;
+  const source = TEXT.planUsesSource(dayMonthYear(planning.plan_uses_as_of));
   return (
     <>
       <h3 className={styles.subhead}>{TEXT.byUseTitle}</h3>
       {uses.length === 0 ? (
-        <p className={styles.note}>{TEXT.planUsesNone}</p>
+        <>
+          <p className={styles.note}>{planning.plan_principal_without_figure ? TEXT.planUsesWithoutFigure : TEXT.planUsesNone}</p>
+          <p className={styles.source}>{source}</p>
+        </>
       ) : (
         <>
           <p>{TEXT.planUsesTitle(planning.urban_parcel)}</p>
@@ -164,7 +169,7 @@ function PlanUses({ planning }: { planning: Sheet["planning"] }) {
             ))}
           </ul>
           <p className={styles.note}>{TEXT.planUsesCaveats}</p>
-          <p className={styles.source}>{TEXT.planUsesSource}</p>
+          <p className={styles.source}>{source}</p>
         </>
       )}
     </>
