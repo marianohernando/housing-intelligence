@@ -6,6 +6,7 @@ is data («dato»), our assumption («supuesto») or the person's («usuario»).
 null with its reason, never 0. Nothing here changes `/search` or `/gaps`.
 """
 
+from datetime import date
 from enum import StrEnum
 from typing import Literal, Self
 
@@ -17,6 +18,9 @@ from hi_contracts.public.gaps import GapRow
 
 __all__ = [
     "AssumptionPart",
+    "Buildability",
+    "BuildabilityKind",
+    "DegradedPart",
     "DemandBlock",
     "DemandOutcome",
     "DemandRequest",
@@ -28,15 +32,31 @@ __all__ = [
     "InvestorZoneSummary",
     "LandBlock",
     "LandItem",
+    "NearbyParcel",
+    "NormaZonal",
+    "ParcelBlock",
+    "ParcelCandidate",
+    "ParcelCandidates",
+    "ParcelContext",
+    "ParcelInput",
+    "ParcelSheet",
+    "ParcelSource",
+    "ParcelUnits",
+    "PlanningBlock",
+    "PlanningInstrument",
+    "PlanningKind",
     "PricesBlock",
     "ScenarioOutcome",
     "SourcedValue",
+    "UnitUse",
     "ValueMark",
     "Verdict",
     "ViabilityDefaults",
     "ViabilityRequest",
     "ViabilityResult",
 ]
+
+RC14_PATTERN = r"^[0-9A-Z]{14}$"
 
 
 class ValueMark(StrEnum):
@@ -357,3 +377,233 @@ class ViabilityResult(BaseModel):
     scenarios: list[ScenarioOutcome]
     demand: DemandOutcome | None
     notices: list[str]
+
+
+# --- Search by parcel (D-250) ---
+
+
+class ParcelInput(StrEnum):
+    """How the parcel was asked for: its cadastral reference, a point on the map or an address."""
+
+    RC = "rc"
+    POINT = "point"
+    ADDRESS = "address"
+
+
+class UnitUse(BaseModel):
+    """How many units of one use a building has, and their built area: never floor and door."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    use: str = Field(examples=["Residencial", "Comercial"])
+    count: int = Field(ge=1)
+    built_m2: float | None = Field(ge=0)
+
+
+class ParcelUnits(BaseModel):
+    """A building in horizontal division, summarised: units by use (no list of units)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    total: int = Field(ge=1)
+    by_use: list[UnitUse]
+
+
+class ParcelBlock(BaseModel):
+    """«Datos de la parcela»: our fields, worked out from the Catastro's public data. Never its
+    raw answer, never the units with their floor and door."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rc14: str = Field(pattern=RC14_PATTERN, examples=["2122202VK4722A"])
+    address: str | None = Field(examples=["Calle Méndez Álvaro 47, 28045 Madrid"])
+    postal_code: str | None = Field(default=None, pattern=r"^\d{5}$")
+    lat: float | None = Field(default=None, ge=40.2, le=40.7)
+    lon: float | None = Field(default=None, ge=-3.95, le=-3.45)
+    area_m2: float | None = Field(ge=0, description="Surface of the parcel (land)")
+    rustic: bool | None = Field(description="Rustic land: a reduced sheet, no buildability")
+    is_vacant: bool | None = Field(description="A plot with nothing built (solar); null unknown")
+    horizontal_division: bool
+    units: ParcelUnits | None = Field(description="Only in horizontal division")
+    built_m2: float | None = Field(ge=0, description="Built today: context, not buildability")
+    year_built: int | None = Field(default=None, ge=1000, le=2100)
+    current_use: str | None
+    official_url: HttpUrl | None = Field(
+        description="The parcel in the Sede Electrónica del Catastro, as its service returns it"
+    )
+    observed_at: date = Field(description="When the Catastro was asked")
+
+
+class PlanningKind(StrEnum):
+    """What the planning code is: a norma zonal or a planning area (ámbito) of the PGOUM."""
+
+    NORMA_ZONAL = "norma_zonal"
+    API = "API"
+    APE = "APE"
+    APR = "APR"
+    APD = "APD"
+    UZI = "UZI"
+    UZP = "UZP"
+    UNP = "UNP"
+    NUP = "NUP"
+    AOE = "AOE"
+    OTRO = "otro"
+
+
+class NormaZonal(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    nz: int = Field(ge=1, le=11)
+    grado: int | None = Field(default=None, ge=1, le=9)
+    nivel: str | None = Field(default=None, pattern=r"^[a-z]$")
+    name: str | None = Field(
+        default=None,
+        description="The zone's name in the Normas Urbanísticas (art. 8.0.5)",
+        examples=["Edificación en manzana cerrada"],
+    )
+
+
+class PlanningInstrument(BaseModel):
+    """The planning instrument in force at the point, with its official record."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    figure: str | None = Field(examples=["MPR.02.391"])
+    name: str | None
+    file_number: str | None = Field(examples=["711/2014/11518"])
+    url: HttpUrl | None
+
+
+class PlanningBlock(BaseModel):
+    """«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str = Field(examples=["8.3.a", "APR.02.06"])
+    name: str | None = Field(examples=["ZONA 8 GRADO 3º - NIVEL a", "MÉNDEZ ÁLVARO NORTE I"])
+    kind: PlanningKind
+    norma_zonal: NormaZonal | None
+    use: str | None = Field(examples=["RESIDENCIAL VIVIENDA COLECTIVA"])
+    urban_parcel: str | None = Field(examples=["MANZANA B"])
+    instrument: PlanningInstrument | None
+    sheet_url: HttpUrl | None = Field(
+        description="The official record: the instrument's, or the article of the Normas "
+        "Urbanísticas for a norma zonal"
+    )
+    sheet_label: str | None
+    viewer_url: HttpUrl = Field(description="The Geoportal viewer, centred on the parcel")
+    notice: str
+    observed_at: date
+
+
+class BuildabilityKind(StrEnum):
+    OFICIAL = "oficial"
+    SUPUESTO = "supuesto"
+    SIN_DATO = "sin_dato"
+
+
+class Buildability(BaseModel):
+    """The buildable m² the calculator starts from: official, assumed or unknown. Always
+    editable."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    value_m2: float | None = Field(ge=0)
+    kind: BuildabilityKind
+    source: str = Field(description="In words, with its date or its article")
+    article: str | None = Field(default=None, examples=["8.8.9"])
+    article_url: HttpUrl | None = None
+    coefficient: float | None = Field(default=None, ge=0, description="m² per m² of parcel")
+    formula: str | None = Field(default=None, examples=["0,7 m²/m² × 502 m² de parcela"])
+    note: str | None = Field(default=None, description="What to keep in mind about the figure")
+    assumed_m2: float | None = Field(
+        default=None, ge=0, description="The norm's assumption when an official figure wins"
+    )
+    dataset_ids: list[str] = Field(default_factory=list[str])
+    editable: Literal[True] = True
+
+
+class ParcelSource(BaseModel):
+    """Who the sheet's data comes from, its licence and how it asks to be cited."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source_id: str
+    name: str
+    publisher: str
+    license: str
+    license_url: HttpUrl | None = None
+    attribution: str
+    url: HttpUrl | None = None
+    accessed_at: date | None = None
+
+
+class ParcelContext(BaseModel):
+    """The barrio around the parcel: the whole investor sheet in a pilot barrio (D-248); outside
+    the pilot, its district's figures, and it says so."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    level: TerritoryLevel
+    in_pilot: bool
+    note: str | None
+    sheet: InvestorZone
+
+
+DegradedPart = Literal["catastro", "planning", "context"]
+
+
+class ParcelSheet(BaseModel):
+    """GET /api/v1/investors/parcels: one parcel of Madrid capital for whoever builds."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    input: ParcelInput
+    parcel: ParcelBlock
+    planning: PlanningBlock | None = Field(description="null when the Ayuntamiento fails")
+    buildability: Buildability
+    barrio: ZoneRef | None
+    district: ZoneRef | None
+    context: ParcelContext | None = Field(description="null when the barrio is unknown")
+    defaults: ViabilityDefaults
+    sources: list[ParcelSource]
+    notices: list[str]
+    degraded: list[DegradedPart] = Field(
+        default_factory=list[DegradedPart], description="The parts that could not be read now"
+    )
+    fallback: Literal["demo_snapshot"] | None = Field(
+        default=None, description="Served from the saved demo sheet because a source failed"
+    )
+
+
+class ParcelCandidate(BaseModel):
+    """An address that matches what was typed, with its parcel. Shown for the person to pick:
+    never picked for them."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    address: str
+    postal_code: str | None = Field(default=None, pattern=r"^\d{5}$")
+    rc14: str = Field(pattern=RC14_PATTERN)
+    lat: float | None = None
+    lon: float | None = None
+
+
+class ParcelCandidates(BaseModel):
+    """GET /api/v1/investors/parcels/candidates: portals of Madrid capital with their parcel."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    candidates: list[ParcelCandidate]
+    needs_number: bool = Field(description="The text matches streets but no portal: add the number")
+    sources: list[ParcelSource]
+
+
+class NearbyParcel(BaseModel):
+    """A parcel near a point that falls on the street (in a 404's `details.nearest`)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rc14: str = Field(pattern=RC14_PATTERN)
+    address: str | None
+    distance_m: float | None = Field(ge=0)

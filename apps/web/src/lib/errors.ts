@@ -9,6 +9,7 @@ const BY_CODE: Record<string, string> = {
   INSUFFICIENT_DATA: "No hay datos suficientes para responder con seguridad en esta zona.",
   SOURCE_DEGRADED: "Uno de los datos oficiales no está disponible ahora. Te enseñamos lo que tenemos y marcamos lo que falta.",
   RATE_LIMITED: "Hay mucha gente usando Vida Fácil ahora mismo. Espera unos segundos y vuelve a intentarlo.",
+  AMBIGUOUS_INPUT: "Hay varias opciones que encajan con lo que has escrito. Elige una de la lista.",
 };
 const SERVER = "Algo ha fallado por nuestra parte. Inténtalo de nuevo en unos minutos.";
 

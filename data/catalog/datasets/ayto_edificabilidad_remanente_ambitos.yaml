@@ -22,6 +22,10 @@ resources:
   format: GeoJSON
   url: https://sigma.madrid.es/hosted/rest/services/ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual/FeatureServer/2/query?where=1%3D1&outFields=AMB_TX_ETI&outSR=25830&f=geojson
   role: points
+- name: Parcelas catastrales con edificabilidad a julio de 2026 (VEDA Madrid, servicio del Departamento de Análisis Urbano)
+  format: JSON
+  url: https://sigma.madrid.es/hosted/rest/services/ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual/FeatureServer/1/query
+  role: parcels
 license_status: CLEAR
 status: REVIEWED
 priority: P1

@@ -8,6 +8,7 @@ dependencies = [
     "hi-db",
     "hi-domain",
     "fastapi>=0.118",
+    "httpx>=0.28",
     "uvicorn[standard]>=0.35",
 ]
 

@@ -9,6 +9,10 @@
 //   J7 a barrio's card becomes its district's, in the address too, when the search leaves the capital
 //   J8 «Para desarrolladores» (D-249), from the link of «Para inversores»: each route with its copyable
 //      example against the public API, the 7 MCP tools, the planned items marked as not available yet
+//   J9 «Busca tu parcela» (D-250): /inversores opens with the search; a demo parcel's sheet (only the
+//      four demo parcels: locally, the API runs with PARCEL_UPSTREAMS=false and calls no source) with
+//      its figures as the API sent them, its sources and notices, the calculator starting from its
+//      buildable m², a reference typed by hand and the print view
 // Every figure on screen is compared with the API response the page itself received: no fixed
 // numbers, so the checks survive a data sync. Browser console errors and horizontal overflow fail.
 //
@@ -643,7 +647,7 @@ async function journeyZoneList(run, page) {
 
 /** The API that the developers page documents: always the public one, also on a local run. */
 const PUBLIC_API = "https://vidafacil-madrid.vercel.app/api/v1";
-const DEV_ROUTES = 13; // apps/web/src/lib/developers.ts, API_GROUPS (its vitest lists them)
+const DEV_ROUTES = 15; // apps/web/src/lib/developers.ts, API_GROUPS (its vitest lists them)
 const MCP_TOOLS = ["buscar_zonas", "que_falta", "explicar_zona", "encontrar_zona", "fuentes_de_datos", "ficha_inversor", "viabilidad"];
 
 async function journeyDevelopers(run, page) {
@@ -675,6 +679,91 @@ async function journeyDevelopers(run, page) {
   await run.overflow(page, J);
 }
 
+/** The four demo parcels (apps/web/src/lib/parcels.ts, DEMO_PARCELS): the only ones J9 asks for. */
+const DEMO_PARCELS = ["2122202VK4722A", "3959601VK4735H", "0390314VK4709A", "9943003VK3794D"];
+const MARK_WORD = { oficial: "Dato", supuesto: "Supuesto", sin_dato: "Sin dato" };
+const m2Shown = (v) =>
+  `${new Intl.NumberFormat("es-ES", { maximumFractionDigits: v >= 100 || Number.isInteger(v) ? 0 : 1, useGrouping: "always" }).format(v)} m²`;
+const isParcel = (rc) => (r) => r.url().includes(`/api/v1/investors/parcels?rc=${rc}`) && r.request().method() === "GET";
+
+/** One parcel's sheet against the API answer the page received: no fixed figures. */
+async function checkParcelSheet(run, page, J, rc, response) {
+  run.check(J, `${rc}: GET /investors/parcels 200`, response.status() === 200, response.status());
+  const { data: sheet } = await response.json();
+  await page.getByRole("heading", { name: "Resultado: tres escenarios" }).waitFor({ timeout: WAIT });
+  const h1 = squash(await page.getByRole("heading", { level: 1 }).innerText());
+  run.check(J, `${rc}: the title is the parcel's address`, h1 === (sheet.parcel.address ?? `Referencia catastral ${rc}`), h1);
+  const area = section(page, "parcela");
+  const areaText = squash(await area.innerText());
+  run.check(J, `${rc}: the parcel's area as the API says`, sheet.parcel.area_m2 === null || areaText.includes(m2Shown(sheet.parcel.area_m2)), sheet.parcel.area_m2);
+  if (sheet.parcel.units) {
+    run.check(J, `${rc}: horizontal division summarised by use`, areaText.includes(`${sheet.parcel.units.total} inmuebles`) && !/Pl:|Pt:|planta \d/i.test(areaText), sheet.parcel.units.total);
+  }
+  const built = squash(await section(page, "edificabilidad").innerText());
+  const b = sheet.buildability;
+  run.check(J, `${rc}: buildability ${b.kind} with its word`, built.includes(MARK_WORD[b.kind]) && (b.value_m2 === null ? built.includes("Sin dato") : built.includes(m2Shown(b.value_m2))), `${b.kind} ${b.value_m2}`);
+  const field = await page.getByLabel("Superficie edificable residencial").inputValue();
+  run.check(J, `${rc}: the calculator starts from the parcel's m²`, field === (b.value_m2 === null ? "" : String(Math.round(b.value_m2))), field);
+  const planning = squash(await section(page, "planeamiento").innerText());
+  if (sheet.planning) {
+    // A norma zonal in words («Norma zonal 1, grado 2º»), an area by its code («APR.02.06»)
+    const nz = sheet.planning.norma_zonal;
+    const shown = nz ? `Norma zonal ${nz.nz}${nz.grado ? `, grado ${nz.grado}º` : ""}` : sheet.planning.code;
+    run.check(J, `${rc}: planning as the API says and the legal notice`, planning.includes(shown) && planning.includes("sin valor jurídico"), shown);
+  } else {
+    run.check(J, `${rc}: without planning, the sheet says the Ayuntamiento does not answer`, planning.includes("el resto de la ficha sí"), planning.slice(0, 80));
+  }
+  const sources = squash(await section(page, "fuentes").innerText());
+  const catastro = sheet.sources.find((s) => s.source_id === "catastro_ovc");
+  run.check(J, `${rc}: the Catastro's citation with its date, never «información catastral»`,
+    catastro && sources.includes(catastro.attribution) && !/(información|ficha|cartografía) catastral/i.test(await page.locator("main").innerText()), catastro?.attribution ?? "missing");
+  return sheet;
+}
+
+const section = (page, id) => page.locator(`section:has(> #${id})`);
+
+async function journeyParcel(run, page) {
+  const J = "J9 parcel";
+  await page.goto(`${BASE}/inversores`);
+  await page.getByRole("heading", { level: 1, name: "Busca tu parcela" }).waitFor({ timeout: WAIT });
+  const ways = await Promise.all(["Por referencia catastral", "Por dirección", "En el mapa"].map((n) => page.getByRole("heading", { level: 2, name: n }).count()));
+  run.check(J, "three ways in: reference, address and map", ways.every((n) => n === 1), ways.join(","));
+  const chips = page.getByRole("heading", { name: "O prueba con una de estas" }).locator("xpath=..").getByRole("link");
+  const hrefs = await chips.evaluateAll((links) => links.map((a) => a.getAttribute("href")));
+  run.check(J, "the four demo parcels as chips", hrefs.join() === DEMO_PARCELS.map((rc) => `/inversores/parcela/${rc}`).join(), hrefs.join());
+  const explore = page.getByRole("heading", { level: 2, name: "Explorar barrios" });
+  await explore.waitFor({ timeout: WAIT });
+  run.check(J, "the barrio list follows, as «Explorar barrios»", (await explore.count()) === 1);
+  run.check(J, "«¿Integrarlo en tu sistema? API y MCP gratis» is still there", (await page.getByRole("link", { name: "¿Integrarlo en tu sistema? API y MCP gratis" }).count()) === 1);
+  await run.overflow(page, J);
+  await run.shot(page, "j9-search");
+
+  // A chip: Méndez Álvaro (official buildability from the Ayuntamiento's VEDA)
+  const [first] = await Promise.all([
+    page.waitForResponse(isParcel(DEMO_PARCELS[0]), { timeout: WAIT }),
+    chips.first().click(),
+  ]);
+  await page.waitForURL(new RegExp(`/inversores/parcela/${DEMO_PARCELS[0]}$`), { timeout: WAIT });
+  await checkParcelSheet(run, page, J, DEMO_PARCELS[0], first);
+  await run.shot(page, "j9-sheet");
+  await run.overflow(page, J);
+
+  // A reference typed by hand, in lower case and with spaces: Mayor 61 (horizontal division, NZ 1)
+  await page.goto(`${BASE}/inversores`);
+  await page.getByRole("textbox", { name: "Referencia catastral" }).fill("9943003 vk3794d");
+  const [typed] = await Promise.all([
+    page.waitForResponse(isParcel(DEMO_PARCELS[3]), { timeout: WAIT }),
+    page.getByRole("button", { name: "Buscar la parcela" }).click(),
+  ]);
+  await checkParcelSheet(run, page, J, DEMO_PARCELS[3], typed);
+
+  // The print view keeps the sources and notices
+  await page.emulateMedia({ media: "print" });
+  const notices = await section(page, "fuentes").getByRole("listitem").allInnerTexts();
+  run.check(J, "printed: the legal notice of the planning", notices.some((n) => n.includes("sin valor jurídico")), notices.length);
+  await page.emulateMedia({ media: "screen" });
+}
+
 async function runCombination(browserName, device) {
   const run = new Run(browserName, device);
   const options = { ...DEVICES[device], locale: "es-ES" };
@@ -685,7 +774,7 @@ async function runCombination(browserName, device) {
     for (const [name, journey] of [["J1 search", journeySearch], ["J2 Qué falta Madrid", journeyMadrid],
       ["J3 map by row", (r, p) => journeyRowMap(r, p, opts.shots ? 1 : 99)], ["J4 zone list", journeyZoneList], ["J5 Somos mayores", journeySeniors],
       ["J6 zone in the address", journeyZoneAddress], ["J7 barrio to district", journeyBarrioToDistrict],
-      ["J8 developers", journeyDevelopers]]) {
+      ["J8 developers", journeyDevelopers], ["J9 parcel", journeyParcel]]) {
       const context = await browser.newContext(options);
       if (opts["block-external"]) {
         await context.route("**/*", (route) => {

@@ -22,6 +22,8 @@ from hi_contracts.public.responses import (
     GapRowMapResponse,
     InvestorZoneListResponse,
     InvestorZoneResponse,
+    ParcelCandidatesResponse,
+    ParcelSheetResponse,
     PlacesResponse,
     SearchResponse,
     ViabilityResponse,
@@ -51,6 +53,8 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "api/investor_zone_response": InvestorZoneResponse,
     "api/viability_request": ViabilityRequest,
     "api/viability_response": ViabilityResponse,
+    "api/parcel_sheet_response": ParcelSheetResponse,  # D-250
+    "api/parcel_candidates_response": ParcelCandidatesResponse,
     "mcp/zone_explanation_response": ZoneExplanationResponse,
     "mcp/zone_lookup_response": ZoneLookupResponse,
 }

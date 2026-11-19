@@ -31,7 +31,7 @@ import { Figure } from "./Figures";
 import styles from "./Investors.module.css";
 import { useInvestorZone } from "./useInvestors";
 
-function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+export function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <GlassCard as="section" aria-labelledby={id} className={`${styles.card} ${styles.section}`}>
       <h2 id={id}>{title}</h2>
@@ -40,10 +40,11 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-function Demand({ sheet }: { sheet: InvestorZone }) {
+/** The sections below are also those of a parcel's sheet (D-250), with its own titles. */
+export function Demand({ sheet, title = TEXT.sections.demand }: { sheet: InvestorZone; title?: string }) {
   const d = sheet.demand;
   return (
-    <Section id="demanda" title={TEXT.sections.demand}>
+    <Section id="demanda" title={title}>
       <dl className={styles.figures}>
         <Figure label={SHEET_TEXT.income} value={d.income} />
         <Figure label={SHEET_TEXT.householdSize} value={d.household_size} decimals={2} />
@@ -58,10 +59,10 @@ function Demand({ sheet }: { sheet: InvestorZone }) {
   );
 }
 
-function Prices({ sheet }: { sheet: InvestorZone }) {
+export function Prices({ sheet, title = TEXT.sections.prices }: { sheet: InvestorZone; title?: string }) {
   const p = sheet.prices;
   return (
-    <Section id="precios" title={TEXT.sections.prices}>
+    <Section id="precios" title={title}>
       <dl className={styles.figures}>
         <Figure label={SHEET_TEXT.sale} value={p.sale_m2} note={SHEET_TEXT.saleNote} />
         <Figure label={SHEET_TEXT.premium} value={p.new_build_premium_pct} decimals={1} />
@@ -88,10 +89,10 @@ function GapItem({ row, district }: { row: GapRow; district: string }) {
   );
 }
 
-function Gaps({ sheet }: { sheet: InvestorZone }) {
+export function Gaps({ sheet, title = TEXT.sections.gaps }: { sheet: InvestorZone; title?: string }) {
   const gaps = sheet.gaps;
   return (
-    <Section id="que-falta" title={TEXT.sections.gaps}>
+    <Section id="que-falta" title={title}>
       {gaps ? (
         <>
           <p className={styles.lead}>{SHEET_TEXT.gapsIntro(gaps.zone_name)}</p>
@@ -138,10 +139,10 @@ function LandList({ items }: { items: LandItem[] }) {
   );
 }
 
-function Land({ sheet }: { sheet: InvestorZone }) {
+export function Land({ sheet, title = TEXT.sections.land }: { sheet: InvestorZone; title?: string }) {
   const land = sheet.land;
   return (
-    <Section id="suelo" title={TEXT.sections.land}>
+    <Section id="suelo" title={title}>
       <p className={styles.lead}>{SHEET_TEXT.landIntro}</p>
       <h3 className={styles.subhead}>{SHEET_TEXT.parcels(land.parcels.length)}</h3>
       {land.parcels.length > 0 ? <LandList items={land.parcels} /> : <p>{emptyLandText(land.parcels_m2.value, "parcelas")}</p>}

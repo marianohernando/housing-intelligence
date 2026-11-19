@@ -19,7 +19,8 @@ export const DEV_TEXT = {
   intro:
     "Las mismas cifras que ves en Vida Fácil, para tu sistema o para tu agente de IA: qué falta en cada zona, qué zonas encajan con un hogar, el suelo público y si una promoción sale. Gratis para todos, también para empresas y ayuntamientos, igual que los datos.",
   tocLabel: "En esta página",
-  verified: "Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026.",
+  verified:
+    "Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026, salvo los dos de la búsqueda por parcela, probados contra la API local ese día: se comprueban en producción al desplegarlos.",
   copy: "Copiar",
   copied: "Copiado",
   copyFailed: "No se ha podido copiar: selecciona el texto y cópialo.",
@@ -232,6 +233,27 @@ export const API_GROUPS: readonly ApiGroup[] = [
           "Quién vive, precios, qué falta, suelo y los valores de partida de la viabilidad. Cada cifra trae su fuente y si es un dato o un supuesto. Aquí, Pinar del Rey.",
         request: "/investors/zones/ES.28.BAR.28079164",
         returns: "Bloques demand, prices, gaps, land y defaults; cada cifra con value, unit, mark (dato o supuesto) y source.",
+      },
+      {
+        id: "investor-parcel",
+        title: "Una parcela exacta",
+        method: "GET",
+        path: "/api/v1/investors/parcels?rc=|lat=&lon=|address=",
+        description:
+          "La ficha de una parcela de Madrid capital por su referencia catastral (rc), por un punto (lat y lon) o por su dirección (address): sus datos, elaborados a partir de los de la Dirección General del Catastro; su calificación del Ayuntamiento con el enlace a la ficha oficial; la edificabilidad de partida, oficial, supuesta o sin dato, y el contexto de su barrio. Aquí, la parcela de demostración de Méndez Álvaro 47–49.",
+        request: "/investors/parcels?rc=2122202VK4722A",
+        returns:
+          "parcel, planning (con el aviso de que no tiene valor jurídico), buildability (value_m2, kind y su fuente), barrio, context, los valores de partida de la calculadora y sources, con la cita de cada fuente. Una dirección con varios portales responde 422 AMBIGUOUS_INPUT con los candidatos; un punto en la calle, 404 con las parcelas más cercanas.",
+      },
+      {
+        id: "investor-parcel-candidates",
+        title: "Los portales de una dirección",
+        method: "GET",
+        path: "/api/v1/investors/parcels/candidates?q=",
+        description:
+          "Los portales de Madrid capital que coinciden con una dirección escrita, cada uno con su referencia catastral, para que elijas el tuyo: nunca elige por ti. Geocodificación de CartoCiudad (IGN).",
+        request: "/investors/parcels/candidates?q=mendez%20alvaro%2047",
+        returns: "candidates (dirección, código postal y referencia catastral), needs_number si falta el número del portal y la cita de CartoCiudad.",
       },
       {
         id: "viability",

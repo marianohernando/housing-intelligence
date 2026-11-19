@@ -19,6 +19,8 @@ class ErrorCode(StrEnum):
     CONSENT_REQUIRED = "CONSENT_REQUIRED"
     RATE_LIMITED = "RATE_LIMITED"
     NOT_FOUND = "NOT_FOUND"
+    # D-250: an address that matches several parcels; `details.candidates` lists them
+    AMBIGUOUS_INPUT = "AMBIGUOUS_INPUT"
 
 
 class Meta(BaseModel):

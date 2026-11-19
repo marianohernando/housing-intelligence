@@ -966,7 +966,8 @@ Las atribuciones salen de `attribution_text` en `data/catalog/sources/`. Cada li
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `inversores.lista.titulo` | Barrios del piloto | Agrupados por distrito: «Hortaleza (5 barrios)» |
+| `inversores.lista.titulo` | Explorar barrios | **Desde D-250** va después de «Busca tu parcela» (antes «Barrios del piloto», arriba). Agrupados por distrito: «Hortaleza (5 barrios)» |
+| `inversores.lista.intro` | O empieza por un barrio del piloto: qué le falta, dónde hay suelo público y sus precios. | D-250. Delante de `inversores.lista.resumen` |
 | `inversores.lista.resumen` | {n} barrios. {m} tienen suelo público para vivienda en el Portal del Suelo. Lo que falta es dato del distrito de cada barrio: «Qué falta» no se calcula por barrio. | Con una: «1 tiene» |
 | `inversores.lista.solo_suelo` | Solo barrios con suelo público | Botón que se queda pulsado (`aria-pressed`) |
 | `inversores.lista.falta` | Falta en el distrito de {distrito}: {filas}; justo: {filas}. | FALTA primero y después JUSTO, como en «Qué falta». Solo JUSTO: «Justo en el distrito de {distrito}: {filas}.»; ninguna: «En el distrito de {distrito} no falta nada de lo que medimos.»; sin lista: «Sin datos de lo que falta en el distrito de {distrito}.» Siempre nombra el distrito: el dato no es del barrio |
@@ -1027,12 +1028,52 @@ En este orden: 1. Quién vive aquí; 2. Precios; 3. Qué falta; 4. Suelo; 5. ¿S
 | `inversores.calc.cifras` | Ingresos por ventas · Construcción (PEM × coeficiente) · Comercialización y otros · Suelo · Beneficio · Margen sobre ventas · Lo máximo que se puede pagar por el suelo · Rentabilidad bruta si se alquila | Sin suelo: «Sin precio». **La rentabilidad nunca se da sin suelo** (revisión del #94): sin precio, «Rentabilidad bruta si se alquila, pagando por el suelo lo máximo que deja el margen objetivo»; si ni con el suelo gratis se llega al objetivo, «Rentabilidad bruta si se alquila: ni con el suelo gratis se llega al margen objetivo, así que no hay precio de suelo con el que calcularla» y «—» |
 | `inversores.calc.demanda` | ¿Lo pueden pagar los hogares del barrio? | Las líneas de la API: precio de la vivienda tipo, cuota de la hipoteca y alquiler en % de la renta media frente al 30 %, la entrada en años de renta, y «Es la renta media: no dice cuántos hogares ganan más o menos que ella.», y «Solo cuenta la cuota o el alquiler, sin gastos ni suministros: la cuenta es optimista.» antes de la de la renta media |
 
+### Busca tu parcela (D-250)
+
+**Nueva (19 nov).** Decisión de Mariano del 19 nov: «el inversor debe poner su parcela exacta». `/inversores` abre con la búsqueda por parcela (toda Madrid capital) y la lista de barrios pasa detrás, como «Explorar barrios». Tres formas de entrar: la referencia catastral, la dirección (los portales que coinciden, para que la persona elija el suyo: **nunca se elige por ella**) y un clic en el mapa. Mismas reglas: 16 px, 44 px, sin colores de estado, cada cifra con su fuente. **Nunca «información catastral», «ficha catastral» ni «cartografía catastral»** (licencia del Catastro): «Datos de la parcela». La dirección tecleada no se registra.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `inversores.parcela.titulo` | Busca tu parcela | Título (h1) de `/inversores`, bajo `inversores.plan` |
+| `inversores.parcela.intro` | Para inversores y promotores: cómo es la parcela, qué dice el planeamiento, cuánto se puede construir y si una promoción sale, con la fuente de cada cifra. | Corto: en un móvil de 390 px la referencia catastral cabe en la primera pantalla |
+| `inversores.parcela.cobertura` | Toda Madrid capital. Dentro de la M-40 (el piloto), con todo el contexto del barrio. | Después de la búsqueda, con `inversores.modelo` y `inversores.desarrolladores` |
+| `inversores.parcela.rc` | Por referencia catastral · Referencia catastral · Buscar la parcela | Título, etiqueta y botón |
+| `inversores.parcela.rc.ayuda` | Los 14 primeros caracteres (por ejemplo, 2122202VK4722A). La de 20 también vale. | |
+| `inversores.parcela.rc.mal` | Una referencia catastral tiene 14, 18 o 20 letras y números. | Bajo el campo, sin llamar a la API |
+| `inversores.parcela.direccion` | Por dirección · Calle y número | |
+| `inversores.parcela.direccion.ayuda` | En Madrid capital. Elige tu portal en la lista: nunca lo elegimos por ti. | |
+| `inversores.parcela.direccion.estados` | Escribe al menos 4 letras. · Buscando portales… · 1 portal coincide. / {n} portales coinciden. · Encontramos la calle: añade el número del portal. · No encontramos ningún portal de Madrid capital con esa dirección. · El buscador de direcciones no responde ahora. Usa la referencia catastral o el mapa. | En una línea `role="status"`. Cada portal: su dirección, y debajo su código postal y «Referencia {rc}». Debajo de la lista, la cita de CartoCiudad |
+| `inversores.parcela.mapa` | En el mapa · Acerca el mapa y pincha en la parcela. | Mapa pequeño con el estilo de la app; debajo, «Mapa: © OpenStreetMap · OpenFreeMap» a 16 px |
+| `inversores.parcela.mapa.estados` | Buscando la parcela de ese punto… · Ese punto cae en la calle. ¿Era una de estas? · En ese punto no hay ninguna parcela. · Ese punto está fuera de Madrid capital. · Tu navegador no puede mostrar el mapa: usa la referencia catastral o la dirección. | Las parcelas cercanas, con «A {n} m» |
+| `inversores.parcela.demo` | O prueba con una de estas: Méndez Álvaro 47–49 (solar con edificabilidad oficial) · Almería 1 (suelo público de Metro de Madrid) · Luis Misson 2 (solar sin coeficiente: pones tú los m²) · Mayor 61 (edificio en división horizontal) | Las 4 parcelas de demostración (la API guarda su ficha). «Luis Misson» como lo escribe el Catastro |
+
+### Ficha de una parcela (D-250)
+
+`/inversores/parcela/{referencia}`, que se puede compartir. En este orden: 1. Datos de la parcela; 2. Planeamiento; 3. Edificabilidad; 4. Quién vive en el barrio; 5. Precios en el barrio; 6. Qué falta; 7. Suelo en el barrio; 8. ¿Sale la promoción?; Fuentes y avisos. Fuera del piloto, 4, 5 y 7 dicen «en el distrito» y un aviso lo explica.
+
+| Clave | Texto | Notas |
+|---|---|---|
+| `inversores.parcela.ficha.lugar` | Parcela de Madrid · barrio de {barrio}, distrito de {distrito} | Sin barrio: «Parcela de Madrid capital». El título es la dirección y debajo «Referencia catastral {rc}» |
+| `inversores.parcela.ficha.datos` | Superficie de la parcela · Uso actual · Construido hoy · Año de construcción · ¿Es un solar? · División horizontal | «Construido hoy» lleva «Es lo que hay, no lo que se puede construir.». La división: «Sí: 6 inmuebles (5 residencial, 314 m²; 1 comercial, 62 m²)», nunca un inmueble con su planta y su puerta. «Ver la parcela en la Sede Electrónica del Catastro» (el enlace que da su servicio) y la cita del Catastro |
+| `inversores.parcela.ficha.cita_catastro` | Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el {dd/mm/aaaa}. | Viene de la API (`sources`) |
+| `inversores.parcela.ficha.planeamiento` | Calificación · Uso pormenorizado · Parcela urbanística · Planeamiento en vigor | «Norma zonal 8, grado 3º, nivel a» con el nombre de la norma debajo, o «Área de planeamiento remitido APR.02.06: Méndez Álvaro Norte I». Enlaces: «Ver la ficha oficial del expediente» o «Ver el artículo 8.4.9 de las Normas Urbanísticas», y «Ver en el visor del Geoportal del Ayuntamiento» |
+| `inversores.parcela.ficha.aviso_urbanistico` | Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial. | Fijo, a la vista, con icono de información; también en papel. Debajo, la cita: «Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el {fecha}. Información urbanística sin valor jurídico.» |
+| `inversores.parcela.ficha.sin_ayuntamiento` | El Ayuntamiento no responde ahora; el resto de la ficha sí. Vuelve a intentarlo en un rato. | Con «Reintentar» |
+| `inversores.parcela.ficha.edificabilidad` | Edificabilidad de partida | Con su etiqueta: «Dato» (oficial: VEDA o el Portal del Suelo), «Supuesto» (el coeficiente de la norma zonal sobre la superficie del Catastro, con la cuenta: «0,7 m²/m² × 502 m² de parcela») o «Sin dato» («La norma zonal 4 no fija un coeficiente…» y «Pon tú los m² edificables.»). Su fuente, su nota, «Ver el artículo…» y «Siempre la puedes cambiar en la calculadora.» |
+| `inversores.parcela.ficha.calculadora` | La que publica la fuente oficial para esta parcela · Supuesta con la norma: compruébala en la ficha · Ponla tú: la norma no fija una cifra para esta parcela | Bajo la superficie edificable de la calculadora, con la misma etiqueta que la ficha, hasta que la persona la cambie («Lo pones tú») |
+| `inversores.parcela.ficha.demo` | El Catastro o el Ayuntamiento no responden ahora: te enseñamos los datos guardados el {fecha} de esta parcela de demostración. | Solo con `fallback: "demo_snapshot"` |
+| `inversores.parcela.ficha.sin_barrio` | No hemos podido leer el barrio ahora; el resto de la ficha sí. La calculadora empieza sin los precios del barrio. | Sin base de datos |
+| `inversores.parcela.ficha.fuera_piloto` | Este barrio está fuera del piloto (Madrid capital dentro de la M-40): las cifras son del distrito de {distrito} o de toda la ciudad. | Viene de la API (`context.note`) |
+| `inversores.parcela.ficha.fuentes` | Las {n} fuentes de la parcela · Los {n} conjuntos de datos del barrio | Cada fuente: quién, qué, su cita, su licencia y «Ver la fuente» (en papel, la dirección) |
+| `inversores.parcela.errores` | No existe ninguna parcela con esa referencia catastral. · Esa referencia no es de una parcela de Madrid capital, o no está bien escrita. · El Catastro no responde ahora y esta parcela no es de las de demostración. Vuelve a intentarlo en unos minutos. · Has buscado muchas parcelas nuevas en poco tiempo. Espera un minuto y vuelve a intentarlo. | Con «‹ Buscar otra parcela» y, si tiene sentido, «Reintentar» |
+
 ### Avisos fijos (vienen de la API, `notices`)
 - No es una tasación ni un informe vinculante ni una garantía de rentabilidad.
 - Contexto urbanístico, no qué se puede construir: los m² edificables son los que publica la fuente; la normativa de cada parcela manda.
 - Sin dato no es 0: lo que no sabemos se dice, nunca se rellena.
 - La financiación (intereses y comisiones del préstamo) no entra en esta versión: el margen es antes de financiación e impuestos.
 - El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. Ajusta el coeficiente si tienes un presupuesto.
+- En la ficha de una parcela (D-250), además: «Información urbanística sin valor jurídico (Ayuntamiento de Madrid). Consulte la ficha oficial.»; «Los datos de la parcela los elabora Vida Fácil a partir de los de la Dirección General del Catastro: para cualquier trámite, consulta la Sede Electrónica del Catastro.»; «Una edificabilidad «supuesta» aplica la norma a la superficie del Catastro: no es la de un proyecto ni la de una licencia. Compruébala en la ficha oficial.»
 
 ---
 
@@ -1072,8 +1113,8 @@ En este orden: 1. Quién vive aquí; 2. Precios; 3. Qué falta; 4. Suelo; 5. ¿S
 | Clave | Texto | Notas |
 |---|---|---|
 | `desarrolladores.funciona` | Funciona hoy | Etiqueta junto al título de la sección (texto, no solo color) |
-| `desarrolladores.funciona.intro` | Estas rutas están en producción. Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026. Copia el ejemplo y pégalo en un terminal. Las respuestas son JSON; con jq puedes quedarte con una parte, por ejemplo \| jq .meta. | |
-| `desarrolladores.ruta` | {título} · {método} {ruta} · {descripción} · ejemplo con curl · Qué devuelve: {…} | Una tarjeta por ruta, en cinco grupos: «Buscar zonas para un hogar» (`POST /search` y `/search/barrios`), «Qué falta en cada zona» (`/gaps/{level}/{code}`, `/gaps?level=&row=` y `/gaps/impact`), «Fuentes e indicadores» (`/datasets`, `/features` y `/features/{id}/values`), «Zonas y lugares en el mapa» (`/geo/admin-units` y `/places`) y «Para inversores y promotores (piloto: Madrid capital dentro de la M-40)» (`/investors/zones`, `/investors/zones/{admin_unit_id}` y `/investors/viability`). Los títulos, descripciones y «Qué devuelve» de cada una, en `API_GROUPS` de `lib/developers.ts` |
+| `desarrolladores.funciona.intro` | Estas rutas están en producción. Cada ejemplo se ha probado contra la API de producción el 19 de noviembre de 2026, salvo los dos de la búsqueda por parcela, probados contra la API local ese día: se comprueban en producción al desplegarlos. Copia el ejemplo y pégalo en un terminal. Las respuestas son JSON; con jq puedes quedarte con una parte, por ejemplo \| jq .meta. | |
+| `desarrolladores.ruta` | {título} · {método} {ruta} · {descripción} · ejemplo con curl · Qué devuelve: {…} | Una tarjeta por ruta, en cinco grupos: «Buscar zonas para un hogar» (`POST /search` y `/search/barrios`), «Qué falta en cada zona» (`/gaps/{level}/{code}`, `/gaps?level=&row=` y `/gaps/impact`), «Fuentes e indicadores» (`/datasets`, `/features` y `/features/{id}/values`), «Zonas y lugares en el mapa» (`/geo/admin-units` y `/places`) y «Para inversores y promotores (piloto: Madrid capital dentro de la M-40)» (`/investors/zones`, `/investors/zones/{admin_unit_id}`, `/investors/parcels`, `/investors/parcels/candidates` —D-250, con el ejemplo de una parcela de demostración— y `/investors/viability`). Los títulos, descripciones y «Qué devuelve» de cada una, en `API_GROUPS` de `lib/developers.ts` |
 | `desarrolladores.copiar` | Copiar | Botón de cada ejemplo (44 px); para el lector de pantalla, «Copiar: {método} {ruta}». Al copiar, al lado: «Copiado»; si el navegador no deja: «No se ha podido copiar: selecciona el texto y cópialo.» |
 
 ### El MCP

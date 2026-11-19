@@ -24,6 +24,8 @@ describe("«Para desarrolladores» (D-249)", () => {
         "GET /api/v1/gaps/impact",
         "GET /api/v1/gaps/{level}/{code}",
         "GET /api/v1/geo/admin-units",
+        "GET /api/v1/investors/parcels",
+        "GET /api/v1/investors/parcels/candidates",
         "GET /api/v1/investors/zones",
         "GET /api/v1/investors/zones/{admin_unit_id}",
         "GET /api/v1/places",

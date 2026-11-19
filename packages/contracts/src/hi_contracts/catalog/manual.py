@@ -287,3 +287,41 @@ class PilotZonesTable(BaseModel):
 
     def codes(self) -> list[str]:
         return [b.code for b in self.barrios]
+
+
+class BuildableParcel(BaseModel):
+    """D-250: one cadastral parcel with the buildable m² an official source publishes for it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rc14: str = Field(pattern=r"^[0-9A-Z]{14}$")
+    buildable_m2: float = Field(gt=0)
+    area_m2: float | None = Field(default=None, gt=0)
+    planning: str | None = Field(default=None, description="its planning area or parcel label")
+    use: str | None = Field(default=None, description="as the source writes it")
+    ref: str | None = Field(default=None, description="the source's own reference")
+
+
+class BuildableParcelsTable(BaseModel):
+    """D-250: the parcels of Madrid with official buildable m², read once from their source and
+    versioned (the API image has no data/ folder: scripts/export_investor_data.py writes them to
+    hi_domain.parcel_data). One entry per parcel; a parcel listed twice stops it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    title: str = Field(min_length=3)
+    publisher: str = Field(min_length=3)
+    url: HttpUrl
+    layer: str = Field(min_length=3)
+    consulted: date
+    dataset_id: str = Field(pattern=r"^[a-z][a-z0-9_]{2,63}$")
+    source_text: str = Field(min_length=10, description="how the sheet names the figure")
+    municipio_ine: str = Field(pattern=INE_MUNICIPIO)
+    parcels: list[BuildableParcel] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _one_entry_per_parcel(self) -> Self:
+        refs = [p.rc14 for p in self.parcels]
+        if len(refs) != len(set(refs)):
+            raise ValueError("one entry per parcel")
+        return self
