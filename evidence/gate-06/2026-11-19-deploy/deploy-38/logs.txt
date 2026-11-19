@@ -1,0 +1,80 @@
+vercel logs, deployment dpl_CXZbyzGYdHXqxszrzcTmE71i1K6U, from 2026-11-19T10:35:00Z to 2026-11-19T10:45:10.105Z (UTC)
+runtime log lines: 600, more pages: false, levels:  600 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 7
+
+CDN request records: 1944, more pages: false
+by status: 200 × 1881 · 304 × 63
+API by path and status:
+    85 GET /api/v1/geo/admin-units 200
+    55 POST /api/v1/search 200
+    49 GET /api/v1/datasets 200
+    24 GET /api/v1/gaps 200
+    18 GET /api/v1/gaps/distrito/2807913 200
+    10 GET /api/v1/gaps/distrito/2807921 200
+    10 GET /api/v1/features/seguridad_percibida_noche/values 200
+    10 GET /api/v1/features/seguridad_percibida_dia/values 200
+     9 GET /api/v1/places 200
+     8 POST /api/v1/investors/viability 200
+     7 POST /api/v1/search/barrios 200
+     7 GET /api/v1/features/suelo_publico_vivienda_m2/values 200
+     7 GET /api/v1/features/plan_vive_viviendas/values 200
+     6 GET /api/v1/investors/zones 200
+     6 GET /api/v1/features/compraventas_obra_nueva_pct/values 200
+     6 GET /api/v1/features/ambitos_residenciales_en_desarrollo/values 200
+     5 GET /api/v1/investors/zones/ES.28.BAR.28079164 200
+     5 GET /api/v1/features/valor_tasado_vivienda_usada_m2/values 200
+     5 GET /api/v1/features/valor_tasado_vivienda_nueva_m2/values 200
+     5 GET /api/v1/features/renta_neta_media_hogar/values 200
+     5 GET /api/v1/features/pct_calle_ruido_noche/values 200
+     5 GET /api/v1/features/pct_calle_ruido_dia/values 200
+     5 GET /api/v1/features/no2_media_anual/values 200
+     5 GET /api/v1/features/min_a_pie_aparcamiento_publico/values 200
+     5 GET /api/v1/features/infracciones_penales_por_1000_hab/values 200
+     5 GET /api/v1/features/ano_medio_construccion_residencial/values 200
+     4 GET /api/v1/features/hospitales_total/values 200
+     4 GET /api/v1/features/camas_instaladas_por_1000_hab/values 200
+     3 GET /api/v1/gaps/municipio/28079 200
+     3 GET /api/v1/features 200
+     2 GET /api/v1/gaps/municipio/28106 200
+     2 GET /api/v1/gaps/impact 200
+     1 GET /api/v1/health/ready 200
+     1 GET /api/v1/health 200
+     1 GET /api/v1/gaps/municipio/28180 200
+     1 GET /api/v1/gaps/municipio/28161 200
+     1 GET /api/v1/gaps/municipio/28148 200
+     1 GET /api/v1/gaps/municipio/28092 200
+     1 GET /api/v1/gaps/municipio/28074 200
+     1 GET /api/v1/gaps/municipio/28049 200
+     1 GET /api/v1/gaps/municipio/28006 200
+     1 GET /api/v1/gaps/municipio/28005 200
+     1 GET /api/v1/gaps/municipio/28001 200
+     1 GET /api/v1/gaps/distrito/2807920 200
+     1 GET /api/v1/gaps/distrito/2807919 200
+     1 GET /api/v1/gaps/distrito/2807918 200
+     1 GET /api/v1/gaps/distrito/2807917 200
+     1 GET /api/v1/gaps/distrito/2807916 200
+     1 GET /api/v1/gaps/distrito/2807915 200
+     1 GET /api/v1/gaps/distrito/2807914 200
+     1 GET /api/v1/gaps/distrito/2807912 200
+     1 GET /api/v1/gaps/distrito/2807911 200
+     1 GET /api/v1/gaps/distrito/2807910 200
+     1 GET /api/v1/gaps/distrito/2807909 200
+     1 GET /api/v1/gaps/distrito/2807908 200
+     1 GET /api/v1/gaps/distrito/2807907 200
+     1 GET /api/v1/gaps/distrito/2807906 200
+     1 GET /api/v1/gaps/distrito/2807905 200
+     1 GET /api/v1/gaps/distrito/2807904 200
+     1 GET /api/v1/gaps/distrito/2807903 200
+     1 GET /api/v1/gaps/distrito/2807902 200
+     1 GET /api/v1/gaps/distrito/2807901 200
+every 4xx/5xx:
