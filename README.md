@@ -17,7 +17,7 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 - colegios y sus aulas, centros de salud, servicios para mayores y farmacias, y los hospitales y camas de la región;
 - las 6 redes de transporte público del Consorcio Regional de Transportes, que también publica ese portal, y la accesibilidad de las estaciones de metro, Metro Ligero y Cercanías.
 
-Son los del código: 36 (53) en la demo de hoy, más los de la versión para inversores, que llegan a la demo en su próxima actualización: el Catastro por uso de la Comunidad (D-247) y los visados con el presupuesto de las obras (D-248).
+Todos están en la demo desde el 19 nov. Los últimos en llegar son los de la versión para inversores: el Catastro por uso de la Comunidad (D-247) y los visados con el presupuesto de las obras (D-248).
 
 → **[Ficha de cada conjunto, con su enlace, su licencia y para qué lo usamos](data/catalog/datasets/)** (también en la API: `GET /api/v1/datasets?cm_only=true`).
 
