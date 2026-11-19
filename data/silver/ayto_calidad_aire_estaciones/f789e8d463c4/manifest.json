@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ayto_calidad_aire_estaciones",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_calidad_aire_estaciones/2c84ca974088/212629-0-estaciones-control-aire-csv.csv",
+      "sha256": "2c84ca974088a6d5de13509489196ddefeee83fcae4999798b00603aa951cd1b",
+      "bytes": 5310,
+      "url": "https://datos.madrid.es/dataset/212629-0-estaciones-control-aire/resource/212629-0-estaciones-control-aire-csv/download/212629-0-estaciones-control-aire-csv.csv",
+      "retrieved_at": "2026-11-15T11:05:55.370504+00:00"
+    }
+  ],
+  "checksum": "f789e8d463c414d95ef0b487bb738226d427236dda49b401b157938a454fcdf2",
+  "parser_version": "places-1.8.1"
+}

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "mivau_serpavi_alquiler",
+      "role": "primary",
+      "path": "data/bronze/datasets/mivau_serpavi_alquiler/f00ca4d7f27d/mivau_serpavi_alquiler.xlsx",
+      "sha256": "f00ca4d7f27d23f811b229d97e65e3854c4563f8a5f3f16afdb023e326226ce9",
+      "bytes": 71155784,
+      "url": "https://cdn.mivau.gob.es/portal-web-mivau/vivienda/serpavi/2026-03_09_bd_SERPAVI_2011-2024%20-%20DEFINITIVO%20WEB_v2.xlsx",
+      "retrieved_at": "2026-11-14T22:37:47.880706+00:00"
+    }
+  ],
+  "checksum": "414a339570d2f94163599f77aa28d9999f4fc18bd61b7d0312a41322304be3fd",
+  "parser_version": "serpavi_rent-1.0.0",
+  "dataset_version": "2026-11-14-414a339570d2",
+  "correlation_id": "5fc1c505b6824fe28b4eb8f008a99282",
+  "silver": "data/silver/mivau_serpavi_alquiler/414a339570d2/observations.csv.gz"
+}

@@ -91,6 +91,14 @@ a {
   border: 0;
 }
 
+/*
+ * zona.contexto.no_puntua: the context cards of a zone (D-235, D-241) end with the same «Son datos
+ * informativos…»; one after another, it is said only under the last one that shows.
+ */
+[data-context-card]:has(~ [data-context-card]) [data-context-footer] {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -99,5 +107,29 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Printing a page (D-248: «Guardar como PDF» of an investor sheet): its content on white, without
+ * the header, the skip link or the buttons (`.no-print`). Each page says what it prints.
+ */
+@media print {
+  [data-site-header],
+  .skip-link,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .glass {
+    background: #fff;
+    border-color: var(--line);
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }

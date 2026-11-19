@@ -1,0 +1,13 @@
+metric_id: poblacion_padron_barrio
+human_name: Población empadronada por barrio
+description: >-
+  Personas inscritas en el padrón municipal de Madrid en cada uno de sus 131 barrios (total, sin
+  bandas de edad), con la misma foto mensual del Ayuntamiento que la población por distrito. Las
+  pocas filas del padrón sin barrio cuentan en su distrito y no en un barrio (D-247).
+domain: population
+unit: personas
+aggregation_method: sum
+geo_resolution_min: barrio
+temporal_resolution: monthly snapshot
+dataset_id: ayto_padron_municipal
+dimensions: [edad]

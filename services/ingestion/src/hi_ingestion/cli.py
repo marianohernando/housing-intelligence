@@ -11,15 +11,30 @@ from sqlalchemy import Engine
 from hi_contracts.catalog.enums import Priority
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
+    AirQualityHourlyPipeline,
+    AirQualityZonesPipeline,
+    CmDistrictConceptPipeline,
+    CmMunicipioConceptPipeline,
+    CmMunicipioNameTablePipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    CuratedZoneItemsPipeline,
     FacilityDirectoryPipeline,
     GtfsFeedPipeline,
+    MadridBuildableAreasPipeline,
+    MadridDevelopmentAreasPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    MadridPremisesCensusPipeline,
+    NoiseRasterPipeline,
     OsmParksPipeline,
+    OsmPoisPipeline,
     OsmWalkNetworkPipeline,
+    PermitBudgetPipeline,
+    PilotZonesPipeline,
     PointsPipeline,
+    PublicLandParcelsPipeline,
+    SerpaviRentPipeline,
     StationTopologyPipeline,
 )
 from hi_db.session import make_engine
@@ -43,17 +58,33 @@ from hi_ingestion.pipelines.admin_boundaries.run import (
     run_admin_boundaries,
 )
 from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
+from hi_ingestion.pipelines.air_quality.run import (
+    run_air_quality_hourly_pipeline,
+    run_air_quality_zones_pipeline,
+)
+from hi_ingestion.pipelines.buildable.run import run_buildable_areas_pipeline
 from hi_ingestion.pipelines.common import EVIDENCE_GATE_01, RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
+from hi_ingestion.pipelines.district_concept.run import run_district_concept_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
+from hi_ingestion.pipelines.noise_raster.run import run_noise_raster_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
+from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
+from hi_ingestion.pipelines.permits.run import run_permit_budget_pipeline
+from hi_ingestion.pipelines.pilot.run import run_pilot_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
+from hi_ingestion.pipelines.premises.run import run_premises_pipeline
+from hi_ingestion.pipelines.serpavi.run import run_serpavi_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
+from hi_ingestion.pipelines.zone_context.run import (
+    run_parcels_pipeline,
+    run_zone_context_pipeline,
+)
 
 app = typer.Typer(help="Housing Intelligence ingestion CLI", no_args_is_help=True)
 catalog_app = typer.Typer(help="Source catalog commands", no_args_is_help=True)
@@ -157,12 +188,17 @@ def _run_one(
         inputs = local_inputs(local) if local else fetch_inputs(catalog)
         return run_admin_boundaries(engine, catalog, inputs, evidence_root=evidence_root)
     spec = catalog.pipelines.get(dataset_id)
-    if isinstance(spec, CmStatTablePipeline | CmPostcodeConceptPipeline):
+    if isinstance(
+        spec, CmStatTablePipeline | CmPostcodeConceptPipeline | CmMunicipioConceptPipeline
+    ):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_metric_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, AeatRentComparisonPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_aeat_rent_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, SerpaviRentPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_serpavi_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, MadridPadronPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_padron_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
@@ -181,12 +217,53 @@ def _run_one(
     if isinstance(spec, OsmParksPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_osm_parks_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, OsmPoisPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_osm_pois_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, FacilityDirectoryPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_directory_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     if isinstance(spec, StationTopologyPipeline):
         source = local_file(dataset_id, spec.resource_role, local) if local else None
         return run_topology_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, NoiseRasterPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_noise_raster_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, AirQualityHourlyPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_air_quality_hourly_pipeline(
+            engine, catalog, spec, source, evidence_root=evidence_root
+        )
+    if isinstance(spec, AirQualityZonesPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_air_quality_zones_pipeline(
+            engine, catalog, spec, source, evidence_root=evidence_root
+        )
+    if isinstance(spec, PermitBudgetPipeline):  # D-248: always its versioned table
+        return run_permit_budget_pipeline(engine, catalog, spec, evidence_root=evidence_root)
+    if isinstance(spec, CuratedZoneItemsPipeline):  # D-241: always its versioned table
+        return run_zone_context_pipeline(engine, catalog, spec, evidence_root=evidence_root)
+    if isinstance(spec, CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline):
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_zone_context_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, PublicLandParcelsPipeline):  # D-246: Madrid placed by versioned points
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_parcels_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
+    if isinstance(spec, PilotZonesPipeline):  # D-247: always its versioned table
+        return run_pilot_pipeline(engine, catalog, spec, evidence_root=evidence_root)
+    if isinstance(spec, CmDistrictConceptPipeline):  # D-247: Madrid districts by name
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_district_concept_pipeline(
+            engine, catalog, spec, source, evidence_root=evidence_root
+        )
+    if isinstance(spec, MadridBuildableAreasPipeline):  # D-247: placed by versioned points
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_buildable_areas_pipeline(
+            engine, catalog, spec, source, evidence_root=evidence_root
+        )
+    if isinstance(spec, MadridPremisesCensusPipeline):  # D-247
+        source = local_file(dataset_id, spec.resource_role, local) if local else None
+        return run_premises_pipeline(engine, catalog, spec, source, evidence_root=evidence_root)
     typer.echo(f"No pipeline registered for {dataset_id}", err=True)
     raise typer.Exit(2)
 

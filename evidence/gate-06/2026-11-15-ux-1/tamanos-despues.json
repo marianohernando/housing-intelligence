@@ -1,0 +1,219 @@
+{
+ "base": "http://localhost:3061",
+ "label": "despues",
+ "checked_at": "2026-11-15T18:10:52.779Z",
+ "sizes": [
+  {
+   "width": 390,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "distrito": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  },
+  {
+   "width": 360,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "distrito": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  }
+ ],
+ "shots": [
+  "01-portada-390.png",
+  "02-formulario-390.png",
+  "03-somos-mayores-390.png",
+  "03b-somos-mayores-lugar-390.png",
+  "04-ejemplo-pareja-jubilada-390.png",
+  "04b-tarjeta-pareja-jubilada-390.png",
+  "05-lista-390.png",
+  "06-tarjeta-390.png",
+  "08-distrito-barrios-390.png",
+  "07-como-lo-calculamos-390.png",
+  "01-portada-360.png",
+  "02-formulario-360.png",
+  "03-somos-mayores-360.png",
+  "03b-somos-mayores-lugar-360.png",
+  "04-ejemplo-pareja-jubilada-360.png",
+  "04b-tarjeta-pareja-jubilada-360.png",
+  "05-lista-360.png",
+  "06-tarjeta-360.png",
+  "08-distrito-barrios-360.png",
+  "07-como-lo-calculamos-360.png",
+  "01-portada-1440.png",
+  "02-formulario-1440.png",
+  "03-somos-mayores-1440.png",
+  "03b-somos-mayores-lugar-1440.png",
+  "04-ejemplo-pareja-jubilada-1440.png",
+  "04b-tarjeta-pareja-jubilada-1440.png",
+  "05-lista-1440.png",
+  "06-tarjeta-1440.png",
+  "08-distrito-barrios-1440.png",
+  "07-como-lo-calculamos-1440.png"
+ ]
+}

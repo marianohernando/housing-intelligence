@@ -1,0 +1,2176 @@
+{
+  "$defs": {
+    "AssumptionPart": {
+      "additionalProperties": false,
+      "description": "One piece of an assumed percentage (the cost coefficient, the sales costs).",
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "pct": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Pct",
+          "type": "number"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "label",
+        "pct",
+        "source"
+      ],
+      "title": "AssumptionPart",
+      "type": "object"
+    },
+    "Buildability": {
+      "additionalProperties": false,
+      "description": "The buildable m² the calculator starts from: official, assumed or unknown. Always\neditable.",
+      "properties": {
+        "article": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "8.8.9"
+          ],
+          "title": "Article"
+        },
+        "article_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Article Url"
+        },
+        "assumed_m2": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The norm's assumption when an official figure wins",
+          "title": "Assumed M2"
+        },
+        "coefficient": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "m² per m² of parcel",
+          "title": "Coefficient"
+        },
+        "dataset_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dataset Ids",
+          "type": "array"
+        },
+        "editable": {
+          "const": true,
+          "default": true,
+          "title": "Editable",
+          "type": "boolean"
+        },
+        "formula": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "0,7 m²/m² × 502 m² de parcela"
+          ],
+          "title": "Formula"
+        },
+        "kind": {
+          "$ref": "#/$defs/BuildabilityKind"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What to keep in mind about the figure",
+          "title": "Note"
+        },
+        "source": {
+          "description": "In words, with its date or its article",
+          "title": "Source",
+          "type": "string"
+        },
+        "value_m2": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value M2"
+        }
+      },
+      "required": [
+        "value_m2",
+        "kind",
+        "source"
+      ],
+      "title": "Buildability",
+      "type": "object"
+    },
+    "BuildabilityKind": {
+      "enum": [
+        "oficial",
+        "supuesto",
+        "sin_dato"
+      ],
+      "title": "BuildabilityKind",
+      "type": "string"
+    },
+    "ComparisonGroup": {
+      "additionalProperties": false,
+      "description": "A zone too small to compare alone, compared with its nearest same-type neighbours.\n\ngap-0.3 (D-217): the nearest municipios of the same type are added until the group expects\n3,69 cases at the reference rate (the floor of D-213). `status` is then the group's.",
+      "properties": {
+        "codes": {
+          "description": "The zone first, then its neighbours",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Codes",
+          "type": "array"
+        },
+        "names": {
+          "examples": [
+            [
+              "La Acebeda",
+              "Robregordo"
+            ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Names",
+          "type": "array"
+        },
+        "ratio_to_reference": {
+          "description": "Group total over its expected total",
+          "minimum": 0,
+          "title": "Ratio To Reference",
+          "type": "number"
+        }
+      },
+      "required": [
+        "codes",
+        "names",
+        "ratio_to_reference"
+      ],
+      "title": "ComparisonGroup",
+      "type": "object"
+    },
+    "DatasetRef": {
+      "additionalProperties": false,
+      "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
+      "properties": {
+        "attribution_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "What the licence asks to show next to the data (source, date, geocoder)",
+          "title": "Attribution Text"
+        },
+        "dataset_id": {
+          "pattern": "^[a-z][a-z0-9_]{2,95}$",
+          "title": "Dataset Id",
+          "type": "string"
+        },
+        "is_cm_open_data": {
+          "description": "Published in the Comunidad de Madrid open data portal (counts for DATAMAD)",
+          "title": "Is Cm Open Data",
+          "type": "boolean"
+        },
+        "license": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where it is published, to name where `url` opens (the CM portal, the Ayuntamiento's, OpenStreetMap, the Ministerio de Sanidad, the Agencia Tributaria…)",
+          "examples": [
+            "Portal de Datos Abiertos del Ayuntamiento de Madrid"
+          ],
+          "title": "Source Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Portal page (CM portal when it exists)",
+          "title": "Url"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "dataset_version label used",
+          "title": "Version"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "name",
+        "publisher",
+        "is_cm_open_data"
+      ],
+      "title": "DatasetRef",
+      "type": "object"
+    },
+    "DemandBlock": {
+      "additionalProperties": false,
+      "description": "Who lives there. Each figure at the finest level published (its `source.level`).",
+      "properties": {
+        "five_plus_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "household_size": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "income": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "one_person_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "over_65_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "population": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "under_15_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        }
+      },
+      "required": [
+        "population",
+        "household_size",
+        "one_person_pct",
+        "five_plus_pct",
+        "over_65_pct",
+        "under_15_pct",
+        "income"
+      ],
+      "title": "DemandBlock",
+      "type": "object"
+    },
+    "FieldSource": {
+      "additionalProperties": false,
+      "description": "Where one figure comes from, to show next to it.",
+      "properties": {
+        "dataset_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dataset Ids",
+          "type": "array"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TerritoryLevel"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The zone the figure is of: the barrio, its district or the whole city"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "2025"
+          ],
+          "title": "Period"
+        },
+        "text": {
+          "description": "In words, with its date",
+          "examples": [
+            "Valor tasado de Madrid (Ministerio de Vivienda, 2025) repartido por barrios"
+          ],
+          "title": "Text",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where to open the source",
+          "title": "Url"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "FieldSource",
+      "type": "object"
+    },
+    "GapRow": {
+      "additionalProperties": false,
+      "properties": {
+        "comparison_group": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ComparisonGroup"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set when the zone is compared together with its nearest neighbours of the same type because it is too small alone (gap-0.3, D-217); `status` is the group's"
+        },
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "direction": {
+          "enum": [
+            "higher_is_better",
+            "lower_is_better"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "explanation": {
+          "examples": [
+            "0,47 centros por cada 10.000 habitantes; en los municipios urbanos de la Comunidad de Madrid, 0,46 (en toda la Comunidad, 0,59)"
+          ],
+          "title": "Explanation",
+          "type": "string"
+        },
+        "extra_indicators": {
+          "description": "e.g. walking minutes (CORE-005)",
+          "items": {
+            "$ref": "#/$defs/IndicatorValue"
+          },
+          "title": "Extra Indicators",
+          "type": "array"
+        },
+        "indicator": {
+          "$ref": "#/$defs/IndicatorValue"
+        },
+        "label": {
+          "examples": [
+            "Colegios"
+          ],
+          "title": "Label",
+          "type": "string"
+        },
+        "people": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PeopleCount"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who the row serves in this zone (children of 0 to 4, people of 65 or more, …): the denominator of its indicator. With FALTA, the people affected (D-229). None when the indicator keeps no counts"
+        },
+        "proxy_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "examples": [
+            "Cuenta centros, no plazas: un centro grande y uno pequeño pesan igual"
+          ],
+          "title": "Proxy Note"
+        },
+        "ratio_to_reference": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Oriented so that above 1 is better than the reference",
+          "title": "Ratio To Reference"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Same indicator for the zones the row is compared with (D-213: the municipios of its type in the region)",
+          "title": "Reference"
+        },
+        "reference_label": {
+          "examples": [
+            "Municipios urbanos de la Comunidad de Madrid"
+          ],
+          "title": "Reference Label",
+          "type": "string"
+        },
+        "regional_reference": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Same indicator for the whole Comunidad de Madrid (context)",
+          "title": "Regional Reference"
+        },
+        "reliable": {
+          "default": true,
+          "description": "False when the zone is too small for this row: the count expected at the reference rate is under the 95 % bound of a zero count (3,7), so not even having none would be a significant shortfall. The status is then never FALTA; show it as «poco fiable» (D-213). True also when the test does not apply (no counts)",
+          "title": "Reliable",
+          "type": "boolean"
+        },
+        "row": {
+          "$ref": "#/$defs/GapRowKey"
+        },
+        "status": {
+          "$ref": "#/$defs/GapStatus"
+        }
+      },
+      "required": [
+        "row",
+        "label",
+        "status",
+        "indicator",
+        "reference",
+        "reference_label",
+        "direction",
+        "explanation",
+        "datasets"
+      ],
+      "title": "GapRow",
+      "type": "object"
+    },
+    "GapRowKey": {
+      "description": "Rows of the per-zone list of what is missing (GAP-001, D-194).",
+      "enum": [
+        "escuela_infantil",
+        "colegio",
+        "centro_salud",
+        "mayores",
+        "farmacia",
+        "vivienda"
+      ],
+      "title": "GapRowKey",
+      "type": "string"
+    },
+    "GapStatus": {
+      "enum": [
+        "FALTA",
+        "JUSTO",
+        "CUBIERTO",
+        "SIN_DATOS"
+      ],
+      "title": "GapStatus",
+      "type": "string"
+    },
+    "IndicatorValue": {
+      "additionalProperties": false,
+      "description": "One measured value with its unit, confidence and the reason when it is missing.",
+      "properties": {
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "datasets": {
+          "description": "dataset_id values",
+          "items": {
+            "type": "string"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "feature_id": {
+          "title": "Feature Id",
+          "type": "string"
+        },
+        "label": {
+          "description": "Plain-language name",
+          "title": "Label",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel",
+          "description": "Level the value was computed at"
+        },
+        "null_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NullReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why value is missing; never 0 for unknown"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "feature_id",
+        "label",
+        "value",
+        "unit",
+        "confidence",
+        "level"
+      ],
+      "title": "IndicatorValue",
+      "type": "object"
+    },
+    "InvestorGaps": {
+      "additionalProperties": false,
+      "description": "«Qué falta»: the district's rows (the list is not computed by barrio) and the commerce of\nthe barrio (line A).",
+      "properties": {
+        "commerce": {
+          "items": {
+            "$ref": "#/$defs/SourcedValue"
+          },
+          "title": "Commerce",
+          "type": "array"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/GapRow"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "zone_name": {
+          "title": "Zone Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "zone_name",
+        "rows",
+        "commerce"
+      ],
+      "title": "InvestorGaps",
+      "type": "object"
+    },
+    "InvestorZone": {
+      "additionalProperties": false,
+      "description": "GET /api/v1/investors/zones/{admin_unit_id}: the sheet of one pilot barrio.",
+      "properties": {
+        "datasets": {
+          "items": {
+            "$ref": "#/$defs/DatasetRef"
+          },
+          "title": "Datasets",
+          "type": "array"
+        },
+        "defaults": {
+          "$ref": "#/$defs/ViabilityDefaults"
+        },
+        "demand": {
+          "$ref": "#/$defs/DemandBlock"
+        },
+        "district": {
+          "$ref": "#/$defs/ZoneRef"
+        },
+        "gaps": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvestorGaps"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "land": {
+          "$ref": "#/$defs/LandBlock"
+        },
+        "notices": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notices",
+          "type": "array"
+        },
+        "prices": {
+          "$ref": "#/$defs/PricesBlock"
+        },
+        "zone": {
+          "$ref": "#/$defs/ZoneRef"
+        }
+      },
+      "required": [
+        "zone",
+        "district",
+        "demand",
+        "prices",
+        "gaps",
+        "land",
+        "defaults",
+        "notices",
+        "datasets"
+      ],
+      "title": "InvestorZone",
+      "type": "object"
+    },
+    "LandBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "parcels": {
+          "items": {
+            "$ref": "#/$defs/LandItem"
+          },
+          "title": "Parcels",
+          "type": "array"
+        },
+        "parcels_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "remaining": {
+          "items": {
+            "$ref": "#/$defs/LandItem"
+          },
+          "title": "Remaining",
+          "type": "array"
+        },
+        "remaining_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "vacant_units": {
+          "$ref": "#/$defs/SourcedValue"
+        }
+      },
+      "required": [
+        "parcels",
+        "parcels_m2",
+        "remaining",
+        "remaining_m2",
+        "vacant_units"
+      ],
+      "title": "LandBlock",
+      "type": "object"
+    },
+    "LandItem": {
+      "additionalProperties": false,
+      "description": "A public parcel (D-246) or a planning area with buildable area left (line A).",
+      "properties": {
+        "buildable_m2": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null when the source does not publish it",
+          "title": "Buildable M2"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Code"
+        },
+        "kind": {
+          "description": "parcela | ambito",
+          "title": "Kind",
+          "type": "string"
+        },
+        "manager": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Manager"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Name"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A caveat that travels with the item: an area that also covers other barrios says which share of it is here (it counts whole in this barrio)",
+          "title": "Note"
+        },
+        "parcel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parcel"
+        },
+        "regime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "venta | concesion",
+          "title": "Regime"
+        },
+        "stage": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stage"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The official viewer or record",
+          "title": "Url"
+        },
+        "use": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Line A's planning areas: their use, as the source writes it",
+          "title": "Use"
+        }
+      },
+      "required": [
+        "kind",
+        "code",
+        "name",
+        "buildable_m2"
+      ],
+      "title": "LandItem",
+      "type": "object"
+    },
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "NormaZonal": {
+      "additionalProperties": false,
+      "properties": {
+        "grado": {
+          "anyOf": [
+            {
+              "maximum": 9,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grado"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The zone's name in the Normas Urbanísticas (art. 8.0.5)",
+          "examples": [
+            "Edificación en manzana cerrada"
+          ],
+          "title": "Name"
+        },
+        "nivel": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nivel"
+        },
+        "nz": {
+          "maximum": 11,
+          "minimum": 1,
+          "title": "Nz",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "nz"
+      ],
+      "title": "NormaZonal",
+      "type": "object"
+    },
+    "NullReason": {
+      "enum": [
+        "NOT_APPLICABLE",
+        "SOURCE_NO_COVERAGE",
+        "SOURCE_MISSING",
+        "TEMPORARILY_UNAVAILABLE",
+        "STALE",
+        "PARSE_ERROR",
+        "ENTITY_NOT_RESOLVED",
+        "ESTIMATION_NOT_ALLOWED",
+        "UNKNOWN"
+      ],
+      "title": "NullReason",
+      "type": "string"
+    },
+    "ParcelBlock": {
+      "additionalProperties": false,
+      "description": "«Datos de la parcela»: our fields, worked out from the Catastro's public data. Never its\nraw answer, never the units with their floor and door.",
+      "properties": {
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "Calle Méndez Álvaro 47, 28045 Madrid"
+          ],
+          "title": "Address"
+        },
+        "area_m2": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Surface of the parcel (land)",
+          "title": "Area M2"
+        },
+        "built_m2": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Built today: context, not buildability",
+          "title": "Built M2"
+        },
+        "current_use": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Current Use"
+        },
+        "horizontal_division": {
+          "title": "Horizontal Division",
+          "type": "boolean"
+        },
+        "is_vacant": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A plot with nothing built (solar); null unknown",
+          "title": "Is Vacant"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "maximum": 40.7,
+              "minimum": 40.2,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "maximum": -3.45,
+              "minimum": -3.95,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lon"
+        },
+        "observed_at": {
+          "description": "When the Catastro was asked",
+          "format": "date",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "official_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The parcel in the Sede Electrónica del Catastro, as its service returns it",
+          "title": "Official Url"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "rc14": {
+          "examples": [
+            "2122202VK4722A"
+          ],
+          "pattern": "^[0-9A-Z]{14}$",
+          "title": "Rc14",
+          "type": "string"
+        },
+        "rustic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Rustic land: a reduced sheet, no buildability",
+          "title": "Rustic"
+        },
+        "units": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ParcelUnits"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Only in horizontal division"
+        },
+        "year_built": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year Built"
+        }
+      },
+      "required": [
+        "rc14",
+        "address",
+        "area_m2",
+        "rustic",
+        "is_vacant",
+        "horizontal_division",
+        "units",
+        "built_m2",
+        "current_use",
+        "official_url",
+        "observed_at"
+      ],
+      "title": "ParcelBlock",
+      "type": "object"
+    },
+    "ParcelContext": {
+      "additionalProperties": false,
+      "description": "The barrio around the parcel: the whole investor sheet in a pilot barrio (D-248); outside\nthe pilot, its district's figures, and it says so.",
+      "properties": {
+        "in_pilot": {
+          "title": "In Pilot",
+          "type": "boolean"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Note"
+        },
+        "sheet": {
+          "$ref": "#/$defs/InvestorZone"
+        }
+      },
+      "required": [
+        "level",
+        "in_pilot",
+        "note",
+        "sheet"
+      ],
+      "title": "ParcelContext",
+      "type": "object"
+    },
+    "ParcelInput": {
+      "description": "How the parcel was asked for: its cadastral reference, a point on the map or an address.",
+      "enum": [
+        "rc",
+        "point",
+        "address"
+      ],
+      "title": "ParcelInput",
+      "type": "string"
+    },
+    "ParcelSheet": {
+      "additionalProperties": false,
+      "description": "GET /api/v1/investors/parcels: one parcel of Madrid capital for whoever builds.",
+      "properties": {
+        "barrio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ZoneRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "buildability": {
+          "$ref": "#/$defs/Buildability"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ParcelContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null when the barrio is unknown"
+        },
+        "defaults": {
+          "$ref": "#/$defs/ViabilityDefaults"
+        },
+        "degraded": {
+          "description": "The parts that could not be read now",
+          "items": {
+            "enum": [
+              "catastro",
+              "planning",
+              "buildability",
+              "context"
+            ],
+            "type": "string"
+          },
+          "title": "Degraded",
+          "type": "array"
+        },
+        "district": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ZoneRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fallback": {
+          "anyOf": [
+            {
+              "const": "demo_snapshot",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Served from the saved demo sheet because a source failed",
+          "title": "Fallback"
+        },
+        "input": {
+          "$ref": "#/$defs/ParcelInput"
+        },
+        "notices": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notices",
+          "type": "array"
+        },
+        "parcel": {
+          "$ref": "#/$defs/ParcelBlock"
+        },
+        "planning": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanningBlock"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "null when the Ayuntamiento fails"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/ParcelSource"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "input",
+        "parcel",
+        "planning",
+        "buildability",
+        "barrio",
+        "district",
+        "context",
+        "defaults",
+        "sources",
+        "notices"
+      ],
+      "title": "ParcelSheet",
+      "type": "object"
+    },
+    "ParcelSource": {
+      "additionalProperties": false,
+      "description": "Who the sheet's data comes from, its licence and how it asks to be cited.",
+      "properties": {
+        "accessed_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accessed At"
+        },
+        "attribution": {
+          "title": "Attribution",
+          "type": "string"
+        },
+        "license": {
+          "title": "License",
+          "type": "string"
+        },
+        "license_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License Url"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "source_id",
+        "name",
+        "publisher",
+        "license",
+        "attribution"
+      ],
+      "title": "ParcelSource",
+      "type": "object"
+    },
+    "ParcelUnits": {
+      "additionalProperties": false,
+      "description": "A building in horizontal division, summarised: units by use (no list of units).",
+      "properties": {
+        "by_use": {
+          "items": {
+            "$ref": "#/$defs/UnitUse"
+          },
+          "title": "By Use",
+          "type": "array"
+        },
+        "total": {
+          "minimum": 1,
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "by_use"
+      ],
+      "title": "ParcelUnits",
+      "type": "object"
+    },
+    "PeopleCount": {
+      "additionalProperties": false,
+      "description": "The population a row serves, living in the zone (D-229): its indicator's denominator.",
+      "properties": {
+        "count": {
+          "examples": [
+            6729
+          ],
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "label": {
+          "examples": [
+            "niños de 0 a 4 años"
+          ],
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "count",
+        "label"
+      ],
+      "title": "PeopleCount",
+      "type": "object"
+    },
+    "PlanningBlock": {
+      "additionalProperties": false,
+      "description": "«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point.",
+      "properties": {
+        "code": {
+          "examples": [
+            "8.3.a",
+            "APR.02.06"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "instrument": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanningInstrument"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "kind": {
+          "$ref": "#/$defs/PlanningKind"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "ZONA 8 GRADO 3º - NIVEL a",
+            "MÉNDEZ ÁLVARO NORTE I"
+          ],
+          "title": "Name"
+        },
+        "norma_zonal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NormaZonal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "notice": {
+          "title": "Notice",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "sheet_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sheet Label"
+        },
+        "sheet_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The official record: the instrument's, or the article of the Normas Urbanísticas for a norma zonal",
+          "title": "Sheet Url"
+        },
+        "urban_parcel": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "MANZANA B"
+          ],
+          "title": "Urban Parcel"
+        },
+        "use": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "RESIDENCIAL VIVIENDA COLECTIVA"
+          ],
+          "title": "Use"
+        },
+        "viewer_url": {
+          "description": "The Geoportal viewer, centred on the parcel",
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Viewer Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "name",
+        "kind",
+        "norma_zonal",
+        "use",
+        "urban_parcel",
+        "instrument",
+        "sheet_url",
+        "sheet_label",
+        "viewer_url",
+        "notice",
+        "observed_at"
+      ],
+      "title": "PlanningBlock",
+      "type": "object"
+    },
+    "PlanningInstrument": {
+      "additionalProperties": false,
+      "description": "The planning instrument in force at the point, with its official record.",
+      "properties": {
+        "figure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "MPR.02.391"
+          ],
+          "title": "Figure"
+        },
+        "file_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "711/2014/11518"
+          ],
+          "title": "File Number"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Url"
+        }
+      },
+      "required": [
+        "figure",
+        "name",
+        "file_number",
+        "url"
+      ],
+      "title": "PlanningInstrument",
+      "type": "object"
+    },
+    "PlanningKind": {
+      "description": "What the planning code is: a norma zonal or a planning area (ámbito) of the PGOUM.",
+      "enum": [
+        "norma_zonal",
+        "API",
+        "APE",
+        "APR",
+        "APD",
+        "UZI",
+        "UZP",
+        "UNP",
+        "NUP",
+        "AOE",
+        "otro"
+      ],
+      "title": "PlanningKind",
+      "type": "string"
+    },
+    "PricesBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "new_build_premium_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "new_build_sale_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "rent_m2_month": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "sale_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        }
+      },
+      "required": [
+        "sale_m2",
+        "new_build_premium_pct",
+        "new_build_sale_m2",
+        "rent_m2_month"
+      ],
+      "title": "PricesBlock",
+      "type": "object"
+    },
+    "SourcedValue": {
+      "additionalProperties": false,
+      "description": "A figure with its unit, mark and source; `low` and `high` when the source gives a range.",
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "feature_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Feature Store figure behind it, when it is data",
+          "title": "Feature Id"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "High"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Low"
+        },
+        "mark": {
+          "$ref": "#/$defs/ValueMark"
+        },
+        "null_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NullReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Why value is missing; never 0 for unknown"
+        },
+        "source": {
+          "$ref": "#/$defs/FieldSource"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "mark",
+        "source"
+      ],
+      "title": "SourcedValue",
+      "type": "object"
+    },
+    "TerritoryLevel": {
+      "description": "Territorial units observations can refer to (superset of AdminLevel).",
+      "enum": [
+        "ccaa",
+        "municipio",
+        "distrito",
+        "barrio",
+        "seccion_censal",
+        "codigo_postal",
+        "zona_estadistica",
+        "h3_r8",
+        "h3_r9"
+      ],
+      "title": "TerritoryLevel",
+      "type": "string"
+    },
+    "UnitUse": {
+      "additionalProperties": false,
+      "description": "How many units of one use a building has, and their built area: never floor and door.",
+      "properties": {
+        "built_m2": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Built M2"
+        },
+        "count": {
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "use": {
+          "examples": [
+            "Residencial",
+            "Comercial"
+          ],
+          "title": "Use",
+          "type": "string"
+        }
+      },
+      "required": [
+        "use",
+        "count",
+        "built_m2"
+      ],
+      "title": "UnitUse",
+      "type": "object"
+    },
+    "ValueMark": {
+      "enum": [
+        "dato",
+        "supuesto",
+        "usuario"
+      ],
+      "title": "ValueMark",
+      "type": "string"
+    },
+    "ViabilityDefaults": {
+      "additionalProperties": false,
+      "description": "What the calculator starts from, every value with its mark and source.",
+      "properties": {
+        "adjust_floor_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "cost_coefficient": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "cost_parts": {
+          "items": {
+            "$ref": "#/$defs/AssumptionPart"
+          },
+          "title": "Cost Parts",
+          "type": "array"
+        },
+        "effort_threshold_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "home_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "household_income": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "loan_rate_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "loan_years": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "ltv_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "new_build_premium_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "pem_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "rent_m2_month": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "sale_price_m2": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "sales_cost_parts": {
+          "items": {
+            "$ref": "#/$defs/AssumptionPart"
+          },
+          "title": "Sales Cost Parts",
+          "type": "array"
+        },
+        "sales_costs_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        },
+        "target_margin_pct": {
+          "$ref": "#/$defs/SourcedValue"
+        }
+      },
+      "required": [
+        "sale_price_m2",
+        "new_build_premium_pct",
+        "rent_m2_month",
+        "pem_m2",
+        "cost_coefficient",
+        "cost_parts",
+        "sales_costs_pct",
+        "sales_cost_parts",
+        "target_margin_pct",
+        "adjust_floor_pct",
+        "household_income",
+        "home_m2",
+        "ltv_pct",
+        "loan_years",
+        "loan_rate_pct",
+        "effort_threshold_pct"
+      ],
+      "title": "ViabilityDefaults",
+      "type": "object"
+    },
+    "ZoneRef": {
+      "additionalProperties": false,
+      "description": "A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.",
+      "properties": {
+        "admin_unit_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "geo_admin_unit id for /api/v1/geo/admin-units; None for H3 cells",
+          "examples": [
+            "ES.28.MUN.28079"
+          ],
+          "title": "Admin Unit Id"
+        },
+        "center_lat": {
+          "anyOf": [
+            {
+              "maximum": 41.17,
+              "minimum": 39.88,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lat"
+        },
+        "center_lon": {
+          "anyOf": [
+            {
+              "maximum": -3.05,
+              "minimum": -4.58,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Center Lon"
+        },
+        "code": {
+          "examples": [
+            "28079",
+            "2807901124"
+          ],
+          "minLength": 1,
+          "title": "Code",
+          "type": "string"
+        },
+        "level": {
+          "$ref": "#/$defs/TerritoryLevel"
+        },
+        "municipio_ine": {
+          "anyOf": [
+            {
+              "pattern": "^28\\d{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Ine"
+        },
+        "municipio_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Municipio Name"
+        },
+        "name": {
+          "examples": [
+            "Madrid"
+          ],
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "code",
+        "name"
+      ],
+      "title": "ZoneRef",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/parcel_sheet_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GET /api/v1/investors/parcels (D-250)",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/ParcelSheet"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "ParcelSheetResponse",
+  "type": "object"
+}

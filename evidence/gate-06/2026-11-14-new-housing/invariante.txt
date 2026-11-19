@@ -1,0 +1,7 @@
+filas D-241 durante el «sin»: 0
+POST /search (toda la Comunidad): idéntica byte a byte
+POST /search (Madrid capital por barrios): idéntica byte a byte
+POST /search/barrios: 21 de 21 distritos idénticos byte a byte
+199 zonas evaluadas · las 10 primeras (cumplen 27, ver golden-search.txt): Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+casi: Chamartín 93, Salamanca 93, Centro 93, Chamberí 93, Retiro 93
+filas D-241 después: 758

@@ -4,42 +4,41 @@
   width: 100%;
 }
 
-.head {
-  display: flex;
+/* zona.volver_lista: «‹ Volver a la lista», a button with words at the top of the card (audit A4) */
+.back {
+  justify-self: start;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-1);
   min-height: var(--target);
-  margin-bottom: calc(-1 * var(--space-3));
-}
-
-.eyebrow {
-  color: var(--ink-soft);
-  font-size: 0.8rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.close {
-  display: grid;
-  width: var(--target);
-  height: var(--target);
-  place-items: center;
-  margin-right: calc(-1 * var(--space-2));
+  margin: calc(-1 * var(--space-1)) 0 calc(-1 * var(--space-2)) calc(-1 * var(--space-2));
+  padding: 0 var(--space-3) 0 var(--space-1);
   border: 0;
   border-radius: var(--radius-sm);
   background: none;
-  color: var(--ink-soft);
+  color: var(--violet-strong);
+  font: inherit;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.titleRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
+.back:hover {
+  background: var(--violet-soft);
 }
 
+/* «Distrito de Madrid» in sentence case, before a search: capitals read worse and sound louder (UX mobile audit, M2) */
+.eyebrow {
+  margin-bottom: calc(-1 * var(--space-2));
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+  font-weight: 500;
+}
+
+/*
+ * The name breaks only between words («Casarrubuelos» never mid-word, review R-02 of PR #75);
+ * break-word is the last resort for a word wider than the whole card. It takes the focus when the
+ * card opens from the list, without a ring for a pointer.
+ */
 .name {
   min-width: 0;
   font-size: var(--text-2xl);
@@ -47,8 +46,125 @@
   overflow-wrap: break-word;
 }
 
-.pct {
+.name:focus {
+  outline: none;
+}
+
+.name:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Phones: a long name («Fuencarral-El Pardo») keeps to two lines */
+@media (max-width: 420px) {
+  .name {
+    font-size: 1.6rem;
+  }
+}
+
+/* zona.esencial.lugar: «Madrid · Muy buena opción», right under the name */
+.place {
+  margin-top: calc(-1 * var(--space-2));
+  color: var(--ink-soft);
+  font-size: var(--text-base);
+}
+
+.place strong {
+  color: var(--violet-strong);
+  font-weight: 600;
+}
+
+/* The three essentials: the price, what was asked with its minutes, and what is missing for the home */
+.essentials {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.essentials li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  line-height: 1.4;
+}
+
+.essentials li > svg {
   flex: none;
+  margin-top: 0.1rem;
+}
+
+.cost > svg {
+  color: var(--violet-strong);
+}
+
+.short > svg {
+  color: var(--falta-ink);
+}
+
+.fine > svg {
+  color: var(--cubierto-ink);
+}
+
+.unsure {
+  color: var(--ink-soft);
+}
+
+.unsure > svg {
+  color: var(--sin-datos-ink);
+}
+
+/* «Ver más sobre {zona}»: a button of 44 px or more that unfolds everything else of the card */
+.more {
+  display: grid;
+  border-top: 1px solid var(--line);
+  padding-top: var(--space-2);
+}
+
+.more > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--target);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--violet);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--violet-strong);
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.more > summary:hover {
+  background: var(--violet-soft);
+}
+
+.moreIcon {
+  flex: none;
+  transition: transform var(--duration) var(--ease);
+}
+
+.more[open] .moreIcon {
+  transform: rotate(180deg);
+}
+
+.moreBody {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+}
+
+/* Behind «Ver más»: «Muy buena opción» over «94 %», in a pill */
+.pct {
+  justify-self: start;
   padding: 0.3rem 0.8rem;
   border-radius: var(--radius);
   background: var(--violet-soft);
@@ -58,20 +174,20 @@
   font-weight: 700;
 }
 
-/* Phones: a long name («Fuencarral-El Pardo») breaks at its hyphen beside the % pill */
-@media (max-width: 420px) {
-  .name {
-    font-size: 1.6rem;
-  }
-}
-
-/* «de encaje» under the figure: beside it, the pill did not fit at 390 px and was cut («de enca…») */
+/* «Muy buena opción» over the figure (F5 of fit-0.9) */
 .pct small {
   display: block;
-  font-size: 0.8rem;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
+  white-space: nowrap;
+}
+
+.pct > span[aria-hidden] {
+  display: grid;
+  justify-items: center;
 }
 
 .fitsButShort {
@@ -83,6 +199,25 @@
 .hint {
   color: var(--ink-soft);
   font-size: var(--text-sm);
+}
+
+/* zona.cerca_pocas: «… a unos 6 min andando, pero hay pocas…: por eso sale FALTA», above the rows */
+.nearButShort {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--violet-soft);
+  color: var(--ink);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.nearButShort svg {
+  flex: none;
+  margin-top: 0.1rem;
+  color: var(--violet-strong);
 }
 
 .missing {
@@ -118,12 +253,12 @@
 
 .rowName small {
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
 }
 
 .pending {
   color: var(--ink-soft);
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
 }
 
 .pending svg {
@@ -134,7 +269,7 @@
   justify-self: start;
   display: inline-flex;
   align-items: center;
-  min-height: 24px;
+  min-height: var(--target);
   color: var(--violet-strong);
   font-size: var(--text-sm);
 }
@@ -158,6 +293,14 @@
   color: var(--violet-strong);
   font-size: var(--text-sm);
   font-weight: 600;
+}
+
+/* zona.empate: «Empata al 94 % con Latina.», right under its place in the ranking */
+.tie {
+  margin-top: calc(-1 * var(--space-2));
+  color: var(--violet-strong);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 
 .fails,
@@ -229,7 +372,7 @@
 
 .facts small {
   color: var(--ink-soft);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   white-space: nowrap;
 }
 
@@ -243,4 +386,26 @@
 
 .unknownFact > svg {
   color: var(--sin-datos-ink);
+}
+
+/* «¿Qué es el %?», right under the % */
+.fitHelp {
+  margin-top: calc(-1 * var(--space-2));
+}
+
+/* What FALTA, JUSTO or CUBIERTO mean, under the rows that show them (estado.*.corto) */
+.statusKey {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  list-style: none;
+}
+
+.statusKey strong {
+  color: var(--ink);
+  font-weight: 600;
 }

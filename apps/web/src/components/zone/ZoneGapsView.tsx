@@ -8,7 +8,7 @@ import GlassCard from "@/components/ui/GlassCard";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { GAP_STATUS, gapsHref, gapSummary, SMALL_ZONE, sortRows } from "@/lib/gaps";
-import { isWholeCity, type ZoneLevel, zoneHref } from "@/lib/map/zones";
+import { isWholeCity, screenZone, type ZoneLevel, zoneHref } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
 import GapRowItem from "./GapRowItem";
@@ -24,7 +24,9 @@ import { useZoneGaps } from "./useZoneGaps";
 const TEXT = {
   title: "Qué falta",
   titleIn: (zona: string) => `Qué falta en ${zona}`,
-  intro: "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales.",
+  // falta.intro, with why something close can still be missing (15 nov, user tests): «Me importa» measures minutes, this list enough for everyone
+  intro:
+    "Miramos lo que tiene la gente a 15 minutos andando, repartido entre todos los que lo comparten, y lo comparamos con los demás municipios de su tipo, urbanos o rurales. Por eso algo puede estar cerca y aun así faltar: hay poco para tanta gente.",
   pick: "Elige una zona en el mapa o escríbela aquí para ver qué le falta.",
   placeholder: "Escribe un municipio o un distrito de Madrid",
   loading: "Calculando qué falta en esta zona…",
@@ -46,7 +48,15 @@ function ZonePicker() {
   return (
     <GlassCard as="section" id={PICK_ID} aria-label={TEXT.pick} className={styles.picker}>
       <p>{TEXT.pick}</p>
-      <ZoneDirectory hrefFor={(zone) => gapsHref(zone.level, zone.code)} placeholder={TEXT.placeholder} wholeCities />
+      <ZoneDirectory
+        hrefFor={(zone) => {
+          const own = screenZone(zone);
+          return gapsHref(own.level, own.code);
+        }}
+        placeholder={TEXT.placeholder}
+        wholeCities
+        folded
+      />
     </GlassCard>
   );
 }

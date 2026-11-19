@@ -1,0 +1,26 @@
+kind: public_land_parcels
+dataset_id: cm_parcelas_portal_suelo
+metric_id: suelo_publico_parcela_m2_edificable
+# Residential parcels only (D-246): «dónde hay suelo público para construir vivienda».
+uses: ["R"]
+# The other main uses of the file (IDEM: T Terciario, I Industrial, O Otros, C Comercial): counted,
+# not kept. A use code that is in neither list is quarantined.
+other_uses: ["T", "I", "O", "C"]
+# The web makes a link of url_visor: only the CM's map viewer
+viewer_prefix: "https://idem.comunidad.madrid/"
+# The CSV has no coordinates: Madrid's parcels are placed in their district and barrio with the
+# points read from the CM's own map layer (scripts/portal_suelo_points.py).
+split_municipio_ine: "28079"
+points: portal_suelo_madrid_puntos.yaml
+# Meanings published by the CM in the layer of the same parcels (IDEM, DS_REGIMEN_ES and
+# DS_URBANIZA_ES, read on 18 Nov 2026): V «Venta»; C «Concesión / derecho de superficie /
+# alquiler»; U «Urbanizado»; P «Pendiente urbanización / no urbanizado».
+regimes: {V: venta, C: concesion}
+urbanization: {U: urbanizado, P: sin_urbanizar}
+# Codes the CM uses without publishing their meaning (empty description in the layer): kept,
+# never labelled. Any other code is quarantined.
+undocumented_regimes: [D, A]
+undocumented_urbanization: [p]
+# 525 parcels of every use on 18 Nov 2026
+min_rows: 300
+max_rows: 1500

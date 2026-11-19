@@ -1,0 +1,14 @@
+metric_id: locales_censo
+human_name: Locales del censo de locales y actividades, por situación
+description: >-
+  Locales de Madrid con acceso desde la calle o dentro de una agrupación (mercado, centro o
+  galería comercial) que siguen existiendo, por distrito y por barrio, según su situación en el
+  censo del Ayuntamiento: abierto, cerrado (sin actividad), en obras o usado como vivienda. No
+  cuenta los locales dados de baja, los «puerta de calle asociado» ni los interiores (D-247).
+domain: economy
+unit: locales
+aggregation_method: count
+geo_resolution_min: barrio
+temporal_resolution: daily snapshot
+dataset_id: ayto_censo_locales_actividades
+dimensions: [situacion]

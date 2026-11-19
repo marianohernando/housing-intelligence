@@ -15,6 +15,8 @@ import { join } from "node:path";
 
 import { chromium } from "playwright";
 
+import { factAsShown } from "../../../infra/deploy/e2e/shown_text.mjs";
+
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
 const MOCKUP = process.env.MOCKUP_DIR ? join(process.env.MOCKUP_DIR, "mockup_1_mapa.png") : null;
@@ -75,7 +77,8 @@ async function firstZone(page, zone, where, tap = false) {
   await card.waitFor({ timeout: WAIT });
   await page.waitForTimeout(1500);
   const text = squash(await card.innerText());
-  const missing = zone.facts.filter((f) => !text.includes(squash(f.text)));
+  // The rent fact goes without what the 2024 notice already says (F5 of fit-0.9): factAsShown, as the e2e
+  const missing = zone.facts.filter((f) => !text.includes(squash(factAsShown(f))));
   if (!text.includes(zone.zone.name) || !new RegExp(`(?<!\\d)${zone.match_pct}\\s*%`).test(text) || missing.length) {
     report.fallos.push(`${where}: tarjeta de ${zone.zone.name} distinta de la API${missing.length ? ` (falta «${missing[0].text}»)` : ""}`);
   }
@@ -247,7 +250,12 @@ if (mode === "off") {
   }
   d.peticiones_search = searches.length;
   d.todas_sin_max_minutes = searches.every((s) => (s?.anchors ?? []).every((a) => a.max_minutes === null));
-  check("todas las búsquedas sin max_minutes", d.todas_sin_max_minutes);
+  check("todas las búsquedas del ejemplo sin max_minutes (Sin límite)", d.todas_sin_max_minutes);
+  // «Tardar como mucho»: the minutes picked reach the request (after the check above, which is about the example)
+  await page.getByLabel("Tardar como mucho hasta el trabajo, en transporte público").selectOption("45");
+  const limited = await searchAnswer(page, () => page.getByRole("button", { name: "Ver zonas que encajan" }).click());
+  d.limite_45 = { enviado: searches.at(-1)?.anchors?.map((a) => a.max_minutes), zones_passing: limited.reality_check.zones_passing };
+  check("con límite de 45 min, max_minutes: 45 llega a /search", d.limite_45.enviado?.[0] === 45, JSON.stringify(d.limite_45.enviado));
   d.overflow_px = await overflow(page);
   d.consola = errors;
   for (const key of ["axe_antes", "axe_resultados", "axe_tarjeta"]) check(`escritorio ${key}`, d[key].length === 0, d[key].map((a) => a.id).join(", "));

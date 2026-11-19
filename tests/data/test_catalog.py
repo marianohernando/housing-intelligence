@@ -6,6 +6,7 @@ import pytest
 
 from hi_contracts.catalog.enums import LicenseStatus, Priority, TrustTier
 from hi_contracts.public import NeedKey
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_ingestion.catalog.loader import Catalog, load_catalog
 
 CM_SOURCE = "comunidad_madrid_ckan"
@@ -68,8 +69,21 @@ def test_every_pipeline_has_metrics_or_category(catalog: Catalog) -> None:
             assert pipeline.walkable_highways, dataset_id
         elif pipeline.kind == "osm_parks":
             assert pipeline.leisure and pipeline.min_area_ha > 0, dataset_id
+        elif pipeline.kind == "osm_pois":
+            assert pipeline.classes and pipeline.min_places > 0, dataset_id
         elif pipeline.kind == "facility_directory":
             assert pipeline.scope_values, dataset_id
+        elif pipeline.kind == "noise_raster":  # D-237: read by the street-noise features
+            read_by = [
+                (f.formula.model_extra or {}).get("raster_dataset")
+                for f in catalog.features.values()
+            ]
+            assert dataset_id in read_by and pipeline.layers, dataset_id
+        elif pipeline.kind in ("air_quality_hourly", "air_quality_zones"):  # D-237: air feature
+            formulas = [f.formula.model_extra or {} for f in catalog.features.values()]
+            read_by = [d for f in formulas for d in f.get("means_datasets", [])]
+            read_by += [f.get("zones_dataset") for f in formulas]
+            assert dataset_id in read_by, dataset_id
         elif pipeline.kind == "station_topology":  # D-223: read by a GTFS feed that names it
             linked = [
                 p.station_accessibility.dataset_id
@@ -134,12 +148,21 @@ def test_directories_complement_cm_registers(catalog: Catalog) -> None:
 
 # Statistics the CM does not publish at the level the product needs (D-209: population and
 # households by district of Madrid; D-228: the rent of the leases signed in the year, which only
-# adjusts the CM rent). They complement CM data, never replace it.
+# adjusts the CM rent; D-241: what is coming, the planning areas of Madrid and the Plan Vive page,
+# which publishes no file; D-242: the Ministry's rent reference, only where the CM publishes none;
+# D-247: the census of premises and the buildable area left in the planning areas of Madrid, for
+# the investor version). They complement CM data, never replace it.
 COMPLEMENTARY_STATISTICS = {
     "ayto_padron_municipal",
     "ayto_panel_indicadores_distritos_barrios",
     "aeat_alquiler_nuevos_contratos_municipios",
     "aeat_alquiler_nuevos_contratos_codigo_postal",
+    "ayto_pgoum_desarrollo_ambitos",
+    "cm_plan_vive_promociones",
+    "mivau_serpavi_alquiler",
+    "ayto_censo_locales_actividades",
+    "ayto_edificabilidad_remanente_ambitos",
+    "osm_m40",
 }
 
 
@@ -278,19 +301,79 @@ def test_feature_levels_use_known_metrics_and_declare_their_sources(catalog: Cat
 def test_search_bindings_cover_every_need_once(catalog: Catalog) -> None:
     """CORE-003: the search finds its features through `fit`: one rent per m² and one walking
     feature per NeedKey (plus the priorities measured on foot, D-222), computed at the
-    municipio and distrito levels it ranks."""
+    municipio and distrito levels it ranks. The estimated purchase price (D-234) only exists
+    inside Madrid: districts and barrios."""
     bound = [s for s in catalog.features.values() if s.fit is not None]
     rents = [s for s in bound if s.fit is not None and s.fit.role == "rent_m2"]
     prices = [s for s in bound if s.fit is not None and s.fit.role == "price_m2"]
+    estimates = [s for s in bound if s.fit is not None and s.fit.role == "price_m2_estimate"]
     to_needs = [s for s in bound if s.fit is not None and s.fit.need is not None]
     walks = {s.fit.need: s for s in to_needs if s.fit is not None}
     assert len(rents) == 1
-    assert len(prices) == 1
+    assert len(prices) == 1 and len(estimates) == 1
     assert len(walks) == len(to_needs)
     assert set(walks) == {n.value for n in NeedKey}
     for spec in bound:
         levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
-        assert {"municipio", "distrito"} <= levels, spec.feature_id
+        if spec.fit is not None and spec.fit.role == "price_m2_estimate":
+            assert levels == {"distrito", "barrio"}, spec.feature_id
+        else:
+            assert {"municipio", "distrito"} <= levels, spec.feature_id
+
+
+def test_leisure_features_walk_to_the_places_their_pipeline_publishes(catalog: Catalog) -> None:
+    """D-236: each leisure need reads a walking feature over the OSM leisure places, with the
+    parks' method and levels, and only names subcategories its pipeline declares. None is a
+    row of the list of what is missing."""
+    pipeline = catalog.pipelines["osm_ocio"]
+    assert pipeline.kind == "osm_pois"
+    declared = {(c.category.value, c.subcategory) for c in pipeline.classes}
+    park = catalog.features["min_a_pie_parque"].formula.model_dump()
+    used: set[tuple[str, str]] = set()
+    for need in LEISURE_NEEDS:
+        spec = next(
+            f for f in catalog.features.values() if f.fit is not None and f.fit.need == need.value
+        )
+        formula = spec.formula.model_dump()
+        mine = {(formula["destination_category"], s) for s in formula["subcategories"]}
+        assert mine <= declared, spec.feature_id
+        assert not mine & used, spec.feature_id  # a place counts for one group
+        used |= mine
+        same = ("method", "statistic", "speed_kmh", "origin_highways", "min_street_m", "levels")
+        assert {k: formula[k] for k in same} == {k: park[k] for k in same}, spec.feature_id
+        assert spec.null_policy == catalog.features["min_a_pie_parque"].null_policy
+        assert spec.gap_row is None
+        assert "osm_ocio" in {s.dataset_id for s in spec.sources}
+    assert used == declared  # every published class belongs to a group
+
+
+def test_transit_by_mode_informs_and_never_scores(catalog: Catalog) -> None:
+    """D-233: bus and Metro/Cercanías are two features that split the stops of the one that
+    scores (`min_a_pie_transporte`), with the same method; their `fit` has no need, so the
+    search never turns them into a criterion."""
+    scoring = catalog.features["min_a_pie_transporte"]
+    assert scoring.fit is not None and scoring.fit.need == "transporte"
+    expected = {
+        "min_a_pie_bus": ("bus", {"emt", "autobus_interurbano", "autobus_urbano"}),
+        "min_a_pie_metro": ("metro", {"metro", "metro_ligero", "cercanias"}),
+    }
+    for feature_id, (mode, subcategories) in expected.items():
+        spec = catalog.features[feature_id]
+        assert spec.fit is not None
+        assert (spec.fit.role, spec.fit.mode, spec.fit.need) == ("transit_mode", mode, None)
+        formula = spec.formula.model_extra or {}
+        assert set(formula["subcategories"]) == subcategories
+        for key in ("destination_category", "statistic", "speed_kmh", "levels"):
+            assert formula[key] == (scoring.formula.model_extra or {})[key]
+        assert spec.formula.method == scoring.formula.method
+        assert spec.null_policy == scoring.null_policy
+    all_modes = {s for _, subs in expected.values() for s in subs}
+    stops = {
+        str(getattr(p, "mode", ""))
+        for name, p in catalog.pipelines.items()
+        if name.startswith("crtm_gtfs_")
+    }
+    assert all_modes == stops
 
 
 def test_green_areas_are_the_walk_to_a_park(catalog: Catalog) -> None:
@@ -352,6 +435,70 @@ def test_safety_is_context_never_a_score(catalog: Catalog) -> None:
         assert spec.gap_row is None, spec.feature_id
 
 
+ENVIRONMENT_CONTEXT = {
+    "pct_calle_ruido_dia",
+    "pct_calle_ruido_noche",
+    "no2_media_anual",
+    "min_a_pie_aparcamiento_publico",
+}
+
+
+def test_the_zone_surroundings_are_context_never_a_score(catalog: Catalog) -> None:
+    """D-237: noise, air and car parks do not score in the search, rank zones or enter «Qué
+    falta»: no `fit` (search.indicators_by_zone never reads them) and no `gap_row`."""
+    for feature_id in ENVIRONMENT_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None and spec.gap_row is None and not spec.models, feature_id
+        assert any("no puntúa" in text for text in spec.limitations), feature_id
+
+
+def test_air_reads_the_cm_network_and_its_zones(catalog: Catalog) -> None:
+    """D-237: NO2 of 2025 from the CM network (with its zones) and the Ayuntamiento's for the
+    capital; a station counts with 85 % of valid hours (Directive 2008/50/EC, annex I)."""
+    spec = catalog.features["no2_media_anual"]
+    formula = spec.formula.model_extra or {}
+    assert formula["means_datasets"] == [
+        "cm_calidad_aire_horario_2025",
+        "ayto_calidad_aire_horario",
+    ]
+    assert formula["zones_dataset"] == "cm_calidad_aire_zonas"
+    assert formula["min_capture"] == 0.85 and set(formula["levels"]) == {"distrito", "barrio"}
+    for dataset_id in ("cm_calidad_aire_horario_2025", "cm_calidad_aire_estaciones"):
+        assert catalog.datasets[dataset_id].source_id == "comunidad_madrid_ckan"
+    for dataset_id in formula["means_datasets"]:
+        hourly = catalog.pipelines[dataset_id]
+        assert hourly.kind == "air_quality_hourly"
+        assert (hourly.magnitude, hourly.year) == (8, 2025)
+    sources = {s.dataset_id for s in spec.sources}
+    assert {"cm_calidad_aire_estaciones", "ayto_calidad_aire_estaciones"} <= sources
+
+
+ZONE_CONTEXT = {  # D-235: what the zone view shows as context, by level
+    "infracciones_penales_por_1000_hab": {"municipio"},
+    "viviendas_desde_2001_pct": {"municipio"},
+    "renta_per_capita": {"municipio"},
+    "ano_medio_construccion_residencial": {"distrito", "barrio"},
+    "renta_neta_media_hogar": {"distrito", "barrio"},
+}
+
+
+def test_context_features_never_score_filter_or_enter_the_gaps(catalog: Catalog) -> None:
+    """D-226, D-235: every feature of the catalogue marked `context_only` has no fit binding
+    (the search never reads it) and no «Qué falta» row, whoever adds it."""
+    tagged = [f for f in catalog.features.values() if "context_only" in f.tests]
+    assert {f.feature_id for f in tagged} >= set(ZONE_CONTEXT)
+    for spec in tagged:
+        assert spec.fit is None and spec.gap_row is None, spec.feature_id
+
+
+def test_zone_context_is_shown_on_the_levels_of_its_measure(catalog: Catalog) -> None:
+    """D-235: each measure of age and income on the levels it is shown, never both."""
+    for feature_id, levels in ZONE_CONTEXT.items():
+        spec = catalog.features[feature_id]
+        formula = spec.formula.model_extra or {}
+        assert {spec.geo_level, *formula.get("levels", {})} == levels, feature_id
+
+
 def test_perceived_safety_is_the_residents_view_of_madrid_only(catalog: Catalog) -> None:
     """D-226: the panel's survey rows for the 21 districts and the city; elsewhere SIN DATOS."""
     for part in ("noche", "dia"):
@@ -378,6 +525,31 @@ def test_purchase_price_is_the_official_appraised_value_from_the_cm_portal(
     assert dataset.license_status == "CLEAR"
     levels = (spec.formula.model_extra or {})["levels"]
     assert levels["distrito"]["method"] == "not_published"
+    assert levels["barrio"]["method"] == "not_published"
+
+
+def test_estimated_purchase_price_shares_out_the_city_value_by_cadastral_value(
+    catalog: Catalog,
+) -> None:
+    """D-234: districts and barrios of Madrid get an estimate, declared as such, with its own
+    feature, its own role (a search deployed before ignores it, with a warning) and both datasets
+    behind it."""
+    spec = catalog.features["precio_compra_estimado_m2"]
+    assert spec.fit is not None and spec.fit.role == "price_m2_estimate"
+    assert {s.dataset_id for s in spec.sources} == {
+        "cm_valor_tasado_vivienda_municipios",
+        "ayto_panel_indicadores_distritos_barrios",
+    }
+    formula = spec.formula.model_extra or {}
+    assert spec.formula.method == "anchored_relative_value"
+    assert formula["confidence"] < 0.8  # never «Dato fiable»
+    assert formula["anchor_metric"] == catalog.features["valor_tasado_vivienda_m2"].formula.metric  # type: ignore[attr-defined]
+    for key in ("numerator_metric", "denominator_metric", "weight_metric"):
+        metric = catalog.metrics[formula[key]]
+        assert metric.dataset_id == "ayto_panel_indicadores_distritos_barrios"
+        assert metric.geo_resolution_min.value == "barrio"
+    assert any("estimación" in text for text in spec.limitations)
+    assert any("ponencias" in text for text in spec.limitations)
 
 
 def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> None:
@@ -390,3 +562,135 @@ def test_rent_note_names_the_year_of_the_new_lease_tables(catalog: Catalog) -> N
     ):
         year = catalog.datasets[dataset_id].name.rsplit("ejercicio ", 1)[1][:4]
         assert f"contratos firmados en {year}" in fit.note
+
+
+NEW_HOUSING_CONTEXT = {
+    "compraventas_obra_nueva_pct",
+    "valor_tasado_vivienda_nueva_m2",
+    "valor_tasado_vivienda_usada_m2",
+    "plan_vive_viviendas",
+    "ambitos_residenciales_en_desarrollo",
+    "suelo_publico_vivienda_m2",  # D-246
+}
+
+
+def test_new_housing_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-241: new housing and what is coming never score, rank or enter «Qué falta», and the
+    purchase price stays the total appraised value (D-227)."""
+    for feature_id in NEW_HOUSING_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None, feature_id
+        assert spec.gap_row is None, feature_id
+        assert "context_only" in spec.tests, feature_id
+    price = [f.feature_id for f in catalog.features.values() if f.fit and f.fit.role == "price_m2"]
+    assert price == ["valor_tasado_vivienda_m2"]
+
+
+def test_new_housing_figures_come_from_the_cm_portal(catalog: Catalog) -> None:
+    """The two figures about new homes are CM open data; what is coming complements them."""
+    for dataset_id in ("cm_transacciones_nueva_usada", "cm_valor_tasado_vivienda_antiguedad"):
+        assert catalog.datasets[dataset_id].source_id == CM_SOURCE, dataset_id
+    plan_vive = catalog.datasets["cm_plan_vive_promociones"]
+    assert plan_vive.source_id == "comunidad_madrid_web"  # a web page, not the open data portal
+    assert catalog.sources["comunidad_madrid_web"].attribution_text
+
+
+def test_public_land_for_housing_comes_from_the_cm_portal(catalog: Catalog) -> None:
+    """D-246: the parcels are CM open data, by municipio and, in Madrid, by district and
+    barrio; the value is the parcels' buildable m², never homes."""
+    spec = catalog.features["suelo_publico_vivienda_m2"]
+    assert {s.dataset_id for s in spec.sources} == {"cm_parcelas_portal_suelo"}
+    assert catalog.datasets["cm_parcelas_portal_suelo"].source_id == CM_SOURCE
+    assert catalog.datasets["cm_parcelas_portal_suelo"].license_status == "CLEAR"
+    formula = spec.formula.model_extra or {}
+    assert {spec.geo_level, *formula["levels"]} == {"municipio", "distrito", "barrio"}
+    assert spec.unit == "m2" and formula["value"] == "sum"
+
+
+def test_plan_vive_citation_carries_the_date_it_was_typed(catalog: Catalog) -> None:
+    """The page's notice asks for the date of extraction: the citation must be the table's own
+    `consulted` date, so refreshing one without the other fails here (D-241)."""
+    import yaml
+
+    from hi_contracts.catalog.manual import ZoneItemsTable
+
+    spec = catalog.pipelines["cm_plan_vive_promociones"]
+    assert spec.kind == "curated_zone_items"
+    path = catalog.paths["cm_plan_vive_promociones"].parents[1] / "manual" / spec.table
+    table = ZoneItemsTable.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+    citation = catalog.sources["comunidad_madrid_web"].attribution_text or ""
+    assert table.consulted.strftime("%d/%m/%Y") in citation
+
+
+def test_reference_rent_only_fills_and_says_its_year(catalog: Catalog) -> None:
+    """D-242: one rent fill, with its own role (a search that does not know it ignores it), on
+    every level the search reads; its note and source name the year of the SERPAVI rows it reads
+    and of the Agencia Tributaria tables of the new-lease factor."""
+    fills = [
+        s for s in catalog.features.values() if s.fit is not None and s.fit.role == "rent_m2_fill"
+    ]
+    assert len(fills) == 1
+    spec = fills[0]
+    assert spec.fit is not None and spec.fit.note is not None and spec.fit.source is not None
+    levels = {spec.geo_level.value, *((spec.formula.model_extra or {}).get("levels") or {})}
+    assert levels == {"municipio", "distrito", "barrio"}
+    pipeline = catalog.pipelines["mivau_serpavi_alquiler"]
+    assert pipeline.kind == "serpavi_rent"
+    serpavi_year = str(pipeline.period_min)
+    aeat_year = catalog.datasets["aeat_alquiler_nuevos_contratos_municipios"].name.rsplit(
+        "ejercicio ", 1
+    )[1][:4]
+    assert serpavi_year == aeat_year  # the factor and the value are of the same year (D-228)
+    assert f"contratos firmados en {serpavi_year}" in spec.fit.note
+    # review R-02 of PR #71: our own work from the Ministry's figures, said as such
+    assert spec.fit.source.startswith("Elaboración propia a partir del Ministerio de Vivienda")
+    assert serpavi_year in spec.fit.source
+    formula = spec.formula.model_extra or {}
+    assert catalog.metrics[formula["metric"]].dataset_id == "mivau_serpavi_alquiler"
+    calibration = catalog.metrics[formula["calibration"]["metric"]]
+    assert catalog.datasets[calibration.dataset_id].source_id == CM_SOURCE  # scaled to the CM
+
+
+INVESTOR_CONTEXT = {
+    "locales_abiertos_1000hab",
+    "locales_cerrados_pct",
+    "comercio_proximidad_1000hab",
+    "edificabilidad_remanente_residencial_m2",
+    "unidades_comerciales_1000hab",
+    "suelo_vacante_unidades",
+    "piloto_inversores_m40",
+}
+
+
+def test_investor_data_is_context_never_a_score(catalog: Catalog) -> None:
+    """D-247: the data of the investor version never scores, ranks, filters or enters «Qué
+    falta»: no `fit`, no `gap_row`, no model, and tagged `context_only` (the search only reads
+    features with `fit`)."""
+    for feature_id in INVESTOR_CONTEXT:
+        spec = catalog.features[feature_id]
+        assert spec.fit is None, feature_id
+        assert spec.gap_row is None, feature_id
+        assert not spec.models, feature_id
+        assert "context_only" in spec.tests, feature_id
+
+
+def test_investor_cm_context_comes_from_the_cm_portal(catalog: Catalog) -> None:
+    """D-247: the commercial units and the vacant land are CM open data (CC BY 4.0), by
+    municipio and, for the commercial units, by district of Madrid; vacant land is a count."""
+    for feature_id in ("unidades_comerciales_1000hab", "suelo_vacante_unidades"):
+        spec = catalog.features[feature_id]
+        primary = {s.dataset_id for s in spec.sources if s.role == "primary"}
+        assert all(catalog.datasets[d].source_id == CM_SOURCE for d in primary), feature_id
+        assert all(catalog.datasets[d].license_status == "CLEAR" for d in primary), feature_id
+    assert catalog.features["suelo_vacante_unidades"].unit == "unidades"
+    levels = (catalog.features["unidades_comerciales_1000hab"].formula.model_extra or {})["levels"]
+    assert set(levels) == {"distrito"}
+
+
+def test_buildable_area_is_m2_never_homes(catalog: Catalog) -> None:
+    """D-247: the VEDA register's «Nº Viviendas» columns are not read."""
+    spec = catalog.pipelines["ayto_edificabilidad_remanente_ambitos"]
+    assert spec.kind == "madrid_buildable_areas"
+    read = {*spec.residential_columns, *spec.other_use_columns}
+    assert not any("Viviendas" in column for column in read)
+    assert catalog.features["edificabilidad_remanente_residencial_m2"].unit == "m2"

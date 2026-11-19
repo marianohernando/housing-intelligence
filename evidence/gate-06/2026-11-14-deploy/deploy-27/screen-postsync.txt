@@ -1,0 +1,3 @@
+desktop on screen: Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min | old text: true | walk note: true | errors: []
+mobile on screen: Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min | old text: true | walk note: true | errors: []
+(«old text: true» is the option «Parada de transporte público» of the «Lo quiero a un paseo» service selector, not a fact: the only text node with those words after tapping Latina is an OPTION.)

@@ -1,0 +1,15 @@
+metric_id: unidades_urbanas_por_uso
+human_name: Unidades urbanas del Catastro por uso
+description: >-
+  Unidades urbanas del Catastro Inmobiliario (todo inmueble con una propiedad delimitada a efectos
+  fiscales) por uso (residencial, comercial, oficinas, suelo vacante…), en número y en porcentaje
+  de las del territorio, por municipio, zona estadística y la Comunidad de Madrid. Publica el
+  Instituto de Estadística de la Comunidad de Madrid con datos de la Dirección General del
+  Catastro (D-247).
+domain: urbanism
+unit: unidades
+aggregation_method: sum
+geo_resolution_min: municipio
+temporal_resolution: annual
+dataset_id: cm_catastro_unidades_urbanas_uso
+dimensions: [uso, medida]

@@ -58,6 +58,7 @@ class FactTopic(StrEnum):
     ZONAS_VERDES = "zonas_verdes"
     SEGURIDAD = "seguridad"
     ACCESIBILIDAD = "accesibilidad"
+    OCIO = "ocio"
     TRAYECTO = "trayecto"
     OTRO = "otro"
 
@@ -75,6 +76,17 @@ class Fact(BaseModel):
     indicator: IndicatorValue | None = None
 
 
+class MatchBand(StrEnum):
+    """The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or
+    «poco», only for a zone that passes every condition. The thresholds (90, 75 and 60) live in
+    hi_domain.fit; a web that gets no band derives it from `match_pct` with the same ones."""
+
+    MUY_BIEN = "muy_bien"
+    BIEN = "bien"
+    REGULAR = "regular"
+    POCO = "poco"
+
+
 class GapHighlight(BaseModel):
     """One row of «Qué falta aquí» for the zone card; the full list is GET /gaps."""
 
@@ -85,12 +97,42 @@ class GapHighlight(BaseModel):
     status: GapStatus
 
 
+class CostRange(BaseModel):
+    """Where half the leases of the zone fall (D-242), for the household's m²: the 25th and 75th
+    percentiles of the rent reference, scaled as the cost itself. Only with a rent that comes
+    from the Ministry's reference (it fills the zones without the CM rent, which publishes means
+    and no spread)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    low_eur: float = Field(ge=0, description="25th percentile, € per month for the needed area")
+    high_eur: float = Field(ge=0, description="75th percentile, € per month for the needed area")
+    source: str = Field(
+        min_length=1,
+        description="Who publishes it and its year",
+        examples=["Ministerio de Vivienda (SERPAVI), 2024"],
+    )
+
+    @model_validator(mode="after")
+    def _low_is_not_above_high(self) -> Self:
+        if self.low_eur > self.high_eur:
+            msg = "low_eur must not be above high_eur"
+            raise ValueError(msg)
+        return self
+
+
 class RankedZone(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     rank: int = Field(ge=1)
     zone: ZoneRef
     match_pct: int = Field(ge=0, le=100, description="% of fit with the search, not a grade")
+    match_band: MatchBand | None = Field(
+        default=None,
+        description="`match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from "
+        "60, poco below. None for a zone that does not pass every condition (near misses): it "
+        "reads by what it misses. Optional and additive: None from an API before fit-0.9",
+    )
     confidence: float = Field(ge=0, le=1)
     facts: list[Fact] = Field(
         max_length=5,
@@ -103,6 +145,18 @@ class RankedZone(BaseModel):
     estimated_cost_eur: float | None = Field(
         default=None, ge=0, description="Monthly rent or purchase price for the needed area"
     )
+    estimated_cost_confidence: float | None = Field(
+        default=None,
+        ge=0,
+        le=1,
+        description="Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for "
+        "the estimated purchase price of D-234); None without a cost",
+    )
+    estimated_cost_range: CostRange | None = Field(
+        default=None,
+        description="Where half the leases fall, renting with the Ministry's rent reference "
+        "(D-242); None otherwise",
+    )
     gap_highlights: list[GapHighlight] = Field(default_factory=list[GapHighlight], max_length=3)
 
 
@@ -113,8 +167,25 @@ class ZoneMatch(BaseModel):
 
     zone: ZoneRef
     match_pct: int | None = Field(default=None, ge=0, le=100, description="None = unknown")
+    match_band: MatchBand | None = Field(
+        default=None,
+        description="`match_pct` in words, as in RankedZone (D-243); None unless `passes_all`, "
+        "and from an API before fit-0.9",
+    )
     passes_all: bool
     failed_constraints: list[str] = Field(default_factory=list[str])
+    estimated_cost_eur: float | None = Field(
+        default=None,
+        ge=0,
+        description="Monthly rent or purchase price for the needed area, as in RankedZone: the "
+        "zone card shows it for any zone (D-234); None without a cost",
+    )
+    estimated_cost_confidence: float | None = Field(
+        default=None, ge=0, le=1, description="Confidence of `estimated_cost_eur`"
+    )
+    estimated_cost_range: CostRange | None = Field(
+        default=None, description="Where half the leases fall, as in RankedZone (D-242)"
+    )
 
 
 class Relaxation(BaseModel):
@@ -140,7 +211,14 @@ class RealityCheck(BaseModel):
     zones_passing: int = Field(ge=0, description="Every constraint PASS")
     zones_unknown: int = Field(ge=0, description="No FAIL but some UNKNOWN: not counted as passing")
     binding_constraint: str | None = Field(
-        default=None, description="constraint_id that removes the most zones"
+        default=None,
+        description="constraint_id that the most zones FAIL; None when no zone fails any. A "
+        "zone where a condition is UNKNOWN is not counted here (D-234)",
+    )
+    unknown_by_constraint: dict[str, int] = Field(
+        default_factory=dict[str, int],
+        description="Among the `zones_unknown` zones, how many have each condition UNKNOWN "
+        "(constraint_id -> zones): what is missing is data, so relaxing it is never offered",
     )
     relaxations: list[Relaxation] = Field(description="Sorted by added_zones, largest first")
 

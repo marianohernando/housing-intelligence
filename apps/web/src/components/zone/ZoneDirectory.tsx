@@ -1,17 +1,19 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
 import { fetchZones } from "@/components/map/fetchZones";
 import { useGapRowMap } from "@/components/map/useGapRowMap";
 import Button from "@/components/ui/Button";
+import Help from "@/components/ui/Help";
 import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import type { ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 import { ApiError } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
-import { gapsHref, inGroup, notComparable } from "@/lib/gaps";
+import { GAP_STATUS, gapsHref, GROUP, inGroup, notComparable, notComparableHelp, SMALL_ZONE } from "@/lib/gaps";
 import { searchable, wholeCities, zoneDirectory, type ZoneCollection, zoneHref, type ZoneProperties } from "@/lib/map/zones";
 
 import GapBadge from "./GapBadge";
@@ -29,7 +31,36 @@ const TEXT = {
   none: "No hay ninguna zona con ese nombre.",
   wholeCity: (name: string) => `${name} (toda la ciudad)`,
   loadingRow: "Cargando el estado de cada zona…",
+  // zonas.ver_todas, zonas.ver_menos: the folded list of «Qué falta»
+  all: (n: number) => `Ver las ${n} zonas`,
+  fewer: "Ver menos",
+  // zonas.estados: what each status of the list means, behind a «?» (they were tooltips, UX mobile audit A5)
+  statuses: "¿Qué quiere decir cada estado?",
+  statusesAbout: "de la lista de zonas",
 };
+
+/**
+ * What FALTA, JUSTO, CUBIERTO, SIN DATOS, «No comparable» and «Junto con sus vecinos» mean, once over
+ * the lists; «No comparable» in the unit of the list's row, as its tags say it to screen readers.
+ */
+function StatusesHelp({ row }: { row: GapRowKey }) {
+  const lines: [string, string][] = [
+    ...Object.values(GAP_STATUS).map((s) => [s.label, s.help] as [string, string]),
+    [SMALL_ZONE.label, notComparableHelp(row)],
+    [GROUP.label, GROUP.help],
+  ];
+  return (
+    <Help about={TEXT.statusesAbout} label={TEXT.statuses}>
+      <ul>
+        {lines.map(([label, help]) => (
+          <li key={label}>
+            <strong>{label}:</strong> {help}
+          </li>
+        ))}
+      </ul>
+    </Help>
+  );
+}
 
 type Result = { zones: ZoneCollection } | { error: ApiError };
 
@@ -41,9 +72,11 @@ interface LinksProps {
   hrefFor: HrefFor;
   /** Each zone's status in a row of «Qué falta», when the list shows one */
   statuses?: ReadonlyMap<string, ZoneGapStatus> | null;
+  /** What a «No comparable» tag of the list says to screen readers: the row's reason */
+  smallZoneHelp?: string;
 }
 
-function ZoneLinks({ title, zones, hrefFor, statuses }: LinksProps) {
+function ZoneLinks({ title, zones, hrefFor, statuses, smallZoneHelp }: LinksProps) {
   const id = useId();
   if (zones.length === 0) return null;
   return (
@@ -57,7 +90,7 @@ function ZoneLinks({ title, zones, hrefFor, statuses }: LinksProps) {
           return (
             <li key={zone.zone_key}>
               <Link href={hrefFor(zone)}>{zone.name}</Link>
-              {gap && (notComparable(gap) ? <SmallZoneTag /> : <GapBadge status={gap.status} />)}
+              {gap && (notComparable(gap) ? <SmallZoneTag help={smallZoneHelp} /> : <GapBadge status={gap.status} />)}
               {gap && inGroup(gap) && <GroupTag />}
             </li>
           );
@@ -75,12 +108,19 @@ interface Props {
   row?: GapRowKey | null;
   /** Also list Madrid capital as a whole, whose «Qué falta» list exists although the map splits it. */
   wholeCities?: boolean;
+  /**
+   * Keep the districts and municipios behind «Ver las N zonas» until the person opens them or types
+   * a name («Qué falta» on a phone: the whole list is a very long scroll).
+   */
+  folded?: boolean;
 }
 
 /** The map's alternative: every zone as a link, with a filter by name (keyboard and screen readers). */
-export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = null, wholeCities: withCities = false }: Props) {
+export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = null, wholeCities: withCities = false, folded = false }: Props) {
   const rowMap = useGapRowMap(row);
   const inputId = useId();
+  const listId = useId();
+  const [all, setAll] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState("");
@@ -125,6 +165,10 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
     );
   }
   const { distritos, municipios } = zoneDirectory(result.zones, query);
+  // A «No comparable» tag of the list says the reason in the unit of its row («Qué falta» by row)
+  const smallZoneHelp = row ? notComparableHelp(row) : undefined;
+  // A name typed in the field shows its zones at once, folded or not
+  const searching = query.trim() !== "";
   // The whole city leads to its «Qué falta» list: on the map it is its districts
   const cities = withCities
     ? wholeCities(result.zones).filter((c) => searchable(TEXT.wholeCity(c.name)).includes(searchable(query)))
@@ -146,13 +190,14 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
             return (
               <li key={city.admin_unit_id}>
                 <Link href={gapsHref("municipio", city.code)}>{TEXT.wholeCity(city.name)}</Link>
-                {gap && (notComparable(gap) ? <SmallZoneTag /> : <GapBadge status={gap.status} />)}
+                {gap && (notComparable(gap) ? <SmallZoneTag help={smallZoneHelp} /> : <GapBadge status={gap.status} />)}
                 {gap && inGroup(gap) && <GroupTag />}
               </li>
             );
           })}
         </ul>
       )}
+      {row && rowMap.data && <StatusesHelp row={row} />}
       {row && rowMap.loading && <p role="status">{TEXT.loadingRow}</p>}
       {row && rowMap.error && (
         <div role="alert" className={styles.error}>
@@ -162,8 +207,16 @@ export default function ZoneDirectory({ hrefFor = zoneHref, placeholder, row = n
           </Button>
         </div>
       )}
-      <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
-      <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} statuses={rowMap.data?.byZone} />
+      {folded && !searching && (
+        <button type="button" className={styles.toggle} aria-expanded={all} aria-controls={listId} onClick={() => setAll((v) => !v)}>
+          {all ? TEXT.fewer : TEXT.all(distritos.length + municipios.length)}
+          <ChevronDown size={18} aria-hidden="true" className={all ? styles.flip : undefined} />
+        </button>
+      )}
+      <div id={listId} className={styles.groups} hidden={folded && !all && !searching}>
+        <ZoneLinks title={TEXT.distritos} zones={distritos} hrefFor={hrefFor} statuses={rowMap.data?.byZone} smallZoneHelp={smallZoneHelp} />
+        <ZoneLinks title={TEXT.municipios} zones={municipios} hrefFor={hrefFor} statuses={rowMap.data?.byZone} smallZoneHelp={smallZoneHelp} />
+      </div>
     </div>
   );
 }

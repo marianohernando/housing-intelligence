@@ -1,0 +1,11 @@
+{
+  "edificabilidad_remanente_residencial_ambito_m2|barrio": 152,
+  "edificabilidad_remanente_residencial_ambito_m2|distrito": 152,
+  "rows": 229,
+  "areas_kept": 152,
+  "points": 225,
+  "partial_blank": 42,
+  "out_of_scope|not_residential": 21,
+  "out_of_scope|nothing_left": 56,
+  "observations": 304
+}

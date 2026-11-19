@@ -1,0 +1,50 @@
+The API before (dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm, c0e9d11, 2026-11-15T21:12:01Z) and after (dpl_F5vfeRz1uNGfYD8f7XZ3b31qDZb3, 55651c2, ~21:15Z), the same requests:
+deploy-34's 11 POST /api/v1/search bodies and GET /api/v1/gaps of the 21 districts and 10 municipios, compared without `meta` (cmp_ux2.mjs).
+#82 changes only the web: all 42 answers must be identical.
+
+buy400: identical
+couple1500-madrid: identical
+couple1500-pueblos: identical
+couple1500: identical
+example: identical
+gaps-distrito-2807901: identical
+gaps-distrito-2807902: identical
+gaps-distrito-2807903: identical
+gaps-distrito-2807904: identical
+gaps-distrito-2807905: identical
+gaps-distrito-2807906: identical
+gaps-distrito-2807907: identical
+gaps-distrito-2807908: identical
+gaps-distrito-2807909: identical
+gaps-distrito-2807910: identical
+gaps-distrito-2807911: identical
+gaps-distrito-2807912: identical
+gaps-distrito-2807913: identical
+gaps-distrito-2807914: identical
+gaps-distrito-2807915: identical
+gaps-distrito-2807916: identical
+gaps-distrito-2807917: identical
+gaps-distrito-2807918: identical
+gaps-distrito-2807919: identical
+gaps-distrito-2807920: identical
+gaps-distrito-2807921: identical
+gaps-municipio-28001: identical
+gaps-municipio-28005: identical
+gaps-municipio-28006: identical
+gaps-municipio-28049: identical
+gaps-municipio-28074: identical
+gaps-municipio-28092: identical
+gaps-municipio-28106: identical
+gaps-municipio-28148: identical
+gaps-municipio-28161: identical
+gaps-municipio-28180: identical
+pueblos: identical
+rent10k: identical
+retired-noflag: identical
+retired: identical
+student: identical
+telework: identical
+
+unexpected differences: 0
+
+The golden through the public API (10 scenarios): line by line deploy-34/golden-api.txt.

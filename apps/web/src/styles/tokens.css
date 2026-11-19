@@ -58,6 +58,9 @@
   --fac-hospital: #141b3d;
   --fac-farmacia: #0b6f7c;
   --fac-mayores: #6d4c41;
+  /* Leisure from OSM (D-236): bars, restaurants, gyms and culture share one colour */
+  --fac-ocio: #5f6f0a;
+  --fac-aparcamiento: #37526b; /* car parks (D-237): context, a quiet slate blue */
 
   /* Map: the darkest fill a glass card can sit on (top of the fit scale) */
   --map-darkest: var(--violet);
@@ -90,10 +93,15 @@
   --map-fit-low: #cdc5f8;
   --map-no-cumple: #eceaf3;
 
-  /* Type */
+  /*
+   * Type. Nothing a person reads to decide goes under 16 px (UX mobile audit, 15 nov: «difícil
+   * de entender», C1): --text-xs is that floor, for the quiet marks («por 68 m²», «Dato
+   * aproximado», the number of a chip); --text-sm is the base size, for helps and options.
+   */
   --font-title: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
   --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
-  --text-sm: 0.875rem;
+  --text-xs: max(16px, 0.9412rem);
+  --text-sm: 1rem;
   --text-base: 1rem;
   --text-lg: 1.1875rem;
   --text-xl: 1.5rem;
@@ -122,4 +130,11 @@
   --duration: 220ms;
   --duration-slow: 600ms;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Phones (MOBILE_QUERY of lib/map/camera.ts): body text of 18 px, what older readers are advised */
+@media (max-width: 760px) {
+  :root {
+    font-size: 112.5%;
+  }
 }

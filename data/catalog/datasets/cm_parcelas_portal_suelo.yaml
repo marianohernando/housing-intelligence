@@ -20,6 +20,11 @@ resources:
 - name: Enlace a la Información Geográfica del Portal del Suelo 4.0
   format: HTML
   url: https://idem.comunidad.madrid/catalogocartografia/srv/spa/catalog.search#/metadata/spacm_parcelaspsuelo
+  role: docs
+- name: Servicio WFS de las parcelas del Portal del Suelo (IDEM, EPSG:25830)
+  format: GeoJSON
+  url: https://idem.comunidad.madrid/geoidem/UsoDelSuelo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=UsoDelSuelo:IDEM_V_SUELO_PARCELA&outputFormat=application/json
+  role: points
 license_status: CLEAR
 status: REVIEWED
 priority: P1
@@ -30,12 +35,20 @@ scorecard:
   freshness: 5
   license_clarity: 5
   ingestion_ease: 5
-  notes: heuristic-v2; keywords=['parcela', 'suelo', 'portal del suelo']; strong=True
+  notes: >-
+    D-246. Portal de datos abiertos de la CM (CC BY 4.0, comprobado en su CKAN el 18 nov:
+    «license_url» de la 4.0; «Fecha Actualización» diaria). 525 parcelas el 18 nov, 291 de uso
+    residencial en 29 municipios. El CSV no trae coordenadas: las de Madrid capital se sitúan en
+    su distrito y su barrio con la capa de las mismas parcelas en la IDEM (WFS de la CM). Los
+    códigos de régimen y urbanización se leen de las descripciones de esa capa; los que no tienen
+    descripción (régimen D y A, urbanización «p») no se enseñan.
   reviewed_by: claude-code
-  reviewed_at: '2026-10-20T11:16:21.688446+00:00'
+  reviewed_at: '2026-11-18T20:00:00+00:00'
 discovery:
   harvested_from: comunidad_madrid_ckan
   external_id: parcelas_portal_suelo
   harvested_at: '2026-10-20T11:16:21.704411+00:00'
-notes: P1-02 Parcel Analyzer (PRO) | curated from 2026-10-20_sprint_p0.yaml | Auto-draft.
-  composite=4.7; license_id=cc-by
+notes: >-
+  D-246: «Suelo público para vivienda» en la vista de zona, dentro de «Vivienda nueva y lo que
+  viene» (contexto que no puntúa). Antes, P1-02 Parcel Analyzer (PRO) | curated from
+  2026-10-20_sprint_p0.yaml | Auto-draft. composite=4.7; license_id=cc-by

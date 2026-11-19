@@ -10,15 +10,34 @@
   background: rgba(255, 255, 255, 0.7);
 }
 
+/* Two columns: the options wrap into rows; a long label wraps inside its pill */
+.columns {
+  grid-auto-flow: row;
+  grid-template-columns: 1fr 1fr;
+}
+
+.columns .option {
+  padding: var(--space-1) var(--space-2);
+  text-align: center;
+}
+
+/* An odd last option («Otra cantidad») takes the whole row */
+.columns .option:last-of-type:nth-of-type(odd) {
+  grid-column: 1 / -1;
+}
+
 .option {
   position: relative;
   display: grid;
-  min-height: calc(var(--target) - 0.5rem);
+  min-height: var(--target);
   place-items: center;
+  padding: 0 var(--space-1);
   border-radius: calc(var(--radius) - 4px);
   color: var(--ink-soft);
   font-size: var(--text-sm);
   font-weight: 500;
+  /* A label on two lines («Cerca de / nuestra familia») stays centred in its pill */
+  text-align: center;
   cursor: pointer;
 }
 

@@ -1,0 +1,13 @@
+kind: serpavi_rent
+dataset_id: mivau_serpavi_alquiler
+province_code: "28"
+sheets:
+  municipio: {sheet: Municipios, code_column: CUMUN, name_column: NMUN}
+  distrito: {sheet: Distritos, code_column: CUDIS}
+  seccion_censal: {sheet: Secciones censales, code_column: CUSEC}
+period_min: 2024
+rent_metric_id: alquiler_m2_mensual_serpavi
+count_metric_id: contratos_alquiler_serpavi
+expected_municipios: 179
+expected_districts: 246
+min_sections: 4300

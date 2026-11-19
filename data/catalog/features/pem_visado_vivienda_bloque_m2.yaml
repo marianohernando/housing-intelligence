@@ -1,0 +1,25 @@
+feature_id: pem_visado_vivienda_bloque_m2
+version: 1
+human_name: Presupuesto de ejecución material por m² de los visados de obra nueva de viviendas en bloque (Comunidad de Madrid)
+domain: housing
+type: raw
+unit: EUR/m2
+direction: neutral
+geo_level: ccaa
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_visados_presupuesto_obra, role: primary}
+formula:
+  method: metric_value
+  metric: pem_visado_m2
+  dims: {tipo: viviendas_en_bloque}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [positive, unknown_never_zero, context_only]
+limitations:
+  - "Es el presupuesto de ejecución material que declaran los visados de dirección de obra nueva (Estadística de Obras en Edificación, Ministerio de Vivienda, en el portal de la CM), no el coste total de la obra: le faltan los gastos generales y el beneficio del constructor, los honorarios, la licencia y los impuestos. Suele declararse a la baja (D-248)."
+  - "Solo el total de la región y el último año publicado; la superficie es la construida total que declara el visado. No hay coste de construcción abierto por zona."
+  - "Dato de partida de la viabilidad v0 de la versión para inversores (D-248): no puntúa, no ordena zonas y no entra en «Qué falta»."

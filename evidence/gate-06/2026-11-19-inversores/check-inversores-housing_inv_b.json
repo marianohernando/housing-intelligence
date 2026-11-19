@@ -1,0 +1,111 @@
+{
+  "base": "local",
+  "barrio": "28079164",
+  "report": [
+    {
+      "name": "390-lista",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-ficha",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-calculadora-con-suelo",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-impresion",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-lista",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-ficha",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-calculadora-con-suelo",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-impresion",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    }
+  ],
+  "consoleErrors": []
+}

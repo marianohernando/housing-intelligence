@@ -8,6 +8,8 @@
 # now limits: cheaper zones a few minutes further out rank first for the family (Latina, 39 min)
 # and the single person (Leganés, 43 min), so those two minute bounds move from 35/40 to 41/45, and
 # the family case checks instead that +150 EUR/month adds zones (before, it added none).
+# D-243 (fit-0.9, «cerca y plazas»): the pitch's order and its % change; Leganés (15,2 km in a
+# straight line from Azca) enters the top 10 at 90 %, so `results_within_km` moves from 15 to 16.
 scenarios:
   - profile_id: golden_family  # the demo case: a couple with two children who work on the Castellana
     scenario:
@@ -16,7 +18,18 @@ scenarios:
       anchors: [{kind: work, label: Paseo de la Castellana (Azca), lon: -3.6930, lat: 40.4500, days_per_week: 4, max_minutes: null}]
       nearby: [{need: colegio, max_walk_minutes: 10, required: true}]
       priorities: [colegios, transporte, salud]
-    expect: {min_results: 10, results_within_km: 15, top_within_minutes: 41, binding: "near:colegio", budget_step_adds_zones: 1}
+    expect:
+      min_results: 10
+      results_within_km: 16
+      top_within_minutes: 41
+      binding: "near:colegio"
+      budget_step_adds_zones: 1
+      # D-239: the order the pitch reads, exactly (top 10 and «Casi encajan»); D-243: and its %
+      # and how many zones fit (42 since the reference rent of D-242)
+      ranked_order: [Puente de Vallecas, Latina, Usera, Moratalaz, Tetuán, Ciudad Lineal, Villaverde, Carabanchel, Coslada, Leganés]
+      ranked_pct: [94, 94, 93, 93, 92, 92, 92, 90, 90, 90]
+      near_miss_order: [Chamartín, Arganzuela, Centro, Chamberí, Retiro]
+      zones_passing: 42
   - profile_id: golden_single
     scenario:
       budget: {kind: rent, amount_eur: 900}
@@ -24,7 +37,7 @@ scenarios:
       anchors: [{kind: work, label: Nuevos Ministerios, lon: -3.6912, lat: 40.4460, days_per_week: 4, max_minutes: null}]
       priorities: [transporte]
     expect: {min_results: 10, top_within_minutes: 45, binding: budget}
-  - profile_id: golden_couple  # purchase: the appraised value by municipio (DATA-021, D-227); districts stay UNKNOWN
+  - profile_id: golden_couple  # purchase: the appraised value by municipio (DATA-021, D-227); districts and barrios of Madrid with the estimate (D-234)
     scenario:
       budget: {kind: buy, amount_eur: 320000}
       household: {adults: 2}
@@ -49,13 +62,16 @@ scenarios:
       nearby: [{need: farmacia, max_walk_minutes: 10, required: true}, {need: centro_salud, max_walk_minutes: 15, required: true}]
       priorities: [salud, transporte, sin_escaleras]
     expect: {min_results: 3, top_within_km: 15}
-  - profile_id: golden_student  # 500 €/month for 61 m²: only a few cheap municipios far away; the budget binds
+  # 500 €/month for 61 m²: the budget binds. D-242: with the Ministry's reference rent of the
+  # villages, some 59 cheap ones far away fit (before, a few municipios with the CM rent), so
+  # `max_results: 5` goes; the case still checks that the budget is what limits.
+  - profile_id: golden_student
     scenario:
       budget: {kind: rent, amount_eur: 500}
       household: {adults: 1}
       anchors: [{kind: study, label: URJC Vicálvaro, lon: -3.6090, lat: 40.4050, days_per_week: 5, max_minutes: null}]
       priorities: [transporte]
-    expect: {max_results: 5, binding: budget}
+    expect: {binding: budget, budget_step_adds_zones: 1}
   - profile_id: golden_sensory_preferences  # D-222: green areas first (the profile's «green»)
     scenario:
       budget: {kind: rent, amount_eur: 1000}
@@ -70,6 +86,15 @@ scenarios:
       anchors: [{kind: other, label: Hospital La Paz, lon: -3.6873, lat: 40.4813, days_per_week: 1, max_minutes: null}]
       priorities: [sin_escaleras, salud, transporte]
     expect: {min_results: 10, top5_step_free_within_minutes: 15}
+  - profile_id: golden_couple  # D-239 feedback case: plenty of budget, no priorities; 57 zones tie at 100 %
+    scenario:
+      budget: {kind: rent, amount_eur: 10000}
+      household: {adults: 2}
+    expect:
+      min_results: 10
+      # D-239: the everyday services at a walk break the tie; leisure never does (D-236). D-243:
+      # every minute counts, so the closer services reorder the tie a little
+      ranked_order: [Chamberí, Tetuán, Salamanca, Puente de Vallecas, Centro, Arganzuela, Usera, Ciudad Lineal, Carabanchel, Retiro]
 # D-232 (fit-0.7): the search inside one district of Madrid ranks its barrios with the same engine
 # (POST /api/v1/search/barrios). Mariano's example: San Blas-Canillejas, with Simancas. `barrios`
 # is how many are evaluated; `ranked` and `near_miss` name barrios that must be among the results

@@ -4,7 +4,33 @@
  * `npm run -w apps/web contracts`.
  */
 
+/**
+ * Confidence of `estimated_cost_eur`
+ */
+export type EstimatedCostConfidence = number | null;
+/**
+ * Monthly rent or purchase price for the needed area, as in RankedZone: the zone card shows it for any zone (D-234); None without a cost
+ */
+export type EstimatedCostEur = number | null;
+/**
+ * 75th percentile, € per month for the needed area
+ */
+export type HighEur = number;
+/**
+ * 25th percentile, € per month for the needed area
+ */
+export type LowEur = number;
+/**
+ * Who publishes it and its year
+ */
+export type Source = string;
 export type FailedConstraints = string[];
+/**
+ * The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or
+ * «poco», only for a zone that passes every condition. The thresholds (90, 75 and 60) live in
+ * hi_domain.fit; a web that gets no band derives it from `match_pct` with the same ones.
+ */
+export type MatchBand = "muy_bien" | "bien" | "regular" | "poco";
 /**
  * None = unknown
  */
@@ -77,9 +103,13 @@ export type Unit = string | null;
 export type Value = number | null;
 export type Constraints = ConstraintCheck[];
 /**
+ * Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for the estimated purchase price of D-234); None without a cost
+ */
+export type EstimatedCostConfidence1 = number | null;
+/**
  * Monthly rent or purchase price for the needed area
  */
-export type EstimatedCostEur = number | null;
+export type EstimatedCostEur1 = number | null;
 export type Confidence2 = number;
 export type Confidence3 = number;
 /**
@@ -129,6 +159,7 @@ export type FactTopic =
   | "zonas_verdes"
   | "seguridad"
   | "accesibilidad"
+  | "ocio"
   | "trayecto"
   | "otro";
 /**
@@ -162,12 +193,15 @@ export type Rank = number;
  */
 export type NearMisses = RankedZone[];
 /**
- * constraint_id that removes the most zones
+ * constraint_id that the most zones FAIL; None when no zone fails any. A zone where a condition is UNKNOWN is not counted here (D-234)
  */
 export type BindingConstraint = string | null;
 export type AddedZones = number;
 export type ConstraintId1 = string;
 export type Label3 = string;
+/**
+ * Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)
+ */
 export type DaysPerWeek = number;
 export type AnchorKind = "work" | "study" | "family" | "other";
 export type Label4 = string;
@@ -193,6 +227,10 @@ export type Adults = number;
 export type MinorAges = number[];
 export type Minors = number;
 /**
+ * Every adult is 65+ («Somos mayores»)
+ */
+export type Seniors = boolean;
+/**
  * People aged 65+ cared for
  */
 export type SeniorsInCare = number;
@@ -202,30 +240,49 @@ export type SeniorsInCare = number;
 export type MinFloorAreaM2 = number | null;
 export type MaxWalkMinutes = number;
 /**
- * Everyday services the search and the per-zone list both talk about.
+ * Everyday services the search and the per-zone list both talk about, and the leisure
+ * groups of «Ocio» (D-236), which only the search knows: they are never rows of the list.
+ *
+ * A leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the
+ * API or the MCP may, it is ignored with a warning: `required` is True by default, so it would
+ * otherwise filter zones by places OpenStreetMap may not have.
  */
 export type NeedKey =
-  "escuela_infantil" | "colegio" | "centro_salud" | "farmacia" | "mayores" | "transporte";
+  | "escuela_infantil"
+  | "colegio"
+  | "centro_salud"
+  | "farmacia"
+  | "mayores"
+  | "transporte"
+  | "bares"
+  | "restaurantes"
+  | "gimnasios"
+  | "cultura";
 /**
  * True = hard constraint (PASS/FAIL/UNKNOWN)
  */
 export type Required = boolean;
 /**
- * @maxItems 6
+ * @maxItems 10
  */
 export type Nearby = NearbyNeed[];
 /**
- * «Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.
+ * «Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio
+ * (D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing.
  */
 export type PriorityKey =
-  "transporte" | "salud" | "colegios" | "zonas_verdes" | "seguridad" | "sin_escaleras";
+  "transporte" | "salud" | "colegios" | "zonas_verdes" | "seguridad" | "sin_escaleras" | "ocio";
 /**
  * Most important first
  *
- * @maxItems 6
+ * @maxItems 7
  */
 export type Priorities = PriorityKey[];
 export type SchemaVersion = 2;
+/**
+ * Where to search; Madrid capital is ranked by barrio instead of by district
+ */
+export type SearchScope = "all" | "madrid" | "alrededores" | "pueblos";
 export type ZonesIfRelaxed = number;
 /**
  * Sorted by added_zones, largest first
@@ -272,10 +329,31 @@ export interface SearchResult {
  * Every evaluated zone, for the choropleth («Encaje con tu búsqueda»).
  */
 export interface ZoneMatch {
+  estimated_cost_confidence?: EstimatedCostConfidence;
+  estimated_cost_eur?: EstimatedCostEur;
+  /**
+   * Where half the leases fall, as in RankedZone (D-242)
+   */
+  estimated_cost_range?: CostRange | null;
   failed_constraints?: FailedConstraints;
+  /**
+   * `match_pct` in words, as in RankedZone (D-243); None unless `passes_all`, and from an API before fit-0.9
+   */
+  match_band?: MatchBand | null;
   match_pct?: MatchPct;
   passes_all: PassesAll;
   zone: ZoneRef;
+}
+/**
+ * Where half the leases of the zone fall (D-242), for the household's m²: the 25th and 75th
+ * percentiles of the rent reference, scaled as the cost itself. Only with a rent that comes
+ * from the Ministry's reference (it fills the zones without the CM rent, which publishes means
+ * and no spread).
+ */
+export interface CostRange {
+  high_eur: HighEur;
+  low_eur: LowEur;
+  source: Source;
 }
 /**
  * A zone the product talks about. `code` is the INE code (municipio, sección) or H3 index.
@@ -307,10 +385,19 @@ export interface DatasetRef {
 export interface RankedZone {
   confidence: Confidence;
   constraints: Constraints;
-  estimated_cost_eur?: EstimatedCostEur;
+  estimated_cost_confidence?: EstimatedCostConfidence1;
+  estimated_cost_eur?: EstimatedCostEur1;
+  /**
+   * Where half the leases fall, renting with the Ministry's rent reference (D-242); None otherwise
+   */
+  estimated_cost_range?: CostRange | null;
   facts: Facts;
   failed_constraints?: FailedConstraints1;
   gap_highlights?: GapHighlights;
+  /**
+   * `match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from 60, poco below. None for a zone that does not pass every condition (near misses): it reads by what it misses. Optional and additive: None from an API before fit-0.9
+   */
+  match_band?: MatchBand | null;
   match_pct: MatchPct1;
   rank: Rank;
   zone: ZoneRef;
@@ -366,6 +453,7 @@ export interface GapHighlight {
 export interface RealityCheck {
   binding_constraint?: BindingConstraint;
   relaxations: Relaxations;
+  unknown_by_constraint?: UnknownByConstraint;
   zones_evaluated: ZonesEvaluated;
   zones_passing: ZonesPassing;
   zones_unknown: ZonesUnknown;
@@ -394,9 +482,10 @@ export interface ScenarioState {
   nearby?: Nearby;
   priorities?: Priorities;
   schema_version?: SchemaVersion;
+  scope?: SearchScope;
 }
 /**
- * A place the household travels to often («Trabajo en»).
+ * A place the household travels to often: where they work, or family and friends.
  */
 export interface Anchor {
   days_per_week?: DaysPerWeek;
@@ -415,11 +504,15 @@ export interface Budget {
 }
 /**
  * «Tu hogar»: adults, children and older people they look after (all live together).
+ *
+ * `seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no
+ * one to the household, unlike `seniors_in_care`.
  */
 export interface Household {
   adults?: Adults;
   minor_ages?: MinorAges;
   minors?: Minors;
+  seniors?: Seniors;
   seniors_in_care?: SeniorsInCare;
 }
 /**
@@ -429,6 +522,12 @@ export interface NearbyNeed {
   max_walk_minutes?: MaxWalkMinutes;
   need: NeedKey;
   required?: Required;
+}
+/**
+ * Among the `zones_unknown` zones, how many have each condition UNKNOWN (constraint_id -> zones): what is missing is data, so relaxing it is never offered
+ */
+export interface UnknownByConstraint {
+  [k: string]: number | undefined;
 }
 export interface Meta {
   api_version?: ApiVersion;

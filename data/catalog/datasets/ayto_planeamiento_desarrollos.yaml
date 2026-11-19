@@ -1,0 +1,37 @@
+dataset_id: ayto_planeamiento_desarrollos
+source_id: ayuntamiento_madrid_urbanismo_sigma
+name: Planeamiento y desarrollos del PGOUM (visor urbanístico)
+domain: urbanism
+owner: Ayuntamiento de Madrid
+format: ArcGIS REST (JSON)
+geography: polygon
+geo:
+  resolution: parcela
+  crs_expected: EPSG:25830
+temporal_resolution: null
+refresh_policy: continuo
+landing_url: https://datos.madrid.es/dataset/300489-0-planeamiento-desarrollos-pgoum
+resources:
+- name: Recintos ordenados (capa 3 de PLANEAMIENTO_URBANISTICO), consulta por punto
+  format: JSON
+  url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/PLANEAMIENTO_URBANISTICO/MapServer/3/query
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 1
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-250. Ayuntamiento de Madrid, CC BY 4.0 (license_id cc-by en su CKAN, comprobado el 19
+    nov). «Incorpora las nuevas geometrías y calificaciones así como el número y denominación del
+    expediente»: la búsqueda por parcela lee en vivo, por un punto, la figura de planeamiento, su
+    expediente y el enlace a su ficha oficial. No se carga en la base.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T20:00:00+00:00'
+notes: >-
+  Complementario, no es dataset CM (D-205): solo Madrid capital. Contexto de la ficha de
+  parcela para inversores (D-250); no puntúa.

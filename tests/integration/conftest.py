@@ -1,46 +1,79 @@
 """Integration fixtures: a migrated Postgres at TEST_DATABASE_URL."""
 
+import io
 import os
+import zipfile
 from collections.abc import Iterator
 from pathlib import Path
 
+import numpy as np
 import pytest
 from alembic import command
 from alembic.config import Config
+from PIL import Image
+from PIL.TiffImagePlugin import ImageFileDirectory_v2
 from pyproj import Transformer
 from sqlalchemy import Engine, create_engine, make_url, text
 
+from hi_contracts.catalog import FeatureSpec
 from hi_contracts.catalog.pipeline import (
     AeatRentComparisonPipeline,
+    AirQualityHourlyPipeline,
+    AirQualityZonesPipeline,
+    CmMunicipioConceptPipeline,
+    CmMunicipioNameTablePipeline,
     CmPostcodeConceptPipeline,
     CmStatTablePipeline,
+    CuratedZoneItemsPipeline,
     FacilityDirectoryPipeline,
     GtfsFeedPipeline,
+    MadridBuildableAreasPipeline,
+    MadridDevelopmentAreasPipeline,
     MadridDistrictPanelPipeline,
     MadridPadronPipeline,
+    MadridPremisesCensusPipeline,
+    NoiseRasterPipeline,
     OsmParksPipeline,
+    OsmPoisPipeline,
     OsmWalkNetworkPipeline,
+    PilotZonesPipeline,
     PointsPipeline,
+    PublicLandParcelsPipeline,
+    SerpaviRentPipeline,
     StationTopologyPipeline,
 )
 from hi_db.session import make_engine
-from hi_ingestion.catalog.loader import load_catalog
+from hi_ingestion.catalog.loader import Catalog, load_catalog
 from hi_ingestion.pipelines.admin_boundaries.run import (
     local_inputs,
     run_admin_boundaries,
 )
 from hi_ingestion.pipelines.aeat_rent.run import run_aeat_rent_pipeline
+from hi_ingestion.pipelines.air_quality.run import (
+    run_air_quality_hourly_pipeline,
+    run_air_quality_zones_pipeline,
+)
+from hi_ingestion.pipelines.buildable.run import run_buildable_areas_pipeline
 from hi_ingestion.pipelines.common import RunSummary
 from hi_ingestion.pipelines.directory.run import run_directory_pipeline
 from hi_ingestion.pipelines.district_panel.run import run_panel_pipeline
 from hi_ingestion.pipelines.fetch import local_file
 from hi_ingestion.pipelines.gtfs.run import run_gtfs_pipeline
+from hi_ingestion.pipelines.noise_raster.run import run_noise_raster_pipeline
 from hi_ingestion.pipelines.osm_network.run import run_osm_network_pipeline
 from hi_ingestion.pipelines.osm_parks.run import run_osm_parks_pipeline
+from hi_ingestion.pipelines.osm_pois.run import run_osm_pois_pipeline
 from hi_ingestion.pipelines.padron.run import run_padron_pipeline
+from hi_ingestion.pipelines.pilot.run import run_pilot_pipeline
 from hi_ingestion.pipelines.places.run import run_places_pipeline
+from hi_ingestion.pipelines.premises.run import run_premises_pipeline
+from hi_ingestion.pipelines.serpavi.run import run_serpavi_pipeline
 from hi_ingestion.pipelines.stat_tables.run import run_metric_pipeline
 from hi_ingestion.pipelines.station_topology.run import run_topology_pipeline
+from hi_ingestion.pipelines.zone_context.run import (
+    run_parcels_pipeline,
+    run_zone_context_pipeline,
+)
 
 ALEMBIC_INI = Path(__file__).resolve().parents[2] / "infra" / "migrations" / "alembic.ini"
 
@@ -179,6 +212,77 @@ def parks_extract(path: Path) -> Path:
     return path
 
 
+# D-237: a synthetic noise map over the walking grid, 50 m cells: the western half loud (70 dB
+# Ld, 60 Ln, above both limits) and the eastern half quiet (50 and 40).
+NOISE_PIXEL_M = 50.0
+NOISE_SPLIT_X = 441_000.0
+
+
+def _tiff(levels: np.ndarray, x0: float, y1: float) -> bytes:
+    tags = ImageFileDirectory_v2()
+    tags[33550] = (NOISE_PIXEL_M, NOISE_PIXEL_M, 0.0)
+    tags[33922] = (0.0, 0.0, 0.0, x0, y1, 0.0)
+    tags[34735] = (1, 1, 0, 2, 1024, 0, 1, 1, 3072, 0, 1, 25830)
+    buffer = io.BytesIO()
+    Image.fromarray(levels.astype(np.float32)).save(buffer, format="TIFF", tiffinfo=tags)
+    return buffer.getvalue()
+
+
+def noise_extract(path: Path, spec: NoiseRasterPipeline) -> Path:
+    x0, y0, x1, y1 = WALK_GRID_BOUNDS
+    columns, rows = int((x1 - x0) // NOISE_PIXEL_M) + 2, int((y1 - y0) // NOISE_PIXEL_M) + 2
+    centre_x = (x0 - NOISE_PIXEL_M) + (np.arange(columns) + 0.5) * NOISE_PIXEL_M
+    loud = np.broadcast_to(centre_x < NOISE_SPLIT_X, (rows, columns))
+    ld = np.where(loud, 70.0, 50.0)
+    with zipfile.ZipFile(path, "w") as archive:
+        for layer, levels in (("ld", ld), ("ln", ld - 10.0)):
+            raw = _tiff(levels, x0 - NOISE_PIXEL_M, y1 + NOISE_PIXEL_M)
+            archive.writestr(f"MER/{spec.layers[layer]}", raw)
+    return path
+
+
+# D-237: a whole year of hourly NO2 (every hour valid) for the stations of the air fixtures,
+# in each network's layout: the CM's in lower case with a decimal comma, the Ayuntamiento's in
+# capitals and quoted.
+AIR_STATIONS = {
+    "cm_calidad_aire_horario_2025": {"28016001": 2.5, "28009001": 10.5, "28005002": 20.5},
+    "ayto_calidad_aire_horario": {"28079035": 23.5, "28079050": 22.0, "28079048": 19.5},
+}
+
+
+def air_hourly_extract(path: Path, spec: AirQualityHourlyPipeline) -> Path:
+    upper = spec.dataset_id.startswith("ayto")
+    keys = ["provincia", "municipio", "estacion", "magnitud", "punto_muestreo", "ano", "mes", "dia"]
+    hours = [c for h in range(1, 25) for c in (f"h{h:02d}", f"v{h:02d}")]
+    header = [c.upper() if upper else c for c in [*keys, *hours]]
+    lines = [";".join(f'"{c}"' if upper else c for c in header)]
+    days = np.arange(f"{spec.year}-01-01", f"{spec.year + 1}-01-01", dtype="datetime64[D]")
+    for code, level in AIR_STATIONS[spec.dataset_id].items():
+        value = f"{level}".replace(".", spec.csv.decimal)
+        for day in days.astype(str):
+            year, month, dom = day.split("-")
+            cells = [code[:2], code[2:5], code[5:], "8", f"{code}_8_8", year, month, dom]
+            cells += [value, "V"] * 24
+            lines.append(";".join(f'"{c}"' if upper else c for c in cells))
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def leisure_extract(path: Path, spec: OsmPoisPipeline) -> Path:
+    """A synthetic OSM extract with one place of each leisure class (D-236) inside the walking
+    grid, on a diagonal 150 m east and 300 m north apart."""
+    lines = ["<?xml version='1.0' encoding='UTF-8'?>", '<osm version="0.6" generator="test">']
+    for i, cls in enumerate(spec.classes):
+        lon, lat = TO_WGS84.transform(440_200.0 + 150 * i, 4_475_000.0 + 300 * i)
+        lines.append(
+            f'  <node id="{i + 1}" lat="{lat:.7f}" lon="{lon:.7f}">'
+            f'<tag k="{cls.key}" v="{cls.value}"/><tag k="name" v="{cls.subcategory} {i + 1}"/>'
+            "</node>"
+        )
+    path.write_text("\n".join([*lines, "</osm>"]) + "\n")
+    return path
+
+
 def ingest_directories(engine: Engine, data_dir: Path) -> None:
     catalog = load_catalog()
     for dataset_id, spec in sorted(catalog.pipelines.items()):
@@ -220,6 +324,20 @@ def fixtures_ingested(
             result = run_metric_pipeline(
                 migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
             )
+        elif isinstance(spec, CmMunicipioConceptPipeline):
+            # D-235: the sample has Madrid only, and the population fixture only its latest
+            # year, so the provisional year is read here (the unit tests cover leaving it out).
+            src = local_file(dataset_id, "primary", GOLDEN / "stat_sample" / f"{dataset_id}.csv")
+            sample = spec.model_copy(
+                update={
+                    "expected_municipios": 1,
+                    "municipios": {"Madrid": "28079"},
+                    "excluded_statuses": [],
+                }
+            )
+            result = run_metric_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
         elif isinstance(spec, AeatRentComparisonPipeline):  # D-228: rent of new leases
             src = local_file(dataset_id, "primary", GOLDEN / "aeat_sample" / f"{dataset_id}.html")
             result = run_aeat_rent_pipeline(
@@ -230,9 +348,22 @@ def fixtures_ingested(
                 evidence_root=None,
                 data_dir=tmp,
             )
+        elif isinstance(spec, SerpaviRentPipeline):  # D-242: the sections of the admin sample
+            src = local_file(
+                dataset_id, "primary", GOLDEN / "serpavi_sample" / f"{dataset_id}.xlsx"
+            )
+            sample = spec.model_copy(
+                update={"expected_municipios": 3, "expected_districts": 5, "min_sections": 19}
+            )
+            result = run_serpavi_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
         elif isinstance(spec, MadridPadronPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "padron_sample" / f"{dataset_id}.csv")
-            sample = spec.model_copy(update={"expected_districts": MADRID_SAMPLE_DISTRICTS})
+            # D-247: the sample's barrios are four of the admin sample's, not the city's 131
+            sample = spec.model_copy(
+                update={"expected_districts": MADRID_SAMPLE_DISTRICTS, "expected_barrios": None}
+            )
             result = run_padron_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )
@@ -262,6 +393,16 @@ def fixtures_ingested(
                 data_dir=tmp,
                 inclusions_file=tmp / "no_inclusions.yaml",  # the real ones are not in the grid
             )
+        elif isinstance(spec, OsmPoisPipeline):  # leisure (D-236)
+            src = local_file(dataset_id, "primary", leisure_extract(tmp / "leisure.osm", spec))
+            result = run_osm_pois_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_places": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+            )
         elif isinstance(spec, MadridDistrictPanelPipeline):
             src = local_file(dataset_id, "primary", GOLDEN / "panel_sample" / f"{dataset_id}.csv")
             sample = spec.model_copy(
@@ -273,9 +414,129 @@ def fixtures_ingested(
             result = run_panel_pipeline(
                 migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
             )
+        elif isinstance(spec, NoiseRasterPipeline):  # D-237
+            src = local_file(dataset_id, "primary", noise_extract(tmp / "noise.zip", spec))
+            sample = spec.model_copy(update={"pixel_m": NOISE_PIXEL_M, "min_cells_with_level": 1})
+            result = run_noise_raster_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, AirQualityHourlyPipeline):  # D-237
+            src = local_file(
+                dataset_id, "primary", air_hourly_extract(tmp / f"{dataset_id}.csv", spec)
+            )
+            result = run_air_quality_hourly_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_stations": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+            )
+        elif isinstance(spec, AirQualityZonesPipeline):  # D-237: the three municipios of the sample
+            src = local_file(dataset_id, "primary", GOLDEN / "air_sample" / f"{dataset_id}.csv")
+            result = run_air_quality_zones_pipeline(
+                migrated_engine, catalog, spec, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline):
+            result = ingest_zone_context(migrated_engine, catalog, spec, tmp)
+        elif isinstance(spec, CuratedZoneItemsPipeline):  # D-241: a sample of its manual table
+            result = run_zone_context_pipeline(
+                migrated_engine,
+                catalog,
+                spec,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=ZONE_CONTEXT_SAMPLE,
+            )
+        elif isinstance(spec, PublicLandParcelsPipeline):  # D-246: five rows, three in Tetuán
+            src = local_file(dataset_id, "primary", ZONE_CONTEXT_SAMPLE / f"{dataset_id}.csv")
+            result = run_parcels_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_rows": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=ZONE_CONTEXT_SAMPLE,
+            )
+        elif isinstance(spec, MadridPremisesCensusPipeline):  # D-247: Palacio and Castillejos
+            src = local_file(dataset_id, "primary", premises_sample(tmp))
+            sample = spec.model_copy(
+                update={"min_rows": 1, "expected_districts": 2, "expected_barrios": None}
+            )
+            result = run_premises_pipeline(
+                migrated_engine, catalog, sample, src, evidence_root=None, data_dir=tmp
+            )
+        elif isinstance(spec, MadridBuildableAreasPipeline):  # D-247: the rows of Tetuán
+            src = local_file(dataset_id, "primary", INVESTOR_SAMPLE / f"{dataset_id}.xlsx")
+            result = run_buildable_areas_pipeline(
+                migrated_engine,
+                catalog,
+                spec.model_copy(update={"min_rows": 1, "expected_districts": 1}),
+                src,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=INVESTOR_SAMPLE,
+            )
+        elif isinstance(spec, PilotZonesPipeline):  # D-247: a sample ring around Tetuán
+            result = run_pilot_pipeline(
+                migrated_engine,
+                catalog,
+                spec,
+                evidence_root=None,
+                data_dir=tmp,
+                manual_dir=INVESTOR_SAMPLE,
+            )
         else:
             continue
         assert result.status in {"SUCCESS", "SKIPPED"}, (dataset_id, result.quality)
+
+
+INVESTOR_SAMPLE = GOLDEN / "investor_sample"
+
+
+def premises_sample(tmp: Path) -> Path:
+    """D-247: the sample premises of the barrios the admin sample has (Palacio, Castillejos)."""
+    source = INVESTOR_SAMPLE / "ayto_censo_locales_actividades.csv"
+    lines = source.read_text(encoding="utf-8-sig").splitlines()
+    column = [c.strip('"') for c in lines[0].split(";")].index("id_barrio_local")
+    kept = [line for line in lines[1:] if line.split(";")[column].strip('"') in {"101", "603"}]
+    path = tmp / "premises_sample.csv"
+    path.write_text("\n".join([lines[0], *kept]) + "\n", encoding="utf-8-sig")
+    return path
+
+
+ZONE_CONTEXT_SAMPLE = GOLDEN / "zone_context_sample"
+
+
+def ingest_zone_context(
+    engine: Engine,
+    catalog: Catalog,
+    spec: CmMunicipioNameTablePipeline | MadridDevelopmentAreasPipeline,
+    tmp: Path,
+) -> RunSummary:
+    """D-241: the sales table by municipio name and the VEDA register of Madrid (3 districts)."""
+    if isinstance(spec, MadridDevelopmentAreasPipeline):
+        name = f"{spec.dataset_id}.xlsx"
+        spec = spec.model_copy(
+            update={"expected_districts": MADRID_SAMPLE_DISTRICTS, "min_rows": 1}
+        )
+    else:
+        name = f"{spec.dataset_id}.csv"
+    source = local_file(spec.dataset_id, "primary", ZONE_CONTEXT_SAMPLE / name)
+    return run_zone_context_pipeline(
+        engine, catalog, spec, source, evidence_root=None, data_dir=tmp
+    )
+
+
+def sample_feature(spec: FeatureSpec) -> FeatureSpec:
+    """D-242: the rent calibration needs 20 municipios with both figures; the sample has one
+    (Madrid), so it is measured on that one."""
+    formula = spec.formula.model_dump()
+    if formula["method"] != "reference_rent_fill":
+        return spec
+    formula["calibration"] = {**formula["calibration"], "min_zones": 1}
+    return spec.model_copy(update={"formula": type(spec.formula).model_validate(formula)})
 
 
 @pytest.fixture(scope="session")
@@ -284,4 +545,5 @@ def features_computed(fixtures_ingested: None, migrated_engine: Engine) -> None:
 
     for spec in load_catalog().features.values():
         if spec.formula.method in METHODS:
-            persist(migrated_engine, spec, compute(migrated_engine, spec))
+            sample = sample_feature(spec)
+            persist(migrated_engine, sample, compute(migrated_engine, sample))

@@ -1,0 +1,239 @@
+{
+  "$defs": {
+    "Meta": {
+      "properties": {
+        "api_version": {
+          "default": "v1",
+          "title": "Api Version",
+          "type": "string"
+        },
+        "data_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Version"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "methodology_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Methodology Version"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        }
+      },
+      "title": "Meta",
+      "type": "object"
+    },
+    "ParcelCandidate": {
+      "additionalProperties": false,
+      "description": "An address that matches what was typed, with its parcel. Shown for the person to pick:\nnever picked for them.",
+      "properties": {
+        "address": {
+          "title": "Address",
+          "type": "string"
+        },
+        "lat": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lat"
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lon"
+        },
+        "postal_code": {
+          "anyOf": [
+            {
+              "pattern": "^\\d{5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Postal Code"
+        },
+        "rc14": {
+          "pattern": "^[0-9A-Z]{14}$",
+          "title": "Rc14",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address",
+        "rc14"
+      ],
+      "title": "ParcelCandidate",
+      "type": "object"
+    },
+    "ParcelCandidates": {
+      "additionalProperties": false,
+      "description": "GET /api/v1/investors/parcels/candidates: portals of Madrid capital with their parcel.",
+      "properties": {
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/ParcelCandidate"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "needs_number": {
+          "description": "The text matches streets but no portal: add the number",
+          "title": "Needs Number",
+          "type": "boolean"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/ParcelSource"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidates",
+        "needs_number",
+        "sources"
+      ],
+      "title": "ParcelCandidates",
+      "type": "object"
+    },
+    "ParcelSource": {
+      "additionalProperties": false,
+      "description": "Who the sheet's data comes from, its licence and how it asks to be cited.",
+      "properties": {
+        "accessed_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Accessed At"
+        },
+        "attribution": {
+          "title": "Attribution",
+          "type": "string"
+        },
+        "license": {
+          "title": "License",
+          "type": "string"
+        },
+        "license_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "License Url"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "source_id": {
+          "title": "Source Id",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "source_id",
+        "name",
+        "publisher",
+        "license",
+        "attribution"
+      ],
+      "title": "ParcelSource",
+      "type": "object"
+    }
+  },
+  "$id": "https://housing-intelligence/schemas/api/parcel_candidates_response.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GET /api/v1/investors/parcels/candidates (D-250)",
+  "properties": {
+    "data": {
+      "$ref": "#/$defs/ParcelCandidates"
+    },
+    "meta": {
+      "$ref": "#/$defs/Meta"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "title": "ParcelCandidatesResponse",
+  "type": "object"
+}

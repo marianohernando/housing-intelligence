@@ -1,0 +1,15 @@
+# Sample of data/catalog/manual/portal_suelo_madrid_puntos.yaml for the fixture geography
+# (D-246): the three residential parcels of Madrid in the sample CSV, each on a point inside a
+# section of the sample (Almenara and Castillejos, in Tetuán), not where they really are.
+title: 'Parcelas del Portal del Suelo 4.0: un punto dentro de cada parcela (muestra)'
+publisher: Comunidad de Madrid (IDEM, Dirección General de Suelo)
+url: https://idem.comunidad.madrid/geoidem/UsoDelSuelo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=UsoDelSuelo:IDEM_V_SUELO_PARCELA&outputFormat=application/json
+layer: UsoDelSuelo:IDEM_V_SUELO_PARCELA
+crs: EPSG:25830
+consulted: '2026-11-18'
+method: Puntos de secciones de la muestra, no de las parcelas.
+municipio_ine: '28079'
+points:
+- {ref: 00000595I, x: 441457, y: 4479494}
+- {ref: 07900151Y, x: 441100, y: 4479928}
+- {ref: 07900174Y, x: 441457, y: 4479494}

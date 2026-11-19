@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BarrioSearchResult } from "@/contracts/barrio_search_response";
 
-import { barrioRows, barriosText, FACTS_PER_BARRIO } from "../barrios";
+import { barrioRows, barriosText, barriosTitle, FACTS_PER_BARRIO } from "../barrios";
 
 // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data:
 // San Blas-Canillejas with the demo case, fit-0.7 (D-232)
@@ -12,33 +12,39 @@ const FIXTURE = new URL("../../../../../data/fixtures/contracts/barrio_search_re
 const sanBlas = JSON.parse(readFileSync(FIXTURE, "utf8")) as BarrioSearchResult;
 
 describe("barrioRows (D-232)", () => {
-  it("keeps the API's order of the barrios that fit, with their outline id, % and first facts", () => {
+  it("keeps the API's order of the barrios that fit, with their outline id, band, % and first facts", () => {
     const { fits } = barrioRows(sanBlas);
-    expect(fits.map((b) => [b.name, b.pct])).toEqual([
-      ["Canillejas", 97],
-      ["Arcos", 97],
-      ["Simancas", 97],
-      ["Rosas", 96],
-      ["Amposta", 96],
-      ["El Salvador", 95],
-      ["Hellín", 93],
+    expect(fits.map((b) => [b.name, b.fit?.text])).toEqual([
+      ["Canillejas", "Muy buena opción · 97\u00a0%"],
+      ["Arcos", "Muy buena opción · 97\u00a0%"],
+      ["Simancas", "Muy buena opción · 97\u00a0%"],
+      ["Rosas", "Muy buena opción · 96\u00a0%"],
+      ["Amposta", "Muy buena opción · 96\u00a0%"],
+      ["El Salvador", "Muy buena opción · 95\u00a0%"],
+      ["Hellín", "Muy buena opción · 93\u00a0%"],
     ]);
-    expect(fits[2]).toMatchObject({ id: "ES.28.BAR.28079201", code: "28079201", fails: null });
+    expect(fits[2]).toMatchObject({ id: "ES.28.BAR.28079201", code: "28079201", lacks: null });
+    // Ties, named in the order of the list, for screen readers (review R-05)
+    expect(fits.map((b) => b.tie)).toEqual(["Arcos y Simancas", "Canillejas y Simancas", "Canillejas y Arcos", "Amposta", "Rosas", null, null]);
     expect(fits[0]?.facts).toEqual(["Colegio con primaria a unos 7 min andando", "Parada de transporte público a unos 3 min andando"]);
     expect(fits.every((b) => b.facts.length <= FACTS_PER_BARRIO)).toBe(true);
   });
 
-  it("names the condition a near miss fails, from the API's labels", () => {
+  it("says what a near miss lacks instead of its %, from the API's own figures (F5 of fit-0.9)", () => {
     const { near } = barrioRows(sanBlas);
     expect(near).toHaveLength(1);
-    expect(near[0]).toMatchObject({ name: "Rejas", pct: 55, fails: ["Colegio con primaria a 10 min andando como mucho"] });
+    // Rejas: a school at 35,5 min against the 10 asked; the demo case is a family, told «lo que pedís» (review M-01 of PR #81)
+    expect(near[0]).toMatchObject({ name: "Rejas", fit: null, lacks: { text: "Colegio con primaria: unos 26 min más andando de lo que pedís" } });
+    // The same search for one person: «lo que pides»
+    const alone = barrioRows({ ...sanBlas, scenario: { ...sanBlas.scenario, household: { adults: 1, minors: 0 } } }).near;
+    expect(alone[0]?.lacks?.text).toBe("Colegio con primaria: unos 26 min más andando de lo que pides");
   });
 
-  it("leaves out a failed condition without a name, and works without near misses", () => {
+  it("says «No cumple todo lo que pides» for a failed condition without a name, and works without near misses", () => {
     const [rejas] = sanBlas.near_misses ?? [];
     if (!rejas) throw new Error("fixture without near misses");
     const unnamed = { ...rejas, failed_constraints: ["no_label"], constraints: [] };
-    expect(barrioRows({ results: [], near_misses: [unnamed] }).near[0]?.fails).toEqual([]);
+    expect(barrioRows({ results: [], near_misses: [unnamed] }).near[0]?.lacks?.text).toBe("No cumple todo lo que pides.");
     expect(barrioRows({ results: sanBlas.results }).near).toEqual([]);
   });
 
@@ -52,9 +58,37 @@ describe("barrioRows (D-232)", () => {
 
 describe("barriosText (barrios.encajan.resumen)", () => {
   it("says how many of the district's barrios fit", () => {
-    expect(barriosText(sanBlas.reality_check)).toBe("7 de sus 8 barrios encajan con tu búsqueda.");
-    expect(barriosText({ zones_passing: 1, zones_evaluated: 8 })).toBe("1 de sus 8 barrios encaja con tu búsqueda.");
-    expect(barriosText({ zones_passing: 6, zones_evaluated: 6 })).toBe("Sus 6 barrios encajan con tu búsqueda.");
+    expect(barriosText(sanBlas.reality_check)).toBe("7 de sus 8 barrios te convienen.");
+    expect(barriosText({ zones_passing: 1, zones_evaluated: 8 })).toBe("1 de sus 8 barrios te conviene.");
+    expect(barriosText({ zones_passing: 6, zones_evaluated: 6 })).toBe("Sus 6 barrios te convienen.");
     expect(barriosText({ zones_passing: 0, zones_evaluated: 6 })).toBe("Ninguno de sus 6 barrios cumple todo lo que pides.");
+    // To a household of more than one (review R-03 of PR #81)
+    expect(barriosText({ zones_passing: 7, zones_evaluated: 8 }, true)).toBe("7 de sus 8 barrios os convienen.");
+    expect(barriosText({ zones_passing: 0, zones_evaluated: 6 }, true)).toBe("Ninguno de sus 6 barrios cumple todo lo que pedís.");
+    expect(barriosTitle(true)).toBe("Los barrios que más os convienen");
+    expect(barriosTitle()).toBe("Los barrios que más te convienen");
+  });
+});
+
+describe("the panel of an outlined barrio (review R-05 of PR #81)", () => {
+  it("says whom a barrio ties with, as the card does, and nothing for one that ties with none", () => {
+    const rows = barrioRows(sanBlas).fits;
+    const tied = rows.find((row) => row.tie !== null);
+    expect(tied?.tieLine).toMatch(/^Igual de bueno que .+ \(\d+\u00a0%\)\.$/);
+    expect(rows.filter((row) => row.tie === null).every((row) => row.tieLine === null)).toBe(true);
+  });
+});
+
+describe("the price of each barrio (D-234)", () => {
+  it("goes under its band, as a purchase price when buying and a monthly rent otherwise", () => {
+    const first = sanBlas.results[0]!;
+    const cost = first.estimated_cost_eur ?? 0;
+    const amount = new Intl.NumberFormat("es-ES", { useGrouping: "always" }).format(cost);
+    expect(barrioRows(sanBlas).fits[0]?.price?.short).toBe(`Unos\u00a0${amount}\u00a0€ al\u00a0mes`);
+    const buying = { ...sanBlas, scenario: { ...sanBlas.scenario, budget: { kind: "buy" as const, amount_eur: 400_000 } } };
+    const estimate = { ...first, estimated_cost_eur: 348_000, estimated_cost_confidence: 0.5 };
+    const row = barrioRows({ ...buying, results: [estimate] }).fits[0];
+    expect([row?.price?.short, row?.price?.confidence?.label]).toEqual(["Unos\u00a0348.000\u00a0€", "Dato aproximado"]);
+    expect(barrioRows({ results: [{ ...first, estimated_cost_eur: null }] }).fits[0]?.price).toBeNull();
   });
 });

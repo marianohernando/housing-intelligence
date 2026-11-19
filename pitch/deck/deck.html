@@ -2,9 +2,10 @@
 <!--
   Plantilla de las 4 slides de DATAMAD 2026 (bases §8). No se abre directamente: build.py la rellena
   ({{…}}) y escribe pitch/deck/build/index.html y el PDF. Contenido: pitch/slides.md.
-  Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero en evidence/, relativa a
+  Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero (capturas/ o evidence/), relativa a
   esta plantilla. build.py la vuelve a resolver al construir: gana pitch/capturas/Cn.png si existe
-  (no se versiona) y, si no, la de EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
+  (C1, C2, C3 y C6 están ahí y versionadas: las hizo D en producción) y, si no, la de
+  EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
 -->
 <html lang="es">
 <head>
@@ -66,7 +67,7 @@
       <table>
         {{DATASET_ROWS}}
       </table>
-      <p class="complement">Apoyo (no CM): OpenStreetMap, Ayuntamiento de Madrid, Ministerio de Sanidad y Agencia Tributaria.</p>
+      <p class="complement">Apoyo (no CM): OpenStreetMap, Ayuntamiento, Sanidad, Vivienda y Hacienda.</p>
     </div>
   </div>
   <p class="sources">Lista completa con enlaces, licencias y control de calidad: <a href="https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md">github.com/marianohernando/housing-intelligence → pitch/datasets_cm.md</a></p>
@@ -80,22 +81,23 @@
   <div class="cols">
     <div class="glass col">
       <p class="kicker">Utilidad · personas</p>
-      <h3>Encuentra la zona que encaja contigo</h3>
+      <h3>Encuentra la zona que te conviene</h3>
       <ul>
-        <li>% de encaje con hechos que se pueden comprobar, cada uno con su fiabilidad.</li>
+        <li>Cada zona, en palabras y con su %, con hechos que se pueden comprobar y su fiabilidad.</li>
       </ul>
-      <blockquote class="quote pending" data-pending="cita 1 de la prueba con personas (Mariano)">
-        <p>«[Cita de una persona que busca casa]»</p>
-        <footer>[Quién es, sin nombre: por ejemplo, «madre de dos hijos que busca piso»]</footer>
+      <blockquote class="quote">
+        <p>«Se valora mucho la cercanía al puesto de trabajo.»</p>
+        <p>«Muy chula la web, funciona bien.»</p>
+        <footer>Prueba con usuarios, 14 nov</footer>
       </blockquote>
       <div class="shots">
         <figure class="shot" data-shot="C2">
-          <img src="../../evidence/map-004/2026-11-12/deck/deck_c2_tarjeta_zona_1440.png" alt="Tarjeta de Latina: 98 % de encaje, la 1.ª que más encaja">
-          <figcaption class="ph">C2 · Tarjeta de zona</figcaption>
+          <img src="../capturas/C2.png" alt="«Zonas que os convienen»: Puente de Vallecas y Latina, «Muy buena opción · 94 %», unos 1.129 y 1.101 € al mes">
+          <figcaption class="ph">C2 · Zonas que os convienen</figcaption>
         </figure>
         <figure class="shot" data-shot="C3">
-          <img src="../../evidence/map-004/2026-11-12/deck/deck_c3_y_si_cambias_1440.png" alt="«¿Y si cambias algo?»: con 5 minutos más a pie hasta el colegio saldrían 44 zonas, 17 más; con 150 € más al mes, 30 zonas, 3 más">
-          <figcaption class="ph">C3 · ¿Y si cambias algo?</figcaption>
+          <img src="../capturas/C3.png" alt="«¿Queréis ver más zonas?»: hemos encontrado 42 zonas para vosotros; con 5 minutos más a pie hasta el colegio con primaria saldrían 49 más, 91 en total">
+          <figcaption class="ph">C3 · ¿Queréis ver más zonas?</figcaption>
         </figure>
       </div>
     </div>
@@ -110,26 +112,29 @@
       </div>
       <p class="impact"><strong>25.551</strong> niños de 0 a 4 años viven donde faltan escuelas infantiles.</p>
       <p class="example"><strong>Dónde invertir primero:</strong> Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde.</p>
-      <blockquote class="quote pending" data-pending="cita 2: técnico municipal (Mariano)">
-        <p>«[Cita del técnico municipal]»</p>
-        <footer>[Cargo y tipo de municipio, sin nombre]</footer>
-      </blockquote>
     </div>
     <div class="glass col">
       <p class="kicker">Viabilidad</p>
       <h3>Se sostiene</h3>
       <ul>
-        <li>Pagan ayuntamientos (informes) y promotoras (estudios). Gratis para las personas.</li>
+        <!-- 19 nov: modelo de Mariano, que sustituye al del 12 nov (pitch/modelo_negocio.md). Sin precios en la slide.
+             «Pagarán»: hoy no se cobra; la versión para inversores es de acceso libre durante el concurso (D-248) -->
+        <li>Gratis para personas y ayuntamientos. Pagarán inversores y promotores.</li>
         <li>Solo zonas, nunca datos de personas.</li>
         <li>0 € hoy; unos 45 $/mes para uso comercial.</li>
-        <li>Código abierto: cualquiera puede repetir los cálculos.</li>
+        <!-- 19 nov: decisión de Mariano (datamad-10). Antes, «Código abierto: cualquiera puede repetir los cálculos.».
+             La misma idea que la frase del bloque 4 del guion: «La API y el MCP para agentes de IA son gratis para todos.» -->
+        <li>Código abierto, y API y MCP gratis.</li>
       </ul>
-      <div class="shots one">
-        <figure class="shot" data-shot="C7">
-          <img src="../../evidence/map-004/2026-11-11/prod_c7_como_lo_calculamos_desktop.png" alt="«Cómo lo calculamos»: cómo sale el % de encaje">
-          <figcaption class="ph">C7 · Cómo lo calculamos</figcaption>
-        </figure>
-      </div>
+      <!-- 18 nov: esta línea ocupa el sitio de la miniatura C7 («Cómo lo calculamos»), que no cabía con ella y
+           queda de reserva (pitch/slides.md, «Capturas necesarias»). 19 nov: ya no es un siguiente paso; la
+           versión para inversores está en producción (D-248, despliegue de 396d8f6, evidencia de C en el PR #96).
+           19 nov por la tarde: con la búsqueda por parcela en producción (D-250), Mariano aprobó esta línea, que sustituye
+           a «Ya está, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.».
+           «Madrid capital»: la búsqueda llega a toda la ciudad; el contexto completo del barrio es el del piloto de la
+           M-40 (D-247). «Calcula si sale»: el semáforo necesita el precio del suelo (revisión del #103). Dice lo mismo que
+           el bloque 4 del guion. Tres líneas como máximo: con cuatro, la tarjeta queda muy justa sobre la banda (858) -->
+      <p class="next"><strong>Ya está</strong>, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.</p>
     </div>
   </div>
   <div class="band">
@@ -159,7 +164,7 @@
   <div class="stage">
     <div class="glass desktop">
       <figure class="shot" data-shot="C1">
-        <img src="../../evidence/map-004/2026-11-12/deck/deck_c1_busqueda_1440.png" alt="Mapa con la búsqueda de ejemplo, las zonas coloreadas según su encaje y la tarjeta de Latina, la que más encaja (98 %), a 39 minutos en transporte público de la Castellana">
+        <img src="../capturas/C1.png" alt="Mapa con la búsqueda de ejemplo y la tarjeta de Puente de Vallecas: «Muy buena opción», unos 1.129 € al mes, sus minutos a pie y «No le falta nada de lo que buscáis»">
         <figcaption class="ph">C1 · Mapa con la búsqueda de ejemplo (1440 × 900)</figcaption>
       </figure>
     </div>
@@ -168,15 +173,19 @@
     <span class="marker m3"><span class="num">3</span></span>
     <div class="phone">
       <figure class="shot" data-shot="C6">
-        <img src="../../evidence/map-004/2026-11-11/prod_c5_chamartin_3d_mobile.png" alt="Vida Fácil en el móvil: Chamartín en 3D, con la zona en una hoja inferior">
+        <img src="../capturas/C6.png" alt="Vida Fácil en el móvil: «Zonas que os convienen», «Hemos encontrado 42 zonas para vosotros» y cada zona con su banda en palabras y su precio al mes">
         <figcaption class="ph">C6 · Móvil (390 × 844)</figcaption>
       </figure>
     </div>
     <ol class="steps">
       <li><span class="num">1</span>Cuéntanos tu hogar, tu presupuesto y dónde trabajas</li>
-      <li><span class="num">2</span>Mira las zonas que encajan contigo y por qué</li>
+      <li><span class="num">2</span>Mira las zonas que te convienen y por qué</li>
       <li><span class="num">3</span>Entra en una zona y mira qué le falta, con su fuente</li>
     </ol>
+    <div class="tested">
+      <p class="who">Probada con 7 personas</p>
+      <p>Lo que pidieron, ya en la web: buscar por barrios y un límite de tiempo al trabajo. Y, para una persona mayor, más sencilla en el móvil.</p>
+    </div>
   </div>
   <p class="live">Demo en vivo: <a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>
   <p class="pageno">4 / 4</p>

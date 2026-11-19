@@ -2,7 +2,9 @@
 
 The padrón is an exhaustive register: an age with no row in a district means nobody of that
 age lives there, so every band is published (0 included). A row that cannot be read goes to
-quarantine and is never counted as 0.
+quarantine and is never counted as 0. With a barrio column (D-247), each barrio also gets its
+total; a row without a barrio, or with one that cannot be read (listed in quarantine), counts in
+its district only (never dropped from it).
 """
 
 import re
@@ -50,6 +52,22 @@ def district_code(raw: str, municipio_ine: str) -> str:
     return f"{municipio_ine}{int(raw):02d}"
 
 
+def barrio_code(raw: str | None, district: str) -> str | None:
+    """«205» (district 2, barrio 5) -> '28079025'; None for a row without a barrio. A barrio of
+    another district than the row's is an error."""
+    text = (raw or "").strip()
+    if not text:
+        return None
+    if not text.isdigit() or not 1 <= int(text) % 100 <= 9:  # a barrio is one digit
+        msg = f"invalid barrio {raw!r}"
+        raise RowError(msg)
+    code = f"{district}{int(text) % 100}"
+    if int(text) // 100 != int(district[-2:]):
+        msg = f"barrio {raw!r} is not of district {district}"
+        raise RowError(msg)
+    return code
+
+
 def _period(raw: str) -> date:
     try:
         return date.fromisoformat(raw)
@@ -59,15 +77,22 @@ def _period(raw: str) -> date:
 
 
 def _observation(
-    spec: MadridPadronPipeline, code: str, name: str | None, period: date, band: str, value: int
+    spec: MadridPadronPipeline,
+    code: str,
+    name: str | None,
+    period: date,
+    band: str,
+    value: int,
+    level: TerritoryLevel = TerritoryLevel.DISTRITO,
 ) -> dict[str, Any]:
     dims = {"edad": band}
+    metric = spec.barrio_metric_id if level is TerritoryLevel.BARRIO else spec.metric_id
     return {
-        "metric_id": spec.metric_id,
-        "territory_level": TerritoryLevel.DISTRITO.value,
+        "metric_id": metric,
+        "territory_level": level.value,
         "territory_code": code,
         "territory_name": name,
-        "admin_unit_id": admin_unit_id(TerritoryLevel.DISTRITO.value, code),
+        "admin_unit_id": admin_unit_id(level.value, code),
         "period_start": period,
         "period_end": period,
         "dims": dims,
@@ -79,9 +104,31 @@ def _observation(
     }
 
 
+def _barrio(
+    row: dict[str, str],
+    spec: MadridPadronPipeline,
+    district: str,
+    index: int,
+    bad: list[dict[str, Any]],
+) -> str | None:
+    """The row's barrio, or None. An unreadable one is listed in quarantine, but the row still
+    counts in its district (D-247: the district population never depends on the barrio column;
+    a barrio that falls short blocks through `barrios_add_up_to_districts`)."""
+    if not spec.barrio_column:
+        return None
+    try:
+        return barrio_code(row.get(spec.barrio_column), district)
+    except RowError as exc:
+        reason = f"{exc}: counted in its district only"
+        bad.append({"source_row": index, "reason": reason, "raw": str(row)[:300]})
+        return None
+
+
 def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
     people: Counter[tuple[str, date, str]] = Counter()
+    barrios: Counter[tuple[str, date]] = Counter()
     names: dict[str, str] = {}
+    barrio_names: dict[str, str] = {}
     bad: list[dict[str, Any]] = []
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
     for index, row in enumerate(records):
@@ -93,8 +140,13 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
         except (RowError, KeyError) as exc:
             bad.append({"source_row": index, "reason": str(exc), "raw": str(row)[:300]})
             continue
+        barrio = _barrio(row, spec, code, index, bad)
         people[(code, period, band)] += count
         people[(code, period, TOTAL_AGE)] += count
+        if barrio:
+            barrios[(barrio, period)] += count
+            if spec.barrio_name_column:
+                barrio_names.setdefault(barrio, " ".join(row[spec.barrio_name_column].split()))
         if spec.district_name_column:
             names.setdefault(code, row[spec.district_name_column])
     districts = sorted({(code, period) for code, period, _ in people})
@@ -102,6 +154,11 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
         _observation(spec, code, names.get(code), period, band, people[(code, period, band)])
         for code, period in districts
         for band in [*five_year_age_bands(), TOTAL_AGE]
+    ] + [
+        _observation(
+            spec, code, barrio_names.get(code), period, TOTAL_AGE, value, TerritoryLevel.BARRIO
+        )
+        for (code, period), value in sorted(barrios.items())
     ]
     return Observations(
         pd.DataFrame(rows, columns=OBS_COLUMNS),

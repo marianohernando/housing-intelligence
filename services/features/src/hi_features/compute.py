@@ -7,8 +7,10 @@ regional reference only comes from the base level.
 """
 
 from collections.abc import Callable, Mapping
+from itertools import pairwise
 from typing import Any
 
+import numpy as np
 import pandas as pd
 from sqlalchemy import Engine, delete, insert
 from sqlalchemy.orm import Session
@@ -16,7 +18,7 @@ from sqlalchemy.orm import Session
 from hi_contracts.catalog import FeatureSpec
 from hi_db.models import FeatureValue
 from hi_domain.geo.codes import admin_unit_id
-from hi_features import fca, loaders, methods, walk
+from hi_features import air, fca, loaders, methods, noise, reference_rent, walk
 
 Method = Callable[[Engine, dict[str, Any], str], pd.DataFrame]
 
@@ -32,7 +34,8 @@ def new_contracts(
     engine: Engine, f: Mapping[str, Any]
 ) -> tuple[methods.NewContractFactors, str | None] | None:
     """D-228: the factors of the leases signed in the year, plus the fallback territory's under
-    its own code (e.g. the region «28» for a municipio without a table of its own)."""
+    its own code (e.g. Madrid «28079» for a district without its postcodes), or with
+    `fallback: {median: true}` the median of the zones' own factors (D-243)."""
     spec = f.get("new_contracts")
     if not spec:
         return None
@@ -40,6 +43,8 @@ def new_contracts(
     fallback = spec.get("fallback")
     if not fallback:
         return factors, None
+    if fallback.get("median"):
+        return methods.with_median_fallback(factors)
     other = _factors(engine, {**spec, **fallback})
     code = str(fallback["code"])
     merged = dict(factors.factors)
@@ -59,8 +64,16 @@ def _metric_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame
 
 
 def _metric_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """`denominator_total` (and `denominator_rest`): the denominator must add up to the total."""
     obs = loaders.observations(engine, f["metric"], level)
-    return methods.metric_share(obs, f["numerator"], f["denominator"], f.get("confidence", 1.0))
+    return methods.metric_share(
+        obs,
+        f["numerator"],
+        f["denominator"],
+        f.get("confidence", 1.0),
+        total=f.get("denominator_total"),
+        rest=f.get("denominator_rest"),
+    )
 
 
 def _metric_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -93,15 +106,26 @@ def _place_attribute_per_population(engine: Engine, f: dict[str, Any], level: st
 
 
 def _metric_ratio(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
-    return methods.metric_ratio(
-        loaders.observations(engine, f["numerator_metric"], level),
+    """`same_period`: the denominator of the numerator's year, not its own latest;
+    `regional_reference: false`: no region row, for a source that covers only some zones;
+    `numerator_minus_dims`: a part of the numerator left out (cybercrime, D-224 §3)."""
+    numerator = loaders.observations(engine, f["numerator_metric"], level)
+    denominator = loaders.observations(engine, f["denominator_metric"], level)
+    if f.get("same_period"):
+        denominator = methods.at_latest_period_of(denominator, numerator)
+    result = methods.metric_ratio(
+        numerator,
         f["numerator_dims"],
-        loaders.observations(engine, f["denominator_metric"], level),
+        denominator,
         f["denominator_dims"],
         float(f["per"]),
         small_population=float(f.get("small_population_threshold", 0)),
         confidence=float(f.get("confidence", 1.0)),
+        numerator_minus=f.get("numerator_minus_dims"),
     )
+    if f.get("regional_reference", True):
+        return result
+    return methods.without_regional_reference(result)
 
 
 def _not_published(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -126,6 +150,97 @@ def _postcode_weighted_mean(engine: Engine, f: dict[str, Any], level: str) -> pd
         min_places=float(few.get("below", 0)),
         few_places_confidence=float(few.get("max_confidence", 1.0)),
     )
+
+
+# D-234: the zones a published value is shared out to, each level anchored to the one above;
+# a zone's parent is a prefix of its code (28079 -> 2807906 -> 28079065).
+SHARE_OUT_CHAIN = ("municipio", "distrito", "barrio")
+CODE_DIGITS = {"municipio": 5, "distrito": 7}
+
+
+def _anchored_relative_value(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """The anchor metric's value (a city's appraised value) shared out level by level down to
+    `level`: districts anchored to their municipio, barrios to their district's estimate."""
+    chain = SHARE_OUT_CHAIN[SHARE_OUT_CHAIN.index(f["anchor_level"]) :]
+    if level not in chain[1:]:
+        msg = f"a {f['anchor_level']} value is shared out to {list(chain[1:])}, not to {level!r}"
+        raise ValueError(msg)
+    anchor, period = methods.latest_values(
+        loaders.observations(engine, f["anchor_metric"], f["anchor_level"])
+    )
+    result = methods.result_frame([])
+    for parent, step in pairwise(chain):
+        value, _ = methods.latest_values(loaders.observations(engine, f["numerator_metric"], step))
+        area, _ = methods.latest_values(loaders.observations(engine, f["denominator_metric"], step))
+        weight, _ = methods.latest_values(loaders.observations(engine, f["weight_metric"], step))
+        ratio = {c: value[c] / area[c] for c in value.keys() & area.keys() if area[c] > 0}
+        zones = sorted(value.keys() | area.keys() | weight.keys())
+        result = methods.anchored_relative_value(
+            ratio,
+            weight,
+            anchor,
+            zones,
+            CODE_DIGITS[parent],
+            period,
+            float(f.get("confidence", 1.0)),
+        )
+        if step == level:
+            break
+        known = result.loc[result["value"].notna()]
+        anchor = dict(zip(known["territory_code"], known["value"].astype(float), strict=True))
+    return result
+
+
+def _reference_rents(
+    engine: Engine, f: Mapping[str, Any], level: str
+) -> tuple[dict[str, dict[str, reference_rent.ReferenceRent]], Any]:
+    rent = loaders.observations(engine, f["metric"], level)
+    count = loaders.observations(engine, f["count_metric"], level)
+    return reference_rent.references_by_typology(rent, count, f["typology_dim"], f["statistic_dim"])
+
+
+def _calibration(engine: Engine, f: Mapping[str, Any]) -> reference_rent.Calibration:
+    """CM mean / reference median over the zones of `calibration.level` with both, in the
+    reference's own year (the CM figure of another year would measure a price change)."""
+    spec = f["calibration"]
+    refs, period = _reference_rents(engine, f, spec["level"])
+    reference = reference_rent.values_at(
+        loaders.observations(engine, spec["metric"], spec["level"]), spec.get("dims", {}), period
+    )
+    typologies = list(f["typologies"])
+    picked = {c: r for c, by in refs.items() if (r := reference_rent.pick(by, typologies))}
+    return reference_rent.calibration(reference, picked, int(spec["min_zones"]))
+
+
+def _reference_rent_fill(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-242: the Ministry's rent reference where the CM publishes none, scaled to the CM
+    figure (calibration) and to a lease signed in the year (D-228), quartiles included. A
+    barrio pools the census sections whose parent it is, weighted by their leases."""
+    typologies = list(f["typologies"])
+    source_level = f.get("source_level", level)
+    by_typology, period = _reference_rents(engine, f, source_level)
+    if source_level == level:
+        refs = {c: r for c, by in by_typology.items() if (r := reference_rent.pick(by, typologies))}
+    else:
+        parents = walk.section_parents(engine, level) or {}
+        refs = reference_rent.pooled(by_typology, parents, typologies)
+    zones = walk.zone_codes(engine, level)
+    within = f.get("within_municipio")
+    if within:
+        zones = [z for z in zones if z.startswith(str(within))]
+    few = f.get("few_contracts") or {}
+    confidence = reference_rent.FillConfidence(
+        base=float(f.get("confidence", 1.0)),
+        few_contracts_below=float(few.get("below", 0)),
+        few_contracts=float(few.get("max_confidence", 1.0)),
+        by_typology=f.get("typology_confidence"),
+    )
+    result = reference_rent.fill_rows(refs, zones, period, _calibration(engine, f), confidence)
+    adjust = new_contracts(engine, f)
+    if adjust is None:
+        return result
+    adjusted = methods.apply_new_contract_factors(result, *adjust)
+    return reference_rent.scale_quartiles_by_adjustment(adjusted)
 
 
 def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
@@ -156,6 +271,85 @@ def _network_walk_time(engine: Engine, f: dict[str, Any], level: str) -> pd.Data
     )
 
 
+def _metric_window_share(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-241: a share over the last periods of a metric (new homes among the sales of a year)."""
+    return methods.metric_window_share(
+        loaders.observations(engine, f["metric"], level),
+        int(f["periods"]),
+        f["numerator"],
+        f["denominator"],
+        status_dim=f.get("status_dim"),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
+def _metric_items(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-241: the items of each zone (planning areas, Plan Vive promotions) and their count or
+    sum. The zones are those of the level inside `scope` (a code prefix: Madrid's districts)."""
+    scope = str(f.get("scope", ""))
+    return methods.metric_items(
+        loaders.observations(engine, f["metric"], level),
+        [z for z in walk.zone_codes(engine, level) if z.startswith(scope)],
+        value=str(f["value"]),
+        stage_order=list(f.get("stage_order") or []),
+        item_dims=list(f.get("item_dims") or []),
+        confidence=float(f.get("confidence", 1.0)),
+    )
+
+
+def _street_share_above(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-237: % of the street where people live above a noise level, by zone, read every
+    `sample_step_m` along each segment (R-03). Only the zones under `coverage_prefix` (the
+    municipio the map covers) get a value."""
+    version = walk.network_version(engine)
+    origins = walk.origins(engine, version.path, tuple(f["origin_highways"]))
+    network = walk.routable(version.path).network
+    section_of_node = np.full(network.n_nodes, "", dtype=origins.section.dtype)
+    section_of_node[origins.node] = origins.section
+    prefix = str(f["coverage_prefix"])
+    samples = noise.street_samples(
+        network, f["origin_highways"], section_of_node, float(f["sample_step_m"]), prefix
+    )
+    grid = noise.grid(noise.grid_path(engine, f["raster_dataset"]))
+    levels = grid.levels_at(f["layer"], samples.x, samples.y)
+    zone = walk.zone_of_node(samples.section, level, walk.section_parents(engine, level))
+    covered = np.char.startswith(zone.astype(str), prefix)
+    settings = methods.StreetShareSettings(
+        above=float(f["above"]),
+        min_covered_share=float(f["min_covered_share"]),
+        base_confidence=float(f.get("confidence", 1.0)),
+        min_street_m=float(f["min_street_m"]),
+    )
+    return methods.street_share_above(
+        zone,
+        samples.weight,
+        np.where(covered, levels, np.nan),
+        walk.zone_codes(engine, level),
+        noise.reference_period(grid),
+        settings,
+    )
+
+
+def _nearest_station_mean(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
+    """D-237: the annual mean of the zone's own monitoring station, or of the nearest one in
+    its air quality zone, naming the station."""
+    zones = air.air_zones(engine, f["zones_dataset"])
+    codes = walk.zone_codes(engine, level)
+    settings = methods.StationSettings(
+        min_capture=float(f["min_capture"]),
+        own_confidence=float(f["own_confidence"]),
+        nearest_confidence=float(f["nearest_confidence"]),
+    )
+    return methods.nearest_station_value(
+        air.stations(engine, f, level, zones),
+        air.centres(engine, f["origin_highways"], level),
+        codes,
+        air.air_zone_of(codes, zones),
+        air.reference_period(engine, f["means_datasets"]),
+        settings,
+    )
+
+
 def _two_step_fca(engine: Engine, f: dict[str, Any], level: str) -> pd.DataFrame:
     """D-217: capacity reachable on foot per person (2SFCA), by zone."""
     return fca.fca_feature(engine, f, level, walk.network_version(engine).observed)
@@ -172,6 +366,12 @@ METHODS: dict[str, Method] = {
     "not_published": _not_published,
     "postcode_weighted_mean": _postcode_weighted_mean,
     "two_step_fca": _two_step_fca,
+    "anchored_relative_value": _anchored_relative_value,
+    "reference_rent_fill": _reference_rent_fill,
+    "metric_window_share": _metric_window_share,
+    "metric_items": _metric_items,
+    "street_share_above": _street_share_above,
+    "nearest_station_mean": _nearest_station_mean,
 }
 
 
@@ -284,6 +484,19 @@ def _adjustment(record: dict[str, Any]) -> dict[str, Any]:
     return {"new_contracts": adjustment} if isinstance(adjustment, dict) else {}
 
 
+def _reference(record: dict[str, Any]) -> dict[str, Any]:
+    """The reference rent behind a filled value (D-242): what the search shows as the range."""
+    reference = record.get("reference")
+    return {"reference_rent": reference} if isinstance(reference, dict) else {}
+
+
+def _detail(record: dict[str, Any]) -> dict[str, Any]:
+    """What a context figure says besides its value (D-241) or what it cites (D-237: the air
+    quality station), served with it by the API."""
+    detail = record.get("detail")
+    return {"detail": detail} if isinstance(detail, dict) else {}
+
+
 def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
     versions = versions_by_pass(
         spec, loaders.last_valid_versions(engine, [s.dataset_id for s in spec.sources])
@@ -305,7 +518,9 @@ def persist(engine: Engine, spec: FeatureSpec, result: pd.DataFrame) -> int:
                 "method": effective_method(spec, _level(spec, r)),
             }
             | _counts(r)
-            | _adjustment(r),
+            | _adjustment(r)
+            | _reference(r)
+            | _detail(r),
         }
         for r in records
     ]

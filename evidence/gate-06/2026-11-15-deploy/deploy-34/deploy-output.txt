@@ -1,0 +1,51 @@
+infra/deploy/deploy.sh
+warning: deploying branch '' (ALLOW_BRANCH=1)
+warning: HEAD is not the pushed upstream; the demo will not match the remote branch
+note: these local files match .vercelignore and are NOT uploaded:
+  ./.env
+  ./.env.local
+-> deploying c0e9d11 () to production
+<claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
+  Inspect         <panel de Vercel>
+  Production      <despliegue>
+▲ Aliased         https://vida-facil-eight.vercel.app
+-> deployment dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm is ready
+-> smoke test against https://vidafacil-madrid.vercel.app
+smoke: https://vidafacil-madrid.vercel.app (2026-11-15T20:30:52Z) tag dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm-0
+OK   web           0.10s     45721 B  /  
+OK   health        0.12s       225 B  /api/v1/health  process up
+OK   ready         0.13s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone          0.20s     35701 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography     0.95s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer         4.03s   1761089 B  /api/v1/places?category=education  3866 places
+OK   largest       0.66s   2112252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search        0.65s    160402 B  /api/v1/search  42 of 199 zones, 1st Puente de Vallecas
+OK   telework      1.65s    158347 B  /api/v1/search  fit-0.9, 42 of 199 zones
+OK   barrios       0.71s     48521 B  /api/v1/search/barrios  7 of 8 barrios, 1st Arcos
+OK   madrid        0.44s    116108 B  /api/v1/search  78 of 131 barrios, 1st Puerta del Ángel
+OK   alrededores   0.79s     82875 B  /api/v1/search  15 of 40 municipios, 1st Coslada
+OK   pueblos       0.67s    136152 B  /api/v1/search  15 of 138 municipios, 1st Navalagamella
+smoke: 13/13 OK
+-> which deployment served the smoke (vercel logs requests, tag dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm-0)
+   6 from dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm (this deploy)
+   7 from dpl_ByScLXFa2ixyreAQMsbQWf6tf4ZG (another deployment)
+-> the smoke did not come entirely from dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm; repeating the smoke in 20 s (1/3)
+-> smoke test against https://vidafacil-madrid.vercel.app
+smoke: https://vidafacil-madrid.vercel.app (2026-11-15T20:31:37Z) tag dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm-1
+OK   web           0.42s     45813 B  /  
+OK   health        0.25s       225 B  /api/v1/health  process up
+OK   ready         0.15s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone          0.23s     35701 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography     0.74s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer         0.63s   1761089 B  /api/v1/places?category=education  3866 places
+OK   largest       0.52s   2112252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search        0.77s    160402 B  /api/v1/search  42 of 199 zones, 1st Puente de Vallecas
+OK   telework      0.50s    158347 B  /api/v1/search  fit-0.9, 42 of 199 zones
+OK   barrios       0.27s     48521 B  /api/v1/search/barrios  7 of 8 barrios, 1st Arcos
+OK   madrid        0.41s    116108 B  /api/v1/search  78 of 131 barrios, 1st Puerta del Ángel
+OK   alrededores   0.47s     82875 B  /api/v1/search  15 of 40 municipios, 1st Coslada
+OK   pueblos       0.56s    136152 B  /api/v1/search  15 of 138 municipios, 1st Navalagamella
+smoke: 13/13 OK
+-> which deployment served the smoke (vercel logs requests, tag dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm-1)
+   13 from dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm (this deploy)
+-> verified: https://vidafacil-madrid.vercel.app serves dpl_7paGtjUZ1syEwCvfgxqUqY6KCBWm, and the smoke passed against it

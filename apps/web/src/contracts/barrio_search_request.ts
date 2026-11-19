@@ -8,6 +8,9 @@
  * INE code of a district of Madrid capital (28079 + its two digits)
  */
 export type Distrito = string;
+/**
+ * Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)
+ */
 export type DaysPerWeek = number;
 export type AnchorKind = "work" | "study" | "family" | "other";
 export type Label = string;
@@ -33,6 +36,10 @@ export type Adults = number;
 export type MinorAges = number[];
 export type Minors = number;
 /**
+ * Every adult is 65+ («Somos mayores»)
+ */
+export type Seniors = boolean;
+/**
  * People aged 65+ cared for
  */
 export type SeniorsInCare = number;
@@ -42,30 +49,49 @@ export type SeniorsInCare = number;
 export type MinFloorAreaM2 = number | null;
 export type MaxWalkMinutes = number;
 /**
- * Everyday services the search and the per-zone list both talk about.
+ * Everyday services the search and the per-zone list both talk about, and the leisure
+ * groups of «Ocio» (D-236), which only the search knows: they are never rows of the list.
+ *
+ * A leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the
+ * API or the MCP may, it is ignored with a warning: `required` is True by default, so it would
+ * otherwise filter zones by places OpenStreetMap may not have.
  */
 export type NeedKey =
-  "escuela_infantil" | "colegio" | "centro_salud" | "farmacia" | "mayores" | "transporte";
+  | "escuela_infantil"
+  | "colegio"
+  | "centro_salud"
+  | "farmacia"
+  | "mayores"
+  | "transporte"
+  | "bares"
+  | "restaurantes"
+  | "gimnasios"
+  | "cultura";
 /**
  * True = hard constraint (PASS/FAIL/UNKNOWN)
  */
 export type Required = boolean;
 /**
- * @maxItems 6
+ * @maxItems 10
  */
 export type Nearby = NearbyNeed[];
 /**
- * «Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.
+ * «Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio
+ * (D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing.
  */
 export type PriorityKey =
-  "transporte" | "salud" | "colegios" | "zonas_verdes" | "seguridad" | "sin_escaleras";
+  "transporte" | "salud" | "colegios" | "zonas_verdes" | "seguridad" | "sin_escaleras" | "ocio";
 /**
  * Most important first
  *
- * @maxItems 6
+ * @maxItems 7
  */
 export type Priorities = PriorityKey[];
 export type SchemaVersion = 2;
+/**
+ * Where to search; Madrid capital is ranked by barrio instead of by district
+ */
+export type SearchScope = "all" | "madrid" | "alrededores" | "pueblos";
 
 /**
  * POST /api/v1/search/barrios (D-232): the same scenario as POST /search, inside one
@@ -87,9 +113,10 @@ export interface ScenarioState {
   nearby?: Nearby;
   priorities?: Priorities;
   schema_version?: SchemaVersion;
+  scope?: SearchScope;
 }
 /**
- * A place the household travels to often («Trabajo en»).
+ * A place the household travels to often: where they work, or family and friends.
  */
 export interface Anchor {
   days_per_week?: DaysPerWeek;
@@ -108,11 +135,15 @@ export interface Budget {
 }
 /**
  * «Tu hogar»: adults, children and older people they look after (all live together).
+ *
+ * `seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no
+ * one to the household, unlike `seniors_in_care`.
  */
 export interface Household {
   adults?: Adults;
   minor_ages?: MinorAges;
   minors?: Minors;
+  seniors?: Seniors;
   seniors_in_care?: SeniorsInCare;
 }
 /**

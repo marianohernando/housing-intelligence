@@ -57,7 +57,8 @@
   justify-items: start;
 }
 
-.details summary {
+.details summary,
+.meaning summary {
   display: inline-flex;
   align-items: center;
   min-height: var(--target);
@@ -132,4 +133,47 @@
   border-radius: var(--radius-pill);
   box-shadow: 0 0 0 1px var(--line);
   vertical-align: -0.05rem;
+}
+
+/* centros.hospital.que_significa: what «Público», «Privado» and «gestión privada» mean, folded */
+.meaning summary {
+  font-size: var(--text-sm);
+}
+
+/* centros.hospital.fila: the pill and the name on the left, the beds on the right */
+.list li.hospital {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-2);
+}
+
+.hospitalName {
+  line-height: 1.5;
+}
+
+/* The pill sits on the name's first line */
+.hospitalName > span {
+  vertical-align: 0.05rem;
+}
+
+.hospitalName small {
+  display: block;
+  color: var(--ink-soft);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+}
+
+.beds {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding-top: 0.15rem;
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.beds svg {
+  color: var(--ink-soft);
 }

@@ -31,7 +31,8 @@
         "MODEL_UNAVAILABLE",
         "CONSENT_REQUIRED",
         "RATE_LIMITED",
-        "NOT_FOUND"
+        "NOT_FOUND",
+        "AMBIGUOUS_INPUT"
       ],
       "title": "ErrorCode",
       "type": "string"

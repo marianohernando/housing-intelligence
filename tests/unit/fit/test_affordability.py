@@ -179,3 +179,57 @@ def test_state_value_and_text_agree_at_the_edge() -> None:
     assert check.value == 1500
     assert check.status is ConstraintStatus.PASS
     assert "1.500 €/mes" in check.explanation
+
+
+ESTIMATE_NOTE = "precio estimado: valor tasado de Madrid repartido según el valor catastral"
+
+
+def test_an_estimated_purchase_price_decides_with_low_confidence_and_says_so() -> None:
+    """D-234: a district's estimate gives PASS or FAIL like a published value, with its own
+    confidence and the words «precio estimado» instead of the appraised-value note."""
+    area = assumed_floor_area(_scenario(adults=2, minors=0))  # a couple: 68 m²
+    note = f"{ESTIMATE_NOTE} del distrito; Ministerio de Vivienda y Catastro vía Ayuntamiento"
+    estimate = _price(6051.0, confidence=0.5)
+    fits = budget_check(_buy(450_000), None, area, estimate, price_note=note)
+    assert fits.status is ConstraintStatus.PASS
+    assert fits.value == 411_000
+    assert fits.confidence == 0.5
+    assert fits.explanation == (
+        "Comprar ≈ 411.000 € por 68 m² (6.051 €/m², precio estimado: valor tasado de Madrid "
+        "repartido según el valor catastral del distrito; Ministerio de Vivienda y Catastro vía "
+        "Ayuntamiento)"
+    )
+    assert "valor tasado medio de la vivienda libre" not in fits.explanation
+    too_low = budget_check(_buy(400_000), None, area, estimate, price_note=note)
+    assert too_low.status is ConstraintStatus.FAIL
+
+
+def test_the_unknown_purchase_text_no_longer_blames_districts_and_barrios() -> None:
+    area = assumed_floor_area(_scenario())
+    check = budget_check(_buy(300_000), None, area, None)
+    assert check.status is ConstraintStatus.UNKNOWN
+    assert "distritos" not in check.explanation
+    assert "25.000 habitantes" in check.explanation
+
+
+def test_a_reference_rent_says_where_half_the_leases_fall() -> None:
+    """D-242: with the quartiles of the Ministry's reference, scaled as the rent, the condition
+    adds «la mitad de los contratos, entre X y Y €», in tens of euros for the household's m²."""
+    area = assumed_floor_area(_scenario())  # 77 m²
+    check = budget_check(
+        Budget(kind=BudgetKind.RENT, amount_eur=1500),
+        _rent(9.0, 0.7),
+        area,
+        rent_note="referencia del Ministerio de Vivienda para contratos firmados en 2024",
+        rent_range=(7.3, 10.6),
+    )
+    assert check.status is ConstraintStatus.PASS and check.value == 693
+    assert check.confidence == 0.7
+    assert check.explanation.startswith("Alquiler ≈ 693 €/mes por 77 m² (9,0 €/m², referencia")
+    assert check.explanation.endswith("; la mitad de los contratos, entre 560 y 820 €")
+
+
+def test_without_quartiles_the_rent_text_is_the_one_of_always() -> None:
+    area = assumed_floor_area(_scenario())
+    check = budget_check(Budget(kind=BudgetKind.RENT, amount_eur=1500), _rent(14.3), area)
+    assert "la mitad de los contratos" not in check.explanation

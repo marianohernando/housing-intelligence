@@ -1,7 +1,7 @@
 # Board — Vida Fácil · Sprint 1 comprimido (10–18 nov 2026) · Demo para el formulario
 
 Listas según `docs/11_engineering/24_trello_board_blueprint.md`. Una card pasa a DONE solo con gate + evidence.
-Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `~/Desktop/DATAMAD/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
+Plan y criterios del jurado: `docs/09_datamad/25_plan_competicion.md`. Decisiones desde D-191. Protocolo de trabajo: `<workspace>/prompts/LINEAS.md` (4 líneas paralelas desde el 11 nov; este board lo escribe solo la línea A).
 Última actualización: 2026-11-13 (A v15: D-232 barrios dentro de un distrito, `fit-0.7`, `POST /api/v1/search/barrios`; pendiente: sync y despliegue, y decidir con Mariano la fase 2 de barrios). **Formulario enviado (12 nov).**
 
 ## Líneas paralelas (LINEAS.md)
@@ -35,6 +35,12 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
 
 | Fecha | Línea | Card · fase | Gate | Commit | Evidencia | Qué deja hecho |
 |---|---|---|---|---|---|---|
+| 19 nov | C | OPS-001 · despliegue de e3e85b6 (#104, D-251 «Inversores» en la cabecera y en «Cómo lo calculamos»; #103 y #106, pitch) | verde en producción: smoke 13/13, golden 10/10, 54 respuestas de la API idénticas, e2e 145/145 y 121/121, `check-cabecera` 15/15, `check-parcela` 21/21 | `e3e85b6` (`dpl_FCcfhjEZYiTgNic444FexZDU34Ds`) | `evidence/gate-06/2026-11-19-deploy/deploy-40-e3e85b6-cabecera.md`, `deploy-40/` | Cuatro pestañas en una fila a 360, 390 y 1440 px, con la activa correcta en las cinco páginas («Inversores» también en la ficha de parcela) y contraste mínimo 5,48:1 sobre el mapa. `/como-lo-calculamos#inversores` abre en su sección con 108 barrios, 1.109 parcelas VEDA, 50 del Portal del Suelo y 644 €/m² (2025), como `investorMethod.ts`; la ficha de una parcela lleva un solo «Cómo lo calculamos» a esa sección, oculto al imprimir. `/desarrolladores` enlaza `main` y clona sin `--branch`: hasta fusionar #105, `main` (d60c180, 14 nov) da documentación más antigua. 7 consultas en vivo (límite ~10), 0 errores 4xx/5xx y ninguna dirección escrita en los logs. Tras cada despliegue, la caché de la CDN empieza vacía: conviene abrir las 4 parcelas de demostración antes de enseñar la demo. |
+| 19 nov | C | OPS-001 · despliegue de 79020a1 (#101, D-250 «Busca tu parcela») | verde en producción: smoke 13/13, golden 10/10, 54 respuestas de la API idénticas, e2e 145/145 y 121/121, `check-parcela` 21/21 | `79020a1` (`dpl_7ySG3suaT3tXBGJHRZ6Ar3eu9YEN`) | `evidence/gate-06/2026-11-19-deploy/deploy-39-79020a1-parcela.md`, `deploy-39/` | Las 4 parcelas de demostración responden en vivo, completas y sin `fallback`: 10,8–11,5 s la primera consulta, 1,6 s Mayor 61 y luego 0,3 s desde la CDN. Méndez Álvaro cae en Atocha, del piloto. En los logs, la dirección escrita sale como `[redactado]`. Sin sync ni variables nuevas. Avisos para A, no bloqueantes: la línea de tiempos de la API no llega a los logs (falta configurar `logging`); los errores de `?address=` salen sin `private, no-store`; las coordenadas de un clic quedan en el log de acceso |
+| 14 nov | A+B | ENV-001 · «Entorno» de la zona (D-237), con la revisión del PR #65 | verde (`make lint typecheck test-unit test-db`, web vitest/lint/typecheck/build, golden 10/10) | `e51b001` (revisión), PR #65 | `evidence/gate-01/2026-11-14/` (Gate 1 de 9 datasets), `evidence/gate-06/2026-11-14-environment/` (capturas, golden, contraste del ruido) | Ruido de la calle (Mapa Estratégico 2021: % de calle sobre 65 dB Ld y 55 dB Ln leído cada 10 m, solo Madrid), NO₂ de 2025 por estación de las redes CM y del Ayuntamiento con su estación (de fondo si es prestada), minutos al aparcamiento público y aparcamientos (71 disuasorios del CRTM y los del Ayuntamiento) en «Todos los centros» cuando `/datasets` los trae. 4 datasets CM más (35 de 51). Contexto: no puntúa. Pendiente: desplegar → `make supabase-sync PROFILE=demo` → smoke |
+| 14 nov | A+B | Vivienda nueva y lo que viene (D-241) | verde | `2fa52ef` y siguientes (PR a `claude/sprint-1-public`) | `evidence/gate-01/2026-11-14/` (4 datasets), `evidence/gate-06/2026-11-14-new-housing/` | Contexto que no puntúa: obra nueva entre las compraventas del último año (179/179 municipios, cruce por nombre), valor tasado de hasta 5 años frente a más de 5 (20 municipios), Plan Vive transcrito con cita (26 entradas, 11.845 viviendas) y ámbitos residenciales sin terminar de VEDA (57 en 19 distritos). `detail` opcional en `/features/{id}/values` y tarjeta en la vista de zona. Golden 9/9; `/search` y `/search/barrios` idénticos con y sin las filas |
+| 14 nov | A+B | D-235 · Otros datos de la zona (contexto, no puntúa) | verde (`make lint typecheck test-unit`, `make test-db`, vitest, `npm run build`) | (este PR) | `evidence/gate-01/2026-11-14/` (3 datasets), `evidence/gate-06/2026-11-14-context/` | Feedback de usuarios. Vista de zona con infracciones penales por 1.000 habitantes (portal CM, Interior; criminalidad convencional sin cibercriminalidad, 2024; 37 municipios, los distritos y barrios con la cifra de la ciudad y su etiqueta), % de viviendas construidas desde 2001 (censo anual CM, 179/179) o año medio de construcción (Catastro, panel del Ayuntamiento, 21 + 131) y renta por persona (IE CM, 179/179) o por hogar (Urban Audit, 21 + 131). Sin `fit` ni `gap_row` (test): el ejemplo del pitch no cambia (27 zonas, Latina 98). Nuevo pipeline `cm_municipio_concept`. Base local `housing_contexto`; falta recalcular `housing`, desplegar y sincronizar (+2 datasets CM: 27 → 29) |
+| 14 nov | A+B | W1 · comprar en Madrid capital (D-234, `fit-0.8`) | verde | (este PR) | `evidence/gate-04/2026-11-14/compra-estimada.md`, `golden-search-compra-estimada.txt` (9/9), `evidence/gate-01/2026-11-14/ayto_panel_indicadores_distritos_barrios/`, `evidence/gate-06/2026-11-14-buy-estimate/` | Precio de compra estimado en los 21 distritos y 131 barrios: el valor tasado de Madrid repartido por valor catastral/m² (confidence 0,5, «Dato aproximado», «precio estimado» en cada texto). Validado frente a anuncios: Spearman 0,95 en 12 distritos, ningún error > 30 %. El Reality Check solo culpa a lo que FALLA (`unknown_by_constraint` aparte): con «Comprar» ya no ofrece «+40.000 €» por falta de precio, y la web dice el motivo. El precio de cada zona va a la vista en las filas y en la tarjeta. Pareja con 400.000 €: Tetuán «casi» (≈ 411.000 €), Valdeacederas y Berruguete cumplen. Invariante: 27 zonas, Latina 98 %. **Desplegar → recalcular en `housing` → sincronizar → smoke** |
 | 13 nov | A | BARRIO-001 · Fase 2b (revisión con `reviewer`) | verde | `01fbf1e` | `evidence/gate-04/2026-11-12/barrios-gate.txt` | Sin bloqueantes. Un trayecto prestado del distrito nunca decide un límite (`UNKNOWN`); el texto del alquiler que falta sigue al motivo real (`SOURCE_NO_COVERAGE` sin lugares, `SOURCE_MISSING` sin alquiler publicado); tope 0,3 por lugares con valor; distrito sin barrios con aviso. Sin cambio de datos. |
 | 12 nov | A | BARRIO-001 · Fase 2 (ruta, `fit-0.7`, D-232) | verde | `788f938` | `evidence/gate-04/2026-11-12/golden-search-barrios.txt` | `POST /api/v1/search/barrios {scenario, distrito}` → `BarrioSearchResult` (= `SearchResult` + `distrito`). Familia demo en San Blas-Canillejas: 7 de 8 barrios cumplen, Simancas 97 %, Rejas «casi» (colegio a 35 min). Golden 9/9; la búsqueda regional no cambia. Tipos TS generados para B |
 | 12 nov | A | BARRIO-001 · Fase 1 (datos de barrio, D-232) | verde | `19bf8bd` | `evidence/gate-03/2026-11-12/barrios-datos.md`, `evidence/gate-01/2026-11-12/official_names/` | 131 barrios: nombres oficiales del panel del Ayuntamiento (17 cambios, Ambroz → Valdebernardo y los 3 sin nombre), minutos a pie (15 features, 131/131), alquiler por sus códigos postales (130/131, Sol sin dato) y trayectos (+75.849 filas). Base local recalculada |
@@ -169,7 +175,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - **Mariano y `datamad-10`:** decidir la fase 2 del diseño (los 131 barrios en el ranking regional) antes del 18 nov. «Qué falta» por barrio, después del freeze.
 - **Next (línea A):** nada de barrios sin decisión. Lo que mande `datamad-10`.
 - **Gate status:** `make lint typecheck test` en verde en `01fbf1e`: 704 unit, 354 web y 133 integración. Golden de búsqueda 9/9 (8 regionales sin cambios + San Blas).
-- **Relevo:** A v15 cierra tras BARRIO-001. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v15 cierra tras BARRIO-001. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (madrugada, línea A v14)
 - **Done (A v14), las 4 fases de `FASE_MEJORA.md` para A:**
@@ -200,7 +206,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   - **Fase 2** (ranking de los 131 barrios) solo si la fase 1 queda en verde y desplegada antes del 18 nov.
   - «Qué falta» por barrio, no antes del freeze.
 - **Gate status:** `make lint typecheck test` en verde en `c269100`: 670 unit, 308 web y 126 integración. Golden de búsqueda 8/8.
-- **Relevo:** A v14 cierra aquí por contexto, tras 4 fases. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v14 cierra aquí por contexto, tras 4 fases. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (noche, línea A v13)
 - **Done (A v13):**
@@ -239,7 +245,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
      - script de comparación de parques sin versionar;
      - `make help` muestra «Makefile» como nombre de cada objetivo cuando existe `.env` (el `grep` recibe dos ficheros).
 - **Gate status:** `make lint typecheck test` en verde en `f29ebec`: 623 unit, 286 web y 119 integración. Golden de búsqueda 8/8. Smoke del MCP por stdio en `evidence/gate-11/2026-11-12/mcp-smoke.txt`.
-- **Relevo:** A v13 cierra aquí tras 3 cards. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v13 cierra aquí tras 3 cards. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (tarde-noche, línea A v12)
 - **Done (A v12):**
@@ -262,7 +268,7 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
      - script de comparación de parques sin versionar;
      - los recuentos del GTFS de autobuses siguen con la versión de `gtfs-1.2.0` recargada desde Bronze (mismos lugares).
 - **Gate status:** `make lint typecheck test` en verde en `d6c6f0f`: 570 unit, 282 web y 102 integración. Tras el rebase, `555c2b4`: 571 unit y 286 web. Golden de búsqueda 8/8.
-- **Relevo:** A v12 cierra aquí por contexto, tras 2 cards. Continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v12 cierra aquí por contexto, tras 2 cards. Continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (tarde, línea A v11)
 - **Done (A v11):**
@@ -278,13 +284,13 @@ Una línea por fase cerrada, con el formato de LINEAS.md: línea · card y fase 
   3. DATA-021 precio de compra y MCP-001 (3–5 herramientas).
   4. Deuda: `drop_off_type` del GTFS (M-3 de CORE-009); la segunda pasada de osmium para inclusiones ensambla todas las áreas (unos 2 s, aceptado); el script de comparación con la lista del Ayuntamiento no está versionado (resultado en `evidence/gate-01/2026-11-12/parques.md`); Gate 3 completo tras las correcciones.
 - **Gate status:** `make lint typecheck test` en verde en `8330771`: 553 unit, 282 web y 102 integración. Golden de búsqueda 7/7.
-- **Relevo:** A v11 cierra aquí tras 2 cards; continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** A v11 cierra aquí tras 2 cards; continuar con `<workspace>/prompts/RELEVO.md`.
 
 ### Estado de la sesión del 12 nov (mañana, línea A v10)
 - **Done (A v10):** D-219 (pooler en modo transacción, `de9ad4b`); HOSP-001 F3–F4 (nombres de atención primaria y fichero de correcciones, D-218 §9–§10); CORE-009 F1–F3c (transporte público al trabajo, D-220, `fit-0.2`, desempates estables); API para B (`attribution_text`, `/places` con varias categorías); CI de nuevo en verde (`9cb54fe`).
 - **Next (línea A), en orden:** (1) confirmar el sync de `2ef95ca` por MCP; (2) DATA-018 a DATA-021 (zonas verdes, accesibilidad, seguridad con salvaguardas, precio de compra), cada una con su fase; (3) MCP-001: 3–5 herramientas sobre los servicios de dominio; (4) deuda: `drop_off_type` en el GTFS (M-3 de la revisión de CORE-009), matriz con aristas por pareja evento-footpath (memoria) si se amplía la ventana, y Gate 3 completo tras las correcciones.
 - **Gate status:** `make lint typecheck test` verde en `2ef95ca` (531 unit, 277 web, 102 integración); CI verde en `9cb54fe`; golden de búsqueda 6/6 con orden estable.
-- **Relevo:** la sesión A v10 cierra aquí por contexto; continuar con `~/Desktop/DATAMAD/prompts/RELEVO.md`.
+- **Relevo:** la sesión A v10 cierra aquí por contexto; continuar con `<workspace>/prompts/RELEVO.md`.
 - **Variables de la API en Vercel (para C, D-219).** C las documenta en `infra/deploy/README.md`:
   | Variable | Valor en producción | Cuándo |
   |---|---|---|

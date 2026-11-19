@@ -1,13 +1,16 @@
 """Read Silver from PostGIS into frames for the pure feature methods."""
 
 from collections.abc import Mapping
+from pathlib import Path
 
 import pandas as pd
 from sqlalchemy import Engine, text
 
+from hi_ingestion.bronze import REPO_ROOT
+
 _OBS = text(
     """
-    SELECT territory_code, period_start, dims, value, null_reason
+    SELECT territory_code, period_start, period_end, dims, value, null_reason
       FROM metric_observation
      WHERE metric_id = :metric_id AND territory_level = :level
     """
@@ -63,6 +66,10 @@ _PLACE_POSTCODES = {
         """
     ),
 }
+_SILVER = text(
+    "SELECT bronze_manifest_path FROM dataset_version WHERE dataset_id = :dataset_id "
+    "AND is_last_valid"
+)
 _VERSIONS = text(
     """
     SELECT dataset_id, version_label FROM dataset_version
@@ -76,7 +83,7 @@ def observations(engine: Engine, metric_id: str, level: str = "municipio") -> pd
         rows = conn.execute(_OBS, {"metric_id": metric_id, "level": level}).mappings().all()
     return pd.DataFrame(
         [dict(r) for r in rows],
-        columns=["territory_code", "period_start", "dims", "value", "null_reason"],
+        columns=["territory_code", "period_start", "period_end", "dims", "value", "null_reason"],
     )
 
 
@@ -133,3 +140,15 @@ def place_postcodes(
         [(zone, cp, float(n)) for (zone, cp), n in sorted(counts.items())],
         columns=["territory_code", "postcode", "weight"],
     )
+
+
+def silver_file(engine: Engine, dataset_id: str, name: str) -> Path:
+    """A file of the last valid Silver version of a dataset that keeps nothing in the database
+    (the noise grid, the station means; D-237)."""
+    with engine.connect() as conn:
+        manifest = conn.execute(_SILVER, {"dataset_id": dataset_id}).scalar()
+    if manifest is None:
+        msg = f"{dataset_id} has no valid version: make ingest DATASET={dataset_id}"
+        raise LookupError(msg)
+    path = Path(str(manifest))
+    return (path if path.is_absolute() else REPO_ROOT / path).parent / name

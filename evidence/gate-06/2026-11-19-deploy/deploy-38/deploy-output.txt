@@ -1,0 +1,31 @@
+infra/deploy/deploy.sh
+warning: deploying branch '' (ALLOW_BRANCH=1)
+warning: HEAD is not the pushed upstream; the demo will not match the remote branch
+note: these local files match .vercelignore and are NOT uploaded:
+  ./.env
+  ./.env.local
+-> deploying 20b46d9 () to production
+<claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
+  Inspect         <panel de Vercel>
+  Production      <despliegue>
+▲ Aliased         https://vida-facil-eight.vercel.app
+-> deployment dpl_CXZbyzGYdHXqxszrzcTmE71i1K6U is ready
+-> smoke test against https://vidafacil-madrid.vercel.app
+smoke: https://vidafacil-madrid.vercel.app (2026-11-19T10:38:30Z) tag dpl_CXZbyzGYdHXqxszrzcTmE71i1K6U-0
+OK   web           0.63s     45863 B  /  
+OK   health        3.95s       225 B  /api/v1/health  process up
+OK   ready         0.82s       225 B  /api/v1/health/ready  database and geography visible
+OK   zone          0.56s     35701 B  /api/v1/gaps/municipio/28079  Madrid: 6 rows
+OK   geography     0.65s    331914 B  /api/v1/geo/admin-units?level=municipio&simplify_m=50  179 municipios
+OK   layer         0.91s   1761089 B  /api/v1/places?category=education  3866 places
+OK   largest       0.71s   2112252 B  /api/v1/places?category=transport  14982 stops, page 1/3
+OK   search        2.11s    160402 B  /api/v1/search  42 of 199 zones, 1st Puente de Vallecas
+OK   telework      0.73s    158347 B  /api/v1/search  fit-0.9, 42 of 199 zones
+OK   barrios       0.29s     48521 B  /api/v1/search/barrios  7 of 8 barrios, 1st Arcos
+OK   madrid        0.40s    116108 B  /api/v1/search  78 of 131 barrios, 1st Puerta del Ángel
+OK   alrededores   0.51s     82875 B  /api/v1/search  15 of 40 municipios, 1st Coslada
+OK   pueblos       0.49s    136152 B  /api/v1/search  15 of 138 municipios, 1st Navalagamella
+smoke: 13/13 OK
+-> which deployment served the smoke (vercel logs requests, tag dpl_CXZbyzGYdHXqxszrzcTmE71i1K6U-0)
+   13 from dpl_CXZbyzGYdHXqxszrzcTmE71i1K6U (this deploy)
+-> verified: https://vidafacil-madrid.vercel.app serves dpl_CXZbyzGYdHXqxszrzcTmE71i1K6U, and the smoke passed against it

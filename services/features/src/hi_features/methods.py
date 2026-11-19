@@ -8,6 +8,7 @@ not at the feature's own level (the regional reference), territory_level.
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from itertools import pairwise
 from typing import Any
 
 import numpy as np
@@ -27,6 +28,8 @@ RESULT_COLUMNS = [
     "numerator",  # counts behind a per-population ratio (GAP-001 significance, D-213)
     "denominator",
     "adjustment",  # how a published value was adjusted (D-228: rent of new leases)
+    "reference",  # the reference rent behind a filled value (D-242: SERPAVI, calibration)
+    "detail",  # what a figure says besides its value (D-241) or cites (D-237: its station)
 ]
 REGION_LEVEL = "ccaa"
 REGION_CODE = "28"  # Comunidad de Madrid, as in metric_observation
@@ -122,13 +125,37 @@ def metric_value(obs: pd.DataFrame, dims: DimFilter, confidence: float = 1.0) ->
     return _result(out)
 
 
+def _adds_up(
+    records: list[dict[str, Any]], part: float, total: DimFilter, rest: DimFilter | None
+) -> bool:
+    """`part` plus the `rest` rows equals the `total` row: no category of the source is
+    missing from the denominator, nor a new one added (D-235)."""
+    whole, whole_reason, whole_n = _sum_selected(records, total)
+    left, left_reason, _ = _sum_selected(records, rest) if rest else (0.0, None, 0)
+    if whole_reason or left_reason or not whole_n:
+        return False
+    return abs(part + left - whole) < 0.5
+
+
 def metric_share(
-    obs: pd.DataFrame, numerator: DimFilter, denominator: DimFilter, confidence: float = 1.0
+    obs: pd.DataFrame,
+    numerator: DimFilter,
+    denominator: DimFilter,
+    confidence: float = 1.0,
+    total: DimFilter | None = None,
+    rest: DimFilter | None = None,
 ) -> pd.DataFrame:
+    """100 x numerator / denominator. With `total`, the denominator plus the `rest` rows must
+    add up to the source's total row, or the share is unknown (ESTIMATION_NOT_ALLOWED): a
+    share over an incomplete denominator would look exact and be wrong."""
     out: list[dict[str, Any]] = []
     for (code, period), records in _by_territory(obs).items():
         num, num_reason, num_n = _sum_selected(records, numerator)
         den, den_reason, den_n = _sum_selected(records, denominator)
+        incomplete = total is not None and not _adds_up(records, den, total, rest)
+        if incomplete and not den_reason and den_n:
+            out.append(_null(code, period, NullReason.ESTIMATION_NOT_ALLOWED))
+            continue
         if num_reason or den_reason or not num_n or not den_n:
             out.append(
                 _null(
@@ -282,6 +309,39 @@ def places_per_population(
     )
 
 
+def at_latest_period_of(obs: pd.DataFrame, other: pd.DataFrame) -> pd.DataFrame:
+    """The rows of `obs` dated like the latest period of `other`: a rate over the population of
+    the same year (D-235). None of that date leaves it empty: unknown, never another year's."""
+    if obs.empty or other.empty:
+        return obs.iloc[0:0]
+    newest = other["period_start"].max()
+    return obs.loc[[period == newest for period in obs["period_start"].tolist()]]
+
+
+def without_regional_reference(result: pd.DataFrame) -> pd.DataFrame:
+    """Drops the region's row: the sum of the zones a source covers is not the region when it
+    only publishes some of them (D-235)."""
+    keep = [level != REGION_LEVEL for level in result["territory_level"].tolist()]
+    return result.loc[keep].reset_index(drop=True)
+
+
+Totals = dict[str, tuple[Any, float | None, str | None]]
+
+
+def _less(totals: Totals, parts: Totals) -> Totals:
+    """Each zone's total less a part of it (offences without cybercrime, D-224 §3): unknown
+    when either is, never the total alone."""
+    out: Totals = {}
+    for code, (period, total, reason) in totals.items():
+        _, part, part_reason = parts.get(code, (period, None, NullReason.SOURCE_MISSING.value))
+        out[code] = (
+            (period, total - part, None)
+            if total is not None and part is not None
+            else (period, None, reason or part_reason)
+        )
+    return out
+
+
 def metric_ratio(
     numerator: pd.DataFrame,
     numerator_dims: DimFilter,
@@ -290,14 +350,19 @@ def metric_ratio(
     per: float,
     small_population: float = 0.0,
     confidence: float = 1.0,
+    numerator_minus: DimFilter | None = None,
 ) -> pd.DataFrame:
     """per x numerator / denominator for two metrics of the same zones (e.g. dwellings over
     90 m2 per 100 households of 4 or more). Each metric uses its own latest period and the row
-    carries the denominator's. A zone whose numerator is unknown or absent is unknown, never 0.
+    carries the denominator's (the caller may hand the denominator already cut to the
+    numerator's period, `at_latest_period_of`). A zone whose numerator is unknown or absent is
+    unknown, never 0. `numerator_minus` selects a part of the numerator that is left out.
     The regional reference adds up the zones where both are known; as in places per
     population, a zone with a 0 denominator is NOT_APPLICABLE but its numerator still counts
     for the region."""
     numerators = _population(numerator, numerator_dims)
+    if numerator_minus is not None:
+        numerators = _less(numerators, _population(numerator, numerator_minus))
     denominators = _population(denominator, denominator_dims)
     totals: dict[str, float] = {}
     for code, (period, den, den_reason) in list(denominators.items()):
@@ -320,6 +385,47 @@ def not_published(territories: pd.DataFrame) -> pd.DataFrame:
             for code, period in sorted(_by_territory(territories))
         ]
     )
+
+
+def latest_values(obs: pd.DataFrame) -> tuple[dict[str, float], Any]:
+    """Each territory's value in the metric's latest period (one row, known), and that period."""
+    values, period = _postcode_values(obs, {})
+    return values, period
+
+
+def anchored_relative_value(
+    ratio: Mapping[str, float],
+    weight: Mapping[str, float],
+    anchor: Mapping[str, float],
+    zones: Sequence[str],
+    parent_digits: int,
+    period: Any,
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """D-234: a parent's published value shared out among its zones by a relative figure.
+    zone value = parent value x zone ratio / mean ratio of the parent's zones, weighted by
+    `weight`; so the weighted mean of the zones' values is the parent's value (the anchor).
+
+    The parent of a zone is the first `parent_digits` of its code (a district's municipio, a
+    barrio's district). Every code in `zones` gets a row: without its ratio, its weight or its
+    parent's value the zone is SOURCE_MISSING, never the parent's mean and never 0; such a zone
+    is left out of the mean, which then holds over the others."""
+    by_parent: dict[str, list[str]] = {}
+    for code in zones:
+        if ratio.get(code, 0.0) > 0 and weight.get(code, 0.0) > 0:
+            by_parent.setdefault(code[:parent_digits], []).append(code)
+    mean = {
+        parent: sum(ratio[c] * weight[c] for c in codes) / sum(weight[c] for c in codes)
+        for parent, codes in by_parent.items()
+    }
+    out: list[dict[str, Any]] = []
+    for code in sorted(zones):
+        parent = code[:parent_digits]
+        if parent not in anchor or code not in by_parent.get(parent, ()):
+            out.append(_null(code, period, NullReason.SOURCE_MISSING))
+        else:
+            out.append(_ok(code, period, anchor[parent] * ratio[code] / mean[parent], confidence))
+    return _result(out)
 
 
 def _postcode_values(obs: pd.DataFrame, dims: DimFilter) -> tuple[dict[str, float], Any]:
@@ -370,6 +476,22 @@ def new_contract_factors(rent: pd.DataFrame, area: pd.DataFrame) -> NewContractF
         if all(r.get(k, 0) > 0 and a.get(k, 0) > 0 for k in kinds):
             factors[code] = (r[NEW_LEASES] / a[NEW_LEASES]) / (r[ALL_LEASES] / a[ALL_LEASES])
     return NewContractFactors(factors, period)
+
+
+MEDIAN_FALLBACK = "mediana_municipios"
+
+
+def with_median_fallback(factors: NewContractFactors) -> tuple[NewContractFactors, str | None]:
+    """D-243 (R-03 of D-242): the fallback for a zone without a factor of its own is the median
+    of the zones' own factors (1,155 for the 37 municipios of 2024), not the region's row (1,2085,
+    which Madrid dominates), under MEDIAN_FALLBACK. With no factor at all there is no fallback
+    and the value stays unknown, never a guessed 1."""
+    if not factors.factors:
+        return factors, None
+    median = float(np.median(list(factors.factors.values())))
+    return NewContractFactors({**factors.factors, MEDIAN_FALLBACK: median}, factors.period), (
+        MEDIAN_FALLBACK
+    )
 
 
 def _same_year(value_period: Any, factor_period: Any) -> None:
@@ -612,6 +734,10 @@ def result_frame(rows: list[dict[str, Any]]) -> pd.DataFrame:
     return _result(rows)
 
 
+def ok_row(code: str, period: Any, value: float, confidence: float = 1.0) -> dict[str, Any]:
+    return _ok(code, period, value, confidence)
+
+
 def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -> pd.DataFrame:
     """Every zone of `level` gets a row: one the source does not publish is SOURCE_MISSING,
     never left out (the null contract of Gate 3), dated like the rest of the level."""
@@ -634,3 +760,247 @@ def fill_missing_zones(result: pd.DataFrame, zones: Sequence[str], level: str) -
     if not missing:
         return result
     return pd.concat([result, _result(missing)], ignore_index=True)
+
+
+def _window(obs: pd.DataFrame, periods: int) -> list[Any]:
+    """The last `periods` periods published by the metric, oldest first (the same window for
+    every zone, so a zone that misses one of them is unknown, not a shorter year). A period
+    missing from the whole series breaks the window: with gaps, the last four quarters would
+    span more than a year, so there is no window (every zone unknown) rather than a wrong one."""
+    published = sorted(set(obs["period_start"].tolist()))
+    window = published[-periods:] if len(published) >= periods else []
+    return window if _consecutive(obs, window) else []
+
+
+def _consecutive(obs: pd.DataFrame, window: list[Any]) -> bool:
+    """Each period starts the day after the previous one ends (needs `period_end`)."""
+    if "period_end" not in obs:
+        return True
+    ends: dict[Any, Any] = {}
+    for start, end in zip(obs["period_start"].tolist(), obs["period_end"].tolist(), strict=True):
+        if start in window and end is not None and not pd.isna(end):
+            ends[start] = max(end, ends.get(start, end))
+    return all(prev in ends and (nxt - ends[prev]).days == 1 for prev, nxt in pairwise(window))
+
+
+def _window_detail(records: list[dict[str, Any]], status_dim: str | None, provisional: str) -> bool:
+    return bool(status_dim) and any(r["dims"].get(status_dim) == provisional for r in records)
+
+
+def metric_window_share(
+    obs: pd.DataFrame,
+    periods: int,
+    numerator: DimFilter,
+    denominator: DimFilter,
+    *,
+    status_dim: str | None = None,
+    provisional: str = "provisional",
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """100 x the numerator over the denominator, both added up over the last `periods` periods
+    (D-241: of the sales of the last four quarters, how many were new homes). The row is dated
+    at the first period of the window; `detail` keeps the two counts, the window's last day and
+    whether any value added up is provisional. Every period of the window must be published
+    for the zone, or it is unknown; no sales at all is NOT_APPLICABLE, with its counts."""
+    window = _window(obs, periods) if not obs.empty else []
+    if not window:
+        return _result([])
+    inside = obs.loc[[p in window for p in obs["period_start"].tolist()]]
+    ends = inside["period_end"].dropna().tolist() if "period_end" in inside else []
+    end = str(max(ends)) if ends else None
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for record in _rows(inside):
+        groups.setdefault(str(record["territory_code"]), []).append(record)
+    out: list[dict[str, Any]] = []
+    for code, records in sorted(groups.items()):
+        row = _window_row(code, records, window, numerator, denominator, confidence)
+        counts = {k: row.pop(k) for k in ("numerator", "denominator") if k in row}
+        detail = counts | {
+            "period_end": end,
+            "provisional": _window_detail(records, status_dim, provisional),
+        }
+        out.append(row | counts | {"detail": detail})
+    return _result(out)
+
+
+def _window_row(
+    code: str,
+    records: list[dict[str, Any]],
+    window: list[Any],
+    numerator: DimFilter,
+    denominator: DimFilter,
+    confidence: float,
+) -> dict[str, Any]:
+    by_period: dict[Any, list[dict[str, Any]]] = {}
+    for record in records:
+        by_period.setdefault(record["period_start"], []).append(record)
+    num = den = 0.0
+    for period in window:
+        members = by_period.get(period, [])
+        n, n_reason, n_matched = _sum_selected(members, numerator)
+        d, d_reason, d_matched = _sum_selected(members, denominator)
+        if not n_matched or not d_matched:
+            return _null(code, window[0], NullReason.SOURCE_MISSING)
+        if n_reason or d_reason:
+            return _null(code, window[0], NullReason(n_reason or d_reason))
+        num, den = num + n, den + d
+    counts = {"numerator": num, "denominator": den}
+    if den == 0:
+        return _null(code, window[0], NullReason.NOT_APPLICABLE) | counts
+    return _ok(code, window[0], 100.0 * num / den, confidence) | counts
+
+
+def _item(record: dict[str, Any], extra: Sequence[str] = ()) -> dict[str, Any]:
+    dims: Mapping[str, str] = record["dims"]
+    item = {
+        "code": dims.get("item"),
+        "name": dims.get("name"),
+        "stage": dims.get("stage"),
+        "value": None if pd.isna(record["value"]) else float(record["value"]),
+    }
+    kept = ["note", *extra]
+    return item | {key: dims[key] for key in kept if dims.get(key)}
+
+
+def metric_items(
+    obs: pd.DataFrame,
+    zones: Sequence[str],
+    *,
+    value: str,
+    stage_order: Sequence[str] = (),
+    item_dims: Sequence[str] = (),
+    confidence: float = 1.0,
+) -> pd.DataFrame:
+    """D-241: a zone's items of the latest period (planning areas, Plan Vive promotions, public
+    parcels), each with its code, name, stage and value, plus the dimensions of `item_dims` it
+    has (D-246: a parcel's régimen, manager and viewer link); the zone's value is their number
+    (`count`) or the sum of their values (`sum`). The source lists every item of its scope, so
+    a zone of `zones` without any is a confirmed 0, with no items. Items go by `stage_order`,
+    then largest first.
+    """
+    if value not in {"count", "sum"}:
+        msg = f"metric_items: value must be count or sum, got {value!r}"
+        raise ValueError(msg)
+    newest = latest(obs) if not obs.empty else obs
+    period = newest["period_start"].max() if not newest.empty else None
+    if period is None:
+        return _result([])
+    groups: dict[str, list[dict[str, Any]]] = {str(code): [] for code in zones}
+    for record in _rows(newest):
+        groups.setdefault(str(record["territory_code"]), []).append(_item(record, item_dims))
+    rank = {stage: i for i, stage in enumerate(stage_order)}
+    out: list[dict[str, Any]] = []
+    for code, items in sorted(groups.items()):
+        # Stage, then largest first, then code: the same order on every recomputation
+        items.sort(
+            key=lambda i: (rank.get(i["stage"], len(rank)), -(i["value"] or 0), i["code"] or "")
+        )
+        detail = {"detail": {"items": items}}
+        if value == "sum" and any(i["value"] is None for i in items):
+            out.append(_null(code, period, NullReason.UNKNOWN) | detail)  # never a short sum
+            continue
+        total = len(items) if value == "count" else sum(i["value"] for i in items)
+        out.append(_ok(code, period, total, confidence) | detail)
+    return _result(out)
+
+
+@dataclass(frozen=True)
+class StreetShareSettings:
+    above: float  # the level a street must exceed to count
+    min_covered_share: float  # below this share of street with a level the zone is unknown
+    base_confidence: float
+    min_street_m: float  # zones with less origin street keep confidence 0.5 at most
+
+
+def street_share_above(
+    zone_of_sample: NDArray[np.str_],
+    weight: NDArray[np.float64],
+    level: NDArray[np.float64],
+    zones: Sequence[str],
+    period: Any,
+    settings: StreetShareSettings,
+) -> pd.DataFrame:
+    """Per zone: % of the street where people live whose level is above `settings.above`
+    (D-237). Each sample is a point along a residential segment (`hi_features.noise.
+    street_samples`, every 10 m at most, R-03 of PR #65) with the street metres it stands for in
+    `weight` and the map's level there in `level`, NaN where the map gives none; those metres
+    leave the percentage and lower the confidence. A zone without residential streets, or with
+    too little of them on the map, is SOURCE_NO_COVERAGE: never 0."""
+    index = {code: i for i, code in enumerate(zones)}
+    zone = np.array([index.get(str(c), -1) for c in zone_of_sample], dtype=np.int64)
+    placed = zone >= 0
+    known = placed & ~np.isnan(level)
+    above = known & (np.nan_to_num(level, nan=-np.inf) > settings.above)
+    n = len(zones)
+    street_m = np.bincount(zone[placed], weights=weight[placed], minlength=n)
+    covered_m = np.bincount(zone[known], weights=weight[known], minlength=n)
+    above_m = np.bincount(zone[above], weights=weight[above], minlength=n)
+    rows: list[dict[str, Any]] = []
+    for i, code in enumerate(zones):
+        covered = covered_m[i] / street_m[i] if street_m[i] > 0 else 0.0
+        if covered_m[i] <= 0 or covered < settings.min_covered_share:
+            rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        confidence = settings.base_confidence * covered
+        if street_m[i] < settings.min_street_m:
+            confidence = min(confidence, 0.5)
+        rows.append(_ok(code, period, 100.0 * above_m[i] / covered_m[i], float(confidence)))
+    return _result(rows)
+
+
+@dataclass(frozen=True)
+class StationSettings:
+    min_capture: float  # share of the year's hours a station needs for its annual mean to count
+    own_confidence: float  # the zone has the station
+    nearest_confidence: float  # the value is another zone's station
+
+
+STATION_COLUMNS = ["code", "name", "zone", "air_zone", "x", "y", "mean", "capture", "traffic"]
+
+
+def _nearest(candidates: pd.DataFrame, x: float, y: float) -> tuple[dict[str, Any], float]:
+    distance = np.hypot(candidates["x"].to_numpy() - x, candidates["y"].to_numpy() - y)
+    i = int(np.argmin(distance))
+    return candidates.iloc[i].to_dict(), float(distance[i])
+
+
+def nearest_station_value(
+    stations: pd.DataFrame,
+    centres: Mapping[str, tuple[float, float]],
+    zones: Sequence[str],
+    air_zone_of: Mapping[str, str],
+    period: Any,
+    settings: StationSettings,
+) -> pd.DataFrame:
+    """D-237: each zone takes the annual mean of one monitoring station. Its own station when it
+    has one (the nearest to its centre if several); otherwise the nearest station of the same
+    air quality zone, so a village of the sierra never takes an urban traffic station's value,
+    and a background one before a traffic one (review of PR #65, R-08): a borrowed traffic
+    station measures an avenue of another zone. `stations` has STATION_COLUMNS: `zone` is the
+    zone the station lies in at this level, `air_zone` the air quality zone of its municipio and
+    `traffic` whether it is a traffic station. `centres` are projected metres. A station without
+    enough valid hours does not count; a zone without a centre or a candidate is
+    SOURCE_NO_COVERAGE, never 0. `detail` names the station, as the value must always say."""
+    valid = stations.loc[stations["mean"].notna() & (stations["capture"] >= settings.min_capture)]
+    rows: list[dict[str, Any]] = []
+    for code in zones:
+        centre = centres.get(code)
+        own = valid.loc[valid["zone"] == code]
+        candidates = own if len(own) else valid.loc[valid["air_zone"] == air_zone_of.get(code)]
+        background = candidates.loc[~candidates["traffic"].astype(bool)]
+        if len(own) == 0 and len(background):
+            candidates = background
+        if centre is None or candidates.empty:
+            rows.append(_null(code, period, NullReason.SOURCE_NO_COVERAGE))
+            continue
+        station, metres = _nearest(candidates, *centre)
+        confidence = settings.own_confidence if len(own) else settings.nearest_confidence
+        detail = {
+            "station": str(station["name"]),
+            "station_code": str(station["code"]),
+            "own": bool(len(own)),
+            "distance_km": round(metres / 1000, 1),
+            "traffic": bool(station["traffic"]),
+        }
+        rows.append(_ok(code, period, float(station["mean"]), confidence) | {"detail": detail})
+    return _result(rows)

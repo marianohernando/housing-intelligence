@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "every_name_matched",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "problems": []
+      }
+    },
+    {
+      "name": "one_zone_per_municipio",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "repeated": []
+      }
+    },
+    {
+      "name": "every_municipio_in_a_zone",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "covered": 179,
+        "region": 179
+      }
+    }
+  ]
+}

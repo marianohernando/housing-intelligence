@@ -6,7 +6,7 @@ import type { ScenarioState } from "@/contracts/scenario_state";
 import type { Relaxation, SearchResult } from "@/contracts/search_response";
 import { ApiError, createApi } from "@/lib/api";
 import { runSearch, SEARCH_ENABLED } from "@/lib/capabilities";
-import { defaultScenario, exampleScenario } from "@/lib/scenario";
+import { defaultScenario, exampleScenario, retiredExampleScenario, scopeOf, setScope } from "@/lib/scenario";
 import {
   type Attempt,
   initialSearchState,
@@ -25,7 +25,7 @@ export type { SearchStatus };
 interface ScenarioContextValue {
   scenario: ScenarioState;
   update: (change: (s: ScenarioState) => ScenarioState) => void;
-  /** «Ver zonas que encajan»: searches the scenario on screen. */
+  /** «Buscar zonas para mí»: searches the scenario on screen. */
   search: () => void;
   /** «Reintentar»: the failed search again, as it was. */
   retry: () => void;
@@ -40,8 +40,8 @@ interface ScenarioContextValue {
   applied: string | null;
   applyRelaxation: (relaxation: Relaxation) => void;
   undoRelaxation: () => void;
-  /** The demo case from the portada (portada.ejemplo.boton): fills the search and runs it. */
-  loadExample: () => void;
+  /** An example of the portada (portada.ejemplo.*): fills the search and runs it. */
+  loadExample: (example?: Example) => void;
 }
 
 const ScenarioContext = createContext<ScenarioContextValue | null>(null);
@@ -53,6 +53,10 @@ export function useScenario(): ScenarioContextValue {
 }
 
 type State = SearchState<ApiError>;
+
+/** The examples of the portada: the family of the pitch and the retired couple of D-244. */
+export type Example = "family" | "retired";
+const EXAMPLES: Record<Example, () => ScenarioState> = { family: exampleScenario, retired: retiredExampleScenario };
 
 /** The single ScenarioState that chips, filters and map share (CLAUDE.md §13), and its search. */
 export default function ScenarioProvider({ children }: { children: ReactNode }) {
@@ -93,11 +97,12 @@ export default function ScenarioProvider({ children }: { children: ReactNode }) 
   const search = useCallback(() => void send((s, id) => plainAttempt(s, id)), [send]);
   const retry = useCallback(() => void send(retryAttempt), [send]);
   const applyRelaxation = useCallback(
-    (r: Relaxation) => void send((s, id) => relaxAttempt(s, id, r.label, r.relaxed_scenario)),
+    // The API echoes `scope: "all"`; the web leaves it out, as «Toda la Comunidad» does (D-238)
+    (r: Relaxation) => void send((s, id) => relaxAttempt(s, id, r.label, setScope(r.relaxed_scenario, scopeOf(r.relaxed_scenario)))),
     [send],
   );
   const undoRelaxation = useCallback(() => void send(undoAttempt), [send]);
-  const loadExample = useCallback(() => void send((s, id) => plainAttempt(s, id, exampleScenario())), [send]);
+  const loadExample = useCallback((example: Example = "family") => void send((s, id) => plainAttempt(s, id, EXAMPLES[example]())), [send]);
 
   const value = useMemo(
     () => ({

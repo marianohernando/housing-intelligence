@@ -28,3 +28,10 @@
 .footer a:hover {
   color: var(--violet-strong);
 }
+
+/* inversores.enlace: a quiet link, 44 px high to touch */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
+}

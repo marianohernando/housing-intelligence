@@ -1,0 +1,10 @@
+kind: cm_municipio_name_table
+dataset_id: cm_transacciones_nueva_usada
+metric_id: compraventas_vivienda
+quarter_column: Periodo
+period_min: 2024  # the context reads the last four quarters; older years stay in Bronze
+# Only the series of sales: the rates of change and the annual mean are recomputed from it.
+row_filters: {"Indicador": ["Serie"]}
+dimension_columns: {"Tipo": tipo}
+# «Provisional» is kept: the zone view says when the last quarters are provisional (D-241).
+status_dimension: estado

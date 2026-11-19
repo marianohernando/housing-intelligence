@@ -1,0 +1,23 @@
+$ DATABASE_URL=…/housing_compra uv run python scripts/validate_buy_estimate.py   # 14 nov, D-234
+
+# Precio de compra estimado (D-234) frente a precios de oferta, 12 distritos
+Fuente: idealista, «Así está el precio de la vivienda en Madrid en septiembre de 2026: cifras y barrios más caros» (https://www.idealista.com/news/node/909039), precios de 2026-09, publicado el 2026-10-02
+
+Distrito                estimado   oferta  est/oferta    error
+Salamanca                   7771    10865        0.72   -19.0%
+Chamberí                    7009     9159        0.77   -13.3%
+Retiro                      6790     8515        0.80    -9.7%
+Chamartín                   7434     8127        0.91    +3.6%
+Centro                      6287     7771        0.81    -8.4%
+San Blas-Canillejas         4251     4146        1.03   +16.1%
+Latina                      3827     4045        0.95    +7.1%
+Villa de Vallecas           4029     3852        1.05   +18.5%
+Carabanchel                 3638     3829        0.95    +7.6%
+Usera                       3046     3628        0.84    -4.9%
+Puente de Vallecas          2971     3535        0.84    -4.8%
+Villaverde                  3442     3365        1.02   +15.8%
+
+Spearman: 0.951
+Nivel común (media geométrica de estimado/oferta): 0.883
+Error por distrito, quitado ese nivel: de -19.0 % a +18.5 %
+Criterio: Spearman ≥ 0.9 y ningún error de más del 30%: OK

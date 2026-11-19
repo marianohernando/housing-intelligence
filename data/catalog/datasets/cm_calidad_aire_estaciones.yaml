@@ -1,0 +1,37 @@
+dataset_id: cm_calidad_aire_estaciones
+source_id: comunidad_madrid_ckan
+name: Red de Calidad del Aire. Estaciones
+domain: environment
+owner: Comunidad de Madrid
+format: CSV
+geography: point
+geo:
+  resolution: point
+  crs_expected: EPSG:25830
+  h3_join_method: centroid
+temporal_resolution: null
+refresh_policy: unknown
+landing_url: https://datos.comunidad.madrid/dataset/calidad_aire_estaciones
+resources:
+- name: Red de Calidad del Aire. Estaciones (CSV)
+  format: CSV
+  url: https://datos.comunidad.madrid/dataset/4cd076a3-e602-48da-b834-58de39d3125c/resource/c05f6436-783e-4b04-b0d2-47848daea984/download/calidad_aire_estaciones.csv
+license_status: CLEAR
+status: REVIEWED
+priority: P1
+scorecard:
+  datamad_relevance: 5
+  product_impact: 3
+  geographic_granularity: 4
+  freshness: 4
+  license_clarity: 5
+  ingestion_ease: 5
+  notes: >-
+    D-237. Dato CM (CC BY 4.0 en el portal, leído el 14 nov 2026). Las 28 estaciones de la red
+    de la Comunidad, fuera de Madrid capital, con su zona de calidad del aire y su tipo (urbana,
+    suburbana o rural; de fondo o de tráfico).
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-14T18:00:00+00:00'
+notes: >-
+  Las estaciones entran como lugares para saber dónde está cada una; el dato de NO₂ sale de los
+  datos horarios (cm_calidad_aire_horario_2025). No se enseñan en «Todos los centros».

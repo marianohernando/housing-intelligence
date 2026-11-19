@@ -1,0 +1,33 @@
+feature_id: suelo_publico_vivienda_m2
+version: 1
+human_name: Suelo público para vivienda en el Portal del Suelo (m² edificables)
+domain: urbanism
+type: aggregate
+unit: m2
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_parcelas_portal_suelo, role: primary}
+formula:
+  method: metric_items
+  metric: suelo_publico_parcela_m2_edificable
+  value: sum
+  # What each parcel says besides its m², for the list of the zone view (D-246)
+  item_dims: [parcel, regime, manager, url]
+  confidence: 1.0
+  levels:
+    # Madrid's parcels, placed by a point inside each one (scripts/portal_suelo_points.py)
+    distrito: {scope: "28079"}
+    barrio: {scope: "28079"}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Parcelas de uso residencial que la Comunidad de Madrid y los Ayuntamientos adheridos ofrecen en el Portal del Suelo 4.0 el día de la descarga (se actualiza a diario). No es todo el suelo público: solo el que se publica ahí."
+  - "El valor es la suma de la superficie edificable de las parcelas, y el número de parcelas es el de sus elementos. Si alguna parcela no publica su superficie edificable, la suma queda desconocida; nunca se da una suma más corta. No se convierte en viviendas: el fichero no dice cuántas caben."
+  - "Un municipio sin parcelas en el portal tiene 0, no «sin datos». En Madrid, cada parcela se sitúa en su distrito y su barrio con un punto dentro de su polígono, leído de la capa del Portal del Suelo en la IDEM de la Comunidad."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-246)."

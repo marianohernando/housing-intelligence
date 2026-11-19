@@ -32,10 +32,11 @@ ROOT = PITCH.parent
 BUILD = DECK / "build"
 CAPTURES = PITCH / "capturas"
 PDF_NAME = "VidaFacil_DATAMAD2026.pdf"
-# A pitch/capturas/<id>.png with the same id wins. C5–C7: B's production captures of 11 Nov.
+# A pitch/capturas/<id>.png with the same id wins: C1–C3 and C6 are there, retaken by D in
+# production on 18 Nov (55651c2, after the mobile clarity deliveries). C5–C7: B's of 11 Nov.
 B_CAPTURES = ROOT / "evidence" / "map-004" / "2026-11-11"  # line B: zone, «Qué falta», method page
-# C1–C4 retaken by B with real data at 1440 px: C1–C3 with fit-0.6, Latina first (PR #32); C4
-# after gap-0.3 (PR #17), kept in reserve. deck.html carries the same paths, relative to itself
+# Fallbacks: C1–C4 retaken by B with real data at 1440 px: C1–C3 with fit-0.6, Latina first
+# (PR #32); C4 after gap-0.3 (PR #17), kept in reserve. deck.html carries its paths, relative to it
 B_DECK = ROOT / "evidence" / "map-004" / "2026-11-12" / "deck"
 EVIDENCE_CAPTURES = {
     "C1": B_DECK / "deck_c1_busqueda_1440.png",
@@ -60,12 +61,11 @@ MIN_FONT_PX = 22  # ~11 pt on a standard 13.33 in slide: only for sources and fo
 MAC_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 THEMES = [
-    ("Geografía", {"geography"}),
-    ("Población y hogares", {"population"}),
-    ("Vivienda", {"housing"}),
-    ("Renta", {"income"}),
+    ("Población y territorio", {"geography", "population", "income"}),
+    ("Vivienda", {"housing", "urbanism"}),
     ("Servicios", {"education", "health", "social"}),
     ("Transporte (CRTM)", {"transport"}),
+    ("Contexto de la zona", {"environment", "safety"}),
 ]
 SHORT_NAMES = {
     "cm_secciones_censales": "Secciones censales",
@@ -74,15 +74,22 @@ SHORT_NAMES = {
     "cm_nacidos_vivos_municipios": "Nacidos vivos",
     "cm_viviendas_superficie": "Viviendas por superficie",
     "cm_viviendas_tenencia_censo_2021": "Viviendas por tenencia",
-    "cm_alquiler_m2_municipios": "Alquiler €/m² por municipio",
-    "cm_alquiler_m2_codigo_postal_madrid": "Alquiler €/m² por código postal",
+    "cm_alquiler_m2_municipios": "Alquiler por municipio",
+    "cm_alquiler_m2_codigo_postal_madrid": "Alquiler por código postal",
     "cm_valor_tasado_vivienda_municipios": "Valor tasado de la vivienda",
+    "cm_valor_tasado_vivienda_antiguedad": "Valor tasado por antigüedad",
+    "cm_viviendas_antiguedad": "Viviendas por antigüedad",
+    "cm_transacciones_nueva_usada": "Compraventas nueva y usada",
+    "cm_parcelas_portal_suelo": "Suelo público (Portal del Suelo)",
+    "cm_catastro_unidades_urbanas_uso": "Catastro por uso",
+    "cm_catastro_inmuebles_distrito_uso": "Catastro por distrito",
+    "cm_visados_presupuesto_obra": "Visados de obra",
     "cm_renta_disponible_municipal": "Renta disponible",
     "cm_centros_educativos": "Centros educativos",
     "cm_unidades_escolares": "Unidades escolares",
     "cm_centros_sanitarios": "Centros sanitarios",
     "cm_dotacion_camas": "Camas por dependencia",
-    "cm_hospitales_datos_asistenciales": "Hospitales (datos asistenciales)",
+    "cm_hospitales_datos_asistenciales": "Hospitales",
     "cm_centros_atencion_social": "Centros de atención social",
     "cm_oficinas_farmacia": "Oficinas de farmacia",
     "cm_farmacias_municipios": "Farmacias por municipio",
@@ -95,6 +102,11 @@ SHORT_NAMES = {
     "crtm_topologia_metro": "Accesibilidad del metro",
     "crtm_topologia_metro_ligero": "Accesibilidad del Metro Ligero",
     "crtm_topologia_cercanias": "Accesibilidad de Cercanías",
+    "crtm_aparcamientos_disuasion": "Aparcamientos de disuasión",
+    "cm_calidad_aire_estaciones": "Aire: estaciones",
+    "cm_calidad_aire_horario_2025": "Aire: datos horarios",
+    "cm_calidad_aire_zonas": "Aire: zonas",
+    "cm_infracciones_penales_municipios": "Infracciones penales",
 }
 # (text token, background, minimum ratio, where it is used). "glass@X" = glass blended over X.
 CONTRAST_CHECKS = [

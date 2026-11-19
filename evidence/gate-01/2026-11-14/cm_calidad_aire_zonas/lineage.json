@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_calidad_aire_zonas",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_calidad_aire_zonas/2edcf34a2bf7/calidad_aire_zonas.csv",
+      "sha256": "2edcf34a2bf73b2e3e1d9846e5262146513085ae3a1db2ed00350fc31cc244f9",
+      "bytes": 7701,
+      "url": "https://datos.comunidad.madrid/dataset/fe4acdb6-84e2-4977-b431-29bdce73ff55/resource/face3eca-6ca9-46f9-ae77-aef9015cb529/download/calidad_aire_zonas.csv",
+      "retrieved_at": "2026-11-14T18:40:55.393612+00:00"
+    }
+  ],
+  "checksum": "66c035302c37183124a535a71225bca2ee6cddab0c937abc0ea89e3c0a079c51",
+  "parser_version": "air-quality-zones-1.0.0",
+  "dataset_version": "2026-11-14-66c035302c37",
+  "correlation_id": "e834de142745413895533c3bdb0aa4d2",
+  "silver": "data/silver/cm_calidad_aire_zonas/66c035302c37/municipio_zones.csv"
+}

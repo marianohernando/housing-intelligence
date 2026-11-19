@@ -3,18 +3,19 @@ apart and recount what each relaxed condition would add (Reality Check). Pure: t
 service loads the zones and their indicators; this module decides.
 """
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import (
     ConstraintStatus,
+    CostRange,
     RankedZone,
     RealityCheck,
     ScenarioState,
     ZoneMatch,
 )
-from hi_domain.fit import ZoneData, ZoneFit, evaluate, ranking_key
+from hi_domain.fit import ZoneData, ZoneFit, evaluate, near_miss_key, ranking_key
 from hi_domain.reality_check import reality_check
 
 RESULT_LIMIT, NEAR_MISS_LIMIT = 10, 5
@@ -25,7 +26,9 @@ INFANT_MAX_AGE = 2  # escuela infantil (0-3): first cycle of educación infantil
 
 
 def highlight_rows(scenario: ScenarioState) -> list[GapRowKey]:
-    """The 3 rows of «Qué falta aquí» that matter most to this household."""
+    """The 3 rows of «Qué falta aquí» that matter most to this household: older people,
+    those they look after or the household itself («Somos mayores», D-244), bring the
+    centres for older people forward."""
     household = scenario.household
     ages = household.minor_ages
     rows: list[GapRowKey] = []
@@ -33,7 +36,7 @@ def highlight_rows(scenario: ScenarioState) -> list[GapRowKey]:
         rows.append(GapRowKey.ESCUELA_INFANTIL)
     if household.minors:
         rows.append(GapRowKey.COLEGIO)
-    if household.seniors_in_care:
+    if household.seniors_in_care or household.seniors:
         rows.append(GapRowKey.MAYORES)
     rows += [GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA, GapRowKey.VIVIENDA]
     return rows[:HIGHLIGHTS]
@@ -48,18 +51,31 @@ class SearchOutcome:
     unscored_passing: int  # zones passing every condition with no data to score them
 
 
-def _ranked(fits: Sequence[ZoneFit], limit: int) -> list[RankedZone]:
-    ordered = sorted((f for f in fits if f.match_pct is not None), key=ranking_key)
+def cost_range(fit: ZoneFit) -> CostRange | None:
+    """Where half the leases fall (D-242), when the zone's rent is the Ministry's reference."""
+    if fit.cost_range is None or fit.cost_source is None:
+        return None
+    low, high = fit.cost_range
+    return CostRange(low_eur=low, high_eur=high, source=fit.cost_source)
+
+
+def _ranked(
+    fits: Sequence[ZoneFit], limit: int, key: Callable[[ZoneFit], tuple[float | str, ...]]
+) -> list[RankedZone]:
+    ordered = sorted((f for f in fits if f.match_pct is not None), key=key)
     return [
         RankedZone(
             rank=i,
             zone=fit.data.zone,
             match_pct=fit.match_pct or 0,
+            match_band=fit.match_band,
             confidence=fit.confidence,
             facts=fit.facts,
             constraints=fit.constraints,
             failed_constraints=fit.failed,
             estimated_cost_eur=fit.cost_eur,
+            estimated_cost_confidence=fit.cost_confidence,
+            estimated_cost_range=cost_range(fit),
             gap_highlights=list(fit.data.gaps),
         )
         for i, fit in enumerate(ordered[:limit], start=1)
@@ -86,14 +102,18 @@ def run_search(scenario: ScenarioState, zones: Sequence[ZoneData]) -> SearchOutc
     fits = [evaluate(scenario, zone) for zone in zones]
     passing = [f for f in fits if f.passes_all]
     return SearchOutcome(
-        results=_ranked(passing, RESULT_LIMIT),
-        near_misses=_ranked([f for f in fits if is_near_miss(f)], NEAR_MISS_LIMIT),
+        results=_ranked(passing, RESULT_LIMIT, ranking_key),
+        near_misses=_ranked([f for f in fits if is_near_miss(f)], NEAR_MISS_LIMIT, near_miss_key),
         all_zones=[
             ZoneMatch(
                 zone=f.data.zone,
                 match_pct=painted_match(f),
+                match_band=f.match_band,
                 passes_all=f.passes_all,
                 failed_constraints=f.failed,
+                estimated_cost_eur=f.cost_eur,
+                estimated_cost_confidence=f.cost_confidence,
+                estimated_cost_range=cost_range(f),
             )
             for f in fits
         ],

@@ -1,0 +1,108 @@
+vercel logs, deployment dpl_FCcfhjEZYiTgNic444FexZDU34Ds, from 2026-11-19T17:22:00Z to 2026-11-19T17:49:04.493Z (UTC)
+runtime log lines: 795, more pages: false, levels:  795 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 10
+
+CDN request records: 3244, the whole window (2 pages of the listing, 2026-11-19T17:24:01.898Z to 2026-11-19T17:48:21.131Z); every one from dpl_FCcfhjEZYiTgNic444FexZDU34Ds
+by status: 200 × 3091 · 206 × 3 · 304 × 150
+WAF action: allow × 3244
+the parcel routes (path as the CDN records it, status, cache, client):
+    10 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/check-parcela
+     7 GET /api/v1/investors/parcels/candidates 200 MISS · Mozilla/5.0 (iPhone)
+     4 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/probe-d251
+     3 GET /api/v1/investors/parcels/candidates 200 MISS · vida-facil-smoke/check-parcela
+     3 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/check-cabecera
+     2 GET /api/v1/investors/parcels 200 MISS · Mozilla/5.0 (headless Chromium, this run's e2e)
+     2 GET /api/v1/investors/parcels 200 HIT · Mozilla/5.0 (headless Chromium, this run's e2e)
+     2 GET /api/v1/investors/parcels 200 MISS · vida-facil-smoke/check-parcela
+     2 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/probe-d251-hash
+     1 GET /api/v1/investors/parcels 200 MISS · Mozilla/5.0 (iPhone)
+API by path and status:
+   103 GET /api/v1/datasets 200
+   103 GET /api/v1/geo/admin-units 200
+    60 POST /api/v1/search 200
+    26 GET /api/v1/investors/parcels 200
+    25 POST /api/v1/investors/viability 200
+    24 GET /api/v1/gaps 200
+    18 GET /api/v1/gaps/distrito/2807913 200
+    17 GET /api/v1/investors/zones 200
+    11 GET /api/v1/places 200
+    10 GET /api/v1/gaps/distrito/2807921 200
+    10 GET /api/v1/features/seguridad_percibida_noche/values 200
+    10 GET /api/v1/features/seguridad_percibida_dia/values 200
+    10 GET /api/v1/investors/parcels/candidates 200
+     8 POST /api/v1/search/barrios 200
+     8 GET /api/v1/investors/zones/ES.28.BAR.28079164 200
+     7 GET /api/v1/features/plan_vive_viviendas/values 200
+     7 GET /api/v1/features/suelo_publico_vivienda_m2/values 200
+     6 GET /api/v1/features/ambitos_residenciales_en_desarrollo/values 200
+     6 GET /api/v1/features/compraventas_obra_nueva_pct/values 200
+     5 GET /api/v1/gaps/impact 200
+     5 GET /api/v1/features/infracciones_penales_por_1000_hab/values 200
+     5 GET /api/v1/features/ano_medio_construccion_residencial/values 200
+     5 GET /api/v1/features/valor_tasado_vivienda_nueva_m2/values 200
+     5 GET /api/v1/features/renta_neta_media_hogar/values 200
+     5 GET /api/v1/features/valor_tasado_vivienda_usada_m2/values 200
+     5 GET /api/v1/features/pct_calle_ruido_dia/values 200
+     5 GET /api/v1/features/no2_media_anual/values 200
+     5 GET /api/v1/features/pct_calle_ruido_noche/values 200
+     5 GET /api/v1/features/min_a_pie_aparcamiento_publico/values 200
+     3 GET /api/v1/gaps/municipio/28079 200
+     3 GET /api/v1/features 200
+     3 GET /api/v1/features/hospitales_total/values 200
+     3 GET /api/v1/features/camas_instaladas_por_1000_hab/values 200
+     2 GET /api/v1/health 200
+     2 GET /api/v1/health/ready 200
+     1 GET /api/v1/gaps/distrito/2807901 200
+     1 GET /api/v1/gaps/distrito/2807902 200
+     1 GET /api/v1/gaps/distrito/2807903 200
+     1 GET /api/v1/gaps/distrito/2807904 200
+     1 GET /api/v1/gaps/distrito/2807905 200
+     1 GET /api/v1/gaps/distrito/2807906 200
+     1 GET /api/v1/gaps/distrito/2807907 200
+     1 GET /api/v1/gaps/distrito/2807908 200
+     1 GET /api/v1/gaps/distrito/2807909 200
+     1 GET /api/v1/gaps/distrito/2807910 200
+     1 GET /api/v1/gaps/distrito/2807911 200
+     1 GET /api/v1/gaps/distrito/2807912 200
+     1 GET /api/v1/gaps/distrito/2807914 200
+     1 GET /api/v1/gaps/distrito/2807915 200
+     1 GET /api/v1/gaps/distrito/2807916 200
+     1 GET /api/v1/gaps/distrito/2807917 200
+     1 GET /api/v1/gaps/distrito/2807918 200
+     1 GET /api/v1/gaps/distrito/2807919 200
+     1 GET /api/v1/gaps/distrito/2807920 200
+     1 GET /api/v1/gaps/municipio/28001 200
+     1 GET /api/v1/gaps/municipio/28074 200
+     1 GET /api/v1/gaps/municipio/28049 200
+     1 GET /api/v1/gaps/municipio/28005 200
+     1 GET /api/v1/gaps/municipio/28006 200
+     1 GET /api/v1/gaps/municipio/28092 200
+     1 GET /api/v1/gaps/municipio/28106 200
+     1 GET /api/v1/gaps/municipio/28148 200
+     1 GET /api/v1/gaps/municipio/28161 200
+     1 GET /api/v1/gaps/municipio/28180 200
+every 4xx/5xx: none
+
+Privacy (D-250: a typed address never reaches our logs)
+  CDN records whose requestPath carries a query string: 0
+  runtime records whose requestPath carries a query string: 0
+  runtime access lines of the parcel routes: 15: 10 with q=[redactado] or address=[redactado], 0 with an address or a q not redacted
+  runtime lines matching calle|avenida|paseo|plaza: 13, all of them the feature pct_calle_ruido_* (13)
+  the access lines of the parcel routes (client IP masked; only the demo parcels and redacted queries):
+     10 INFO:     <ip> - "GET /api/v1/investors/parcels/candidates?q=[redactado] HTTP/1.1" 200 OK
+      1 INFO:     <ip> - "GET /api/v1/investors/parcels?rc=0390314VK4709A HTTP/1.1" 200 OK
+      1 INFO:     <ip> - "GET /api/v1/investors/parcels?rc=2122202VK4722A HTTP/1.1" 200 OK
+      1 INFO:     <ip> - "GET /api/v1/investors/parcels?rc=3959601VK4735H HTTP/1.1" 200 OK
+      1 INFO:     <ip> - "GET /api/v1/investors/parcels?rc=9943003VK3794D HTTP/1.1" 200 OK
+  lookups by reference or point of a visitor (Safari on an iPhone, not this run), counted and not shown: 1
+  the API's own lines «parcel input=… rc14=… ms=… upstream_ms=…» and «parcel candidates=… ms=…»: 0

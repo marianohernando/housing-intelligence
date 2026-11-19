@@ -1,5 +1,6 @@
 """POST /api/v1/search on the fixture database (CORE-003): contract, UNKNOWN never PASS,
-Reality Check that the web can apply, highlights equal to GET /gaps and provenance."""
+Reality Check that the web can apply, highlights equal to GET /gaps, the rows of «Qué falta» the
+% reads (D-243) and provenance."""
 
 import json
 from pathlib import Path
@@ -11,8 +12,11 @@ from sqlalchemy import Engine, text
 
 from hi_api.deps import get_engine
 from hi_api.main import app
+from hi_api.services.barrios import load_barrios
+from hi_api.services.search import load
+from hi_contracts.public import ScenarioState
 from hi_contracts.public.responses import SearchResponse
-from hi_domain.fit import FIT_VERSION
+from hi_domain.fit import FIT_VERSION, match_band
 
 pytestmark = pytest.mark.db
 FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "contracts"
@@ -53,21 +57,65 @@ def test_demo_case_ranks_zones_that_pass_every_condition(client: TestClient) -> 
     passing = {z.zone.code for z in data.all_zones if z.passes_all}
     assert {r.zone.code for r in data.results} <= passing
     assert any(d.is_cm_open_data for d in data.datasets)
+    # D-243: the % in words, only for a zone that passes every condition
+    for zone in data.results:
+        assert zone.match_band == match_band(zone.match_pct)
+    assert all(zone.match_band is None for zone in data.near_misses)
+    for match in data.all_zones:
+        assert match.match_band == (match_band(match.match_pct) if match.passes_all else None)
 
 
 def test_unknown_never_counts_as_pass(client: TestClient) -> None:
-    """No zone of the fixtures has a published appraised value (D-227): buying is UNKNOWN
-    everywhere, never PASS, and more budget cannot add a zone without a price."""
-    scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 300000}, "nearby": []}
+    """No municipio of the fixtures that the search ranks has a published appraised value
+    (D-227): buying is UNKNOWN there, never PASS, and it is counted apart, not blamed on the
+    budget (D-234). The districts of Madrid have an estimate, far above this budget: they FAIL."""
+    scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 100000}, "nearby": []}
     data = _search(client, scenario).data
+    check = data.reality_check
     assert data.results == []
-    assert data.reality_check.zones_passing == 0
-    assert data.reality_check.zones_unknown == data.reality_check.zones_evaluated
+    assert check.zones_passing == 0
     assert all(not z.passes_all for z in data.all_zones)
-    option = next(o for o in data.reality_check.relaxations if o.constraint_id == "budget")
+    municipios = [z for z in data.all_zones if z.zone.level == "municipio"]
+    districts = [z for z in data.all_zones if z.zone.level == "distrito"]
+    assert municipios and districts
+    assert all(z.match_pct is None and not z.failed_constraints for z in municipios)
+    assert all(z.failed_constraints == ["budget"] for z in districts)
+    assert check.zones_unknown == len(municipios)
+    assert check.unknown_by_constraint == {"budget": len(municipios)}
+    assert check.binding_constraint == "budget"  # the districts do fail it
+    option = next(o for o in check.relaxations if o.constraint_id == "budget")
     assert option.relaxed_scenario.budget is not None
-    assert option.relaxed_scenario.budget.amount_eur == 330000
+    assert option.relaxed_scenario.budget.amount_eur == 110000
     assert option.added_zones == 0
+
+
+def test_madrid_districts_buy_with_an_estimate_that_says_so(client: TestClient) -> None:
+    """D-234 through the API: a district of Madrid has no published appraised value, so buying
+    uses the estimate (the city's value shared out by cadastral value), with low confidence,
+    its own indicator, both datasets cited and «precio estimado» in every text."""
+    scenario = _family() | {"budget": {"kind": "buy", "amount_eur": 2000000}, "nearby": []}
+    data = _search(client, scenario).data
+    districts = [r for r in data.results if r.zone.level == "distrito"]
+    assert districts
+    for ranked in districts:
+        budget = next(c for c in ranked.constraints if c.constraint_id == "budget")
+        assert budget.status == "PASS" and budget.confidence == 0.5
+        assert budget.value == ranked.estimated_cost_eur
+        assert "precio estimado: valor tasado de Madrid" in budget.explanation
+        assert "valor catastral del distrito" in budget.explanation
+        cost = next(f for f in ranked.facts if f.topic == "coste")
+        assert "precio estimado" in cost.text and cost.confidence == 0.5
+        assert cost.indicator is not None
+        assert cost.indicator.feature_id == "precio_compra_estimado_m2"
+        assert set(cost.indicator.datasets) == {
+            "ayto_panel_indicadores_distritos_barrios",
+            "cm_valor_tasado_vivienda_municipios",
+        }
+    cited = {d.dataset_id for d in data.datasets}
+    assert "ayto_panel_indicadores_distritos_barrios" in cited
+    assert all(z.zone.level == "municipio" for z in data.all_zones if z.match_pct is None)
+    assert data.reality_check.binding_constraint is None  # nothing fails: no data is not a limit
+    assert all(o.constraint_id != "budget" for o in data.reality_check.relaxations)
     assert data.near_misses == []  # an UNKNOWN is never an explicit alternative either
 
 
@@ -98,6 +146,36 @@ def test_highlights_match_the_gap_map(client: TestClient) -> None:
             gap_map = client.get("/api/v1/gaps", params=params).json()["data"]
             status = {z["code"]: z["status"] for z in gap_map["zones"]}[zone.zone.code]
             assert highlight.status == status
+
+
+def _statuses(client: TestClient, level: str, row: str) -> dict[str, tuple[str, str]]:
+    gap_map = client.get("/api/v1/gaps", params={"level": level, "row": row}).json()["data"]
+    return {z["code"]: (z["status"], z["name"]) for z in gap_map["zones"]}
+
+
+def test_the_pct_reads_the_rows_of_que_falta_and_a_barrio_its_district_s(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """D-243: every zone carries the status of every service row as GET /gaps gives it, marked or
+    not; a barrio carries its district's, with the district's name (a declared proxy)."""
+    scenario = ScenarioState.model_validate(_family())
+    with migrated_engine.connect() as conn:
+        zones = load(conn, scenario).zones
+        barrios = load_barrios(conn, scenario, None).zones
+    checked = 0
+    for data in zones:
+        for row, supply in data.supply.items():
+            status, _ = _statuses(client, data.zone.level.value, row.value)[data.zone.code]
+            assert supply.status == status and supply.district is None
+            checked += 1
+    assert checked, "no zone reads «Qué falta» on fixtures"
+    borrowed = 0
+    for data in barrios:
+        for row, supply in data.supply.items():
+            status, name = _statuses(client, "distrito", row.value)[data.zone.code[:7]]
+            assert (supply.status, supply.district) == (status, name)
+            borrowed += 1
+    assert borrowed, "no barrio reads its district's «Qué falta» on fixtures"
 
 
 def test_invalid_scenario_is_rejected(client: TestClient) -> None:
@@ -168,3 +246,94 @@ def test_rent_says_it_is_the_rent_of_a_lease_signed_in_2024(client: TestClient) 
     cited = {d.dataset_id: d for d in data.datasets}
     assert "aeat_alquiler_nuevos_contratos_codigo_postal" in cited
     assert cited["aeat_alquiler_nuevos_contratos_codigo_postal"].is_cm_open_data is False
+
+
+_CM_RENT = text(
+    "SELECT territory_code FROM feature_value WHERE feature_id = 'alquiler_m2_mensual' "
+    "AND territory_level = 'distrito' AND value IS NOT NULL"
+)
+
+
+def test_a_municipio_without_the_cm_rent_takes_the_reference_with_its_range(
+    client: TestClient, migrated_engine: Engine
+) -> None:
+    """D-242: Ajalvir has no CM rent in the fixtures; the Ministry's reference fills it, says
+    what it is and where half its leases fall. A district with the CM rent keeps it, with no
+    range. La Acebeda publishes no median: still unknown, never PASS."""
+    with migrated_engine.connect() as conn:
+        with_cm_rent = set(conn.execute(_CM_RENT).scalars())
+    scenario = _family() | {"nearby": [], "anchors": []}
+    data = _search(client, scenario).data
+    zones = {z.zone.code: z for z in data.all_zones}
+    ajalvir, acebeda = zones[AJALVIR], zones[LA_ACEBEDA]
+    assert ajalvir.estimated_cost_eur is not None and ajalvir.estimated_cost_confidence == 0.7
+    assert ajalvir.estimated_cost_range is not None
+    assert ajalvir.estimated_cost_range.low_eur <= ajalvir.estimated_cost_eur
+    assert ajalvir.estimated_cost_eur <= ajalvir.estimated_cost_range.high_eur
+    assert (
+        ajalvir.estimated_cost_range.source
+        == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
+    )
+    assert acebeda.estimated_cost_eur is None and acebeda.match_pct is None
+    districts = [z for z in data.all_zones if z.zone.code in with_cm_rent]
+    assert districts and all(z.estimated_cost_range is None for z in districts)
+    ranked = next(r for r in [*data.results, *data.near_misses] if r.zone.code == AJALVIR)
+    budget = next(c for c in ranked.constraints if c.constraint_id == "budget")
+    assert "referencia del Ministerio de Vivienda" in budget.explanation
+    assert "la mitad de los contratos, entre" in budget.explanation
+    assert "mivau_serpavi_alquiler" in {d.dataset_id for d in data.datasets}
+
+
+LA_ACEBEDA = "28001"  # Sierra Norte: a village (D-238)
+
+
+def _zones(client: TestClient, scope: str | None) -> dict[str, str]:
+    """Code and level of every zone the search evaluates in a scope (None: not sent)."""
+    scenario = _family() if scope is None else _family() | {"scope": scope}
+    data = _search(client, scenario).data
+    assert data.reality_check.zones_evaluated == len(data.all_zones)
+    assert data.scenario.scope == (scope or "all")
+    return {z.zone.code: z.zone.level.value for z in data.all_zones}
+
+
+def test_a_search_without_scope_is_the_whole_region_as_before(client: TestClient) -> None:
+    """D-238: the example and every shared link send no scope and must not change."""
+    plain = _search(client, _family()).data
+    explicit = _search(client, _family() | {"scope": "all"}).data
+    assert plain.model_dump(exclude={"scenario"}) == explicit.model_dump(exclude={"scenario"})
+    assert set(_zones(client, None).values()) == {"municipio", "distrito"}
+
+
+def test_surroundings_and_villages_split_the_municipios_outside_madrid(
+    client: TestClient,
+) -> None:
+    everywhere = _zones(client, None)
+    around, villages = _zones(client, "alrededores"), _zones(client, "pueblos")
+    assert around == {AJALVIR: "municipio"}  # Este Metropolitano
+    assert villages == {LA_ACEBEDA: "municipio"}
+    municipios = {code for code, level in everywhere.items() if level == "municipio"}
+    assert set(around) | set(villages) == municipios
+
+
+def test_madrid_capital_is_ranked_by_barrio(client: TestClient) -> None:
+    everywhere = _zones(client, None)
+    capital = _zones(client, "madrid")
+    assert capital and set(capital.values()) == {"barrio"}
+    districts = {code for code, level in everywhere.items() if level == "distrito"}
+    assert {code[:7] for code in capital} <= districts  # each barrio inside a ranked district
+    assert {"28079011", "28079016"} <= set(capital)  # Palacio and Sol
+    data = _search(client, _family() | {"scope": "madrid"}).data
+    for ranked in [*data.results, *data.near_misses]:
+        assert ranked.gap_highlights == []  # «Qué falta» stays by district (D-232)
+        assert ranked.zone.municipio_ine == "28079"
+
+
+def test_a_relaxed_scenario_keeps_its_scope(client: TestClient) -> None:
+    scenario = _family() | {"budget": {"kind": "rent", "amount_eur": 600}, "scope": "madrid"}
+    check = _search(client, scenario).data.reality_check
+    assert check.relaxations
+    for option in check.relaxations:
+        assert option.relaxed_scenario.scope == "madrid"
+        again = _search(client, option.relaxed_scenario.model_dump(mode="json")).data
+        assert again.reality_check.zones_passing == option.zones_if_relaxed
+        assert {z.zone.level.value for z in again.all_zones} == {"barrio"}

@@ -1,0 +1,33 @@
+Four of /desarrolladores' printed examples, copied from the live page (each <pre>) and run verbatim with /bin/bash -c, 2026-11-19 ~10:43Z.
+
+## Las zonas que encajan con un hogar
+curl -s -X POST https://vidafacil-madrid.vercel.app/api/v1/search \
+  -H 'Content-Type: application/json' \
+  -d '{"budget":{"kind":"rent","amount_eur":1500},
+       "household":{"adults":2,"minors":1,"minor_ages":[4]},
+       "priorities":["colegios","transporte"]}'
+→ 140169 B, fit-0.9
+  180 of 199 zones pass, 10 results, 1st Puente de Vallecas
+
+## Qué falta en una zona
+curl -s "https://vidafacil-madrid.vercel.app/api/v1/gaps/municipio/28106"
+→ 35603 B, gap-0.3
+  Parla: Escuelas infantiles JUSTO, Colegios JUSTO, Centros de salud JUSTO, Centros de mayores JUSTO, Farmacias FALTA, Vivienda para familias FALTA
+
+## La ficha de un barrio
+curl -s "https://vidafacil-madrid.vercel.app/api/v1/investors/zones/ES.28.BAR.28079164"
+→ 59482 B, viability-0.1
+  Pinar del Rey (Hortaleza), warnings none
+
+## ¿Sale una promoción?
+curl -s -X POST https://vidafacil-madrid.vercel.app/api/v1/investors/viability \
+  -H 'Content-Type: application/json' \
+  -d '{"buildable_m2":1000,
+       "sale_price_m2":4847,
+       "new_build_premium_pct":9.3,
+       "rent_m2_month":16,
+       "pem_m2":644,
+       "land_eur_m2":3200}'
+→ 2480 B, viability-0.1
+  Ajustar: margen del 15,1 %, por debajo del 20 % objetivo. · Sale: margen del 22,8 % sobre ventas (objetivo, 20 %). · No sale: margen del 5,6 %, por debajo del 10 %.
+

@@ -3,7 +3,8 @@ scenario, with every indicator behind it and the datasets it reads (attribution 
 
 No new query: the zones, indicators, highlights and trips come from the search's own loader,
 the facts from the same evaluation (hi_domain.fit.evaluate), the datasets of the highlighted
-rows from the zone's own list (GET /gaps) and the rest from the same provenance as /search.
+rows and of the rows the % reads (D-243: the services the person marks) from the zone's own list
+(GET /gaps) and the rest from the same provenance as /search.
 """
 
 from collections.abc import Iterable
@@ -12,15 +13,16 @@ from sqlalchemy import Connection
 
 from hi_api.services.gaps import ZoneNotFoundError, dataset_refs, zone_gap_list
 from hi_api.services.search import LEVELS, load, load_warnings
-from hi_contracts.catalog.enums import TerritoryLevel
+from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import (
     BudgetKind,
     DatasetRef,
     IndicatorValue,
     ScenarioState,
+    SearchScope,
     ZoneExplanation,
 )
-from hi_domain.fit import FIT_VERSION, ZoneData, evaluate
+from hi_domain.fit import FIT_VERSION, ZoneData, evaluate, marked_rows
 from hi_domain.search import SPLIT_BY_DISTRICT
 
 
@@ -41,12 +43,18 @@ def _union(refs: Iterable[DatasetRef]) -> list[DatasetRef]:
     return [unique[k] for k in sorted(unique)]
 
 
-def _highlight_datasets(conn: Connection, data: ZoneData) -> list[DatasetRef]:
-    """The datasets of the zone's highlighted rows, as its own list of what is missing cites
-    them (the zone's level, its reference and the row's extras)."""
-    if not data.gaps:
+def cited_rows(data: ZoneData, scenario: ScenarioState) -> set[GapRowKey]:
+    """The rows of «Qué falta» the explanation reads: the zone's highlighted ones and those its
+    % reads (D-243: the services the person marks that the zone has a row for)."""
+    return {h.row for h in data.gaps} | {r for r in marked_rows(scenario) if r in data.supply}
+
+
+def _gap_datasets(conn: Connection, data: ZoneData, scenario: ScenarioState) -> list[DatasetRef]:
+    """The datasets of the rows it reads (cited_rows), as the zone's own list of what is missing
+    cites them (the zone's level, its reference and the row's extras)."""
+    rows = cited_rows(data, scenario)
+    if not rows:
         return []
-    rows = {h.row for h in data.gaps}
     gap_list, _, _ = zone_gap_list(conn, data.zone.level, data.zone.code)
     return [d for row in gap_list.rows if row.row in rows for d in row.datasets]
 
@@ -65,7 +73,8 @@ def explain_zone(
 ) -> tuple[ZoneExplanation, list[str], str | None]:
     """The explanation, the search warnings and the data version (latest computation)."""
     _check_searchable(level, code)
-    loaded = load(conn, scenario)
+    # A zone is explained wherever the search looked: its own «Dónde buscar» may leave it out
+    loaded = load(conn, scenario.model_copy(update={"scope": SearchScope.ALL}))
     data = next((z for z in loaded.zones if z.zone.level == level and z.zone.code == code), None)
     if data is None:
         msg = f"No {level.value} with code {code}"
@@ -74,7 +83,7 @@ def explain_zone(
     indicators = _indicators(data, scenario)
     used = {d for i in indicators for d in i.datasets}
     versions = {d: v for d, v in loaded.versions.items() if d in used} | loaded.commute_versions
-    datasets = _union([*dataset_refs(conn, versions), *_highlight_datasets(conn, data)])
+    datasets = _union([*dataset_refs(conn, versions), *_gap_datasets(conn, data, scenario)])
     explanation = ZoneExplanation(
         zone=data.zone,
         scenario=scenario,

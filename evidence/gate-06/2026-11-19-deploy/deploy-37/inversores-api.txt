@@ -1,0 +1,52 @@
+The investor routes of #94 (D-248) against production, dpl_GAcSQGpjuj7AKa178gFS2Yq1kNRU (396d8f6):
+before the sync (~09:41Z, A's new features not loaded yet) and after it (~09:49Z). UA vida-facil-smoke/inv-pre | inv-sync.
+
+## Before the sync
+GET /api/v1/investors/zones → 200, 73549 B
+GET /api/v1/investors/zones/ES.28.BAR.28079164 → 200, 55316 B
+GET /api/v1/investors/zones/ES.28.BAR.28079999 → 404, 119 B · {"code": "NOT_FOUND", "message": "ES.28.BAR.28079999 is not a pilot barrio (Madrid capital dentro de la M-40)"}
+GET /api/v1/investors/zones/ES.28.MUN.28079 → 422, 118 B · {"code": "OUT_OF_COVERAGE", "message": "The investor sheet is for the barrios of Madrid (ES.28.BAR.28079nnn)"}
+POST /api/v1/investors/viability {buildable_m2 1000, sale_price_m2 4000, rent_m2_month 15, pem_m2 600} → 200, 2468 B
+POST /api/v1/investors/viability, the same with land_eur_m2 2200 and demand.household_income 40000 → 200, 3179 B
+POST /api/v1/investors/viability {buildable_m2 49, …} → 422, 153 B · [{"type": "greater_than_equal", "loc": ["body", "buildable_m2"], "msg": "Input should be greater than or equal to 50", "input": 49, "ctx": {"ge": 50.0}}]
+  zones: 108 barrios, pilot «Madrid capital dentro de la M-40», viability-0.1, data_version 2026-11-18, warnings []
+  null fields in the 108: {'remaining_m2': 108, 'remaining_shared_areas': 108, 'commerce_per_1000': 108}
+  Pinar del Rey in the list: {'gaps': {'falta': 0, 'justo': 3, 'rows': ['Colegios', 'Centros de salud', 'Centros de mayores']}, 'parcels': 4, 'parcels_m2': 19796.18, 'remaining_m2': None, 'remaining_shared_areas': None, 'commerce_per_1000': None, 'sale_price_m2': 4846.67, 'rent_m2_month': 15.94}
+  Pinar del Rey's sheet: data_version 2026-11-18, warnings ['INSUFFICIENT_DATA: edificabilidad_remanente_residencial_m2 not loaded yet', 'INSUFFICIENT_DATA: suelo_vacante_unidades not loaded yet', 'INSUFFICIENT_DATA: comercio_proximidad_1000hab not loaded yet', 'INSUFFICIENT_DATA: locales_abiertos_1000hab not loaded yet', 'INSUFFICIENT_DATA: locales_cerrados_pct not loaded yet', 'INSUFFICIENT_DATA: unidades_comerciales_1000hab not loaded yet']
+    land.remaining_m2: None m² · dato · Aún sin cargar · null_reason SOURCE_NO_COVERAGE
+    land.vacant_units: None unidades · dato · Aún sin cargar · null_reason SOURCE_NO_COVERAGE
+    gaps.commerce comercio_proximidad_1000hab: None locales/1000 hab · null_reason SOURCE_NO_COVERAGE
+    gaps.commerce locales_abiertos_1000hab: None locales/1000 hab · null_reason SOURCE_NO_COVERAGE
+    gaps.commerce locales_cerrados_pct: None % · null_reason SOURCE_NO_COVERAGE
+    gaps.commerce unidades_comerciales_1000hab: None unidades/1000 hab · null_reason SOURCE_NO_COVERAGE
+  via-1000: land_known False · base: «Lo máximo que se puede pagar por el suelo: 2,06 millones de € (2.064 € por m² edificable), para un margen del 20 %.» · rental_yield_pct 6.25
+  via-1000-land: land_known True · base: «Ajustar: margen del 16,6 %, por debajo del 20 % objetivo.» · rental_yield_pct 5.97
+
+## After the sync
+GET /api/v1/investors/zones → 200, 76089 B
+GET /api/v1/investors/zones/ES.28.BAR.28079164 → 200, 59482 B
+GET /api/v1/investors/zones/ES.28.BAR.28079999 → 404, 119 B · {"code": "NOT_FOUND", "message": "ES.28.BAR.28079999 is not a pilot barrio (Madrid capital dentro de la M-40)"}
+GET /api/v1/investors/zones/ES.28.MUN.28079 → 422, 118 B · {"code": "OUT_OF_COVERAGE", "message": "The investor sheet is for the barrios of Madrid (ES.28.BAR.28079nnn)"}
+POST /api/v1/investors/viability {buildable_m2 1000, sale_price_m2 4000, rent_m2_month 15, pem_m2 600} → 200, 2468 B
+POST /api/v1/investors/viability, the same with land_eur_m2 2200 and demand.household_income 40000 → 200, 3179 B
+POST /api/v1/investors/viability {buildable_m2 49, …} → 422, 153 B · [{"type": "greater_than_equal", "loc": ["body", "buildable_m2"], "msg": "Input should be greater than or equal to 50", "input": 49, "ctx": {"ge": 50.0}}]
+  zones: 108 barrios, pilot «Madrid capital dentro de la M-40», viability-0.1, data_version 2026-11-19, warnings []
+  null fields in the 108: none
+    remaining_m2: min 0 · max 1161094 · zeros 58
+    remaining_shared_areas: min 0 · max 2 · zeros 101
+    commerce_per_1000: min 0.700869 · max 16.9347 · zeros 0
+  Pinar del Rey in the list: {'gaps': {'falta': 0, 'justo': 3, 'rows': ['Colegios', 'Centros de salud', 'Centros de mayores']}, 'parcels': 4, 'parcels_m2': 19796.18, 'remaining_m2': 55628.31, 'remaining_shared_areas': 0, 'commerce_per_1000': 3.22, 'sale_price_m2': 4846.67, 'rent_m2_month': 15.94}
+  Pinar del Rey's sheet: data_version 2026-11-19, warnings none
+    land.remaining_m2: 55628.31 m² · dato · Ayuntamiento de Madrid · 2026 · dato del barrio · null_reason None
+    land.vacant_units: 13813.0 unidades · dato · Instituto de Estadística de la Comunidad de Madrid · 2026 · dato de toda la ciudad · null_reason None
+    gaps.commerce comercio_proximidad_1000hab: 3.22 locales/1000 hab · null_reason None
+    gaps.commerce locales_abiertos_1000hab: 21.61 locales/1000 hab · null_reason None
+    gaps.commerce locales_cerrados_pct: 40.1 % · null_reason None
+    gaps.commerce unidades_comerciales_1000hab: 16.03 unidades/1000 hab · null_reason None
+  via-1000: land_known False · base: «Lo máximo que se puede pagar por el suelo: 2,06 millones de € (2.064 € por m² edificable), para un margen del 20 %.» · rental_yield_pct 6.25
+  via-1000-land: land_known True · base: «Ajustar: margen del 16,6 %, por debajo del 20 % objetivo.» · rental_yield_pct 5.97
+
+viability via-1000: identical before and after the sync (it reads no database).
+viability via-1000-land: identical before and after the sync (it reads no database).
+
+Web: before the sync /inversores 200, /inversores/28079164 200, /inversores/99999999 404, /inversores/abc 404; after it /inversores 200, /inversores/28079164 200, /inversores/99999999 404.

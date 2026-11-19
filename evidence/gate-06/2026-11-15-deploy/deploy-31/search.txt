@@ -1,0 +1,63 @@
+POST /api/v1/search against https://vidafacil-madrid.vercel.app, 2026-11-15 (UTC).
+Bodies: example = data/fixtures/contracts/scenario_state.familia_castellana.fixture.json; telework = the same with anchors[0].days_per_week 0;
+  buy400 = a couple buying up to 400.000 €, nothing else; rent10k = a couple renting up to 10.000 €/month, nothing else;
+  pueblos = the example with scope pueblos; couple1500 = a couple renting up to 1.500 €/month, nothing else (with scope pueblos and madrid too).
+Moments: 785bac0 in production (~11:05), 59187f8 deployed before the sync (~11:11), after the sync (~11:19).
+
+== 785bac0 → 59187f8, before the sync
+  example   identical apart from the new field estimated_cost_range, null in every zone (214)
+  buy400    identical apart from the new field estimated_cost_range, null in every zone (214)
+  telework  identical apart from the new field estimated_cost_range, null in every zone (214)
+  rent10k   identical apart from the new field estimated_cost_range, null in every zone (209)
+  pueblos   identical apart from the new field estimated_cost_range, null in every zone (140)
+
+== After the sync
+  example: fit-0.8 · 42 of 199 pass · unknown 0 · binding near:colegio
+    top: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+    near: Chamartín 93, Salamanca 93, Centro 93, Chamberí 93, Retiro 93
+    options: +5 min a pie hasta colegio con primaria +49 | +150 €/mes +3
+    before the sync: 27 of 199, unknown 15; options: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+  buy400: fit-0.8 · 41 of 199 pass · unknown 151 · binding budget
+    top: Puente de Vallecas 100, Usera 100, Carabanchel 100, Latina 100, Villaverde 100, Coslada 100, Parla 100, Móstoles 100, San Blas-Canillejas 100, Leganés 100
+    near: Arganzuela 0, Tetuán 0, Centro 0, Retiro 0, Chamberí 0
+    options: +40.000 € +3
+    before the sync: 41 of 199, unknown 151; options: +40.000 € +3
+  telework: fit-0.8 · 42 of 199 pass · unknown 0 · binding near:colegio
+    top: Usera 100, Latina 100, Moratalaz 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Parla 100, Móstoles 100, El Álamo 100, Leganés 100
+    near: Serranillos del Valle 99, Cobeña 98, Morata de Tajuña 98, Villanueva de Perales 97, Ciempozuelos 97
+    options: +5 min a pie hasta colegio con primaria +49 | +150 €/mes +3
+    before the sync: 27 of 199, unknown 15; options: +5 min a pie hasta colegio con primaria +17 | +150 €/mes +3
+  rent10k: fit-0.8 · 183 of 199 pass · unknown 16 · binding none
+    top: Chamberí 100, Tetuán 100, Puente de Vallecas 100, Salamanca 100, Centro 100, Usera 100, Arganzuela 100, Ciudad Lineal 100, Carabanchel 100, Retiro 100
+    near: 
+    options: 
+    before the sync: 57 of 199, unknown 142; options: 
+  pueblos: fit-0.8 · 15 of 138 pass · unknown 0 · binding near:colegio
+    top: Villanueva del Pardillo 90, Casarrubuelos 87, El Álamo 87, Belmonte de Tajo 87, Torrejón de Velasco 87, Torrejón de la Calzada 86, Villamanta 86, Santorcaz 86, Titulcia 86, Navalagamella 86
+    near: Serranillos del Valle 86, Sevilla la Nueva 85, Morata de Tajuña 85, Daganzo de Arriba 85, Villanueva de Perales 84
+    options: +5 min a pie hasta colegio con primaria +30
+    before the sync: 1 of 138, unknown 14; options: +5 min a pie hasta colegio con primaria +1
+  couple1500: fit-0.8 · 181 of 199 pass · unknown 16 · binding budget
+    top: Puente de Vallecas 100, Usera 100, Ciudad Lineal 100, Carabanchel 100, Latina 100, Moratalaz 100, Villaverde 100, Casarrubuelos 100, Coslada 100, Navalagamella 100
+    near: Chamberí 0, Salamanca 0
+    options: +150 €/mes +2
+  couple1500-pueblos: fit-0.8 · 122 of 138 pass · unknown 16 · binding none
+    top: Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100, Torrejón de la Calzada 100, Quijorna 100, Talamanca de Jarama 100, Alpedrete 100, Fresnedillas de la Oliva 100
+    near: 
+    options: 
+  couple1500-madrid: fit-0.8 · 121 of 131 pass · unknown 0 · binding budget
+    top: Almendrales 100, Comillas 100, Palomeras Bajas 100, Pradolongo 100, San Diego 100, Quintana 100, Los Rosales 100, Puerta Bonita 100, Puerta del Ángel 100, San Pascual 100
+    near: Cortes 0, Universidad 0, Justicia 0, Almagro 0, Trafalgar 0
+    options: +150 €/mes +6
+
+== The example, before vs after the sync
+  top 10 and «casi»: identical order, %, costs and facts
+  110 municipios that fail the school condition rise 1 to 7 points (D-242 says 111); the other 74 zones with a % keep it.
+  the 15 zones without data before now have it, and all 15 fit: El Álamo, Anchuelo, Belmonte de Tajo, Casarrubuelos, Lozoya, Navalagamella, Orusco de Tajuña, Santorcaz, Titulcia, Torrejón de la Calzada, Torrejón de Velasco, Velilla de San Antonio, Villamanta, Villamantilla, Villanueva del Pardillo
+  datasets adds: mivau_serpavi_alquiler
+
+== buy400, before vs after the sync
+  identical apart from datasets and estimated_cost_range
+
+== Sol (a barrio without published rent, D-232 §4), couple 1.500 €, Madrid capital
+  3 %, passes true, ≈ 1490.0 €/month, confidence 0.7, range 1080.0–1820.0 (Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024; rango: media de sus 7 secciones censales)

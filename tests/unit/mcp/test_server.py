@@ -1,6 +1,6 @@
-"""MCP server contract without a database (MCP-001, D-225): five read-only tools whose inputs and
-outputs are the API contracts, inputs validated before any query, a readable error when the
-database is down and a stdio entrypoint that speaks the protocol."""
+"""MCP server contract without a database (MCP-001, D-225, D-249): seven read-only tools whose
+inputs and outputs are the API contracts, inputs validated before any query, a readable error when
+the database is down and a stdio entrypoint that speaks the protocol."""
 
 import json
 import os
@@ -10,17 +10,22 @@ from typing import Any
 
 import anyio
 import pytest
+from fastapi.testclient import TestClient
 from mcp import Client, StdioServerParameters
 from mcp.server.mcpserver import MCPServer
 from mcp.types import CallToolResult, Tool
 from pydantic import BaseModel
 from sqlalchemy import Connection, Engine
 
+from hi_api.main import app
 from hi_contracts.catalog.enums import TerritoryLevel
+from hi_contracts.pro.investors import ViabilityRequest
 from hi_contracts.public import ScenarioState, ZoneLookup, ZoneRef
 from hi_contracts.public.responses import (
     DatasetListResponse,
+    InvestorZoneResponse,
     SearchResponse,
+    ViabilityResponse,
     ZoneExplanationResponse,
     ZoneGapListResponse,
     ZoneLookupResponse,
@@ -36,6 +41,17 @@ OUTPUTS: dict[str, type[BaseModel]] = {
     "explicar_zona": ZoneExplanationResponse,
     "encontrar_zona": ZoneLookupResponse,
     "fuentes_de_datos": DatasetListResponse,
+    "ficha_inversor": InvestorZoneResponse,
+    "viabilidad": ViabilityResponse,
+}
+# The body of tests/unit/investors/test_investors_api.py, as POST /investors/viability takes it
+VIABILITY = {
+    "buildable_m2": 1000,
+    "sale_price_m2": 4000,
+    "rent_m2_month": 15,
+    "pem_m2": 600,
+    "cost_coefficient": 1.5,
+    "sales_costs_pct": 10,
 }
 
 
@@ -65,7 +81,7 @@ def _text(result: CallToolResult) -> str:
     return block.text
 
 
-def test_the_five_tools_are_read_only_and_closed_world() -> None:
+def test_the_seven_tools_are_read_only_and_closed_world() -> None:
     tools = _tools(build_server(_never_connects))
     assert set(tools) == set(OUTPUTS)
     for tool in tools.values():
@@ -78,7 +94,8 @@ def test_the_five_tools_are_read_only_and_closed_world() -> None:
 
 
 def test_no_tool_takes_free_sql() -> None:
-    """CLAUDE.md §3: tools over domain services; the only free text is a place name."""
+    """CLAUDE.md §3: tools over domain services; the only free text is a place name (a zone's,
+    or a barrio's, which may also be its code)."""
     for name, tool in _tools(build_server(_never_connects)).items():
         assert "sql" not in name
         free_text = {
@@ -86,7 +103,7 @@ def test_no_tool_takes_free_sql() -> None:
             for key, spec in tool.input_schema["properties"].items()
             if spec.get("type") == "string" and "pattern" not in spec and "enum" not in spec
         }
-        assert free_text <= {"name"}, (name, free_text)
+        assert free_text <= {"name", "barrio"}, (name, free_text)
 
 
 @pytest.mark.parametrize(("tool", "model"), list(OUTPUTS.items()))
@@ -103,6 +120,29 @@ def test_the_search_takes_the_scenario_state_of_the_api() -> None:
     assert schema["$defs"]["ScenarioState"]["properties"] == expected["properties"]
 
 
+def test_the_viability_takes_the_request_of_the_api() -> None:
+    """The same body as POST /api/v1/investors/viability: same fields, bounds and defaults."""
+    schema = _tools(build_server(_never_connects))["viabilidad"].input_schema
+    assert schema["required"] == ["request"]
+    assert schema["properties"]["request"] == {"$ref": "#/$defs/ViabilityRequest"}
+    expected = ViabilityRequest.model_json_schema()
+    assert schema["$defs"]["ViabilityRequest"]["properties"] == expected["properties"]
+    assert schema["$defs"]["ViabilityRequest"]["required"] == expected["required"]
+
+
+def test_the_viability_is_the_route_without_a_database() -> None:
+    """It never opens the database (the engine factory would fail) and answers what the route
+    answers: data, warnings and method version."""
+    for body in (VIABILITY, VIABILITY | {"land_eur_m2": 2200, "demand": {"household_income": 4e4}}):
+        route = TestClient(app).post("/api/v1/investors/viability", json=body).json()
+        result = _call(build_server(_never_connects), "viabilidad", {"request": body})
+        assert not result.is_error, result.content
+        tool = ViabilityResponse.model_validate(result.structured_content).model_dump(mode="json")
+        assert tool["data"] == route["data"]
+        assert tool["warnings"] == route["warnings"]
+        assert tool["meta"]["methodology_version"] == route["meta"]["methodology_version"]
+
+
 @pytest.mark.parametrize(
     ("tool", "arguments", "says"),
     [
@@ -113,6 +153,13 @@ def test_the_search_takes_the_scenario_state_of_the_api() -> None:
         ("buscar_zonas", {"scenario": {"priorities": ["vistas"]}}, "priorities"),
         ("buscar_zonas", {"scenario": {"budget": {"kind": "rent", "amount_eur": 5}}}, "budget"),
         ("encontrar_zona", {"name": "a"}, "name"),
+        ("ficha_inversor", {"barrio": "a"}, "barrio"),
+        ("ficha_inversor", {"barrio": "Atlántida"}, "No pilot barrio"),
+        ("ficha_inversor", {"barrio": "San"}, "matches 5 pilot barrios: San Diego"),
+        ("viabilidad", {"request": VIABILITY | {"buildable_m2": 49}}, "buildable_m2"),
+        ("viabilidad", {"request": VIABILITY | {"land_eur": 1, "land_eur_m2": 1}}, "not both"),
+        ("viabilidad", {"request": VIABILITY | {"sql": "select 1"}}, "sql"),
+        ("viabilidad", {"request": {"buildable_m2": 1000}}, "sale_price_m2"),
     ],
 )
 def test_invalid_inputs_never_reach_the_database(
@@ -218,3 +265,40 @@ def test_the_lookup_says_when_nothing_or_not_everything_is_shown(
     else:
         assert len(warnings) == 1
         assert warning in warnings[0]
+
+
+@pytest.mark.parametrize(
+    ("query", "admin_unit_id"),
+    [
+        ("28079164", "ES.28.BAR.28079164"),
+        ("ES.28.BAR.28079164", "ES.28.BAR.28079164"),
+        (" pinar del rey ", "ES.28.BAR.28079164"),
+        ("NIÑO JESUS", "ES.28.BAR.28079036"),
+        ("Jerónimos", "ES.28.BAR.28079035"),
+        ("Palos", "ES.28.BAR.28079026"),
+    ],
+)
+def test_a_barrio_by_its_code_or_its_name(query: str, admin_unit_id: str) -> None:
+    """As encontrar_zona: no case, accents or extra spaces; the code or the id the API takes."""
+    assert tools.resolve_barrio(query) == (admin_unit_id, [])
+
+
+def test_the_best_match_wins_and_the_others_are_named() -> None:
+    pilot = (("28079011", "Palacio", "Centro"), ("28079091", "Casa de Campo", "Moncloa-Aravaca"))
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(tools, "PILOT_BARRIOS", pilot)
+        found, warnings = tools.resolve_barrio("pala")  # starts Palacio; inside no other
+        assert (found, warnings) == ("ES.28.BAR.28079011", [])
+        found, warnings = tools.resolve_barrio("casa")  # Casa de Campo first; no tie
+        assert found == "ES.28.BAR.28079091"
+        assert warnings == []
+        patch.setattr(tools, "PILOT_BARRIOS", (*pilot, ("1", "Las Casas", "X")))
+        found, warnings = tools.resolve_barrio("casa")
+        assert found == "ES.28.BAR.28079091"  # starts with it, before a word that starts with it
+        assert len(warnings) == 1
+        assert "1 more pilot barrios match «casa» (Las Casas (X, 1))" in warnings[0]
+
+
+def test_a_code_outside_madrid_is_not_a_barrio_code() -> None:
+    with pytest.raises(tools.BarrioNotResolvedError, match="No pilot barrio"):
+        tools.resolve_barrio("28005001")

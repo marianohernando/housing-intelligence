@@ -4,7 +4,7 @@ from datetime import date
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import Engine
 
 from hi_api.deps import get_engine
@@ -28,6 +28,114 @@ class FeatureInfo(BaseModel):
     sources: list[dict[str, Any]]
 
 
+class ContextItem(BaseModel):
+    """One thing a context figure lists (D-241): a Plan Vive entry, a Madrid planning area or a
+    public parcel for housing of the Portal del Suelo (D-246, which adds the last four fields;
+    the other items leave them out)."""
+
+    code: str | None = Field(
+        default=None,
+        description="Its id in the source: the planning area's code («APR.06.02»), the "
+        "parcel's reference («07900151Y»)",
+    )
+    name: str | None = Field(
+        default=None,
+        description="What to call it: the area's name, or where the entry or the parcel is",
+    )
+    stage: str | None = Field(
+        default=None,
+        description="Planning areas: obras | tramitacion | sin_empezar. Plan Vive: its phase "
+        "as the page writes it («Entrega y construcción»). Parcels: urbanizado | "
+        "sin_urbanizar, absent when the CM does not publish what its code means",
+    )
+    value: float | None = Field(
+        default=None,
+        description="Plan Vive: homes. Planning areas: surface in m². Parcels: buildable m² "
+        "(null when the portal does not publish it)",
+    )
+    note: str | None = Field(
+        default=None, description="A caveat that travels with the data, shown next to it"
+    )
+    parcel: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["Parcela RC.5.3.1"],
+        description="D-246: the parcel as the portal names it",
+    )
+    regime: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-246: venta | concesion («Concesión / derecho de superficie / alquiler»); "
+        "absent when the CM does not publish what its code means",
+    )
+    manager: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["Ayuntamiento de Madrid"],
+        description="D-246: who offers it",
+    )
+    url: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-246: the parcel in the Comunidad de Madrid's map viewer",
+    )
+
+
+class FeatureValueDetail(BaseModel):
+    """What a context figure says besides its value (D-241). Only the features that keep one
+    (`feature_value.inputs.detail`) send it; any field may be absent:
+
+    - a share over periods (`compraventas_obra_nueva_pct`): `numerator`, `denominator`,
+      `period_end` and `provisional`;
+    - the items behind a count or a sum (`plan_vive_viviendas`,
+      `ambitos_residenciales_en_desarrollo`, `suelo_publico_vivienda_m2`): `items`, empty when
+      the zone has none (a confirmed 0); D-246: the zone's public parcels for housing are its
+      items, and the value is the sum of their buildable m²;
+    - the air quality station a value comes from (`no2_media_anual`, D-237): `station`,
+      `station_code`, `own`, `distance_km` and `traffic`, left out of the other features'
+      rows."""
+
+    numerator: float | None = Field(default=None, description="Count behind the share's top")
+    denominator: float | None = Field(default=None, description="Count behind the share's base")
+    period_end: date | None = Field(
+        default=None,
+        description="Last day of the periods added up (the row's period_start is the first)",
+    )
+    provisional: bool | None = Field(
+        default=None, description="True when any value added up is marked provisional"
+    )
+    items: list[ContextItem] | None = Field(
+        default=None, description="The zone's items: stage order, then largest first"
+    )
+    station: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["Getafe"],
+        description="D-237: the air quality station's name",
+    )
+    station_code: str | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        examples=["28065014"],
+        description="D-237: its code in its network",
+    )
+    own: bool | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-237: true when the station lies in the zone itself",
+    )
+    distance_km: float | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-237: from the centre of the zone's residential streets",
+    )
+    traffic: bool | None = Field(
+        default=None,
+        exclude_if=lambda v: v is None,
+        description="D-237: a traffic station (its network's type), not background",
+    )
+
+
 class FeatureValueRow(BaseModel):
     territory_code: str
     admin_unit_id: str | None
@@ -36,6 +144,12 @@ class FeatureValueRow(BaseModel):
     value: float | None
     null_reason: str | None
     confidence: float
+    # Only the context features keep one; the rest leave it out (no `null` in every row)
+    detail: FeatureValueDetail | None = Field(
+        default=None,
+        exclude_if=lambda d: d is None,
+        description="Only in the rows of context features that keep one (D-241); absent otherwise",
+    )
 
 
 class FeatureValues(BaseModel):

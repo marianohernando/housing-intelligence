@@ -1,6 +1,6 @@
-"""MCP tools on the fixture database (MCP-001, D-225): each tool answers what its API route
-answers, the explanation is the zone's search card plus its sources, and every tool reads in
-a read-only transaction."""
+"""MCP tools on the fixture database (MCP-001, D-225, D-249): each tool answers what its API
+route answers, the explanation is the zone's search card plus its sources, and every tool reads
+in a read-only transaction."""
 
 import json
 from pathlib import Path
@@ -17,10 +17,12 @@ from sqlalchemy.exc import DBAPIError
 
 from hi_api.deps import get_engine
 from hi_api.main import app
+from hi_api.services import investors
 from hi_api.services.zones import find_zones
 from hi_contracts.public import ZoneLookup
 from hi_contracts.public.responses import (
     DatasetListResponse,
+    InvestorZoneResponse,
     SearchResponse,
     ZoneExplanationResponse,
     ZoneGapListResponse,
@@ -30,6 +32,8 @@ from hi_mcp.server import build_server, run_tool
 
 pytestmark = pytest.mark.db
 FIXTURES = Path(__file__).resolve().parents[2] / "data" / "fixtures" / "contracts"
+# The fixture's two sample barrios of Centro, as in test_api_investors.py
+PILOT = (("28079011", "Palacio", "Centro"), ("28079016", "Sol", "Centro"))
 
 
 @pytest.fixture
@@ -206,3 +210,35 @@ def test_encontrar_zona_counts_the_matches_it_leaves_out(
     assert len(one.zones) == 1
     assert one.total == everything.total
     assert one.zones[0] == everything.zones[0]
+
+
+@pytest.mark.parametrize(
+    ("barrio", "admin_unit_id"),
+    [("palacio", "ES.28.BAR.28079011"), ("28079016", "ES.28.BAR.28079016")],
+)
+def test_ficha_inversor_is_get_investor_zone(
+    server: MCPServer,
+    api: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+    barrio: str,
+    admin_unit_id: str,
+) -> None:
+    monkeypatch.setattr(investors, "PILOT_BARRIOS", PILOT)
+    route = api.get(f"/api/v1/investors/zones/{admin_unit_id}")
+    assert route.status_code == 200, route.text
+    tool = InvestorZoneResponse.model_validate(_ok(server, "ficha_inversor", {"barrio": barrio}))
+    assert tool.data.zone.admin_unit_id == admin_unit_id
+    _same_answer(tool.model_dump(mode="json"), route.json())
+
+
+def test_ficha_inversor_outside_the_pilot_is_the_404_of_the_route(
+    server: MCPServer, api: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(investors, "PILOT_BARRIOS", PILOT)
+    route = api.get("/api/v1/investors/zones/ES.28.BAR.28079164")
+    assert route.status_code == 404
+    result = _call(server, "ficha_inversor", {"barrio": "28079164"})
+    assert result.is_error
+    block = result.content[0]
+    assert block.type == "text"
+    assert route.json()["detail"]["message"] in block.text

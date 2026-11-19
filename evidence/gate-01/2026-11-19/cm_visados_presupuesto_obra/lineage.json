@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_visados_presupuesto_obra",
+      "role": "primary",
+      "path": "data/catalog/manual/pem_visados_cm.yaml",
+      "sha256": "8acfee66fb3fda2adee47e06bfae23006ecea2e17b6635eb8333d29324a5632e",
+      "bytes": 3632,
+      "url": "https://datos.comunidad.madrid/dataset/6f917bba-b8cd-448b-997a-c3710b96480c/resource/073b9a57-8d89-4e5f-b496-4db418e8af09/download/visados-superficie-y-presupuesto-de-direccion-de-obra-de-edificios-por-tipo-de-obra-y-caracteris.csv",
+      "retrieved_at": "2026-11-19T00:00:00+00:00"
+    }
+  ],
+  "checksum": "37e839d23fbfadb185f8f9ed3d7af4c841ee5858bf5e74fc0845683131bd1ffc",
+  "parser_version": "permit_budget-1.0.0",
+  "dataset_version": "2026-11-19-37e839d23fbf",
+  "correlation_id": "c2662a5082de40598d1dfd1941ca7d71",
+  "silver": "data/silver/cm_visados_presupuesto_obra/37e839d23fbf/observations.csv.gz"
+}

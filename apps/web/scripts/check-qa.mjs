@@ -15,7 +15,7 @@
 //   node scripts/check-qa.mjs escaleras [outDir] # «Sin escaleras» opt-in, and the API's accessibility fact in the card
 //   node scripts/check-qa.mjs parques [outDir]   # «Parques» in «Todos los centros» and green on the map (DATA-018)
 //   node scripts/check-qa.mjs seguridad [outDir] # how the neighbours rate their barrio's safety, only in Madrid's districts (D-226)
-//   node scripts/check-qa.mjs compra [outDir]    # buying with fit-0.5 (D-227): note, «+30.000 €» and a district without price
+//   node scripts/check-qa.mjs compra [outDir]    # buying (D-227, D-234): the note, the budget step, the list notice and a district's estimated price
 //   node scripts/check-qa.mjs encaje [outDir]    # «100 %» with JUSTO rows: the line that explains it, and the % pill at 390 px
 //   node scripts/check-qa.mjs verdes [outDir]    # «Zonas verdes» (fit-0.3), the same checks; neither leaves a «Muy pronto» line
 //   node scripts/check-qa.mjs textos [outDir]    # line D's copy after gap-0.3 and D-218 (method page, «Qué falta», centres)
@@ -28,29 +28,49 @@
 //   node scripts/check-qa.mjs mariano [outDir]   # Mariano's 13 nov notes: safety as two neutral bars, and several types at once in «Todos los centros»
 //   node scripts/check-qa.mjs pequenas [outDir]  # D-230 in the web: «No comparable» and the API's reason for NOT_APPLICABLE (La Acebeda, El Álamo)
 //   node scripts/check-qa.mjs fuentes [outDir]   # D-231: «en {source_name}» in each source link, and the region's beds under the hospital note
-//   node scripts/check-qa.mjs barrios [outDir]   # D-232: «Los barrios que mejor encajan» in San Blas after the demo search, Simancas outlined
+//   node scripts/check-qa.mjs barrios [outDir]   # D-232: «Los barrios que más os convienen» in the 1st district of the example, one panel at a time
 //   node scripts/check-qa.mjs mapa [outDir] [antes|despues] # MAP-004: map labels (glyphs) and the first view, before and after
 //                                                    (MAP_OFFLINE=1: web built with local tiles and fonts, OpenFreeMap blocked)
 //
 // Web on 3011 (next build + start, NEXT_PUBLIC_FEATURE_SEARCH=true) and API on 8011, as in
-// LINEAS.md. Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
+// LINEAS.md, unless --base and --api (or QA_BASE_URL and QA_API_URL) say otherwise:
+//   node scripts/check-qa.mjs barrios /tmp/qa --base http://localhost:3091 --api http://localhost:8091
+// Writes qa_<mode>.json and the captures to outDir (default evidence/map-004/<today>).
 import { mkdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
+import { parseArgs } from "node:util";
 
 import { chromium } from "playwright";
+
+import { BUY_LIST_NOTICE, changesTitle, factAsShown, nearMissLine, PRICE_HINT, speaksToMany } from "../../../infra/deploy/e2e/shown_text.mjs";
 
 const require = createRequire(import.meta.url);
 const AXE = require.resolve("axe-core/axe.min.js");
 const today = new Date().toLocaleDateString("sv-SE");
-const [mode = "fixes", out = join("..", "..", "evidence", "map-004", today)] = process.argv.slice(2);
-const BASE = "http://localhost:3011";
+const { values: opts, positionals } = parseArgs({
+  allowPositionals: true,
+  options: {
+    base: { type: "string", default: process.env.QA_BASE_URL ?? "http://localhost:3011" },
+    api: { type: "string", default: process.env.QA_API_URL ?? "http://localhost:8011" },
+  },
+});
+const [mode = "fixes", out = join("..", "..", "evidence", "map-004", today)] = positionals;
+const BASE = opts.base.replace(/\/$/, "");
 const DESKTOP = { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 };
 const MOBILE = { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
 
 mkdirSync(out, { recursive: true });
-const report = { modo: mode, como: "Playwright contra web 3011 (next build + start) y API 8011 (datos reales)" };
+const report = { modo: mode, como: `Playwright contra la web ${BASE} (next build + start) y la API ${opts.api.replace(/\/$/, "")} (datos reales)` };
 const flat = (text) => text.replace(/\s+/g, " ").trim();
+
+/** Whether `version` («fit-0.9») is `least` ([0, 8]) or later, compared as numbers, as scripts/smoke_demo.sh does. */
+function fitAtLeast(version, least) {
+  const parts = /^fit-(\d+)\.(\d+)$/.exec(version ?? "")?.slice(1).map(Number);
+  if (!parts) return false;
+  const [major, minor] = parts;
+  return major > least[0] || (major === least[0] && minor >= least[1]);
+}
 
 async function axe(page) {
   await page.addScriptTag({ path: AXE });
@@ -79,12 +99,26 @@ async function open(browser, profile, path = "/") {
 
 const overflow = (page) => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 
+/** POST /api/v1/search, the request of «Buscar zonas para mí» and of the examples. */
+const isSearchPost = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
+/** resultados.titulo: «Zonas que te convienen», «… os …» to a household of more than one (resultsTitle of lib/fit.ts). */
+const RESULTS = /^Zonas que (te|os) convienen$/;
+
+/**
+ * The family's example of the portada (portada.ejemplo.boton, «Ejemplo: pareja con 2 hijos…»):
+ * its /search answer, once the list shows. Before the UX mobile audit it was «Ver un ejemplo».
+ */
 async function loadExample(page, tap = false) {
-  const button = page.getByRole("button", { name: /Ver un ejemplo/ });
-  await (tap ? button.tap() : button.click());
-  await page.getByText(/^Con tu búsqueda tal cual (sale|salen|no sale)/).first().waitFor({ timeout: 20000 });
+  const button = page.getByRole("button", { name: /pareja con 2 hijos/ }).first();
+  const [response] = await Promise.all([page.waitForResponse(isSearchPost, { timeout: 30000 }), tap ? button.tap() : button.click()]);
+  await page.getByRole("heading", { name: RESULTS }).first().waitFor({ timeout: 30000 });
   await page.waitForTimeout(2500);
+  return (await response.json()).data;
 }
+
+/** The zone card of the overview, with its «Volver a la lista» (second delivery of the UX mobile audit). */
+const zoneCard = (page) => page.locator("aside").filter({ has: page.getByRole("button", { name: /^Volver( a la lista)?$/ }) }).first();
+const escapeRe = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /** Phase 1: texts of D, the method of D-213, the search requests (abort, edits kept) and R-06. */
 async function fixes(browser) {
@@ -125,13 +159,13 @@ async function fixes(browser) {
   await page.unroute("**/api/v1/search");
 
   // A row of «Qué falta» on the map: the label of the map (D-213)
-  await page.getByLabel("¿Qué quieres ver?").selectOption("centro_salud");
+  await page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("centro_salud");
   await page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
   d.mapa_aria_fila = await page.locator("[role='region'][aria-label^='Mapa']").first().getAttribute("aria-label");
   d.overflow_px = await overflow(page);
 
   // Leaving the map while a search is in flight cancels it (the answer would go nowhere)
-  await page.getByLabel("¿Qué quieres ver?").selectOption("");
+  await page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("");
   await page.route("**/api/v1/search", async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 1500));
     await route.continue().catch(() => undefined);
@@ -180,7 +214,7 @@ async function fixes(browser) {
   await mob.ctx.close();
 }
 
-const API = "http://localhost:8011";
+const API = opts.api.replace(/\/$/, "");
 const ZONE = { path: "/zona/distrito/2807905", id: "ES.28.DIS.2807905", name: "Chamartín" };
 const box = (locator) => locator.evaluate((el) => {
   const r = el.getBoundingClientRect();
@@ -343,7 +377,7 @@ async function projector(browser) {
     entry.overflow_px = await overflow(home.page);
     // The map by a row of «Qué falta»: the longest legend (2SFCA label and the neighbours, gap-0.3)
     await home.page.getByRole("button", { name: "Cerrar" }).first().click().catch(() => undefined);
-    await home.page.getByLabel("¿Qué quieres ver?").selectOption("colegio");
+    await home.page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("colegio");
     await home.page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
     await home.page.waitForTimeout(1500);
     entry.mapa_fila = await overlaps(home.page);
@@ -539,7 +573,7 @@ async function gap03(browser) {
 
   // The map coloured by a row: the legend says the small towns go with their neighbours
   const h = await open(browser, DESKTOP);
-  await h.page.getByLabel("¿Qué quieres ver?").selectOption("colegio");
+  await h.page.getByLabel(/^¿Qué (quieres|queréis) ver\?$/).selectOption("colegio");
   await h.page.getByText(/frente a los municipios de su tipo/).first().waitFor({ timeout: 20000 });
   await h.page.waitForTimeout(2500);
   const legend = h.page.locator("section[aria-label='Leyenda del mapa']");
@@ -630,8 +664,10 @@ async function hospitals(browser) {
       consola: errors,
     });
     await panel.screenshot({ path: `${out}/hosp_hospitales_fuencarral_${id}.png` });
-    if (!items.some((t) => t.includes("Hospital Universitario La Paz · 966 camas instaladas · gestión pública"))) failures.push(`${id}: sin La Paz`);
-    if (items.some((t) => /privado|(^|· )privada/.test(t))) failures.push(`${id}: «privado» a secas`);
+    // centros.hospital.fila (15 nov): the pill, the name first and the beds read aloud whole
+    if (!items.some((t) => t.startsWith("Público Hospital Universitario La Paz") && t.includes("966 camas instaladas"))) failures.push(`${id}: sin La Paz`);
+    // «gestión privada» only under a public one, never next to «Privado» (D-239)
+    if (items.some((t) => t.startsWith("Privado") && t.includes("gestión privada"))) failures.push(`${id}: «Privado» con «gestión privada»`);
     if (entry.frase.includes(NO_NAME_NOTICE) !== report.hospitales_sin_nombre_api > 0) failures.push(`${id}: aviso de nombres distinto de la API`);
     if (!entry.fuente.startsWith("Camas instaladas a 31 de diciembre de 2024, según el Catálogo Nacional de Hospitales 2025")) failures.push(`${id}: frase de las camas`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
@@ -730,7 +766,7 @@ async function licences(browser) {
       await footer.screenshot({ path: `${out}/licencias_pie_${name}_${id}.png` });
       for (const m of citedAll(lines, datasets)) failures.push(`${name} ${id}: falta ${m}`);
       const rest = entry.resto.join(" | ");
-      for (const must of ["del Ministerio de Sanidad ni de la Agencia Tributaria.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria"]) {
+      for (const must of ["de la Agencia Tributaria ni del Ministerio de Vivienda.", "(con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda"]) {
         if (!rest.includes(must)) failures.push(`${name} ${id}: falta «${must}»`);
       }
       if (entry.axe.length) failures.push(`${name} ${id}: axe ${entry.axe.map((a) => a.id).join(", ")}`);
@@ -1114,57 +1150,78 @@ async function perceivedSafety(browser) {
 }
 
 /**
- * Buying with fit-0.5 (DATA-021, D-227): the note says where the official price exists, the Reality
- * Check offers the budget step the API gives, and a Madrid district says it has no price because of
- * the source (reached from the list of zones, so the search stays).
+ * Buying (D-227, D-234), as the web says it today: «Precio de compra: el valor tasado medio…» behind
+ * «¿Qué es esto?» of the budget, the budget step the API offers in «¿Queréis ver más zonas?», the
+ * notice under the list (resultados.aviso_compra) and a district of Madrid, Chamartín, searched from
+ * its own screen: its estimated price with «Precio orientativo» and, behind «Ver más», how sure it is
+ * («Dato aproximado»); without a price in the API, the reason (zona.compra.sin_precio). Its old
+ * «puede faltar el precio: … no para los distritos» (2e0d28a) no longer exists: D-234 prices them.
  */
 async function buying(browser) {
   const failures = [];
-  const isSearch = (r) => r.url().endsWith("/api/v1/search") && r.request().method() === "POST";
-  for (const [id, profile, touch] of [["desktop", DESKTOP, false], ["mobile", MOBILE, true]]) {
+  const CHAMARTIN = { level: "distrito", code: "2807905", name: "Chamartín" };
+  const NO_PRICE_MADRID = "Sin precio de compra en esta zona: el valor tasado del Ministerio de Vivienda se publica para Madrid entero, no por distrito ni por barrio.";
+  const asCouple = async (page) => {
+    await page.getByRole("button", { name: "En pareja", exact: true }).click();
+    await page.getByRole("radio", { name: "Comprar" }).check();
+  };
+  const search = async (page) => {
+    const [response] = await Promise.all([page.waitForResponse(isSearchPost, { timeout: 30000 }), page.getByRole("button", { name: "Buscar zonas para mí" }).click()]);
+    return (await response.json()).data;
+  };
+  for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
     const p = await open(browser, profile, "/");
-    const press = (locator) => (touch ? locator.tap() : locator.click());
     const entry = (report[id] = {});
-    if (touch) await press(p.page.getByRole("button", { name: /Desliza hacia arriba/ }));
-    // A couple buying up to 300.000 € (the golden_couple of D-227 §5): the budget is what limits most
-    await press(p.page.getByRole("button", { name: "En pareja" }));
-    await press(p.page.getByRole("radio", { name: "Comprar" }));
+    // A couple buying with the amount «Comprar» starts at (250.000 € since the UX delivery of 15 nov); the budget is what limits most
+    await asCouple(p.page);
+    await p.page.locator("summary").filter({ hasText: "Precio de compra" }).first().click();
     entry.nota = flat(await p.page.getByText(/^Precio de compra: el valor tasado medio/).first().innerText());
     entry.aun_no_tenemos = await p.page.getByText(/Aún no tenemos precios/).count();
-    const [response] = await Promise.all([p.page.waitForResponse(isSearch, { timeout: 30000 }), press(p.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
-    const { data } = await response.json();
+    const data = await search(p.page);
+    const many = speaksToMany(data.scenario.household);
+    await p.page.getByRole("heading", { name: RESULTS }).first().waitFor({ timeout: 30000 });
     await p.page.waitForTimeout(2000);
     entry.api = { metodo: data.methodology_version, presupuesto: data.scenario.budget, relajaciones: data.reality_check.relaxations.map((r) => [r.label, r.added_zones]) };
-    const changes = p.page.getByRole("region", { name: "¿Y si cambias algo?", exact: true });
+    const changes = p.page.getByRole("region", { name: changesTitle(many), exact: true });
     const all = changes.getByRole("button", { name: /Ver todas las opciones/ });
-    if (await all.count()) await press(all);
-    entry.y_si_cambias = flat(await changes.innerText());
-    await changes.screenshot({ path: `${out}/compra_y_si_cambias_${id}.png` });
+    if (await all.count()) await all.click();
+    entry.mas_zonas = flat(await changes.innerText());
+    await changes.screenshot({ path: `${out}/compra_mas_zonas_${id}.png` });
+    entry.aviso_lista = await p.page.getByRole("region", { name: RESULTS }).getByText(BUY_LIST_NOTICE, { exact: true }).count();
     entry.axe_resultados = await axe(p.page);
     entry.overflow_px = await overflow(p.page);
     await p.ctx.close();
-    // A district, searched from its own screen: no price, and the card says why
-    const z = await open(browser, profile, "/zona/distrito/2807905");
-    const pressZ = (locator) => (touch ? locator.tap() : locator.click());
-    if (touch) await pressZ(z.page.getByRole("button", { name: /Desliza hacia arriba/ }));
-    await pressZ(z.page.getByRole("button", { name: "Ver mi búsqueda" }));
-    await pressZ(z.page.getByRole("radio", { name: "Comprar" }));
-    await Promise.all([z.page.waitForResponse(isSearch, { timeout: 30000 }), pressZ(z.page.getByRole("button", { name: "Ver zonas que encajan" }))]);
-    const why = z.page.getByText(/puede faltar el precio: .* solo se publica para los municipios de más de 25.000 habitantes, no para los distritos/).first();
-    await why.waitFor({ timeout: 20000 });
+    // Chamartín, searched from its own screen: the price the API gives it, said as the card says it
+    const z = await open(browser, profile, `/zona/${CHAMARTIN.level}/${CHAMARTIN.code}`);
+    const show = z.page.getByRole("button", { name: "Ver mi búsqueda" });
+    if (await show.count()) await show.first().click();
+    await asCouple(z.page);
+    const zoneData = await search(z.page);
+    const zone = zoneData.all_zones.find((m) => m.zone.level === CHAMARTIN.level && m.zone.code === CHAMARTIN.code) ?? null;
+    const card = z.page.locator("main").first();
+    await card.getByText(PRICE_HINT).or(card.getByText(NO_PRICE_MADRID)).first().waitFor({ timeout: 20000 });
+    const more = card.locator("summary").filter({ hasText: /^Ver más sobre/ }).first();
+    if (await more.count()) await more.click();
     await z.page.waitForTimeout(1000);
-    const card = why.locator("xpath=..");
-    entry.chamartin = flat(await card.innerText());
+    entry.chamartin = { api: zone && { precio: zone.estimated_cost_eur, fiabilidad: zone.estimated_cost_confidence, pct: zone.match_pct }, texto: flat(await card.innerText()) };
     await card.screenshot({ path: `${out}/compra_chamartin_${id}.png` });
     entry.axe_zona = await axe(z.page);
     entry.overflow_px = Math.max(entry.overflow_px, await overflow(z.page));
     entry.consola = [...p.errors, ...z.errors];
     await z.ctx.close();
-    if (entry.api.metodo !== "fit-0.5") failures.push(`${id}: método ${entry.api.metodo}`);
+    // Buying is fit-0.5 (D-227); the answer today is fit-0.8 or later (fit-0.9, D-243)
+    if (!fitAtLeast(entry.api.metodo, [0, 8])) failures.push(`${id}: método ${entry.api.metodo}`);
+    if (!entry.nota.includes("25.000 habitantes")) failures.push(`${id}: la nota de compra no dice de dónde sale el precio`);
     if (entry.aun_no_tenemos > 0) failures.push(`${id}: sigue «Aún no tenemos precios»`);
-    for (const [label, added] of entry.api.relajaciones) if (added > 0 && !entry.y_si_cambias.includes(label)) failures.push(`${id}: falta «${label}»`);
+    for (const [label, added] of entry.api.relajaciones) if (added > 0 && !entry.mas_zonas.includes(label)) failures.push(`${id}: falta «${label}»`);
     if (!entry.api.relajaciones.some(([label, added]) => /€$/.test(label) && added > 0)) failures.push(`${id}: la API no propone subir el presupuesto`);
-    if (!entry.chamartin.includes("solo se publica para los municipios de más de 25.000 habitantes")) failures.push(`${id}: Chamartín no dice por qué`);
+    if (entry.aviso_lista !== 1) failures.push(`${id}: «${BUY_LIST_NOTICE}» sale ${entry.aviso_lista} veces`);
+    if (!zone) failures.push(`${id}: Chamartín no está en all_zones`);
+    else if (zone.estimated_cost_eur != null) {
+      const amount = new Intl.NumberFormat("es-ES", { maximumFractionDigits: 0, useGrouping: "always" }).format(zone.estimated_cost_eur);
+      if (!entry.chamartin.texto.includes(`Unos ${amount} €`) || !entry.chamartin.texto.includes(PRICE_HINT)) failures.push(`${id}: Chamartín no dice su precio estimado`);
+      if (zone.estimated_cost_confidence != null && zone.estimated_cost_confidence < 0.8 && !/Dato (aproximado|poco seguro)/.test(entry.chamartin.texto)) failures.push(`${id}: Chamartín no dice que el precio es una estimación`);
+    } else if (zone.match_pct == null && !entry.chamartin.texto.includes(NO_PRICE_MADRID)) failures.push(`${id}: Chamartín, sin precio, no dice por qué`);
     if ([...entry.axe_resultados, ...entry.axe_zona].length) failures.push(`${id}: axe`);
     if (entry.consola.length) failures.push(`${id}: consola`);
     if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
@@ -1386,12 +1443,13 @@ async function deckSearchCaptures(browser, failures) {
   await s.page.waitForTimeout(2500);
   const cardText = flat(await card.innerText());
   report.c1_c2.tarjeta = cardText;
-  for (const fact of top.facts) if (!cardText.includes(flat(fact.text))) failures.push(`C2: falta «${fact.text}»`);
+  // The rent fact goes without what the 2024 notice already says (F5 of fit-0.9): factAsShown, as the e2e
+  for (const fact of top.facts) if (!cardText.includes(flat(factAsShown(fact)))) failures.push(`C2: falta «${fact.text}»`);
   if (!cardText.includes(`${top.match_pct} %`)) failures.push("C2: % de encaje distinto de la API");
   await s.page.screenshot({ path: `${out}/deck_c1_busqueda_1440.png` });
   await card.screenshot({ path: `${out}/deck_c2_tarjeta_zona_1440.png` });
   // trabajo.ayuda of fit-0.2, and no «Tiempo en transporte: muy pronto» any more (D, 0186ae9)
-  report.c1_c2.trabajo_ayuda = await s.page.getByText("Miramos cuánto tardarías en transporte público para llegar a las 9:00.").count();
+  report.c1_c2.trabajo_ayuda = await s.page.getByText("Miramos cuánto tardarías en llegar a las 9:00 en transporte público", { exact: false }).count();
   report.c1_c2.muy_pronto = await s.page.getByText("Tiempo en transporte: muy pronto").count();
   if (!report.c1_c2.trabajo_ayuda || report.c1_c2.muy_pronto) failures.push("C1: textos de «Trabajo en»");
   report.c1_c2.consola = s.errors;
@@ -2069,106 +2127,175 @@ async function sources(browser) {
   if (failures.length) process.exitCode = 1;
 }
 
+/** resultados.banda.*: the band in words (BAND_TEXT of apps/web/src/lib/match.ts). */
+const BAND_TEXT = { muy_bien: "Muy buena opción", bien: "Buena opción", regular: "Opción regular", poco: "Poco recomendable" };
+/** Rows of the list in view before «Ver las 10 primeras» (FIRST_ROWS of SearchResults.tsx). */
+const FIRST_ROWS = 5;
+
+/** Each barrio row of a list of the section, as seen: its button's state and text, and whether its panel is open. */
+function barrioRowsOf(list) {
+  return list.locator(":scope > li").evaluateAll((items) =>
+    items.map((li) => {
+      const button = li.querySelector("button");
+      const text = (el) => el?.textContent?.replace(/\s+/g, " ").trim() ?? null;
+      return {
+        nombre: text(li.querySelector("[class*='name']")),
+        texto: text(button),
+        boton: button !== null,
+        pulsado: button?.getAttribute("aria-pressed") ?? null,
+        abierto: button?.getAttribute("aria-expanded") ?? null,
+        // What is seen of a near miss's line (its words for screen readers go apart)
+        falta: text(li.querySelector("[class*='fails'] > [aria-hidden='true']")),
+        panel: [...(li.querySelector("[class*='details']")?.children ?? [])].map((s) => text(s)),
+      };
+    }),
+  );
+}
+
 /**
- * D-232 in the web: after the demo search, San Blas-Canillejas opened from the results shows «Los
- * barrios que mejor encajan» (one POST /search/barrios, only there) as the API ranks them, with the
- * near misses and their reason; pressing Simancas outlines it on the map. At 1440 and 390 px, axe,
- * console and overflow, and the zone's LCP on slow 4G.
+ * D-232 in the web, as it is after the second delivery of the UX mobile audit. After the family's
+ * example, the first district of Madrid in the API's list (picked from its answer, not fixed: with
+ * fit-0.9 San Blas-Canillejas is no longer in the top 10) opened from its card shows «Los barrios que
+ * más os convienen» (one POST /search/barrios, only there) as the API ranks them, with the near misses
+ * and what they lack. The district's barrio outlines are held back until a panel is open (review R-06
+ * of PR #82): that panel stays open when they arrive; pressing another barrio, or a chip of «Ir a un
+ * barrio», leaves one panel open; and a tie is read once. At 1440 and 390 px, with axe, console and
+ * overflow, and the zone's LCP on slow 4G.
  */
 async function barrioFit(browser) {
   const failures = [];
-  const DISTRICT = { name: "San Blas-Canillejas", code: "2807920", barrio: "Simancas" };
-  const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  let district = null;
   for (const [id, profile] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
-    const touch = id === "mobile";
     const p = await open(browser, profile, "/");
-    const press = (locator) => (touch ? locator.tap() : locator.click());
     const asked = [];
     p.page.on("request", (r) => r.url().includes("/api/v1/search/barrios") && asked.push({ url: r.url(), body: r.postDataJSON() }));
     const isBarrios = (r) => r.url().endsWith("/api/v1/search/barrios") && r.request().method() === "POST";
-    await loadExample(p.page, touch);
-    const beforeDistrict = asked.length;
-    await press(p.page.getByRole("button", { name: /^Ver las \d+ primeras/ }).first());
-    const row = p.page.getByRole("button", { name: new RegExp(`^\\d+ ${escape(DISTRICT.name)}\\b`) }).first();
-    await row.scrollIntoViewIfNeeded();
-    await press(row);
-    const open_ = p.page.getByRole("link", { name: "Ver la zona" }).first();
-    await open_.waitFor({ timeout: 20000 });
-    await open_.scrollIntoViewIfNeeded();
-    const started = Date.now();
-    const [response] = await Promise.all([p.page.waitForResponse(isBarrios, { timeout: 30000 }), press(open_)]);
-    const api = (await response.json()).data;
-    const section = p.page.locator("section").filter({ has: p.page.getByRole("heading", { name: "Los barrios que mejor encajan" }) }).first();
-    await section.getByText(/barrios? (encaja|encajan) con tu búsqueda|cumple todo lo que pides/).first().waitFor({ timeout: 20000 });
-    const entry = (report[id] = { ms_hasta_los_barrios: Date.now() - started });
-    await p.page.waitForTimeout(6000);
-    const rows = (list) =>
-      list.locator(":scope > li > div").evaluateAll((items) =>
-        items.map((row) => ({
-          nombre: row.firstElementChild?.firstElementChild?.textContent?.trim(),
-          pct: row.firstElementChild?.lastElementChild?.textContent?.replace(/\s*de encaje$/, "").trim(),
-          boton: row.firstElementChild?.tagName === "BUTTON",
-          lineas: [...(row.lastElementChild?.children ?? [])].map((s) => s.textContent.trim()),
-        })),
-      );
-    entry.resumen = flat(await section.locator("p").first().innerText());
-    entry.primeros = await rows(section.locator("ol").first());
-    // Simancas: pressed, outlined on the map and the same chip pressed in «Ir a un barrio»
-    const simancas = section.getByRole("button", { name: new RegExp(`^${DISTRICT.barrio}\\b`) });
-    await simancas.scrollIntoViewIfNeeded();
-    await press(simancas);
-    await p.page.waitForTimeout(5000);
-    entry.simancas_pulsado = await simancas.getAttribute("aria-pressed");
-    entry.chip_simancas = await p.page.getByRole("button", { name: DISTRICT.barrio, exact: true }).getAttribute("aria-pressed");
-    await p.page.screenshot({ path: `${out}/barrios_san_blas_simancas_${id}.png` });
-    if (touch) {
-      // In the open sheet (an element capture inside its scroll comes out cut): the title, then «Casi encajan»
-      await press(p.page.getByRole("button", { name: "Desliza hacia arriba para ver más" }));
-      await p.page.waitForTimeout(800);
-      for (const [name, file] of [["Los barrios que mejor encajan", "seccion"], ["Casi encajan", "casi"]]) {
-        await section.getByRole("heading", { name }).evaluate((h) => h.scrollIntoView({ block: "start" }));
-        await p.page.waitForTimeout(400);
-        await p.page.screenshot({ path: `${out}/barrios_${file}_${id}.png` });
-      }
-    } else {
-      await section.screenshot({ path: `${out}/barrios_seccion_${id}.png` });
+    // The district's outlines (GET /geo/admin-units?level=barrio&…&parent=…) wait until a panel is open
+    let release = () => undefined;
+    const held = new Promise((resolve) => {
+      release = resolve;
+    });
+    await p.page.route(/\/api\/v1\/geo\/admin-units\?.*level=barrio.*parent=/, async (route) => {
+      await held;
+      await route.continue();
+    });
+    const data = await loadExample(p.page);
+    const index = data.results.findIndex((z) => z.zone.level === "distrito");
+    const entry = (report[id] = {});
+    if (index < 0) {
+      failures.push(`${id}: ningún distrito de Madrid en la lista del ejemplo`);
+      release();
+      await p.ctx.close();
+      continue;
     }
-    // Every barrio that fits, not only the first three
-    const more = section.getByRole("button", { name: /^Ver los \d+ barrios/ });
-    if (await more.count()) await press(more);
-    entry.encajan = await rows(section.locator("ol").first());
-    entry.casi = await rows(section.locator("section ul").first());
+    district = { name: data.results[index].zone.name, code: data.results[index].zone.code, puesto: index + 1 };
+    entry.distrito = district;
+    const beforeDistrict = asked.length;
+    if (index >= FIRST_ROWS) await p.page.getByRole("button", { name: /^Ver las \d+ primeras/ }).first().click();
+    await p.page.getByRole("button", { name: new RegExp(`^${index + 1} ${escapeRe(district.name)}\\b`) }).first().click();
+    const card = zoneCard(p.page);
+    const more = card.locator("summary").filter({ hasText: /^Ver más sobre/ }).first();
+    await more.waitFor({ timeout: 20000 });
+    await more.click();
+    const started = Date.now();
+    const [response] = await Promise.all([
+      p.page.waitForResponse(isBarrios, { timeout: 30000 }),
+      card.getByRole("link", { name: /^Ver (la zona|el distrito)/ }).first().click(),
+    ]);
+    const api = (await response.json()).data;
+    const many = speaksToMany(api.scenario?.household);
+    const section = p.page.locator("section").filter({ has: p.page.getByRole("heading", { name: /^Los barrios que más (te|os) convienen$/ }) }).first();
+    const fits = section.locator("ol").first();
+    await fits.locator("li").first().waitFor({ timeout: 20000 });
+    entry.ms_hasta_los_barrios = Date.now() - started;
+    entry.resumen = flat(await section.locator("p").first().innerText());
+
+    // 1. Outlines on their way: the first barrio only opens its panel, and the panel stays when they arrive
+    const first = api.results[0];
+    const firstButton = fits.locator(":scope > li").first().locator("button").first();
+    entry.antes_de_los_contornos = (await barrioRowsOf(fits))[0];
+    await firstButton.click();
+    entry.panel_sin_contornos = (await barrioRowsOf(fits))[0];
+    release();
+    // «Ir a un barrio»: its chips show once the outlines are in
+    const bar = p.page.getByRole("region", { name: "Ir a un barrio" });
+    await bar.getByRole("button", { name: first.zone.name, exact: true }).first().waitFor({ timeout: 20000 });
+    await p.page.waitForTimeout(1500);
+    entry.panel_con_contornos = (await barrioRowsOf(fits))[0];
+    const tied = entry.panel_con_contornos;
+    // The rows in view (on a phone, inside the bottom sheet), with the open panel
+    await fits.evaluate((el) => el.scrollIntoView({ block: "start" }));
+    await p.page.waitForTimeout(500);
+    await p.page.screenshot({ path: `${out}/barrios_panel_${id}.png` });
+
+    // 2. Another barrio pressed on the list, then a third by its chip: one panel open each time
+    const second = api.results[1] ?? null;
+    if (second) {
+      await fits.locator(":scope > li").nth(1).locator("button").first().click();
+      await p.page.waitForTimeout(2500);
+      entry.otro_pulsado = await barrioRowsOf(fits);
+    }
+    const third = api.results[2] ?? null;
+    if (third) {
+      await bar.getByRole("button", { name: third.zone.name, exact: true }).first().click();
+      await p.page.waitForTimeout(2500);
+      entry.chip_pulsado = await barrioRowsOf(fits);
+    }
+    await fits.evaluate((el) => el.scrollIntoView({ block: "start" }));
+    await p.page.waitForTimeout(500);
+    await p.page.screenshot({ path: `${out}/barrios_un_panel_${id}.png` });
+
+    // Every barrio that fits, and the near misses
+    const all = section.getByRole("button", { name: /^Ver los \d+ barrios/ });
+    if (await all.count()) await all.click();
+    entry.encajan = await barrioRowsOf(fits);
+    entry.casi = await barrioRowsOf(section.locator("section ul").first());
     entry.api = {
-      encajan: api.results.map((z) => [z.zone.name, `${z.match_pct} %`]),
-      casi: api.near_misses.map((z) => [z.zone.name, `${z.match_pct} %`, z.failed_constraints]),
+      encajan: api.results.map((z) => [z.zone.name, z.match_band, `${z.match_pct} %`]),
+      casi: api.near_misses.map((z) => [z.zone.name, z.failed_constraints]),
       zonas: `${api.reality_check.zones_passing} de ${api.reality_check.zones_evaluated}`,
     };
-    entry.texto_visible = flat(await section.innerText());
-    entry.mitad_de_sus_calles = /mitad de sus calles/i.test(entry.texto_visible);
     entry.peticiones_barrios = asked.length;
     entry.peticiones_antes_del_distrito = beforeDistrict;
     entry.peticion = asked[0] ? { url: new URL(asked[0].url).pathname, distrito: asked[0].body?.distrito } : null;
     entry.axe = await axe(p.page);
     entry.overflow_px = await overflow(p.page);
     entry.consola = p.errors;
-    const expected = api.results.map((z) => [z.zone.name, `${z.match_pct} %`]);
-    if (JSON.stringify(entry.encajan.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected)) failures.push(`${id}: los barrios no son los de la API`);
-    if (JSON.stringify(entry.primeros.map((r) => [r.nombre, r.pct])) !== JSON.stringify(expected.slice(0, 3))) failures.push(`${id}: los tres primeros no son los de la API`);
-    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !r.lineas[0]?.startsWith("No cumple:"))) failures.push(`${id}: «casi» sin su motivo`);
-    if (entry.encajan.some((r) => r.lineas.length < 1 || r.lineas.length > 2)) failures.push(`${id}: hechos fuera de 1–2`);
+
+    const openPanels = (rows) => rows.filter((r) => r.panel.length > 0).length;
+    const names = entry.encajan.map((r) => r.nombre);
+    if (JSON.stringify(names) !== JSON.stringify(api.results.map((z) => z.zone.name))) failures.push(`${id}: los barrios no son los de la API`);
+    if (entry.encajan.some((r, i) => !r.texto?.includes(BAND_TEXT[api.results[i]?.match_band]))) failures.push(`${id}: alguna fila sin su banda en palabras`);
+    // F5 of fit-0.9: a near miss says what it lacks, in one of its forms and in the household's words (nearMissLine), never its %
+    const nearLine = nearMissLine(many);
+    if (entry.casi.length !== api.near_misses.length || entry.casi.some((r) => !nearLine.test(r.falta ?? "") || /%/.test(r.falta ?? ""))) {
+      failures.push(`${id}: «Casi valen» sin su motivo o con %`);
+    }
     if ([...entry.encajan, ...entry.casi].some((r) => !r.boton)) failures.push(`${id}: algún barrio sin botón`);
+    if (entry.antes_de_los_contornos.abierto !== "false" || entry.antes_de_los_contornos.pulsado !== null) failures.push(`${id}: sin contornos, la fila no abre un panel`);
+    if (entry.panel_sin_contornos.abierto !== "true" || entry.panel_sin_contornos.panel.length === 0) failures.push(`${id}: el panel no se abre sin contornos`);
+    if (entry.panel_con_contornos.abierto !== "true" || entry.panel_con_contornos.panel.length === 0) failures.push(`${id}: el panel se cierra al llegar los contornos`);
+    // Its panel: its facts as the API gives them (the first two), as the web shows them
+    const facts = first.facts.slice(0, 2).map((f) => flat(factAsShown(f)));
+    if (facts.some((f) => !entry.panel_con_contornos.panel.includes(f))) failures.push(`${id}: el panel no dice los hechos de la API`);
+    // A tie is read once: with the panel open, by the panel, not by the button's name (review R-06 of PR #82)
+    if (tied.panel.some((t) => /^Igual de bueno/.test(t ?? "")) && /empata con/.test(tied.texto ?? "")) failures.push(`${id}: el empate se lee dos veces`);
+    const opened = (row) => row?.pulsado === "true" || row?.abierto === "true";
+    if (entry.otro_pulsado && (openPanels(entry.otro_pulsado) !== 1 || !opened(entry.otro_pulsado[1]))) failures.push(`${id}: al pulsar otro barrio no queda un solo panel`);
+    if (entry.chip_pulsado && (openPanels(entry.chip_pulsado) !== 1 || entry.chip_pulsado[2]?.pulsado !== "true")) failures.push(`${id}: con el chip de «Ir a un barrio» no queda un solo panel`);
     if (asked.length !== 1 || beforeDistrict !== 0) failures.push(`${id}: ${asked.length} peticiones a /search/barrios (${beforeDistrict} antes del distrito)`);
-    if (entry.peticion?.distrito !== DISTRICT.code) failures.push(`${id}: distrito ${entry.peticion?.distrito}`);
-    if (entry.simancas_pulsado !== "true" || entry.chip_simancas !== "true") failures.push(`${id}: Simancas no queda marcado`);
+    if (entry.peticion?.distrito !== district.code) failures.push(`${id}: distrito ${entry.peticion?.distrito}`);
     if (entry.axe.length) failures.push(`${id}: axe ${entry.axe.map((v) => v.id).join(", ")}`);
     if (entry.overflow_px > 0) failures.push(`${id}: desborde`);
     if (entry.consola.length) failures.push(`${id}: consola`);
     await p.ctx.close();
   }
   // The zone opened from its link, before any search (so without the barrios section): its LCP
-  report.lcp_san_blas_slow4g = await lcpOnSlow4g(browser, `/zona/distrito/${DISTRICT.code}`);
-  const lcp = report.lcp_san_blas_slow4g.at(-1);
-  if (!lcp || lcp.ms > 2500) failures.push(`LCP de la zona en el móvil: ${lcp?.ms} ms`);
+  if (district) {
+    report.lcp_distrito_slow4g = await lcpOnSlow4g(browser, `/zona/distrito/${district.code}`);
+    const lcp = report.lcp_distrito_slow4g.at(-1);
+    if (!lcp || lcp.ms > 2500) failures.push(`LCP de la zona en el móvil: ${lcp?.ms} ms`);
+  }
   report.fallos = failures;
   if (failures.length) process.exitCode = 1;
 }
@@ -2206,6 +2333,6 @@ else throw new Error(`Unknown mode ${mode}`);
 await browser.close();
 
 // «mapa» runs before and after the change: each run keeps its own report
-const tagged = mode === "mapa" ? `${mode}_${process.argv[4] ?? "despues"}` : mode;
+const tagged = mode === "mapa" ? `${mode}_${positionals[2] ?? "despues"}` : mode;
 writeFileSync(`${out}/qa_${tagged}.json`, `${JSON.stringify(report, null, 1)}\n`);
 console.log(JSON.stringify(report, null, 1));

@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ayto_censo_locales_actividades",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_censo_locales_actividades/3dc8783cc9cb/actividades.csv",
+      "sha256": "3dc8783cc9cbf84085b4980667cd76a884c4a8bb206273e818ae10966252e6fd",
+      "bytes": 125145928,
+      "url": "https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-5-censo-locales/download/actividades.csv",
+      "retrieved_at": "2026-11-19T00:17:33.179548+00:00"
+    }
+  ],
+  "checksum": "d9df427e658e0da8a6d02c4f46bb2b0e62ab305efdf5f464bf766e6a08c1e803",
+  "parser_version": "madrid_premises_census-1.0.0",
+  "dataset_version": "2026-11-19-d9df427e658e",
+  "correlation_id": "0be623daaa5642d895a2bce647b8e4b3",
+  "silver": "data/silver/ayto_censo_locales_actividades/d9df427e658e/observations.csv.gz"
+}

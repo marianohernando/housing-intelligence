@@ -1,0 +1,29 @@
+source_id: ayuntamiento_madrid_urbanismo_sigma
+name: Ayuntamiento de Madrid — servicios de mapas de urbanismo (sigma.madrid.es, ArcGIS REST)
+provider: Ayuntamiento de Madrid (Área de Urbanismo)
+source_type: official_service
+api_type: none
+base_url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/
+catalog_url: https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo
+license_name: Creative Commons Attribution 4.0 International (CC BY 4.0)
+license_url: https://creativecommons.org/licenses/by/4.0/legalcode.es
+license_status: CLEAR
+attribution_text: "Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Información urbanística sin valor jurídico."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: continuous
+geographic_scope: Municipio de Madrid
+terms_reviewed_at: 2026-11-19T00:00:00Z
+robots_status: api
+active: true
+notes: >-
+  D-250. Los servicios que publican los conjuntos de datos «Urbanismo. Destino urbanístico del
+  suelo» (300744) y «Planeamiento y desarrollos del PGOUM» (300489) de datos.madrid.es, ambos
+  con license_id cc-by (comprobado en su CKAN el 19 nov). Condiciones generales del
+  Ayuntamiento: citar «Origen de los datos: Ayuntamiento de Madrid» y la fecha, y no sugerir
+  que el Ayuntamiento participa en la reutilización. La propia ficha de 300744 dice que la
+  información carece de valor jurídico: la ficha de la parcela lo repite siempre. Se pregunta
+  por un punto (la capa 3 de USOS_SUELO y la capa 3 de PLANEAMIENTO_URBANISTICO) en cada
+  búsqueda que no está en caché.

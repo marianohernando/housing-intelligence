@@ -13,14 +13,20 @@ from pydantic import BaseModel, TypeAdapter
 
 from hi_contracts.api.envelope import ErrorEnvelope
 from hi_contracts.catalog import DatasetSpec, FeatureSpec, MetricSpec, PipelineSpec, SourceSpec
+from hi_contracts.pro.investors import ViabilityRequest
 from hi_contracts.public import BarrioSearchRequest, ScenarioState
 from hi_contracts.public.responses import (
     BarrioSearchResponse,
     DatasetListResponse,
     GapImpactResponse,
     GapRowMapResponse,
+    InvestorZoneListResponse,
+    InvestorZoneResponse,
+    ParcelCandidatesResponse,
+    ParcelSheetResponse,
     PlacesResponse,
     SearchResponse,
+    ViabilityResponse,
     ZoneExplanationResponse,
     ZoneGapListResponse,
     ZoneLookupResponse,
@@ -43,6 +49,12 @@ MODELS: dict[str, type[BaseModel] | TypeAdapter[object]] = {
     "api/dataset_list_response": DatasetListResponse,
     "api/places_response": PlacesResponse,
     "api/error_response": ErrorEnvelope,
+    "api/investor_zone_list_response": InvestorZoneListResponse,  # D-248
+    "api/investor_zone_response": InvestorZoneResponse,
+    "api/viability_request": ViabilityRequest,
+    "api/viability_response": ViabilityResponse,
+    "api/parcel_sheet_response": ParcelSheetResponse,  # D-250
+    "api/parcel_candidates_response": ParcelCandidatesResponse,
     "mcp/zone_explanation_response": ZoneExplanationResponse,
     "mcp/zone_lookup_response": ZoneLookupResponse,
 }

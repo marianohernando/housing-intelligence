@@ -12,12 +12,18 @@ import {
   gapSummary,
   GROUP,
   groupText,
+  householdRows,
   hospitalText,
   hospitalWalking,
   inGroup,
   isSmallZone,
   listNames,
+  nearButShort,
+  ROW_WALK_MIN,
   notComparable,
+  notComparableHelp,
+  notComparableReason,
+  notComparableText,
   referenceLabel,
   SMALL_ZONE,
   gapsHref,
@@ -53,7 +59,7 @@ describe("rows", () => {
     for (const key of ROW_KEYS.filter((k) => k !== "vivienda")) {
       expect(ROW_MEASURE[key as keyof typeof ROW_MEASURE]).toMatch(/a 15 min andando .*repartid[oa]s entre todos los que l[oa]s tienen cerca$/);
     }
-    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud del SERMAS/);
+    expect(ROW_MEASURE.centro_salud).toMatch(/^Centros de salud de la red pública de salud de la Comunidad \(SERMAS\)/);
     expect(ROW_MEASURE.vivienda).not.toMatch(/andando/);
   });
 
@@ -94,6 +100,45 @@ describe("small zones (gap-0.2, D-213, fila.zona_pequena)", () => {
     expect(isSmallZone({})).toBe(false);
     expect(SMALL_ZONE.label).toBe("No comparable");
   });
+
+  it("says what «No comparable» means, of each row in its unit: too few centres for its people, not too few people (D-213, D-230)", () => {
+    // Barajas has some 50.000 people: «vive tan poca gente» was not true there
+    expect(SMALL_ZONE.help).not.toMatch(/poca gente/);
+    expect(SMALL_ZONE.help).toMatch(/menos de 4/);
+    expect(notComparableText("centro_salud")).toBe(
+      "para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+    );
+    expect(notComparableText("mayores")).toMatch(/menos de 4 centros de mayores/);
+    // The housing row: few households of 4 or more is its reason (review R-07 of PR #81)
+    expect(notComparableText("vivienda")).toBe("aquí viven muy pocos hogares de 4 o más personas para saber si falta.");
+    // The API's explanation says the real reason since D-245: shown as it is, the housing row's too
+    const barajas =
+      "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud";
+    expect(notComparableReason(barajas)).toBe(barajas);
+    const acebeda = "No comparable: aquí viven muy pocos hogares de 4 o más personas (1) para saber si falta. 10.700,0 viviendas";
+    expect(notComparableReason(acebeda)).toBe(acebeda);
+    expect(notComparableReason("Sin datos para esta zona")).toBe(SMALL_ZONE.help);
+  });
+
+  it("tells screen readers the row's own reason after «No comparable», never the legend's sentence (seen in production by C)", () => {
+    // The card and a list of zones by row: the row's reason, as its visible line says it
+    expect(notComparableHelp("centro_salud")).toBe(
+      "Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan.",
+    );
+    expect(notComparableHelp("vivienda")).toBe("Aquí viven muy pocos hogares de 4 o más personas para saber si falta.");
+    // With the API's explanation: its words (notComparableReason), without the «No comparable:» the tag has just said
+    const barajas =
+      "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud";
+    expect(notComparableHelp("centro_salud", barajas)).toBe(
+      "Para la gente que vive aquí le corresponden menos de 4 centros de salud y, con números tan pequeños, no se puede saber si faltan. 0,40 centros de salud",
+    );
+    expect(notComparableHelp("mayores", "Otra explicación")).toBe(SMALL_ZONE.help);
+    // Every row says its own unit, none the common «centros u hogares» sentence
+    for (const row of ["escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia", "vivienda"] as const) {
+      expect(notComparableHelp(row)).not.toBe(SMALL_ZONE.help);
+      expect(notComparableHelp(row)).not.toMatch(/ o en la vivienda /);
+    }
+  });
 });
 
 describe("comparison groups (gap-0.3, D-217)", () => {
@@ -118,13 +163,13 @@ describe("comparison groups (gap-0.3, D-217)", () => {
     expect(text).toContain("sus 5 vecinos más cercanos del mismo tipo: Navalcarnero, Arroyomolinos, Serranillos del Valle, Moraleja de Enmedio y Móstoles.");
     // the API: «…, tiene el 105 % de lo esperado»
     expect(health.explanation).toContain(`tiene el ${Math.round(100 * group.ratio_to_reference)} % de lo esperado`);
-    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)} % de lo que tienen de media los municipios de su tipo`);
+    expect(text).toContain(`Juntos tienen el ${Math.round(100 * group.ratio_to_reference)}\u00a0% de lo que tienen de media los municipios de su tipo`);
   });
 
   it("uses the singular with one neighbour", () => {
     const text = groupText("El Álamo", { codes: ["28004", "28096"], names: ["El Álamo", "Navalcarnero"], ratio_to_reference: 1.0815 });
     expect(text).toContain("lo juntamos con su vecino más cercano del mismo tipo: Navalcarnero.");
-    expect(text).toContain("Juntos tienen el 108 %");
+    expect(text).toContain("Juntos tienen el 108\u00a0%");
   });
 });
 
@@ -156,6 +201,63 @@ describe("sortRows and topRows", () => {
   it("keeps at most three rows for the zone card", () => {
     expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
   });
+
+  // Review of PR #79: «lo que le falta que le afecte», the household's rows first for every home
+  it("knows which rows matter to each home, as highlight_rows of hi_domain/search.py", () => {
+    expect(householdRows({ minors: 1, minor_ages: [1] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ minors: 2, minor_ages: [4, 8] })).toEqual(["colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ minors: 1, minor_ages: [] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
+    expect(householdRows({ seniors: true })).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({ seniors_in_care: 1 })).toEqual(["centro_salud", "farmacia", "mayores"]);
+    expect(householdRows({})).toEqual(["centro_salud", "farmacia"]);
+  });
+
+  // Barajas for the retired couple of the example (GET /gaps/distrito/2807921, 15 nov): the health
+  // centre and the centres for older people are too small to compare, the colegio is JUSTO
+  const barajas = [
+    { row: "escuela_infantil", status: "CUBIERTO" },
+    { row: "colegio", status: "JUSTO" },
+    { row: "centro_salud", status: "CUBIERTO", reliable: false },
+    { row: "mayores", status: "CUBIERTO", reliable: false },
+    { row: "farmacia", status: "CUBIERTO" },
+    { row: "vivienda", status: "SIN_DATOS" },
+  ] as const;
+
+  it("shows a retired couple the health centre first, then the pharmacy and the centres for older people, never schools", () => {
+    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "farmacia", "mayores"]);
+    // Without a household, by status, as before: the colegio JUSTO first
+    expect(topRows([...barajas]).map((r) => r.row)[0]).toBe("colegio");
+  });
+
+  it("keeps the escuela infantil up for a family with a baby, and what is short of theirs first", () => {
+    const baby = { minors: 1, minor_ages: [1] };
+    const rows = [
+      { row: "mayores", status: "FALTA" },
+      { row: "escuela_infantil", status: "JUSTO" },
+      { row: "colegio", status: "CUBIERTO" },
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "farmacia", status: "CUBIERTO" },
+    ] as const;
+    expect(topRows([...rows], 3, baby).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "centro_salud"]);
+    const healthShort = [...rows.slice(0, 3), { row: "centro_salud", status: "FALTA" }, rows[4]] as const;
+    expect(topRows([...healthShort], 3, baby).map((r) => r.row)).toEqual(["centro_salud", "escuela_infantil", "colegio"]);
+  });
+
+  it("never shows a couple without children the escuela infantil, even when it is the zone's FALTA", () => {
+    const rows = [
+      { row: "escuela_infantil", status: "FALTA" },
+      { row: "colegio", status: "FALTA" },
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "mayores", status: "CUBIERTO" },
+      { row: "farmacia", status: "JUSTO" },
+      { row: "vivienda", status: "SIN_DATOS" },
+    ] as const;
+    const top = topRows([...rows], 3, { minors: 0 });
+    expect(top.map((r) => r.row)).toEqual(["farmacia", "centro_salud", "mayores"]);
+    // Rows of the household without data go after the others with data
+    const noHealthData = rows.map((r) => (r.row === "centro_salud" ? { ...r, status: "SIN_DATOS" as const } : r));
+    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["farmacia", "mayores", "centro_salud"]);
+  });
 });
 
 describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something)", () => {
@@ -164,16 +266,16 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
 
   it("names the rows that are JUSTO (Fuencarral-El Pardo, 12 nov)", () => {
     expect(fitsButShortText([row("escuela_infantil", "JUSTO"), row("colegio", "JUSTO"), row("centro_salud", "JUSTO")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí van justos de escuelas infantiles, colegios y centros de salud.",
     );
   });
 
   it("says what is missing, and then what is tight", () => {
     expect(fitsButShortText([row("escuela_infantil", "FALTA")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan escuelas infantiles.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
     );
     expect(fitsButShortText([row("centro_salud", "FALTA"), row("colegio", "JUSTO"), row("farmacia", "CUBIERTO")])).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de colegios.",
     );
   });
 
@@ -188,7 +290,16 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
     ];
     expect(topRows(rows)).toHaveLength(3);
     expect(fitsButShortText(rows)).toBe(
-      "Encaja con lo que pides. Aun así, frente a municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
+    );
+  });
+
+  it("says «Tiene lo que pedís» to a household of more than one (review M-01 of PR #81)", () => {
+    expect(fitsButShortText([row("escuela_infantil", "FALTA")], true)).toBe(
+      "Tiene lo que pedís. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
+    );
+    expect(fitsButShortText([row("escuela_infantil", "FALTA")], false)).toBe(
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.",
     );
   });
 
@@ -340,7 +451,7 @@ describe("the summary over the rows (falta.resumen.*)", () => {
   });
 
   it("says nothing is missing when every comparable row is CUBIERTO", () => {
-    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada frente a municipios parecidos.", rest: [] });
+    expect(gapSummary([row("colegio", "CUBIERTO"), row("farmacia", "CUBIERTO")])).toEqual({ lead: "Aquí no falta nada, comparado con municipios parecidos.", rest: [] });
   });
 
   it("keeps rows too small to compare apart, but not those compared with their neighbours", () => {
@@ -389,5 +500,42 @@ describe("rows that are not comparable (D-230)", () => {
     expect(notComparable({ status: "JUSTO", reliable: false, comparison_group: group })).toBe(false);
     expect(notComparable({ status: "JUSTO", reliable: true })).toBe(false);
     expect(notComparable({ status: "SIN_DATOS", reliable: false })).toBe(false);
+  });
+});
+
+describe("near, but short («Cerca, pero con pocas…», zona.cerca_pocas)", () => {
+  const row = (key: GapRowKey, status: GapStatus, extra: object = {}) => ({ row: key, status, reliable: true, comparison_group: null, ...extra });
+  const nearButShortTexts = (...args: Parameters<typeof nearButShort>) => nearButShort(...args).map((line) => line.text);
+  // Puente de Vallecas, 14 nov: escuelas infantiles FALTA (57 por cada 100), a 6,3 min andando
+  const vallecas = [row("colegio", "CUBIERTO"), row("escuela_infantil", "FALTA"), row("centro_salud", "JUSTO"), row("vivienda", "SIN_DATOS")];
+
+  it("says a service close by can still be short, for each FALTA or JUSTO row the search found close", () => {
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 6.3, colegio: 4.2, centro_salud: 7.6 })).toEqual([
+      "Escuela infantil a unos 6 min andando, pero hay pocas para tantos niños: por eso sale FALTA.",
+      "Centro de salud a unos 8 min andando, pero van justos para tanta gente: por eso sale JUSTO.",
+    ]);
+    // Each line says which row it explains, so the card does not repeat it in encaje.aviso_*
+    expect(nearButShort(vallecas, { escuela_infantil: 6.3, centro_salud: 7.6 }).map((line) => line.row)).toEqual(["escuela_infantil", "centro_salud"]);
+  });
+
+  it("only within the 15 min the row measures (fila.mide.*): further, the row does not count it", () => {
+    expect(ROW_WALK_MIN).toBe(15);
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 20 })).toEqual([]);
+    expect(nearButShortTexts(vallecas, { escuela_infantil: 15 })).toHaveLength(1);
+  });
+
+  it("names the district when the card is a barrio's, whose rows are the district's", () => {
+    expect(nearButShortTexts([row("mayores", "FALTA")], { mayores: 0.4 }, "Latina")).toEqual([
+      "Centro de mayores a menos de 1 min andando, pero en Latina hay pocas plazas para tantas personas mayores: por eso sale FALTA.",
+    ]);
+  });
+
+  it("says nothing when the service is not close, the row is fine, or the status is not the zone's own", () => {
+    expect(nearButShortTexts(vallecas, {})).toEqual([]);
+    expect(nearButShortTexts(vallecas, { colegio: 4 })).toEqual([]);
+    expect(nearButShortTexts([row("farmacia", "SIN_DATOS")], { farmacia: 3 })).toEqual([]);
+    expect(nearButShortTexts([row("farmacia", "FALTA", { reliable: false })], { farmacia: 3 })).toEqual([]);
+    const group = { names: ["El Álamo", "Batres", "Serranillos del Valle"], ratio_to_reference: 0.4 };
+    expect(nearButShortTexts([row("farmacia", "FALTA", { comparison_group: group })], { farmacia: 3 })).toEqual([]);
   });
 });

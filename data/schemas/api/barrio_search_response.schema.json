@@ -2,12 +2,13 @@
   "$defs": {
     "Anchor": {
       "additionalProperties": false,
-      "description": "A place the household travels to often («Trabajo en»).",
+      "description": "A place the household travels to often: where they work, or family and friends.",
       "properties": {
         "days_per_week": {
           "default": 5,
+          "description": "Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)",
           "maximum": 7,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Days Per Week",
           "type": "integer"
         },
@@ -254,6 +255,40 @@
       "title": "ConstraintStatus",
       "type": "string"
     },
+    "CostRange": {
+      "additionalProperties": false,
+      "description": "Where half the leases of the zone fall (D-242), for the household's m²: the 25th and 75th\npercentiles of the rent reference, scaled as the cost itself. Only with a rent that comes\nfrom the Ministry's reference (it fills the zones without the CM rent, which publishes means\nand no spread).",
+      "properties": {
+        "high_eur": {
+          "description": "75th percentile, € per month for the needed area",
+          "minimum": 0,
+          "title": "High Eur",
+          "type": "number"
+        },
+        "low_eur": {
+          "description": "25th percentile, € per month for the needed area",
+          "minimum": 0,
+          "title": "Low Eur",
+          "type": "number"
+        },
+        "source": {
+          "description": "Who publishes it and its year",
+          "examples": [
+            "Ministerio de Vivienda (SERPAVI), 2024"
+          ],
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low_eur",
+        "high_eur",
+        "source"
+      ],
+      "title": "CostRange",
+      "type": "object"
+    },
     "DatasetRef": {
       "additionalProperties": false,
       "description": "Provenance of a result: the dataset, who publishes it and where to open it.",
@@ -419,6 +454,7 @@
         "zonas_verdes",
         "seguridad",
         "accesibilidad",
+        "ocio",
         "trayecto",
         "otro"
       ],
@@ -473,7 +509,7 @@
     },
     "Household": {
       "additionalProperties": false,
-      "description": "«Tu hogar»: adults, children and older people they look after (all live together).",
+      "description": "«Tu hogar»: adults, children and older people they look after (all live together).\n\n`seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no\none to the household, unlike `seniors_in_care`.",
       "properties": {
         "adults": {
           "default": 1,
@@ -496,6 +532,12 @@
           "minimum": 0,
           "title": "Minors",
           "type": "integer"
+        },
+        "seniors": {
+          "default": false,
+          "description": "Every adult is 65+ («Somos mayores»)",
+          "title": "Seniors",
+          "type": "boolean"
         },
         "seniors_in_care": {
           "default": 0,
@@ -579,6 +621,17 @@
       "title": "IndicatorValue",
       "type": "object"
     },
+    "MatchBand": {
+      "description": "The % of fit in words (D-243), from the % shown: «encaja muy bien», «bien», «regular» or\n«poco», only for a zone that passes every condition. The thresholds (90, 75 and 60) live in\nhi_domain.fit; a web that gets no band derives it from `match_pct` with the same ones.",
+      "enum": [
+        "muy_bien",
+        "bien",
+        "regular",
+        "poco"
+      ],
+      "title": "MatchBand",
+      "type": "string"
+    },
     "Meta": {
       "properties": {
         "api_version": {
@@ -651,14 +704,18 @@
       "type": "object"
     },
     "NeedKey": {
-      "description": "Everyday services the search and the per-zone list both talk about.",
+      "description": "Everyday services the search and the per-zone list both talk about, and the leisure\ngroups of «Ocio» (D-236), which only the search knows: they are never rows of the list.\n\nA leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the\nAPI or the MCP may, it is ignored with a warning: `required` is True by default, so it would\notherwise filter zones by places OpenStreetMap may not have.",
       "enum": [
         "escuela_infantil",
         "colegio",
         "centro_salud",
         "farmacia",
         "mayores",
-        "transporte"
+        "transporte",
+        "bares",
+        "restaurantes",
+        "gimnasios",
+        "cultura"
       ],
       "title": "NeedKey",
       "type": "string"
@@ -679,14 +736,15 @@
       "type": "string"
     },
     "PriorityKey": {
-      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.",
+      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio\n(D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing.",
       "enum": [
         "transporte",
         "salud",
         "colegios",
         "zonas_verdes",
         "seguridad",
-        "sin_escaleras"
+        "sin_escaleras",
+        "ocio"
       ],
       "title": "PriorityKey",
       "type": "string"
@@ -707,6 +765,21 @@
           "title": "Constraints",
           "type": "array"
         },
+        "estimated_cost_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Confidence of `estimated_cost_eur`: that of its rent or price per m² (0,5 for the estimated purchase price of D-234); None without a cost",
+          "title": "Estimated Cost Confidence"
+        },
         "estimated_cost_eur": {
           "anyOf": [
             {
@@ -720,6 +793,18 @@
           "default": null,
           "description": "Monthly rent or purchase price for the needed area",
           "title": "Estimated Cost Eur"
+        },
+        "estimated_cost_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CostRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where half the leases fall, renting with the Ministry's rent reference (D-242); None otherwise"
         },
         "facts": {
           "description": "Up to 5 tangible facts, most important to the person first; unknown last",
@@ -745,6 +830,18 @@
           "maxItems": 3,
           "title": "Gap Highlights",
           "type": "array"
+        },
+        "match_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`match_pct` in words (D-243): muy_bien from 90, bien from 75, regular from 60, poco below. None for a zone that does not pass every condition (near misses): it reads by what it misses. Optional and additive: None from an API before fit-0.9"
         },
         "match_pct": {
           "description": "% of fit with the search, not a grade",
@@ -786,7 +883,7 @@
             }
           ],
           "default": null,
-          "description": "constraint_id that removes the most zones",
+          "description": "constraint_id that the most zones FAIL; None when no zone fails any. A zone where a condition is UNKNOWN is not counted here (D-234)",
           "title": "Binding Constraint"
         },
         "relaxations": {
@@ -796,6 +893,14 @@
           },
           "title": "Relaxations",
           "type": "array"
+        },
+        "unknown_by_constraint": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "Among the `zones_unknown` zones, how many have each condition UNKNOWN (constraint_id -> zones): what is missing is data, so relaxing it is never offered",
+          "title": "Unknown By Constraint",
+          "type": "object"
         },
         "zones_evaluated": {
           "minimum": 0,
@@ -909,7 +1014,7 @@
           "items": {
             "$ref": "#/$defs/NearbyNeed"
           },
-          "maxItems": 6,
+          "maxItems": 10,
           "title": "Nearby",
           "type": "array"
         },
@@ -918,7 +1023,7 @@
           "items": {
             "$ref": "#/$defs/PriorityKey"
           },
-          "maxItems": 6,
+          "maxItems": 7,
           "title": "Priorities",
           "type": "array"
         },
@@ -927,10 +1032,26 @@
           "default": 2,
           "title": "Schema Version",
           "type": "integer"
+        },
+        "scope": {
+          "$ref": "#/$defs/SearchScope",
+          "default": "all",
+          "description": "Where to search; Madrid capital is ranked by barrio instead of by district"
         }
       },
       "title": "ScenarioState",
       "type": "object"
+    },
+    "SearchScope": {
+      "description": "«Dónde buscar» (D-238): the whole region, or one of its three parts by the statistical\nzoning of the Comunidad de Madrid (data/catalog/zoning/search_scope.yaml).",
+      "enum": [
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos"
+      ],
+      "title": "SearchScope",
+      "type": "string"
     },
     "TerritoryLevel": {
       "description": "Territorial units observations can refer to (superset of AdminLevel).",
@@ -952,12 +1073,65 @@
       "additionalProperties": false,
       "description": "Every evaluated zone, for the choropleth («Encaje con tu búsqueda»).",
       "properties": {
+        "estimated_cost_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Confidence of `estimated_cost_eur`",
+          "title": "Estimated Cost Confidence"
+        },
+        "estimated_cost_eur": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monthly rent or purchase price for the needed area, as in RankedZone: the zone card shows it for any zone (D-234); None without a cost",
+          "title": "Estimated Cost Eur"
+        },
+        "estimated_cost_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CostRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where half the leases fall, as in RankedZone (D-242)"
+        },
         "failed_constraints": {
           "items": {
             "type": "string"
           },
           "title": "Failed Constraints",
           "type": "array"
+        },
+        "match_band": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MatchBand"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "`match_pct` in words, as in RankedZone (D-243); None unless `passes_all`, and from an API before fit-0.9"
         },
         "match_pct": {
           "anyOf": [

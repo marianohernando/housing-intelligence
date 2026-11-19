@@ -1,0 +1,26 @@
+# Municipal public car parks of Madrid (D-237): context only, they never score. The file also
+# lists the mixed ones as «AparcamientosResidentes»; those come from ayto_aparcamientos_residentes.
+kind: points_csv
+dataset_id: ayto_aparcamientos_publicos
+category: other
+id_column: PK
+name_column: NOMBRE
+subcategory_prefixes:
+  column: NOMBRE
+  prefixes:
+    "Aparcamiento disuasorio": Aparcamiento disuasorio
+    "Aparcamiento público": Aparcamiento público
+row_filters:
+  TIPO:
+    - /contenido/entidadesYorganismos/AparcamientosPublicos
+# Closed ones, and the two park-and-ride car parks the CRTM publishes too with their spaces and
+# fee, at 12 m and 126 m (crtm_aparcamientos_disuasion keeps them; review of PR #65, R-10)
+exclude_patterns:
+  NOMBRE:
+    - '\(cerrado\)'
+    - '^Aparcamiento disuasorio Aviación Española$'
+    - '^Aparcamiento disuasorio Estadio Metropolitano Sur'
+
+x_column: COORDENADA-X
+y_column: COORDENADA-Y
+attribute_columns: [DISTRITO, BARRIO]

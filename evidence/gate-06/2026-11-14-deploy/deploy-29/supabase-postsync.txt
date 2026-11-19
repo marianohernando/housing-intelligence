@@ -1,0 +1,3 @@
+Supabase (project-scoped read-only MCP), 2026-11-14 ~22:22 UTC, after datamad-10's make supabase-sync PROFILE=demo from d5fe735
+feature_registry 50 (+1) · feature_value 95,263 (+283) · metric_registry 38 (+3)
+precio_compra_estimado_m2: 152 rows (21 districts + 131 barrios) · valor_tasado_vivienda_m2: 331 rows

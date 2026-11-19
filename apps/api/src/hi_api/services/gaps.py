@@ -213,6 +213,7 @@ def _gap_row(
     indicator = _indicator(feature, row, zone.level)
     ref = zone.references.for_zone(feature["feature_id"], zone.code, reference_row)
     judged = Assessment(None, True)
+    counted = False
     if indicator.value is None:
         ratio, text_ = None, missing_text(key, row)
     elif ref is None:
@@ -230,7 +231,8 @@ def _gap_row(
     if verdict.group is not None:
         text_ += "; " + group_sentence(verdict.group)
     elif not verdict.reliable and indicator.value is not None:
-        text_ = not_comparable_text(key, None if people is None else people.count, text_)
+        count = None if people is None else people.count
+        text_ = not_comparable_text(key, count, text_, counted_denominator=counted)
     return GapRow(
         row=binding["row"],
         label=binding["label"],

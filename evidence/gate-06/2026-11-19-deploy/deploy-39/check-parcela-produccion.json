@@ -1,0 +1,285 @@
+{
+  "base": "production",
+  "parcels": [
+    "2122202VK4722A",
+    "3959601VK4735H",
+    "0390314VK4709A",
+    "9943003VK3794D"
+  ],
+  "report": [
+    {
+      "name": "360-buscar",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "360-buscar-estados",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "360-ficha-mendez-alvaro",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "360-ficha-almeria",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "360-ficha-luis-misson",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "360-ficha-mayor",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "360-impresion",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-buscar",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-buscar-estados",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-ficha-mendez-alvaro",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-ficha-almeria",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-ficha-luis-misson",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-ficha-mayor",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "390-impresion",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-buscar",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-buscar-estados",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-ficha-mendez-alvaro",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-ficha-almeria",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-ficha-luis-misson",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-ficha-mayor",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    },
+    {
+      "name": "1440-impresion",
+      "texts": 0,
+      "targets": 0,
+      "overflow": false,
+      "axe": 0,
+      "details": {
+        "texts": [],
+        "targets": [],
+        "overflow": false,
+        "violations": []
+      }
+    }
+  ],
+  "consoleErrors": []
+}

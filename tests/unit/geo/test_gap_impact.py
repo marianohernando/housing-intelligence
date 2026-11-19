@@ -197,12 +197,19 @@ def test_denominator_is_a_count_only_outside_the_per_unit_methods() -> None:
 
 def test_texts_for_zones_that_cannot_be_compared() -> None:
     """Fase de mejora: «0,0 frente a 28,0» must not read as JUSTO, and 0 children is a reason,
-    not «the source does not publish it»."""
+    not «the source does not publish it». A row of services says the real reason (D-245): too
+    few centres for its people, whatever the number of people."""
     text = "0,0 aulas de primaria…; en los demás municipios rurales de la Comunidad de Madrid, 28,0"
     assert not_comparable_text(GapRowKey.COLEGIO, 12, text) == (
-        "No comparable: aquí viven muy pocos niños de 5 a 14 años (12) para saber si falta. " + text
+        "No comparable: para la gente que vive aquí le corresponden menos de 4 colegios y, con "
+        "números tan pequeños, no se puede saber si faltan. " + text
     )
-    assert not_comparable_text(GapRowKey.COLEGIO, None, text).startswith(
+    # The same with or without the people: the reason is the centres, not how many live there
+    assert not_comparable_text(GapRowKey.COLEGIO, None, text) == not_comparable_text(
+        GapRowKey.COLEGIO, 12, text
+    )
+    # A count of households under the floor: there, few households is the reason
+    assert not_comparable_text(GapRowKey.VIVIENDA, None, text, counted_denominator=True).startswith(
         "No comparable: la zona es demasiado pequeña para saber si falta. "
     )
     assert nobody_text(GapRowKey.ESCUELA_INFANTIL) == (
@@ -210,8 +217,15 @@ def test_texts_for_zones_that_cannot_be_compared() -> None:
     )
 
 
-def test_not_comparable_text_agrees_in_gender() -> None:
-    assert "muy pocas personas (70)" in not_comparable_text(GapRowKey.FARMACIA, 70, "…")
+def test_not_comparable_text_never_calls_a_large_zone_small() -> None:
+    """Barajas (D-245): some 50.000 people and too few health centres to compare; the text said
+    «aquí viven muy pocas personas (50.375)», which was not true."""
+    barajas = not_comparable_text(GapRowKey.CENTRO_SALUD, 50_375, "0,40 centros de salud…")
+    assert "pocas personas" not in barajas and "50.375" not in barajas
+    assert barajas.startswith(
+        "No comparable: para la gente que vive aquí le corresponden menos de 4 centros de salud"
+    )
+    assert "menos de 4 farmacias y" in not_comparable_text(GapRowKey.FARMACIA, 70, "…")
     assert "muy pocos hogares de 4 o más personas (1)" in not_comparable_text(
-        GapRowKey.VIVIENDA, 1, "…"
+        GapRowKey.VIVIENDA, 1, "…", counted_denominator=True
     )

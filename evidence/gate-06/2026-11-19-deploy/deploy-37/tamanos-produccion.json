@@ -1,0 +1,617 @@
+{
+ "base": "https://vidafacil-madrid.vercel.app",
+ "label": "produccion",
+ "checked_at": "2026-11-19T09:51:26.242Z",
+ "sizes": [
+  {
+   "width": 390,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta_ver_mas": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "pantalla_zona": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "pantalla_zona_abierta": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "no_comparable": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "tarjeta_ver_mas": [],
+    "distrito": [],
+    "pantalla_zona_abierta": [],
+    "no_comparable": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  },
+  {
+   "width": 360,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta_ver_mas": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "pantalla_zona": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "pantalla_zona_abierta": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "no_comparable": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "tarjeta_ver_mas": [],
+    "distrito": [],
+    "pantalla_zona_abierta": [],
+    "no_comparable": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  },
+  {
+   "width": 1440,
+   "screens": {},
+   "axe": {
+    "lista": [],
+    "tarjeta_ver_mas": [],
+    "pantalla_zona_abierta": []
+   },
+   "console_errors": []
+  }
+ ],
+ "counts": [
+  {
+   "profile": "390",
+   "familia": {
+    "rows": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "row_items": [
+     "1",
+     "Puente de Vallecas",
+     "Muy buena opción · 94 %, empata con Latina",
+     "Unos 1.129 € al mes"
+    ],
+    "card_first_screen": 12,
+    "card_first_screen_items": [
+     "Volver a la lista",
+     "Puente de Vallecas",
+     "Distrito de Madrid · Muy buena opción",
+     "Muy buena opción",
+     "Unos 1.129 € al mes",
+     "Precio orientativo",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "Centro de salud a unos 8 min andando",
+     "41 min en transporte público hasta Paseo de la Cas",
+     "No le falta nada de lo que buscáis.",
+     "Ver más sobre Puente de Vallecas"
+    ],
+    "card_whole": 12,
+    "card_whole_with_more": 48
+   },
+   "pareja_jubilada": {
+    "rows": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "row_items": [
+     "1",
+     "Casco Histórico de Barajas · Barajas",
+     "Muy buena opción · 92 %, empata con Alameda de Osu",
+     "Unos 1.038 € al mes"
+    ],
+    "card_first_screen": 12,
+    "card_first_screen_items": [
+     "Volver a la lista",
+     "Casco Histórico de Barajas · Barajas",
+     "Barrio de Madrid · Muy buena opción",
+     "Muy buena opción",
+     "Unos 1.038 € al mes",
+     "Precio orientativo",
+     "Centro de salud a unos 9 min andando",
+     "Estación de metro o tren accesible (sin escaleras)",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "27 min en transporte público hasta Ciudad Lineal (",
+     "En Barajas, de lo que podemos comparar, no falta n",
+     "No sabemos si en Barajas faltan centros de salud o"
+    ],
+    "card_whole": 13,
+    "card_whole_with_more": 54
+   }
+  },
+  {
+   "profile": "360",
+   "familia": {
+    "rows": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "row_items": [
+     "1",
+     "Puente de Vallecas",
+     "Muy buena opción · 94 %, empata con Latina",
+     "Unos 1.129 € al mes"
+    ],
+    "card_first_screen": 12,
+    "card_first_screen_items": [
+     "Volver a la lista",
+     "Puente de Vallecas",
+     "Distrito de Madrid · Muy buena opción",
+     "Muy buena opción",
+     "Unos 1.129 € al mes",
+     "Precio orientativo",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "Centro de salud a unos 8 min andando",
+     "41 min en transporte público hasta Paseo de la Cas",
+     "No le falta nada de lo que buscáis.",
+     "Ver más sobre Puente de Vallecas"
+    ],
+    "card_whole": 12,
+    "card_whole_with_more": 48
+   },
+   "pareja_jubilada": {
+    "rows": [
+     4,
+     4,
+     4,
+     4,
+     4
+    ],
+    "row_items": [
+     "1",
+     "Casco Histórico de Barajas · Barajas",
+     "Muy buena opción · 92 %, empata con Alameda de Osu",
+     "Unos 1.038 € al mes"
+    ],
+    "card_first_screen": 11,
+    "card_first_screen_items": [
+     "Volver a la lista",
+     "Casco Histórico de Barajas · Barajas",
+     "Barrio de Madrid · Muy buena opción",
+     "Muy buena opción",
+     "Unos 1.038 € al mes",
+     "Precio orientativo",
+     "Centro de salud a unos 9 min andando",
+     "Estación de metro o tren accesible (sin escaleras)",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "27 min en transporte público hasta Ciudad Lineal (",
+     "En Barajas, de lo que podemos comparar, no falta n"
+    ],
+    "card_whole": 13,
+    "card_whole_with_more": 54
+   }
+  },
+  {
+   "profile": "1440",
+   "familia": {
+    "rows": [
+     5,
+     5,
+     5,
+     5,
+     5
+    ],
+    "row_items": [
+     "1",
+     "Puente de Vallecas",
+     "Muy buena opción · 94 %, empata con Latina",
+     "· 94 %, empata con Latina",
+     "Unos 1.129 € al mes"
+    ],
+    "card_first_screen": 12,
+    "card_first_screen_items": [
+     "Volver a la lista",
+     "Puente de Vallecas",
+     "Distrito de Madrid · Muy buena opción",
+     "Muy buena opción",
+     "Unos 1.129 € al mes",
+     "Precio orientativo",
+     "Colegio con primaria a unos 4 min andando",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "Centro de salud a unos 8 min andando",
+     "41 min en transporte público hasta Paseo de la Cas",
+     "No le falta nada de lo que buscáis.",
+     "Ver más sobre Puente de Vallecas"
+    ],
+    "card_whole": 12,
+    "card_whole_with_more": 48
+   },
+   "pareja_jubilada": {
+    "rows": [
+     5,
+     5,
+     5,
+     5,
+     5
+    ],
+    "row_items": [
+     "1",
+     "Casco Histórico de Barajas · Barajas",
+     "Muy buena opción · 92 %, empata con Alameda de Osu",
+     "· 92 %, empata con Alameda de Osuna",
+     "Unos 1.038 € al mes"
+    ],
+    "card_first_screen": 13,
+    "card_first_screen_items": [
+     "Volver a la lista",
+     "Casco Histórico de Barajas · Barajas",
+     "Barrio de Madrid · Muy buena opción",
+     "Muy buena opción",
+     "Unos 1.038 € al mes",
+     "Precio orientativo",
+     "Centro de salud a unos 9 min andando",
+     "Estación de metro o tren accesible (sin escaleras)",
+     "Parada de autobús a unos 2 min andando · Metro o C",
+     "27 min en transporte público hasta Ciudad Lineal (",
+     "En Barajas, de lo que podemos comparar, no falta n",
+     "No sabemos si en Barajas faltan centros de salud o",
+     "Ver más sobre Casco Histórico de Barajas"
+    ],
+    "card_whole": 13,
+    "card_whole_with_more": 54
+   }
+  }
+ ],
+ "shots": []
+}

@@ -1,0 +1,3 @@
+infra/deploy/e2e/e2e_prod.mjs contra la web de esta rama (next build + start) y su API sobre la base local housing, en solo lectura:
+ok   chromium desktop-1440  70/70 checks · 10 s
+ok   chromium mobile-390    44/44 checks · 10 s

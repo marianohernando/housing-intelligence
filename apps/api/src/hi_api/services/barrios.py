@@ -1,9 +1,13 @@
 """The search inside one district of Madrid (D-232, POST /api/v1/search/barrios): its barrios
-ranked by the same engine as POST /search (hi_domain.search). Each barrio brings its own
+ranked by the same engine as POST /search (hi_domain.search), and the same over every barrio
+of Madrid capital for POST /search with `scope: madrid` (D-238). Each barrio brings its own
 walking minutes and rent of its postcodes; its trip by public transport is that of its own
 sections, or its district's when the barrio is missing from the matrix (said in the fact, with
-lower confidence). Parameterised SQL only, no feature id here.
+lower confidence). «Qué falta» is by district: a barrio's % reads its district's rows (D-243,
+a declared proxy). Parameterised SQL only, no feature id here.
 """
+
+from dataclasses import replace
 
 from sqlalchemy import Connection, text
 
@@ -11,17 +15,23 @@ from hi_api.services.commute import commutes
 from hi_api.services.gaps import ZoneNotFoundError, dataset_refs
 from hi_api.services.search import (
     FIT_VALUES,
+    GapData,
     Loaded,
+    gap_data,
     indicators_by_zone,
     load_warnings,
+    scenario_warnings,
     union_datasets,
+    zone_price,
     zone_ref,
+    zone_rent,
 )
 from hi_contracts.api.envelope import ErrorCode
-from hi_contracts.catalog.enums import NullReason, TerritoryLevel
+from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.public import BarrioSearchResult, IndicatorValue, ScenarioState, ZoneRef
-from hi_domain.fit import FIT_VERSION, Commute, ZoneData
-from hi_domain.search import run_search
+from hi_domain.fit import FIT_VERSION, Commute, Supply, ZoneData
+from hi_domain.geo.codes import district_of_barrio
+from hi_domain.search import SPLIT_BY_DISTRICT, run_search
 
 # A barrio without a trip of its own takes its district's, which stands for the whole district:
 # its confidence is the district's times this factor, and it never decides a trip limit.
@@ -42,7 +52,7 @@ RENT_UNKNOWN = "Sin datos de alquiler para este barrio"
 RENT_NOT_COMPUTED = "Sin datos de alquiler para este barrio todavía"
 
 _UNITS = """
-    SELECT u.level, u.code_official AS code, u.admin_unit_id, u.name,
+    SELECT u.level, u.code_official AS code, u.admin_unit_id, u.name, u.parent_admin_unit_id,
            m.code_official AS municipio_ine, m.name AS municipio_name,
            ST_X(u.c) AS lon, ST_Y(u.c) AS lat
       FROM (SELECT *, ST_PointOnSurface(geom_4326) AS c FROM geo_admin_unit
@@ -53,6 +63,9 @@ _UNITS = """
 """
 _DISTRICT = text(_UNITS.format(where="level = 'distrito' AND code_official = :code"))
 _BARRIOS = text(_UNITS.format(where="level = 'barrio' AND parent_admin_unit_id = :district"))
+_CAPITAL_BARRIOS = text(
+    _UNITS.format(where="level = 'barrio' AND left(code_official, 5) = ANY(:split)")
+)
 
 
 def rent_missing(rent: IndicatorValue | None) -> str | None:
@@ -82,6 +95,13 @@ def borrowed_trips(
     return trips, borrowed
 
 
+def district_supply(gaps: GapData, barrio_code: str) -> dict[GapRowKey, Supply]:
+    """The barrio's district rows of «Qué falta», named after the district (D-243 proxy)."""
+    key = (TerritoryLevel.DISTRITO.value, district_of_barrio(barrio_code))
+    name = gaps.names.get(key)
+    return {row: replace(found, district=name) for row, found in gaps.supply.get(key, {}).items()}
+
+
 def district(conn: Connection, code: str) -> ZoneRef:
     row = conn.execute(_DISTRICT, {"code": code}).mappings().first()
     if row is None:
@@ -90,8 +110,13 @@ def district(conn: Connection, code: str) -> ZoneRef:
     return zone_ref(dict(row))
 
 
-def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> Loaded:
-    rows = [dict(r) for r in conn.execute(_BARRIOS, {"district": parent.admin_unit_id}).mappings()]
+def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef | None) -> Loaded:
+    """The barrios of one district, or with no `parent` those of the whole capital (D-238)."""
+    if parent is None:
+        found = conn.execute(_CAPITAL_BARRIOS, {"split": list(SPLIT_BY_DISTRICT)})
+    else:
+        found = conn.execute(_BARRIOS, {"district": parent.admin_unit_id})
+    rows = [dict(r) for r in found.mappings()]
     codes = {str(r["code"]) for r in rows}
     level = TerritoryLevel.BARRIO.value
     value_rows = [
@@ -100,47 +125,58 @@ def load_barrios(conn: Connection, scenario: ScenarioState, parent: ZoneRef) -> 
         if r["territory_code"] in codes
     ]
     indicators = indicators_by_zone(value_rows)
+    gaps = gap_data(conn, scenario, [TerritoryLevel.DISTRITO], highlights=False)
     trips = commutes(conn, scenario.anchors)
     zones: list[ZoneData] = []
     borrowed = 0
     for row in rows:
         key = (level, str(row["code"]))
-        rent = indicators.rent.get(key)
+        rent = zone_rent(indicators, key)
         commute, from_district = borrowed_trips(
-            trips.by_zone, str(row["admin_unit_id"]), str(parent.admin_unit_id)
+            trips.by_zone, str(row["admin_unit_id"]), str(row["parent_admin_unit_id"])
         )
         borrowed += from_district
+        price, price_estimated = zone_price(indicators, key)
         zones.append(
             ZoneData(
                 zone=zone_ref(row),
-                rent=rent,
-                rent_note=indicators.rent_note,
-                rent_missing=rent_missing(rent),
-                price=indicators.price.get(key),
+                rent=rent.rent,
+                rent_note=rent.note,
+                rent_missing=rent_missing(rent.rent),
+                rent_range=rent.range_m2,
+                rent_source=rent.source,
+                price=price,
+                price_estimated=price_estimated,
                 walk=indicators.walk.get(key, {}),
                 priority_walk=indicators.priority_walk.get(key, {}),
+                transit=indicators.transit.get(key, {}),
                 commute=commute,
+                supply=district_supply(gaps, str(row["code"])),
             )
         )
     versions: dict[str, str] = dict(trips.versions)
     for row in value_rows:
         versions.update(row["inputs"].get("dataset_versions", {}))
+    warnings = barrio_warnings(len(rows), bool(value_rows), borrowed, whole_capital=parent is None)
     return Loaded(
         zones,
         versions,
         [row["computed_at"] for row in value_rows],
-        [],
-        barrio_warnings(len(rows), bool(value_rows), borrowed),
+        gaps.datasets,
+        [*warnings, *gaps.warnings],
         trips.unresolved,
         dict(trips.versions),
     )
 
 
-def barrio_warnings(barrios: int, indicators: bool, borrowed: int) -> list[str]:
+def barrio_warnings(
+    barrios: int, indicators: bool, borrowed: int, *, whole_capital: bool = False
+) -> list[str]:
     insufficient = ErrorCode.INSUFFICIENT_DATA.value
     warnings: list[str] = []
     if not barrios:  # never an empty answer that looks complete
-        warnings.append(f"{insufficient}: no barrio of this district is in the geography")
+        where = "Madrid capital" if whole_capital else "this district"
+        warnings.append(f"{insufficient}: no barrio of {where} is in the geography")
     elif not indicators:
         warnings.append(
             f"{insufficient}: no indicator by barrio has been computed yet, so every condition "
@@ -162,7 +198,7 @@ def search_barrios(
     parent = district(conn, distrito)
     loaded = load_barrios(conn, scenario, parent)
     outcome = run_search(scenario, loaded.zones)
-    warnings = load_warnings(loaded)
+    warnings = [*load_warnings(loaded), *scenario_warnings(scenario)]
     if outcome.unscored_passing:
         warnings.append(
             f"{ErrorCode.INSUFFICIENT_DATA.value}: {outcome.unscored_passing} barrios pass every "
@@ -175,7 +211,7 @@ def search_barrios(
         near_misses=outcome.near_misses,
         all_zones=outcome.all_zones,
         reality_check=outcome.reality_check,
-        datasets=union_datasets(dataset_refs(conn, loaded.versions)),
+        datasets=union_datasets([*dataset_refs(conn, loaded.versions), *loaded.gap_datasets]),
         methodology_version=FIT_VERSION,
     )
     data_version = max(loaded.computed).date().isoformat() if loaded.computed else None

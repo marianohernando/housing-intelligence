@@ -1,0 +1,188 @@
+# Banco de pruebas de la fórmula de encaje
+
+> **Fórmula elegida por Mariano el 15 nov:** la variante A, «cerca y plazas», con el tope por trayecto (`f4_a_recomendada`). Está en producción desde el 15 nov como `fit-0.9` (D-243). Sus resultados están abajo.
+>
+> El banco corre fuera del repositorio, contra la base local `housing` en solo lectura. Aquí va qué comprueba y con qué evidencia externa. Lo citan las preguntas 57, 58 y 59 de `pitch/preguntas.md`.
+
+## La variante elegida, en palabras
+
+- Cada minuto cuenta, también dentro de lo que se considera «cerca».
+- Lo imprescindible también puntúa, además de filtrar.
+- Cada servicio que se marca combina lo cerca que está y las plazas que hay frente a zonas parecidas. Es la misma cifra de «Qué falta», así que el % y la lista hablan de lo mismo.
+- El presupuesto vale 1 hasta el 75 % y 0,6 justo en el límite, en vez de 0: lo que cabe no se lee como «poco» solo por gastar el presupuesto entero.
+- Un trayecto imposible (90 min o más, o sin llegar a las 9:00) de 3 días o más a la semana deja el encaje en la mitad.
+- Las zonas se ordenan por el % que se ve. A igual %, va primero la que tiene más servicios a un paseo.
+- Una zona con FALTA en algo que se marca no pasa del 89 %.
+- Con más de 60 min de trayecto 3 días o más a la semana, no pasa del 74 %.
+
+## Resultados de la variante elegida
+
+Son cifras del banco con los datos del 15 nov. La columna «Antes» es la fórmula anterior (`fit-0.8`). Fuente: D-243 §7–9.
+
+| Qué | Antes | Con la elegida |
+|---|---|---|
+| Zonas al 90 % o más con FALTA en algo marcado, en las 1.000 búsquedas | 578 | 0 |
+| Búsquedas con más de 10 zonas empatadas con la 1.ª | 29 % | 8 % |
+| Zonas con un trayecto imposible entre las 5 primeras, en las 1.000 búsquedas | 103 | 55 |
+| Expectativas cumplidas: el ejemplo del pitch | 5 de 6 | 6 de 6 |
+| Expectativas cumplidas: las personas de la prueba (ajuste) | 20 de 42 | 37 de 42 |
+| Expectativas cumplidas: control | 16 de 20 | 17 de 20 |
+| Expectativas cumplidas: evidencia externa (no se usa para ajustar) | 19 de 24 | 20 de 24 |
+
+- **El control no empeora.** Los 4 casos sintéticos sacan lo mismo con las dos fórmulas. El punto de más es del estudiante, que no cuenta como validación independiente.
+- **Robustez.** Moviendo los datos dentro de su fiabilidad, las 10 primeras conservan de media un 85 % de zonas en las personas y un 84 % en la rejilla.
+- **El precio.** Con ruido en los datos, la 1.ª del pitch cambia en casi la mitad de las réplicas, casi siempre por otra zona con el mismo %: por eso la web dice con quién empata cada una («Igual de buena que…», en «Ver más» de la tarjeta).
+- **Paridad.** La web desplegada da exactamente los mismos % y órdenes que el banco, en las 26 personas y en las 1.000 búsquedas (diferencia máxima, 0).
+- **El ejemplo del pitch, en producción:**
+  - cumplen todo 42 de 199 zonas: 12 «Muy buena opción», 5 «Buena opción», 13 «Opción regular» y 12 «Poco recomendable» (las palabras de la web desde D-245; antes, «encaja muy bien», «bien», «regular» y «poco»);
+  - arriba empatan Puente de Vallecas y Latina al 94 % (desde D-245 la lista no lo dice: lo dice la tarjeta, en «Ver más», «Igual de buena que Latina (94 %).»);
+  - antes, Latina salía 1.ª al 98 %, con cuatro empatadas.
+
+**Lo que sigue sin validar.** Los parámetros nuevos (0,9 en el borde de la ventana, el 40 % de peso de las plazas y su cero al 40 % de la referencia, 0,6 en el límite del presupuesto, +25 %, la mitad, 89 % y 74 %) salen de las bandas y de umbrales que ya había. No están validados con usuarios. Habrá una segunda ronda con las mismas personas, que compare zonas de dos en dos, y el banco ya puede cargarla como preferencias «A mejor que B».
+
+**Lo que no arregla ninguna fórmula** (medido en el banco: son datos o producto).
+- **Alquiler de 2024 frente a los anuncios** (D10). Si todo fuera un 20 % más caro, el ejemplo del pitch pasaría de 42 a 39 zonas, y una persona sola con 900 € que trabaja en Sol, de 9 a 1. La web lo avisa en la lista y en la tarjeta.
+- **Solo transporte público** (B02, B05). Suponer coche cambiaría 3 o más zonas de las 10 primeras en el 64 % de las búsquedas con trabajo. Va a la hoja de ruta.
+- **Precio de compra estimado** (D11, D-234). Corregido el sesgo de Tetuán, a P1 (400.000 € para comprar) Tetuán le sale 5.º. Va a la hoja de ruta.
+- **Metros del piso.** P6 ve todos los distritos si busca 60 m² en lugar de los 71 que se suponen para un hogar de 3 personas.
+
+## Qué comprueba
+
+Cuatro capas, más un informe aparte de lo que la fórmula no ve.
+
+1. **Personas.** 17 casos escritos a mano. Cada uno es una búsqueda con el mismo formato que envía la web, junto con lo que debería salir.
+   - 1 es el ejemplo del pitch. Sus cifras solo informan: sirven para saber si una variante las cambia.
+   - 10 se usan para ajustar. 8 salen de lo que contaron las personas de la prueba con usuarios (13 y 14 nov), sin nombres y sin sus frases, y 2 de notas internas del equipo tras cargar los datos.
+   - 6 son de control y no se miran al ajustar: comprueban que un cambio no empeora casos en los que nadie se ha fijado. 4 son búsquedas sintéticas. Las otras 2 son el caso del estudiante de las pruebas de la API, que no es un control independiente: de él salió la regla del trayecto imposible.
+   - En total hay 79 expectativas:
+     - 21 «debe»: si falla, el resultado no es creíble;
+     - 48 «deseables»;
+     - 10 informativas.
+   - Las cifras de las expectativas salen del sentido común o de lo que contaron las personas. Nunca de lo que da una variante.
+2. **Rejilla de 1.000 búsquedas sintéticas.** Combina hogar, presupuesto, lugar de trabajo, días de oficina, prioridades, ámbito («¿Dónde?») y metros. Es una muestra fija y sin repeticiones, y siempre da lo mismo.
+3. **Pruebas de coherencia** sobre una muestra de la rejilla. Son relaciones entre dos búsquedas que siempre se tienen que cumplir:
+   - más presupuesto (+10 %) nunca quita zonas que encajaban;
+   - menos minutos de trayecto (−20 %) nunca bajan el % de una zona;
+   - marcar un servicio que la zona tiene en la puerta no le baja el %. Esta es solo informativa: con la variante elegida se incumple en 16 de 1.557 comprobaciones (en 33 sin el tope por trayecto), siempre por menos de 1 punto;
+   - menos metros (−10 m²) nunca suben el coste ni quitan zonas;
+   - encarecer una zona no cambia el orden de las demás entre sí.
+4. **Robustez frente al error de los datos.** Cada valor se mueve dentro de su fiabilidad, con una semilla fija para poder repetirlo. Se mide cuánto cambian las 10 primeras zonas.
+
+**Además:**
+- 9 perfiles con expectativas sacadas de la evidencia externa de abajo: una persona joven que trabaja en la Castellana, una pareja, una familia, una persona mayor, un estudiante y otros. Cada expectativa cita sus filas (A01, B04…).
+- Un informe aparte de lo que la fórmula no ve: el alquiler de los anuncios, el coche y el precio de compra estimado.
+
+## Evidencia externa
+
+La recogió la línea de investigación el 15 nov. Sirve para **comprobar** la fórmula, no para ajustarla.
+
+**Cómo leer las tablas:**
+- **Tipo:** *dato* (registro o medición oficial), *encuesta* (preferencias declaradas) u *opinión* (guías, prensa, foros).
+- **Fiabilidad:** *alta* (oficial o arbitrada, muestra grande y método publicado), *media* (método publicado pero muestra sesgada, o cifra secundaria que cita una fuente fiable) o *baja* (sin método, autoselección o cifras contradictorias).
+- Las cifras salen de la fuente indicada. Cuando un número solo se ha visto a través del buscador o de un medio que cita a otro, la columna de sesgo lo dice.
+
+**Límites de la búsqueda:**
+- **Reddit no fue accesible** desde las herramientas de la búsqueda (dominio bloqueado). Las opiniones salen de guías, prensa y portales, no de foros.
+- Las publicaciones académicas se citan por título y revista, con su enlace. Sus autores son públicos y están en cada publicación; no se cita a ninguna persona privada.
+
+---
+
+## A. Qué valora la gente al elegir dónde vivir
+
+| Id | Qué dice | Fuente | Fecha | Muestra | Tipo | Fiab. | Sesgo |
+|---|---|---|---|---|---|---|---|
+| A01 | Condición a la que se daría **más importancia** al elegir vivienda (1.er lugar): cerca de la familia 26,9 %; entorno (barrio) agradable 24,0 %; precio ajustado a sus posibilidades 23,9 %; cerca del trabajo o estudios 16,1 %; calidad de construcción 4,7 %. En 2.º lugar: 13,9 / 25,6 / 22,4 / 15,4 / 11,2 %. | CIS, Barómetro de la Vivienda y el Alquiler, estudio 3212, marginales. https://www.cis.es/documents/d/cis/es3212marpdf | abr-may 2018 | 2.468 (España) | encuesta | alta | Pregunta hipotética con 6 opciones cerradas: transporte, servicios, colegios y seguridad no se ofrecen por separado. Nacional y de 2018. No se han encontrado los cruces por edad. |
+| A02 | Sobre su propio barrio: el 92,2 % dice que es seguro y tranquilo y el 84,6 % que tiene equipamiento sanitario. | CIS 3212 (misma URL) | abr-may 2018 | 2.468 | encuesta | alta | Autovaloración del barrio propio (adaptación): no mide qué se busca. |
+| A03 | Compradores, % que **considera** cada aspecto: precio que encaje 89 %; habitaciones 78; m² 75; **servicios cerca 75**; distribución 74; barrio o vecinos de su agrado 71; terraza 67; **transporte público 65**; accesos por carretera 65; garaje 64; reformas 64; **cerca del trabajo o estudios 50** (43 en 2021); **barrio residencial lejos de aglomeraciones y tráfico 50**; cerca de familia o amigos 45; zona con ocio 35; zonas comunes 38; **buenos colegios 31**; piscina 22. | Fotocasa Research, «Experiencia en compraventa en 2024» (G12). https://s36216.pcdn.co/wp-content/uploads/2025/03/Informe-Experiencia-en-compraventa-en-2024.pdf | feb 2024 | 1.993 demandantes de compra (panel online, 18-75 años) | encuesta | media | Usuarios de un portal y solo compradores. Es «lo considera» (sí/no), no un orden forzado. España entera. |
+| A04 | Por edad: los de 18-24 años consideran menos el precio (75 % frente al 89 %) y son menos exigentes con el tamaño y la distribución; esas exigencias suben a partir de los 25 y más desde los 35. | Fotocasa 2024 (mismo PDF) | feb 2024 | 84 demandantes de 18-24 | encuesta | media-baja | Submuestra pequeña. |
+| A05 | Compradores en 2026: precio 89 % (8,7/10, igual que los dos años anteriores); habitaciones 76; servicios en la zona 74; zona con actividad y ocio 36; accesos por carretera 63; garaje 60 % de valoración positiva; buenos colegios 4,5/10; piscina 3,5/10. | Fotocasa Life sobre «Experiencia en compraventa en 2026». https://www.fotocasa.es/fotocasa-life/compraventa/precio-gran-filtro-comprar-vivienda-condiciona-nueve-cada-diez-demandantes/ | 1.er sem. 2026 (nota del 12 nov 2026) | no publicada en la nota | encuesta | media | Igual que A03. La nota no da la muestra. |
+| A06 | Inquilinos: el precio guía toda la búsqueda. Lo que menos se considera: piscina, trastero, buenos colegios (22 %) y zonas comunes. Los menores de 35 años valoran más tener ocio cerca y los de 45-75 el precio, la distribución y los m². La cercanía al trabajo perdió peso frente a 2018. | Fotocasa, nota «Experiencia en alquiler en 2018-2019». https://prensa.fotocasa.es/wp-content/uploads/2020/01/NdP-precio-y-alquiler-experiencia-en-alquiler-2019.pdf | feb-mar 2019 | 1.403 inquilinos (±2,5 %) | encuesta | media | Antigua y de un portal. |
+| A07 | Ciudad de Madrid, principales problemas (respuesta espontánea, hasta 3): vivienda 57,6 %; sanidad 24,7; coste de la vida 18,2; inseguridad 17,9; paro 16,6; limpieza 15,3; inmigración 12,4; contaminación 10,3; tráfico 10,0; transporte público 5,8. | Ayuntamiento de Madrid, Encuesta de Calidad de Vida y Satisfacción con los Servicios Públicos 2025, informe por distrito. https://www.madrid.es/UnidadesDescentralizadas/Calidad/Observatorio_Ciudad/06_S_Percepcion/EncuestasCalidad/EncuestaMadrides/ficheros/2025/Informe_Res_2025.pdf | sep-oct 2025 | 8.593 (unas 400 por distrito; ±1,1 % en la ciudad y ±4,9 % por distrito) | encuesta | alta | Son problemas de la ciudad, no criterios para elegir barrio. Solo Madrid capital. |
+| A08 | Misma encuesta, valoración de 0 a 10: oferta cultural y ocio 8,1; movilidad y transporte público 7,4; deporte 7,4; convivencia vecinal 6,6; seguridad 6,4; educación 6,4; salud y servicios sanitarios 5,8; calidad medioambiental 5,4; coste de la vida 3,7; facilidad para encontrar vivienda 3,1. | ECV Madrid 2025 (misma URL) | sep-oct 2025 | 8.593 | encuesta | alta | El transporte está bien valorado en la capital; la vivienda es el punto negro. |
+| A09 | Calidad de vida **en su barrio** por distrito (0-10): Salamanca 8,0; Chamberí 7,9; Moncloa-Aravaca 7,9; Retiro 7,8; Chamartín 7,8; Hortaleza 7,8; Fuencarral-El Pardo 7,7; Arganzuela 7,5; Moratalaz 7,5; Centro 7,1; Vicálvaro 7,1; Villa de Vallecas 7,1; Ciudad Lineal 7,0; Latina 6,9; San Blas-Canillejas 6,9; Tetuán 6,6; Carabanchel 6,4; Usera 6,1; Villaverde 6,0; **Puente de Vallecas 5,7**. Media de la ciudad 7,1. (El valor de Barajas no se pudo leer en la tabla.) | ECV Madrid 2025 (misma URL), p. 22 | sep-oct 2025 | unas 400 por distrito | encuesta | alta | Lo valoran los propios vecinos. Correlaciona con la renta del distrito. |
+| A10 | Percepción de seguridad general por distrito: de 7,5 (Chamberí) y 7,4 (Chamartín, Barajas) a 6,5 (Puente de Vallecas, Usera) y 6,4 (Villaverde). **Rango: 1,1 puntos.** En el barrio, 7,8 de día y 6,4 de noche. | ECV Madrid 2025 (misma URL), pp. 74-76 | sep-oct 2025 | 8.593 | encuesta | alta | Es percepción, no delitos. La diferencia entre distritos existe pero es moderada. |
+| A11 | Las personas de 65 años o más declaran más satisfacción con vivir en su barrio; las de 30-44 son las más críticas con la calidad de vida. | ECV Madrid 2025 (misma URL), pp. 24 y 31 | sep-oct 2025 | 8.593 | encuesta | alta | — |
+| A12 | Hogares de la Comunidad de Madrid que sufren: ruidos de vecinos o del exterior 27,7 % (España 22,1); contaminación y otros problemas ambientales 17,5 (12,0); delincuencia o vandalismo 16,7 (14,1). | INE, Encuesta de Condiciones de Vida, tabla 10001. https://servicios.ine.es/wstempus/js/ES/DATOS_TABLA/10001?nult=1 | 2020 (último año que sirve la tabla) | muestra de la ECV | encuesta | alta | De 2020: año de pandemia y no reciente. |
+| A13 | El 82 % de las personas de 65-84 años quiere envejecer en su propia casa; el 74 % incluso con alta dependencia. | OCU, nota de prensa. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2017/mayores-vivienda-07122017 | dic 2017 | 1.380 | encuesta | media | Panel de consumidores. |
+| A14 | Alrededor del 30 % de los mayores de 65 años vive en edificios sin ascensor; el 34,3 % de las viviendas principales no lo tiene. | Estudio «Más allá del ascensor» (OTIS e ILUNION Accesibilidad), citado en prensa. https://otis.com/documents/d/otis-2/otis_mas_alla_del_ascensor_movilidad-accesible_vf_web | 2024 | — | dato | media-baja | No se ha verificado en el original, y lo publica una empresa de ascensores. |
+| A15 | Con el registro completo de afiliados a la Seguridad Social (2019-2021), el teletrabajo explica de forma significativa mudanzas de adultos jóvenes y de mediana edad del núcleo de Madrid a la corona y a zonas rurales, controlando distancia al trabajo, vivienda, transporte y amenidades. En sentido contrario la evidencia es menos concluyente. | «The impact of remote working on residential mobility in the metropolitan region of Madrid», *Cities* 169 (2026) 106462. https://docta.ucm.es/bitstreams/09f70bba-fc74-4a2b-92be-eea888222108/download | 2026 (datos 2019-2021) | registro completo | dato (estudio) | alta | Periodo de pandemia. |
+| A16 | En la elección de colegio, junto al proyecto educativo, el motivo práctico principal es la proximidad al domicilio (o tener hermanos en el centro). Para las familias «confiadas», la proximidad es el único criterio de descarte. | Artículo en *Profesorado* (Universidad de Granada) sobre la elección de escuela en Barcelona. https://digibug.ugr.es/bitstream/handle/10481/17388/rev122ART4.pdf?sequence=1 | 2012 | cualitativo | estudio | media | Barcelona. Solo se ha leído el fragmento del buscador, sin porcentajes. Madrid tiene zona única de escolarización. |
+| A17 | La tasa de emancipación de los menores de 30 años es del 14,5 %, la más baja registrada. Alquilar una vivienda en solitario costaría el 98,7 % del salario joven medio (1.191 €/mes). | Consejo de la Juventud de España, Observatorio de Emancipación 2025, citado en prensa. https://es.euronews.com/2026/05/22/el-alquiler-consume-el-987-del-salario-juvenil-en-pisos-individuales-y-mas-del-33-en-compa | may 2026 | — | dato | media | Nacional (no Madrid). No se ha verificado en el PDF, porque el enlace de descarga falla. |
+
+## B. Tolerancia al trayecto
+
+| Id | Qué dice | Fuente | Fecha | Muestra | Tipo | Fiab. | Sesgo |
+|---|---|---|---|---|---|---|---|
+| B01 | Comunidad de Madrid, día laborable: quien viaja dedica 69-71 min al día a desplazarse. El viaje medio dura 25 min: 17-18 a pie, **38-39 en transporte público** y 23 en vehículo privado. | CRTM, Encuesta Domiciliaria de Movilidad 2018: síntesis (Tabla 10) https://www.vialibre-ffe.com/pdf/edm18_sintesis.pdf y documento III (Tabla 102) https://crtm.es/media/j3tfhsrl/edm18_doc3_espacial_y_temporal.pdf | 2018 | 13.009 hogares | dato | alta | Antes de la pandemia y del teletrabajo. Tiempos declarados (inicio y fin) redondeados a 5 min. |
+| B02 | Tiempo medio en transporte público según dónde se vive: Almendra Central 31 min; periferia urbana de Madrid 36; corona metropolitana 47; corona regional 62. En coche, 22-27 min en todas las coronas. | EDM 2018, documento III, Tabla 102 | 2018 | 13.009 hogares | dato | alta | — |
+| B03 | Por motivo: **trabajo, 33 min de media** (Almendra 30; periferia y corona metropolitana 34; el máximo, en la corona regional); estudios 21-24; compras 15-16; médico 23-26; ocio 24-25. | EDM 2018, documento III, Tabla 103 | 2018 | 13.009 hogares | dato | alta | — |
+| B04 | Duración de los viajes en hora punta. En transporte público: < 15 min 10,6 %; 15-30 23,2 %; 30-45 27,2 %; 45-60 13,9 %; **60-75 14,6 %**; 75-90 4,4 %; 90-105 4,1 %. En coche: < 15 31,6 %; 15-30 32,8 %; 30-45 22,9 %; 45-60 6,1 %; 60-75 4,3 %. | EDM 2018, documento III, Tabla 106 y texto (p. 118) | 2018 | 13.009 hogares | dato | alta | Son viajes de cualquier motivo en hora punta, no solo al trabajo. |
+| B05 | El 52,7 % de los viajes por trabajo se hace en vehículo privado. En transporte público, los modos más usados para ir a trabajar son Metro (43,5 %), Cercanías (26,0) e interurbanos (15,0). | EDM 2018, síntesis, pp. 24-25 | 2018 | 13.009 hogares | dato | alta | — |
+| B06 | Ocupados de la UE: 25 min de media por trayecto; el 61,3 % tarda menos de 30, el 26,3 % entre 30 y 59 y el 8,1 % 60 o más. | Eurostat, LFS, módulo de 2019 (lfso_19plwk28). https://ec.europa.eu/eurostat/de/web/products-eurostat-news/-/ddn-20201021-2 | 2019 | LFS de la UE | dato | alta | La nota no da la cifra de España ni de Madrid; no se ha obtenido. |
+| B07 | **Constante de Marchetti:** las personas dedican alrededor de 1 h al día a viajar (1,1 h por viajero en la literatura que la defiende). La EDM de Madrid (69-71 min/día, B01) encaja. Una revisión de más de 24 estudios concluye que el presupuesto de tiempo **no es constante a nivel individual**, solo quizá en agregado. | https://en.wikipedia.org/wiki/Marchetti%27s_constant · revisión «TTB or not TTB, that is the question», *Transportation Research Part A* 38 (2004). https://ideas.repec.org/a/eee/transa/v38y2004i9-10p643-675.html | 1994 / 2004 | revisión | estudio | media | Regularidad agregada: no sirve como umbral individual, pero sí como orden de magnitud. Ida y vuelta de 60 min por trayecto = 2 h/día, el doble del presupuesto. |
+| B08 | Panel alemán (GSOEP 1985-1998): media de 23 min por trayecto. Quien tarda más declara menos satisfacción vital; +19 min (1 desviación típica) restan 0,12 puntos. Compensar 23 min exigiría unos **242 €/mes (≈ 19 % del salario medio)**; compensar **1 h por trayecto, unos 515 €/mes (≈ 40 %)**. Los que cambian de casa o de trabajo tampoco lo compensan. | «Stress That Doesn't Pay: The Commuting Paradox», *The Scandinavian Journal of Economics* 110(2) (2008) 339-366. https://doi.org/10.1111/j.1467-9442.2008.00542.x (las cifras están en el texto y en la nota 14) | 2008 (datos 1985-1998) | panel nacional | estudio | alta | Alemania y datos antiguos. La cifra de 1 h está en una nota al pie. |
+| B09 | Panel inglés (Understanding Society): cada minuto extra de trayecto reduce la satisfacción con el trabajo y con el tiempo libre, aumenta la tensión y empeora la salud mental, sobre todo por la pérdida de tiempo libre. Ir andando o en bici atenúa el efecto. Según la nota de prensa, +20 min al día equivalen en satisfacción laboral a un recorte del 19 % del sueldo. | «How commuting affects subjective wellbeing», *Transportation* 47 (2020) 2777-2805. https://uwe-repository.worktribe.com/output/850689 · nota: https://www.bristolhealthpartners.org.uk/news/an-additional-20-minutes-commuting-each-day-lowers-job-satisfaction-equivalent-to-a-19-per-cent-pay-cut/ | 2020 | panel representativo de Inglaterra | estudio | alta (el 19 %: media) | Reino Unido. |
+| B10 | Reino Unido: el **peor bienestar** en las cuatro medidas se da con trayectos de **61-90 min**, frente a ≤ 15 min. La ansiedad sube con cada minuto; a partir de 3 h el efecto desaparece (son perfiles distintos). El autobús es el modo con peor bienestar. | ONS, «Commuting and Personal Well-being, 2014» (Annual Population Survey), vía prensa. https://ckan.publishing.service.gov.uk/dataset/measuring_national_well-being/resource/1ab7fc5b-523f-4303-84ae-1570319531ab | feb 2014 | ~60.200 | dato | media | No se ha leído el informe original, solo coberturas coincidentes. |
+| B11 | 27 países: el valor que se da al teletrabajo (2-3 días) crece con la duración del trayecto, unos 5 % del sueldo de media. El teletrabajo de 2021-2022 ahorró unas 2 h/semana de trayecto. | «Working from Home Around the World», *Brookings Papers on Economic Activity* (2022). https://www.brookings.edu/wp-content/uploads/2022/09/BPEA-FA22_WEB_Aksoy-et-al.pdf | 2022 | 27 países, encuesta online | encuesta | media | Preferencia declarada. No mide directamente cuánto trayecto más se acepta. |
+| B12 | España: 36 min por trayecto puerta a puerta; el 66 % va en vehículo privado; el 40 % describe su trayecto como estresante, más en Madrid. | Estudio de PageGroup citado en idealista/news. https://www.idealista.com/news/node/856142 | ago 2025 | no publicada | encuesta | baja | Encuesta privada sin método. |
+| B13 | Madrid, viaje en transporte público: 45-48 min por viaje (informes de 2020-2023); 62 min diarios en otra edición. | Moovit, vía prensa. https://www.deia.eus/bilbao/2023/02/15/bilbainos-esperan-8-minutos-coger-6446149.html | 2018-2023 | usuarios de la app | dato | baja | Autoselección (usuarios de una app de transporte) y método no publicado. |
+
+## C. Opiniones sobre dónde vivir en Madrid según el perfil
+
+No hay foros: Reddit no fue accesible desde las herramientas de la búsqueda. Lo que sigue son patrones que se repiten en guías y prensa. Es opinión salvo donde se indica lo contrario.
+
+| Id | Qué dice | Fuente | Fecha | Muestra | Tipo | Fiab. | Sesgo |
+|---|---|---|---|---|---|---|---|
+| C01 | **Familias:**<br>• Madrid: Retiro, Chamberí, Arturo Soria y el noreste, Conde de Orgaz, Mirasierra, Sanchinarro y Valdebebas.<br>• Fuera: Las Rozas, Pozuelo, Alcobendas y La Moraleja, Rivas-Vaciamadrid («presupuesto más manejable») y Tres Cantos.<br>• Se repiten: colegios, parques, calles tranquilas y espacio.<br>• Avisos: precio en el centro, coche en los PAU y trayectos largos desde el noroeste. | idealista/news (en inglés). https://www.idealista.com/en/news/lifestyle-in-spain/2026/10/13/71690-the-best-places-to-live-in-madrid-for-families | 13 oct 2026 | — | opinión | media-baja | Público expatriado de presupuesto alto y colegios internacionales. |
+| C02 | **Familias:**<br>• Centro: Chamberí, Salamanca, Retiro, Chamartín, El Viso, Arturo Soria y Conde de Orgaz.<br>• PAU: Montecarmelo, Las Tablas y Sanchinarro.<br>• Fuera: Pozuelo, Majadahonda, Aravaca, Las Rozas y La Moraleja; Alcobendas y San Sebastián de los Reyes como «más asequibles».<br>• Aviso: en los suburbios casi siempre hace falta coche. | Steps into Spain. https://www.stepsintospain.es/family-friendly-neighbourhoods-madrid/ | 2020 | — | opinión | baja | Expatriados y antigua. |
+| C03 | **Estudiantes y jóvenes:**<br>• Para la UCM y la UPM, Moncloa y Argüelles; para la Carlos III, Getafe o Leganés (Cercanías).<br>• Más baratos junto al centro: Lavapiés y **Tetuán** (L1 y L6, «unos 20 min a casi todo Madrid»).<br>• Jóvenes profesionales: Chueca y Chamberí; Salamanca si se trabaja en la Castellana y hay presupuesto alto. | Uniplaces, guía de barrios 2026. https://www.uniplaces.com/city-explorer/guia-de-barrios-de-madrid-donde-vivir-segun-estilo-de-vida-tipo-de-alojamiento-y-zona-2026/ | 2026 | — | opinión | baja | Portal de alquiler para estudiantes e internacionales. |
+| C04 | **URJC Vicálvaro:**<br>• Residencias junto al campus, desde unos 720-745 €/mes.<br>• Vicálvaro se describe como tranquilo y más asequible que el centro.<br>• Desde Vicálvaro se llega al centro en Metro (L9) y Cercanías. | URJC, alojamiento del Campus de Vicálvaro https://www.urjc.es/internacional/estudiantes-internacionales/262-alojamiento-accomodation · uniscopio https://uniscopio.com/residencias/residencias-universitarias-madrid/universidad-rey-juan-carlos/vicalvaro/ | 2026 | — | dato y opinión | media | Precios de residencias, no de pisos. |
+| C05 | **Ranking de «mejor relación calidad-precio»:**<br>• Los 25 barrios están en el sur, el este o la periferia interior: Entrevías renovado, Carabanchel norte, Delicias, Almenara (Tetuán), Pueblo Nuevo, Marroquina, Adelfas, Almendrales, Oporto, Legazpi, Moscardó, San Fermín, Comillas, Palomeras Bajas, Aluche, Vallecas Villa, Orcasitas, San Cristóbal…<br>• Método: precio, transporte, servicios, seguridad (Interior por distrito) y tendencia. | El blog del Euríbor. https://www.euribor.com.es/2026/06/05/los-25-barrios-de-madrid-con-mejor-relacion-calidad-precio-para-vivir-en-2026/ | 5 jun 2026 | — | opinión con datos | baja | Método no reproducible e incoherencias (un barrio aparece dos veces). |
+| C06 | **Barrios más baratos para alquilar** (anuncio de 90 m² usado, en buen estado y con ascensor):<br>• Pavones 810 €; San Andrés 815; Los Rosales 884; Orcasitas 885; Zofío 900; casco de Vallecas 947; San Fermín 976.<br>• Una pareja joven dedicaría el 43 % de sus ingresos al alquiler. | OCU. https://www.ocu.org/organizacion/prensa/notas-de-prensa/2025/pisos090925 | 9 sep 2025 | 114 barrios | dato (anuncios) | media | Implica 9-11 €/m², muy por debajo de idealista para esos distritos (D01-D02): los métodos no son comparables. |
+| C07 | **Prensa local:** Villaverde, Carabanchel y Vallecas son las zonas donde la clase media «aún puede vivir»; para muchos jóvenes, la única opción de emanciparse dentro de Madrid. | moncloa.com https://www.moncloa.com/2026/04/01/madrid-alquiler-zonas-3368791/ · dineo https://www.dineo.es/blog/?p=3090 | abr 2026 | — | opinión | baja | Cifras sin fuente y contradictorias entre medios. |
+| C08 | **Estereotipo del sur.**<br>• En opiniones aparece desaconsejar el sur (Villaverde, Puente de Vallecas, Usera).<br>• Los datos de los vecinos (A09) sí muestran peor calidad de vida percibida (5,7-6,1 frente a 7,1 de media).<br>• Pero la seguridad percibida solo difiere 1,1 puntos entre el mejor y el peor distrito (A10).<br>• Y esos mismos barrios encabezan los rankings de calidad-precio (C05).<br>• **Conclusión:** no se convierte en una expectativa que excluya zonas; como mucho, en una «info». | síntesis de A09, A10, C05 y C07 | — | — | — | — | Riesgo de estereotipo. |
+
+## D. Precios de mercado frente a los nuestros (solo contraste)
+
+| Id | Qué dice | Fuente | Fecha | Muestra | Tipo | Fiab. | Sesgo |
+|---|---|---|---|---|---|---|---|
+| D01 | **Alquiler en idealista, sep. 2026 (€/m²/mes):**<br>• Madrid 23,4.<br>• Distritos: Salamanca 28,5; Centro 26,1; Chamberí 26,0; Retiro 24,0; Chamartín 23,7; Tetuán 22,9; Arganzuela 22,4; Moncloa-Aravaca 21,8; Usera 19,9; Carabanchel 19,3; Villaverde 18,2.<br>• Municipios: Leganés 15,4; Getafe 15,1; Alcalá de Henares 14,2. | Housfy, citando el informe de idealista de septiembre. https://housfy.com/blog/cuales-son-las-zonas-tensionadas-del-alquiler-en-madrid/ | sep 2026 | anuncios | dato (anuncio) | media | Precio pedido, no firmado. Fuente secundaria. |
+| D02 | **Alquiler en idealista, oct. 2026 (€/m²/mes):**<br>• Madrid 23,4 (+4,5 % interanual); Comunidad 21,6.<br>• Distritos: Salamanca 28,4; Puente de Vallecas 19,3; Villa de Vallecas 17,3.<br>• Municipios: Pozuelo 18,2; Alcobendas 17,8.<br>• En 2025 el alquiler de Madrid subió un 9,7 %. | idealista, informe de alquiler (la página da 403; cifras vistas a través del buscador) https://www.idealista.com/sala-de-prensa/informes-precio-vivienda/alquiler/madrid-comunidad/madrid-provincia/madrid/ · nota del 3 nov 2026 https://www.idealista.com/news/inmobiliario/vivienda/2026/11/03/921672-el-precio-del-alquiler-en-espana-sube-un-5-6-anual-en-octubre · nota del 2 ene 2026 (título) | oct 2026 | anuncios | dato (anuncio) | media | Precio pedido. |
+| D03 | Fotocasa, Madrid capital: 23,11 €/m²/mes en oct. 2026 (23,00 en oct. 2025). | https://www.fotocasa.es/es/alquiler/viviendas/madrid-capital/todas-las-zonas/l | oct 2026 | anuncios | dato (anuncio) | media | Desde jul. 2026 excluye el alquiler de temporada. |
+| D04 | **Municipios, alquiler (€/m²):**<br>• Jul. 2026: Colmenar Viejo 12,5; Arganda 12,7; Collado Villalba 13,8; Alcalá 14,1; Fuenlabrada 14,5.<br>• T2 2026: Aranjuez 11,8; Arroyomolinos 11,4. | El Diario de Madrid (atribuye a idealista solo una parte). https://www.eldiariodemadrid.es/articulo/vivienda/municipios-madrid-donde-todavia-puede-alquilar-menos-1000-euros-mes/20260819114526139671.html | ago 2026 | — | dato (anuncio) | baja-media | Fuente parcialmente citada. |
+| D05 | **Venta en idealista, sep. 2026 (€/m²):**<br>• Madrid 6.458.<br>• Distritos caros: Salamanca 10.865; Chamberí 9.159; Retiro 8.515; Chamartín 8.127; Centro 7.771.<br>• Distritos baratos: Villa de Vallecas 3.852; Carabanchel 3.829; Usera 3.628; Puente de Vallecas 3.535; Villaverde 3.365. | idealista/news. https://www.idealista.com/news/inmobiliario/vivienda/2026/10/02/917177-asi-esta-el-precio-de-la-vivienda-en-madrid-en-septiembre-de-2026-cifras-y-barrios | sep 2026 | anuncios | dato (anuncio) | media-alta | Precio pedido (un 10-25 % por encima del de cierre). |
+| D06 | **Venta en idealista, oct. 2026 (€/m²):** Madrid 6.427; Salamanca 10.876; Chamberí 9.081; Chamartín 8.142; **Tetuán 6.169**; **Moratalaz 4.515**; Carabanchel 3.894; Villa de Vallecas 3.846; Villaverde 3.389. | idealista, informe de venta (403 al abrir; cifras vistas a través del buscador). https://www.idealista.com/sala-de-prensa/informes-precio-vivienda/venta/madrid-comunidad/madrid-provincia/madrid/ | oct 2026 | anuncios | dato (anuncio) | media | Precio pedido. |
+| D07 | **Venta en municipios, idealista, mar. 2026 (€/m²):** Alcobendas 3.962; Getafe 3.162; Coslada 3.121; Leganés 3.120; Móstoles 2.924. Realadvisor da 4.585 para Alcobendas (ago. 2026). | Xataka, citando a idealista https://www.xataka.com/magnet/periferia-siempre-fue-refugio-quienes-huian-precios-vivienda-madrid-ahora-eso-esta-cambiando · https://realadvisor.es/es/precios-viviendas/municipio-alcobendas | mar-ago 2026 | anuncios | dato (anuncio) | media-baja | Fuentes secundarias que no coinciden entre sí. |
+| D08 | **Precio de compraventa en escrituras:** 3.463 €/m² de media en la Comunidad de Madrid en 2025 (España, 1.902). No se ha obtenido el desglose por distrito. | Consejo General del Notariado, vía prensa. https://brainsre.news/compraventa-viviendas-crecio-44-2025-precios-7/ | 2025 | todas las escrituras | dato | alta | Mezcla toda la región. |
+| D09 | **Nuestros datos** (14-15 nov).<br>• **Alquiler** («contratos firmados en 2024»: IRPF de la CM × factor de la AEAT; €/m² sobre superficie catastral): Chamberí 22,5; Centro 22,0; Fuencarral-El Pardo 16,6; Puente de Vallecas 14,7; Latina 14,3; Moratalaz 14,1; Collado Villalba 11,8; Leganés 11,6; Alcalá 11,3; Colmenar Viejo 9,8.<br>• **Compra** (valor tasado del MIVAU de 2025 repartido según el valor catastral, D-234): Chamberí 7.009; Chamartín ≈ 7.441 (506.000 € / 68 m²); Tetuán 6.051; Moratalaz 4.492; Puente de Vallecas 2.971. Valor tasado de Madrid municipio: 4.993.<br>• **Municipios** (valor tasado): Alcobendas 4.327; Coslada 2.875; Leganés 2.869; Getafe 2.812; Móstoles 2.692; Parla 2.097. | cálculo de Vida Fácil: alquiler, D-228; compra, D-227 y D-234 | 2024-2025 | — | dato interno | — | — |
+| D10 | **Alquiler, mercado ÷ nuestro (€/m²):**<br>• Distritos caros: Chamberí 26,0/22,5 = **1,16**; Centro 26,1/22,0 = **1,19**.<br>• Puente de Vallecas 19,3/14,7 = **1,31**.<br>• Municipios: Leganés 15,4/11,6 = **1,33**; Colmenar Viejo 12,5/9,8 = **1,28**; Alcalá 14,2/11,3 = **1,26**; Collado Villalba 13,8/11,8 = **1,17**. | cálculo con D01-D04 y D09 | — | — | cálculo | media | Mezcla precio pedido en 2026 con contratos firmados en 2024. Solo la subida (+9,7 % en 2025 y +4,5 % interanual en oct. 2026) ya explica un desfase uniforme del orden del 15 %. Lo que no es uniforme es el hallazgo. |
+| D11 | **Compra, anuncio ÷ nuestro (€/m²):**<br>• Chamberí 9.081/7.009 = **1,30**; Madrid municipio 6.458/4.993 = 1,29; Puente de Vallecas 3.535/2.971 = 1,19; Chamartín ≈ 1,09.<br>• **Tetuán 6.169/6.051 = 1,02**; **Moratalaz 4.515/4.492 = 1,01**.<br>• Municipios: Getafe 1,12; Coslada, Leganés y Móstoles 1,09; Alcobendas 0,92 (1,06 con Realadvisor). | cálculo con D05-D07 y D09 | — | — | cálculo | media | El anuncio debería estar por encima de la tasación (a escala de ciudad, ×1,29). |
+| D12 | **Hipótesis por verificar, no hallazgo:** el €/m² de alquiler es sobre la superficie **construida** del Catastro (límites del feature `alquiler_m2_mensual`). Si los 61-77 m² del Censo son superficie **útil**, el coste mensual de un piso de esa superficie útil se infravalora en la proporción construida/útil (del orden del 15-25 %). | `data/catalog/features/alquiler_m2_mensual.yaml` y `hi_domain/affordability.py` | — | — | inferencia | baja | Hay que comprobar qué superficie usa la tabla 59524 del INE. |
+
+**Lectura de D10 y D11:**
+- **Alquiler:**
+  - el mercado está entre un 16 % y un 33 % por encima de nuestros datos;
+  - la distancia es **mayor en las zonas baratas** (Puente de Vallecas, Leganés, Colmenar Viejo: ×1,28-1,33) que en las caras (Chamberí, Centro: ×1,16-1,19);
+  - en nuestros datos, el cociente Chamberí/Puente de Vallecas es 1,53, y en el mercado, 1,35.
+- **Compra:**
+  - la estimación por valor catastral **comprime el gradiente** y pone Tetuán y Moratalaz al nivel del anuncio (×1,0), mientras Chamberí y la media de la ciudad están a ×1,3;
+  - Chamberí/Tetuán es 1,16 en nuestros datos y 1,47 en el mercado;
+  - Chamberí/Moratalaz es 1,56 en nuestros datos y 2,01 en el mercado;
+  - Tetuán/Puente de Vallecas es 2,04 en nuestros datos y 1,75 en el mercado;
+  - **Tetuán y Moratalaz salen un 20-25 % caros respecto al resto de la ciudad.** En anuncios, 68 m² en Tetuán cuestan unos 419.000 €, pero a la ratio de tasación de la ciudad (÷ 1,29) serían unos 325.000 €.
+- **Hipótesis (sin verificar):** las ponencias catastrales van por detrás del mercado en las zonas caras.
+
+---
+
+## Lo que no se ha encontrado
+
+- **Censo 2021 y EPA:** no se ha encontrado ningún tiempo de desplazamiento al trabajo para Madrid. El Censo de 2011 lo preguntaba a una muestra del ~9 %, pero no se ha conseguido la tabla. Del módulo de la EPA de 2019 no se ha obtenido la cifra de España.
+- **Encuesta española sobre el trayecto máximo aceptable** («rechazaría un empleo a más de X min»): no aparece ninguna fiable.
+- **Cruces por edad o por tipo de hogar:**
+  - no se han encontrado los del CIS 3212;
+  - tampoco ninguna encuesta con prioridades declaradas para familias con hijos en Madrid;
+  - lo más cercano son Fotocasa por edad (A04, A06) y la ECV de Madrid por edad (A11).
+- **Ruido y zonas verdes como criterio de elección:** solo hay indicios indirectos: «barrio residencial lejos de aglomeraciones y tráfico», 50 % (A03), y ruido en el 27,7 % de los hogares (A12).
+- **Precios de alquiler de idealista para los 21 distritos con una sola fecha:** faltan Latina, Moratalaz, Ciudad Lineal, Hortaleza, San Blas-Canillejas, Vicálvaro, Barajas y Fuencarral-El Pardo con cifra verificada.
+- **Precios notariales por distrito.**
+- **Consenso de zonas para personas mayores:** no se ha encontrado ninguno. Solo hay criterios: quedarse en su barrio, salud cerca, ascensor y estar cerca de la familia.

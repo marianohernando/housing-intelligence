@@ -1,0 +1,33 @@
+vercel logs, deployment dpl_HDY4ezEb35YLdtw5TXZCwXiKPnKq, from 2026-11-14T12:49:00Z (after the pre-sync checks; the sync ran after that) to 2026-11-14T16:47:59.227Z (UTC)
+runtime log lines: 555, more pages: false, levels:  555 info 
+  "fit bindings ignored"   0
+  "fit roles ignored"      0
+  "ignored"                0
+  "WARNING"                0
+  "EMAXCONNSESSION"        0
+  "prepared statement"     0
+  "password authentication" 0
+  "OperationalError"       0
+  "Traceback"              0
+  "ValueError"             0
+  "KeyError"               0
+  "connection"             0
+  "timeout"                0
+instances started ("Started server process"): 31
+API access lines by status:  278 200  2 404  1 405 
+POST /api/v1/search: 30 · POST /api/v1/search/barrios: 4
+CDN request records: 1744, more pages: false, by status: 1696 200  9 206  21 304  3 404  1 405  14 416 
+CDN 4xx/5xx:
+   1   404 GET /api/v1/features/camas_instaladas_por_1000_hab/values Mozilla/5.0 (Macintosh; Intel 
+   1   404 GET /api/v1/features/hospitales_total/values Mozilla/5.0 (Macintosh; Intel 
+   1   404 GET /robots.txt Mozilla/5.0 (Macintosh; Intel 
+   1   405 GET /api/v1/search/barrios Mozilla/5.0 (compatible)
+  14   416 GET / Mozilla/5.0 (compatible)
+
+What the 4xx are:
+  404 GET /api/v1/features/{hospitales_total,camas_instaladas_por_1000_hab}/values?level=ccaa at 16:45:07 (a Safari visitor, the hospital note of a zone):
+      «No values for … at ccaa», so feature_value had no rows for them at that moment, which is the window of the sync's reload.
+      Before (16:44:33) other features answered 200; at 16:49 UTC both answer 200, three times in a row.
+  404 GET /robots.txt (OAI-SearchBot): there is no robots.txt.
+  416 GET / x14 and 405 GET /api/v1/search/barrios (a POST route), 13:02-13:03, User-Agent «Mozilla/5.0 (compatible)»: an anonymous bot.
+  206 x9: the link preview of WhatsApp (WhatsApp/2.23.20.0) at 14:25, 15:29 and 16:11: GET /, /favicon.ico and /opengraph-image.png, all partial content as WhatsApp asks with Range.

@@ -1,0 +1,8 @@
+Supabase after the sync (supabase-datamad MCP, read only), 2026-11-14T16:47:46Z
+  alembic                              0007
+  feature_registry rows                49 (47 + min_a_pie_bus, min_a_pie_metro)
+  feature_value rows                   94980 (+9948)
+  feature_value min_a_pie_bus          4974 = 131 barrio + 246 distrito + 179 municipio + 4417 seccion_censal (4393 with value) + 1 ccaa
+  feature_value min_a_pie_metro        4974, same shape
+  min_a_pie_transporte, for reference  4974, same shape (the ccaa row is the Comunidad reference, with no admin_unit_id)
+  geo_admin_unit 4973 · place_master 24776 · commute_time 191649 (unchanged)

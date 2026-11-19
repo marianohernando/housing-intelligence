@@ -1,0 +1,7 @@
+Vercel Web Analytics (#68), 2026-11-15 ~11:13 UTC
+curl /_vercel/insights/script.js: 200 application/javascript, 2,076 B
+curl /c701312a495cf1d6/script.js: 200 application/javascript, 2,076 B (the same bytes)
+The page mounts <Analytics /> (RSC reference «Analytics» in the HTML of /); @vercel/analytics 2.0.1 injects the script from the project's own path,
+  /c701312a495cf1d6/script.js, not /_vercel/insights/script.js. In Chromium at 1440 and at 390, on / and /que-falta: «200 GET /c701312a495cf1d6/script.js»,
+  window.vam = production, window.va defined, 0 console errors.
+No page-view beacon was seen from headless Chromium, so the counting itself is checked in the Vercel dashboard, not here.

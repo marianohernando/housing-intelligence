@@ -1,0 +1,44 @@
+feature_id: no2_media_anual
+version: 2
+human_name: "NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire"
+domain: environment
+type: derived
+unit: "µg/m³"
+direction: lower_is_better
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_calidad_aire_horario_2025, role: primary}
+  - {dataset_id: cm_calidad_aire_estaciones, role: primary}
+  - {dataset_id: cm_calidad_aire_zonas, role: primary}
+  - {dataset_id: ayto_calidad_aire_horario, role: primary}
+  - {dataset_id: ayto_calidad_aire_estaciones, role: primary}
+  - {dataset_id: osm_red_peatonal, role: secondary}
+formula:
+  method: nearest_station_mean
+  station_category: other
+  station_subcategory: Estación de calidad del aire
+  means_datasets: [cm_calidad_aire_horario_2025, ayto_calidad_aire_horario]
+  zones_dataset: cm_calidad_aire_zonas
+  # The station's type as each network publishes it: a borrowed station is a background one
+  # before a traffic one (review of PR #65, R-08)
+  type_attributes: [estacion_tipo_estacion, nom_tipo]
+  # Directive 2008/50/EC, annex I: 90 % of the hours minus calibration and maintenance
+  min_capture: 0.85
+  own_confidence: 0.9  # one station for the whole zone
+  nearest_confidence: 0.6  # another zone's station
+  # The zone's centre is the centre of its residential streets, as in the walking features
+  origin_highways: ["residential", "living_street", "unclassified", "pedestrian", "tertiary"]
+  levels: {distrito: {}, barrio: {}}  # barrios of Madrid since D-238's zone view
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [own_station, min_capture]}
+public_use: true
+pro_use: true
+models: []
+tests: [names_its_station, own_station_first, same_air_zone, context_only]
+limitations:
+  - "Es la media del año 2025 de las horas válidas de una sola estación: la de la zona si tiene una (la más cercana al centro de sus calles si tiene varias) o, si no, la más cercana de su misma zona de calidad del aire de la Comunidad de Madrid, una de fondo antes que una de tráfico. El texto dice siempre de qué estación es y si es de tráfico."
+  - "Una estación mide el aire de su entorno: junto a una avenida hay más NO₂ que en una calle tranquila del mismo barrio."
+  - "Madrid capital usa la red del Ayuntamiento (23 estaciones con NO₂); el resto de la región, la de la Comunidad (28)."
+  - "El límite de la Unión Europea es hoy 40 µg/m³ de media anual (Directiva 2008/50/CE) y será 20 desde 2030 (Directiva (UE) 2024/2881). La OMS recomienda niveles más bajos; se cita solo como referencia."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta»."

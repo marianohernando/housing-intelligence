@@ -1,0 +1,63 @@
+# D-250: parcelas de Madrid capital con su edificabilidad oficial, por referencia catastral, para
+# la búsqueda por parcela de la versión para inversores. Leídas una vez el día `consulted` por
+# scripts/buildable_parcels.py; scripts/export_investor_data.py las pasa a hi_domain.parcel_data.
+# No editar a mano.
+title: 'Portal del Suelo 4.0: parcelas de Madrid capital y su superficie edificable'
+publisher: Comunidad de Madrid (Dirección General de Suelo)
+url: https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/32af1c4e-1e19-4c22-87c9-df1c5b656f56/download/parcelas_portal_suelo.csv
+layer: parcelas_portal_suelo.csv
+consulted: '2026-11-18'
+dataset_id: cm_parcelas_portal_suelo
+source_text: 'Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela'
+municipio_ine: '28079'
+parcels:
+- {rc14: 0092806VK5609A, buildable_m2: 2547.3, area_m2: 1041.32, planning: RC 2.2.6 LOS BERROCALES, use: Residencial, ref: 00000597I}
+- {rc14: 0118307VK5701G, buildable_m2: 5503.0, area_m2: 6074.0, planning: Parcela 24APR.19.04 - LA DEHESA, use: Terciario, ref: 07900138Y}
+- {rc14: 0315610VK5701E, buildable_m2: 2631.81, area_m2: 1339.7, planning: PARCELA 13 (APE 19.07), use: Industrial, ref: 00000061S}
+- {rc14: 0392201VK5609A, buildable_m2: 9684.66, area_m2: 4299.77, planning: Parcela RC.5.4.1, use: Residencial, ref: 07900174Y}
+- {rc14: 0394201VK5609C, buildable_m2: 9684.66, area_m2: 4184.25, planning: Parcela RC.5.3.1, use: Residencial, ref: 07900175Y}
+- {rc14: 0395602VK5609E, buildable_m2: 2793.11, area_m2: 1177.31, planning: Parcela RC.6.3.3, use: Residencial, ref: 07900172Y}
+- {rc14: 0395603VK5609E, buildable_m2: 2795.35, area_m2: 1177.24, planning: Parcela RC.6.3.1, use: Residencial, ref: 07900173Y}
+- {rc14: 0517705VK5701F, buildable_m2: 2173.0, area_m2: 2398.0, planning: PARCELA 25F (APR 19.04), use: Terciario, ref: 00000062S}
+- {rc14: 0517706VK5701F, buildable_m2: 4157.0, area_m2: 4588.0, planning: APR.19.04 - LA DEHESA, use: Terciario, ref: 07900139Y}
+- {rc14: 0786807VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: Parcela 5.28.S, use: Industrial, ref: 00000592I}
+- {rc14: 1088704VK5618G, buildable_m2: 6653.2, area_m2: 3015.53, planning: RC 4.12.3 LOS BERROCALES, use: Residencial, ref: 00000598I}
+- {rc14: 1288504VK4618G, buildable_m2: 1881.34, area_m2: 1254.23, planning: API.12.02 - OESTE DE SAN FERMIN, use: Terciario, ref: 07900131Y}
+- {rc14: 1326706VK4812E, buildable_m2: 1039.39, area_m2: 440.0, planning: Finca 73694, use: Otros, ref: 00000008S}
+- {rc14: 1385401VK5618E, buildable_m2: 8521.37, area_m2: 5216.09, planning: Parcela RC.3.18.1, use: Residencial, ref: 07900177Y}
+- {rc14: 1385402VK5618E, buildable_m2: 8193.29, area_m2: 4683.16, planning: Parcela RC.3.18.2, use: Residencial, ref: 07900176Y}
+- {rc14: 1486601VK5618E, buildable_m2: 6967.23, area_m2: 3814.77, planning: Parcela RC.5.18.2, use: Residencial, ref: 07900179Y}
+- {rc14: 1486602VK5618E, buildable_m2: 8402.94, area_m2: 5189.92, planning: Parcela RC.5.18.3, use: Residencial, ref: 07900178Y}
+- {rc14: 3959601VK4735H, buildable_m2: 32697.0, area_m2: 20058.98, planning: Depósito 2 Ventas de Metro de Madrid S.A. APR 04.09, use: Residencial, ref: 00000002M}
+- {rc14: 4607501VK4840H, buildable_m2: 12192.0, area_m2: 2880.0, planning: PARCELA R25-L, use: Residencial, ref: 00000595I}
+- {rc14: 4707301VK4840F, buildable_m2: 3638.0, area_m2: 792.3, planning: PARCELA R21-T, use: Residencial, ref: 00000593I}
+- {rc14: 4802149VK4840B, buildable_m2: 328.18, area_m2: 273.48, planning: API 16.165 Colonia Leonesa, use: Residencial, ref: 07900158Y}
+- {rc14: 4810803VK4841B, buildable_m2: 3638.0, area_m2: 826.5, planning: PARCELA R22-T, use: Residencial, ref: 00000594I}
+- {rc14: 4896701VK4749F, buildable_m2: 497.73, area_m2: 497.73, planning: NZ 8 grado 4º, use: Residencial, ref: 07900159Y}
+- {rc14: 4996103VK4749F, buildable_m2: 303.0, area_m2: 303.0, planning: NZ 8 grado 4º, use: Residencial, ref: 07900164Y}
+- {rc14: 4996801VK4749F, buildable_m2: 301.0, area_m2: 301.0, planning: NZ 8 grado 4º, use: Residencial, ref: 07900161Y}
+- {rc14: 4996803VK4749F, buildable_m2: 324.0, area_m2: 324.0, planning: NZ 8 grado 4º, use: Residencial, ref: 07900162Y}
+- {rc14: 4996804VK4749F, buildable_m2: 282.0, area_m2: 282.0, planning: NZ 8 grado 4º, use: Residencial, ref: 07900163Y}
+- {rc14: 6076801VK4767E, buildable_m2: 329.06, area_m2: 320.5, planning: 'QUINTA DE LOS MOLINOS, FINCA M-33 (7)', use: Residencial, ref: 00000005N}
+- {rc14: 7011444VK3871C, buildable_m2: 745.85, area_m2: 1491.7, planning: NZ 8 Grado 2ºa, use: Residencial, ref: 07900157Y}
+- {rc14: 7552701VK4775B, buildable_m2: 11170.0, area_m2: 1288.92, planning: PARCELA A RESULTANTE MP PE PARCELA F "GRAN SAN BLAS" (API 20.16), use: Residencial, ref: 00000596I}
+- {rc14: 7913102VK3871D, buildable_m2: 406.0, area_m2: 288.67, planning: API 08.12 C/ El Vellón, use: Residencial, ref: 07900150Y}
+- {rc14: 8129235VK4782G, buildable_m2: 250.75, area_m2: 273.6, planning: PARCELA 30 (APE 19.08), use: Residencial, ref: 00000043S}
+- {rc14: 8129236VK4782G, buildable_m2: 244.33, area_m2: 250.0, planning: PARCELA 31 (APE 19.08), use: Residencial, ref: 00000044S}
+- {rc14: 8129237VK4782G, buildable_m2: 244.57, area_m2: 250.02, planning: PARCELA 32 (APE 19.08), use: Residencial, ref: 00000045S}
+- {rc14: 8129238VK4782G, buildable_m2: 244.57, area_m2: 250.27, planning: PARCELA 33 (APE 19.08), use: Residencial, ref: 00000046S}
+- {rc14: 8129247VK4782G, buildable_m2: 244.49, area_m2: 250.19, planning: PARCELA 42 (APE 19.08), use: Residencial, ref: 00000047S}
+- {rc14: 8129248VK4782G, buildable_m2: 336.48, area_m2: 368.57, planning: PARCELA 43 (APE 19.08), use: Residencial, ref: 00000048S}
+- {rc14: 8177101VK4787E, buildable_m2: 516.6, area_m2: 516.6, planning: NZ 8 Grado 3ºa, use: Residencial, ref: 07900166Y}
+- {rc14: 8413307VK3881C, buildable_m2: 361.2, area_m2: 251.74, planning: API.08.13C/ SANDALIA NAVAS, use: Residencial, ref: 07900155Y}
+- {rc14: 8413309VK3881C, buildable_m2: 419.55, area_m2: 292.4, planning: API.08.13C/ SANDALIA NAVAS, use: Residencial, ref: 07900154Y}
+- {rc14: 8416768VK3881E, buildable_m2: 378.0, area_m2: 224.57, planning: API 08.13 c/Sandalia Navas, use: Residencial, ref: 07900153Y}
+- {rc14: 8416769VK3881E, buildable_m2: 378.0, area_m2: 224.57, planning: API 08.13 c/Sandalia Navas, use: Residencial, ref: 07900152Y}
+- {rc14: 8416770VK3881E, buildable_m2: 377.0, area_m2: 224.57, planning: API 08.13 c/Sandalia Navas, use: Residencial, ref: 07900151Y}
+- {rc14: 8603848VK3880D, buildable_m2: 314.71, area_m2: 314.71, planning: NZ 8 grado 4º, use: Residencial, ref: 07900165Y}
+- {rc14: 8954004VK3685D, buildable_m2: 5812.0, area_m2: 6678.3, planning: Parcela 14-4UZP.1.06 - VILLAVERDE - POLIGONO EL GATO, use: Terciario, ref: 07900134Y}
+- {rc14: 8954005VK3685D, buildable_m2: 2181.0, area_m2: 2505.98, planning: Parcela 14-5UZP.1.06 - VILLAVERDE - POLIGONO EL GATO, use: Terciario, ref: 07900133Y}
+- {rc14: 9218305VK4791G, buildable_m2: 4900.0, area_m2: 5000.0, planning: PARCELA 6B (APR 19.04), use: Industrial, ref: 00000063S}
+- {rc14: 9587503VK3698G, buildable_m2: 8333.54, area_m2: 6006.0, planning: APR.17.07 - ORCASITAS/M-40, use: Otros, ref: 07900144Y}
+- {rc14: 9824502VK4792D, buildable_m2: 6088.0, area_m2: 3044.0, planning: API.19.04 - POLIGONO INDUSTRIAL DE VICALVARO, use: Terciario, ref: 07900136Y}
+- {rc14: 9976713VK4697F, buildable_m2: 174.56, area_m2: 264.0, planning: Parcela 6.52.M, use: Residencial, ref: 00000591I}

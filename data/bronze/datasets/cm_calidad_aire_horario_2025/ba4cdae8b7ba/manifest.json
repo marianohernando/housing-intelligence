@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_calidad_aire_horario_2025",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_calidad_aire_horario_2025/ba4cdae8b7ba/2025.csv",
+      "sha256": "ba4cdae8b7ba159079b200fd64f60edc469f67ac54dd2019b5666c074638506e",
+      "bytes": 9759196,
+      "url": "https://datos.comunidad.madrid/dataset/f18aa765-7432-4b39-8b6e-c41799c1c3e0/resource/3887b64f-5140-40eb-b4ba-afc20581ccd5/download/2025.csv",
+      "retrieved_at": "2026-11-14T18:40:28.111157+00:00"
+    }
+  ]
+}

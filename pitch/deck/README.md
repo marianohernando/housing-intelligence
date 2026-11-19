@@ -15,7 +15,7 @@ Están maquetadas en HTML a 16:9 (1920 × 1080) con el estilo del brief (D-201):
 | `deck.css` | Tokens y maquetación. Tamaños pensados para proyector |
 | `build.py` | Rellena la plantilla, comprueba contraste y tamaños, imprime el PDF con Chrome y revisa el PDF |
 | `build/` | Salida (no se versiona): `index.html`, `VidaFacil_DATAMAD2026.pdf` y `preview-N.png` |
-| `../capturas/C1.png`… | Opcional y sin versionar: una captura aquí sustituye a la de la evidencia. Si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`, que es la misma ruta que lleva cada `<img>` de `deck.html`, recortada en `deck.css`. C5–C7 son de B en producción (`evidence/map-004/2026-11-11/prod_*`). C1–C3 son de B con `fit-0.6` (PR #32, `evidence/map-004/2026-11-12/deck/`). Si no hay ninguna, el hueco sale con borde discontinuo |
+| `../capturas/C1.png`… | Una captura aquí sustituye a la de la evidencia; si no hay, el build usa la de `EVIDENCE_CAPTURES` en `build.py`. C1, C2, C3 y C6 están aquí y versionadas: las rehízo D en producción el 18 nov, con la claridad en el móvil desplegada (`55651c2`). C1, C2 y C3, a 1440 × 900 (C1, la tarjeta esencial de Puente de Vallecas; C2, «Zonas que os convienen» con «Muy buena opción · 94 %»; C3, «¿Queréis ver más zonas?»); C6, la lista del móvil a 390 × 844. Sus recortes están en `deck.css`. C4, C5 y C7 siguen siendo las de B (`evidence/map-004/`); C4 y C7 no van en ninguna slide |
 
 ## Cómo se genera
 Desde la raíz del repo. Necesita Chrome (o `CHROME=/ruta`), poppler para revisar el PDF y red para las fuentes de Google:
@@ -33,9 +33,9 @@ Lo que rellena el build:
 | Comprobación | Umbral | Resultado del 11 nov |
 |---|---|---|
 | Contraste de los 12 pares de color, con el cristal mezclado sobre el punto más oscuro del fondo | 4,5:1 texto; 3:1 texto grande (cifra de datasets, números en círculo) | Todos en verde: el peor es 4,87:1 (violeta de la cifra grande sobre cristal) y el texto pequeño más bajo, 4,94:1 (fuentes sobre el fondo) |
-| Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 28 px o más y los títulos a 56 px o más | Mínimo 22 px |
+| Tamaño mínimo de letra | 22 px (≈ 11 pt en una slide estándar de 13,33 in, solo para fuentes y pies). La lectura va a 26 px o más y los títulos a 56 px o más | Mínimo 22 px |
 | PDF | 4 páginas de 1440 × 810 pt (1920 × 1080 px), con Inter y Plus Jakarta Sans incrustadas | OK |
-| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 12 nov falla a propósito: la slide 3 espera las 2 citas de la prueba con personas (abajo). El borrador genera sin fallos |
+| `--final` | Ninguna marca «pendiente» y las capturas presentes | Desde el 14 nov solo falla por el nombre completo de la slide 1, que llega con `DECK_INTEGRANTES` el 24 nov (abajo). El borrador genera sin fallos |
 
 **Nota:** Chrome incrusta las fuentes variables como Type 3. Se ven bien en Acrobat, Vista Previa y Chrome; aun así, se revisa el PDF en el portátil de la final.
 
@@ -43,8 +43,16 @@ Lo que rellena el build:
 | Dónde | Qué falta | De quién |
 |---|---|---|
 | Slide 1 | El nombre completo, que se pasa con `DECK_INTEGRANTES` | Mariano, el 24 nov |
-| Slide 3, utilidad | Cita 1 de la prueba con personas: alguien que busca casa, de 12 palabras como mucho, con quién es y sin nombre | Mariano (prueba con personas) |
-| Slide 3, impacto | Cita 2: el técnico municipal, de 12 palabras como mucho, con su cargo y el tipo de municipio, sin nombre | Mariano (prueba con personas) |
+
+Rehechas el 18 nov, ya sin `data-pending`: **C1, C2, C3 y C6, de D en producción con `55651c2`** (`pitch/capturas/`). Los marcadores de la slide 4 van a «Tu búsqueda» (`.s4 .m1`, `top: 340px`), a la cabecera de la tarjeta (`.m2`, `top: 136px`) y a «No le falta nada de lo que buscáis.» (`.m3`, `top: 428px`). Los recortes de C2 y C3 están en `deck.css`.
+
+Añadido el 18 nov: en la slide 3, al pie de «Viabilidad», el siguiente paso («dónde construir, según la vivienda que falta»), en el sitio de la miniatura C7, que no cabía con él y queda de reserva. En la slide 4, el recuadro «Probada con 7 personas» dice también «Y, para una persona mayor, más sencilla en el móvil.»; las paradas de autobús salen del recuadro para que quepa.
+
+Añadido el 14 nov (noche): en la slide 4, bajo los tres pasos, el recuadro «Probada con 7 personas» con lo que pidieron y ya está en la web (relato en `pitch/slides.md`, slide 3). Para que quepa, los pasos van con 24 px de separación en lugar de 40.
+
+Cerradas el 14 nov:
+- **las 2 citas de la slide 3**, de la prueba con usuarios del 14 nov y aprobadas por Mariano: «Se valora mucho la cercanía al puesto de trabajo.» y «Muy chula la web, funciona bien.». Van sin nombre, porque se prometió a los usuarios. Las dos son de usuarios, así que van juntas en la columna de utilidad; el hueco del técnico municipal se quita. Si llegan citas mejores, se cambian;
+- **la maqueta de la slide 3:** la banda de los enlaces tapaba el pie de las tres columnas, también las capturas. Las columnas pasan a 636 px, las viñetas a 26 px (como el resto del texto de la slide) y las capturas C2 y C3 a 104 px de alto.
 
 Cerradas el 12 nov por la noche: C1, C2 y C3, rehechas por B con `fit-0.6` (PR #32), con los `alt` nuevos y el marcador 3 de la slide 4 en «Qué falta aquí».
 
@@ -58,7 +66,13 @@ Cerradas el 12 nov: C3 y C4 rehechas por B tras gap-0.3 (PR #17), con recortes n
 
 Cambiadas el 12 nov, con gap-0.3 (D-217) en producción:
 - el ejemplo de la slide 3 pasa de Madrid capital (que ya sale JUSTO en centros de salud) a **Puente de Vallecas, escuelas infantiles**: 2,781 frente a 4,87, ratio 0,571 (`GET /api/v1/gaps/distrito/2807913`, comprobado en producción el 12 nov);
-- la slide 2 cuenta 27 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- la slide 2 cuenta 35 datasets CM (los dos de camas, las tres topologías del CRTM con la accesibilidad de las estaciones y el valor tasado de la vivienda son del 12 nov; las infracciones penales y la antigüedad de las viviendas, del 14 nov, D-235; los aparcamientos de disuasión y las 3 fichas del aire, D-237, y las compraventas de vivienda nueva y el valor tasado por antigüedad, D-241, del 15 nov) y nombra al Ministerio de Sanidad entre las fuentes de apoyo (D-218).
+- el 15 nov, para que quepan las 35, la tabla junta geografía, población y renta en «Población y territorio», añade «Contexto de la zona» (aire e infracciones) y acorta tres nombres en `SHORT_NAMES`; la línea de apoyo pasa a «OpenStreetMap, Ayuntamiento, Sanidad, Vivienda y Hacienda».
+- el 18 nov, la 36.ª: las parcelas del Portal del Suelo 4.0 (D-246, en producción ese día). Su dominio en el catálogo es `urbanism`, que `THEMES` pone en «Vivienda», y en la tabla se llama «Suelo público (Portal del Suelo)». Sin eso caía en una fila «Otros» con el nombre largo del portal.
+- el 18 nov, por decisión de Mariano, la línea del siguiente paso de la slide 3 empieza por «Ya enseñamos el suelo público para vivienda.». Cabe a 1920 × 1080: la tarjeta no se desborda (640 px de alto y de contenido) y la línea queda justo bajo la lista.
+- el 19 nov, de la 37.ª a la 39.ª: el Catastro por uso de la Comunidad, por municipio y por distrito (D-247), y los visados de obra (D-248), en producción ese día. Van en «Vivienda» (dominios `urbanism` y `housing`), que pasa a 12 y ocupa una línea más; en la tabla se llaman «Catastro por uso», «Catastro por distrito» y «Visados de obra» (`SHORT_NAMES`). Para que «Apoyo (no CM)» siga dentro de la tarjeta, las filas van con 5 px de margen en vez de 7, la tabla con 12 px de separación en vez de 20 y la línea de apoyo con 10 en vez de 14. La letra no cambia. Medido a 1920 × 1080: el contenido acaba a 737 px de los 760 de la tarjeta, como con 36 (738).
+- el 19 nov, la línea de la slide 3 pasa de siguiente paso a hecho: «**Ya está**, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.» (D-248, en producción). La redacción es genérica a propósito, porque la versión pasa a ser por parcela exacta (datamad-10, 19 nov); sin capturas hasta entonces. La viñeta de «Quién paga» dice «Pagarán»: hoy no se cobra. Tiene que caber en 3 líneas: con 4, las tres columnas se alargan hasta 876 px y se meten bajo la banda, que empieza a 858; con 3 acaban a 842, como el 18 nov.
+- el 19 nov por la tarde, por decisión de Mariano, la viñeta «Código abierto: cualquiera puede repetir los cálculos.» de la slide 3 pasa a «Código abierto, y API y MCP gratis.», lo mismo que dice el bloque 4 del guion. Medido a 1920 × 1080 (borrador sin fallos): cabe en una línea, sin desborde, y las tres tarjetas acaban a 834 px, 8 menos que antes, con la banda a 858. Después, también aprobada por Mariano, la línea del pie pasa a «**Ya está**, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.» (D-250, en producción). Medido a 1920 × 1080 (borrador sin fallos): 3 líneas, sin desborde, y las tarjetas siguen acabando a 834 px. Las capturas de la búsqueda por parcela (C8–C10, de C en producción) quedan de reserva: no van en ninguna slide.
 
 Las de B se hicieron antes de desplegar el PR #9, así que en algunos textos todavía se ve el método anterior. Los recortes de `deck.css` los dejan fuera (`pitch/slides.md`, «Capturas necesarias», con la lista de lo que se rehace tras gap-0.3).
 

@@ -1,0 +1,6 @@
+kind: cm_stat_table
+dataset_id: cm_valor_tasado_vivienda_antiguedad
+metric_id: valor_tasado_vivienda_m2_antiguedad
+territory_types: {"Municipios": municipio}
+dimension_columns: {"Antigüedad": antiguedad}
+period_min: 2021  # the context reads the latest year; older years stay in Bronze

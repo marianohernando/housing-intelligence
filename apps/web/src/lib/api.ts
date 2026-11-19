@@ -7,9 +7,15 @@ import type { BarrioSearchResponse } from "@/contracts/barrio_search_response";
 import type { DatasetListResponse } from "@/contracts/dataset_list_response";
 import type { GapImpactResponse } from "@/contracts/gap_impact_response";
 import type { GapRowMapResponse } from "@/contracts/gap_row_map_response";
+import type { InvestorZoneListResponse } from "@/contracts/investor_zone_list_response";
+import type { InvestorZoneResponse } from "@/contracts/investor_zone_response";
+import type { ParcelCandidatesResponse } from "@/contracts/parcel_candidates_response";
+import type { ParcelSheetResponse } from "@/contracts/parcel_sheet_response";
 import type { PlaceCategory as ContractPlaceCategory, PlacesResponse } from "@/contracts/places_response";
 import type { ScenarioState } from "@/contracts/scenario_state";
 import type { SearchResponse } from "@/contracts/search_response";
+import type { ViabilityRequest } from "@/contracts/viability_request";
+import type { ViabilityResponse } from "@/contracts/viability_response";
 import type { GapRowKey, ZoneGapListResponse } from "@/contracts/zone_gap_list_response";
 import type { Envelope } from "@/lib/envelope";
 import type { FeatureValueRow } from "@/lib/features";
@@ -77,6 +83,8 @@ export class ApiError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    /** What the API adds to some errors (D-250: an address's candidates, the parcels near a point) */
+    readonly details: Record<string, unknown> = {},
   ) {
     super(message);
     this.name = "ApiError";
@@ -84,15 +92,29 @@ export class ApiError extends Error {
 }
 
 interface ErrorBody {
-  detail?: { code?: string; message?: string } | unknown[];
+  detail?: { code?: string; message?: string; details?: Record<string, unknown> } | unknown[];
 }
 
 async function toApiError(response: Response): Promise<ApiError> {
   const body = (await response.json().catch(() => null)) as ErrorBody | null;
   const detail = body?.detail;
   if (Array.isArray(detail)) return new ApiError(response.status, "VALIDATION", "Petición no válida");
-  if (detail?.code) return new ApiError(response.status, detail.code, detail.message ?? detail.code);
+  if (detail?.code) return new ApiError(response.status, detail.code, detail.message ?? detail.code, detail.details ?? {});
   return new ApiError(response.status, `HTTP_${response.status}`, `HTTP ${response.status}`);
+}
+
+/** How to ask for a parcel (D-250): its reference, a point of the map or a typed address. */
+export type ParcelLookup = { rc: string } | { lat: number; lon: number } | { address: string };
+
+export function parcelPath(lookup: ParcelLookup): string {
+  const params = new URLSearchParams(
+    "rc" in lookup
+      ? { rc: lookup.rc }
+      : "address" in lookup
+        ? { address: lookup.address }
+        : { lat: lookup.lat.toFixed(6), lon: lookup.lon.toFixed(6) },
+  );
+  return `/api/v1/investors/parcels?${params.toString()}`;
 }
 
 /**
@@ -187,7 +209,7 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
     },
     places,
     /** GET /api/v1/features/{id}/values?level=: one feature for every zone of a level, or the region's (ccaa). */
-    featureValues(featureId: string, level: "municipio" | "distrito" | "ccaa", { timeoutMs }: GetOptions = {}) {
+    featureValues(featureId: string, level: "municipio" | "distrito" | "barrio" | "ccaa", { timeoutMs }: GetOptions = {}) {
       return call<FeatureValuesResponse>(`/api/v1/features/${encodeURIComponent(featureId)}/values?level=${level}`, { timeoutMs });
     },
     /** POST /api/v1/search: ranked zones, the choropleth and the Reality Check; `signal` cancels it. */
@@ -196,6 +218,31 @@ export function createApi(base: string = API_URL, fetchImpl: FetchLike = fetchIn
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(scenario),
+        signal,
+      });
+    },
+    /** GET /api/v1/investors/zones (D-248): the pilot barrios with what they lack, their land and prices. */
+    investorZones({ timeoutMs }: GetOptions = {}) {
+      return call<InvestorZoneListResponse>("/api/v1/investors/zones", { timeoutMs });
+    },
+    /** GET /api/v1/investors/zones/{id} (D-248): one pilot barrio's sheet with the calculator's defaults. */
+    investorZone(adminUnitId: string, { timeoutMs }: GetOptions = {}) {
+      return call<InvestorZoneResponse>(`/api/v1/investors/zones/${encodeURIComponent(adminUnitId)}`, { timeoutMs });
+    },
+    /** GET /api/v1/investors/parcels (D-250): one parcel of Madrid capital with its planning, buildability and barrio. */
+    parcel(lookup: ParcelLookup, { timeoutMs, signal }: GetOptions & { signal?: AbortSignal } = {}) {
+      return call<ParcelSheetResponse>(parcelPath(lookup), { timeoutMs, signal });
+    },
+    /** GET /api/v1/investors/parcels/candidates (D-250): the portals that match a typed address; `signal` cancels it. */
+    parcelCandidates(q: string, { signal }: { signal?: AbortSignal } = {}) {
+      return call<ParcelCandidatesResponse>(`/api/v1/investors/parcels/candidates?${new URLSearchParams({ q }).toString()}`, { signal });
+    },
+    /** POST /api/v1/investors/viability (D-248): the residual method on the person's inputs; `signal` cancels it. */
+    viability(request: ViabilityRequest, { signal }: { signal?: AbortSignal } = {}) {
+      return call<ViabilityResponse>("/api/v1/investors/viability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
         signal,
       });
     },

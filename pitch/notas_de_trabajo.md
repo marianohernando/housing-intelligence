@@ -8,7 +8,45 @@ Fichero interno: lo que no va en los ficheros que puede leer el jurado (`formula
 
 | Cifra | Hoy | Si no llega | De quién |
 |---|---|---|---|
-| 27 conjuntos CM | Los 2 de camas los sirve la API (85 hospitales, 3,0 camas por 1.000 habitantes) | Si la web no enseña la línea de camas en la nota del hospital antes del 23 nov, se cuentan 25: guion (bloque 4), slides, preguntas 7 y 23, metodología §1.7 y tabla del formulario. El resumen enviado no se toca | B |
+| 39 conjuntos CM (27 el 12 nov; 29 con D-235; 35 con D-237 y D-241, en producción el 15 nov; 36 con D-246, en producción el 18 nov; 39 con D-247 y D-248, en producción el 19 nov) | **Cumplida.** La web enseña los 2 de camas bajo la nota del hospital (D-231, `3325084`, en producción) y `GET /api/v1/datasets?cm_only=true` da 39, y 59 en total (comprobado por D el 19 nov, tras el despliegue de `396d8f6`) | — | — |
+
+---
+
+## Tras la entrega 2 de UX: hecho el 18 nov
+
+La claridad en el móvil (D-244 y D-245) está en producción desde el 15 nov (`55651c2`, PR #84) y D la comprobó el 18 nov. Las palabras de la web cambiaron: las bandas son «Muy buena opción», «Buena opción», «Opción regular» y «Poco recomendable»; la lista se llama «Zonas que te convienen» («os» con más de una persona); «Casi encajan» pasa a «Casi valen» y «¿Y si cambias algo?», a «¿Queréis ver más zonas?». La lista enseña la zona, la banda y el precio (en escritorio, el % pequeño), sin «Empatan»; la tarjeta, lo esencial y lo demás tras «Ver más». El método no cambia.
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| Rehacer C1, C2 y C3 en producción y quitar sus `data-pending` | `pitch/capturas/`, `pitch/deck/deck.html` y `deck.css` | **Hecho el 18 nov.** También C6, la lista del móvil a 390 px. Recortes de C2 y C3 y marcadores de la slide 4 al día |
+| Cambiar las etiquetas citadas | `pitch/video_respaldo.md` (planos 2 a 5), preguntas 43 y 48, `pitch/banco_formula.md` y `pitch/metodologia.md` §1.3 (sin el aviso) | **Hecho el 18 nov** |
+| «Zonas que encajan» → «Zonas que te/os convienen» | guion, `slides.md`, `video_respaldo.md`, `metodologia.md` y el deck | **Hecho el 18 nov.** `textos_web.md` ya lo tenía (B) |
+| Contar como hecho lo de la persona mayor | pregunta 43, `slides.md`, guion (bloque 5) y el recuadro de la slide 4 | **Hecho el 18 nov**, con las medidas (0 textos < 16 px y 0 botones < 44 px a 390 y 360 px; 4 cosas por fila en vez de 7 a 9). **Sin segunda prueba todavía:** no se dice que ya le resulta fácil |
+| Que el guion quepa en 5 minutos | guion | **Hecho el 18 nov:** 497 palabras y unos 28 s de margen, con el clic en «Ver más». Esa noche, con la frase del suelo público sin cifra (decisión de Mariano), 496 y unos 28 s |
+| «Cómo lo calculamos» dice todavía que la lista pone «Empatan al 94 %» | web (B) | Avisado a datamad-10 el 18 nov; va a la deuda de la web |
+
+## El siguiente paso: de dónde vivir a dónde construir (18 nov)
+
+Aprobado por Mariano el 18 nov. Está en el guion (bloque 4), en la slide 3 («Viabilidad», en el sitio de la miniatura C7) y en la pregunta 60. En las slides, sin nombres de empresas; en la pregunta 60, Nestra y Sitescope como validación de mercado.
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| La capa del suelo público (Portal del Suelo 4.0 de la Comunidad, D-246) | otra línea, en la web | **En producción desde el 18 nov** (despliegue de `747cb65` y sync, `evidence/gate-06/2026-11-18-deploy/deploy-36-747cb65-suelo.md`, PR #90; confirmado por datamad-10). D lo leyó en la API ese día: 291 parcelas en 29 municipios, 394.298 m² edificables; 38 en 7 distritos de Madrid (`pitch/comprobacion_produccion_18nov.md`) |
+| +1 en `pitch/datasets_cm.md` (36 CM, 53 en total, igual que el README y la API), la frase del suelo en el bloque 4 del guion, sin cifra (sin la lista de datos: 101 palabras, unos 28 s de margen) y la pregunta 60 sin «pendiente» | `datasets_cm.md`, guion, preguntas, slides, metodología | **Hecho el 18 nov** |
+| «Ya enseñamos el suelo público para vivienda.» en la slide 3, o una captura de la capa | deck | **Hecho el 18 nov, por decisión de Mariano:** la frase va en la línea del siguiente paso de la slide 3 y cabe a 1920 × 1080; sin captura de la capa. Mariano también quitó la cifra (291) del bloque 4 del guion: no está en pantalla. La slide 2 ya cuenta 36: su número y su tabla salen del catálogo (`pitch/deck/build.py`) |
+
+## Modelo de negocio del 19 nov
+
+Decisión de Mariano del 19 nov, que sustituye a la del 12 nov: personas y ayuntamientos, gratis; pagan inversores y promotores privados, con un plan de precios (`pitch/modelo_negocio.md`).
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| El modelo nuevo, con los precios como hipótesis: Inversor 99–199 €/mes, Equipo 399 €/mes y estudio a medida de 490–1.500 €; Nestra, 175, 437,50 y 1.050 €/mes como referencia | `modelo_negocio.md` | **Hecho el 19 nov** |
+| «Gratis para personas y ayuntamientos; pagan inversores y promotores», sin precios en la voz ni en la slide | slide 3, guion (bloque 4), `slides.md` y preguntas 6 y 60 | **Hecho el 19 nov.** Bloque 4: 102 palabras; margen, unos 28 s |
+| La sección «Para inversores» de la web | otra línea, en la web | **En producción desde el 19 nov** (D-247 y D-248, despliegue de `396d8f6` y sync; `evidence/gate-06/2026-11-19-deploy/deploy-37-396d8f6-inversores.md`, PR #96; confirmado por datamad-10). Ya citada como hecha, **con redacción genérica** («la viabilidad sobre una parcela, con el contexto de su barrio»), en la slide 3, el bloque 4 del guion (93 palabras; margen, unos 32 s; sin «de dónde vivir a dónde construir», revisión del #98), las preguntas 6, 23 y 60, `slides.md` y `modelo_negocio.md`. Sin capturas. **Desde la tarde del 19 nov**, la lista de barrios va detrás de la búsqueda por parcela, como «Explorar barrios» (fila siguiente) |
+| La versión por parcela exacta (referencia catastral, dirección o clic en el mapa, con su calificación; la lista de barrios, en segundo plano) | otra línea, en la web | **En producción desde el 19 nov** (D-250, despliegue de `79020a1` verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-39-79020a1-parcela.md`, PR #102; confirmado por datamad-10). D leyó las 4 parcelas de demostración en la API de producción ese día: las 4, completas y en barrios del piloto. **Revisado el 19 nov (resuelve el «REVISAR tras la búsqueda por parcela»):** el bloque 4 del guion («…y su versión ya está: buscar una parcela de Madrid capital y calcular si una promoción sale, con la demanda de la zona.»; 105 palabras, margen de unos 26 s; «calcular» y no «ver» tras la revisión del #103); las preguntas 6 (la ficha, dónde funciona y las 4 parcelas con sus cifras) y 60 (lo distinto es el contexto de demanda al lado de la parcela, y cruzarlo con la vivienda que falta es el siguiente paso; el límite: no decimos qué se puede construir, y la fila «vivienda» sale SIN DATOS en los 21 distritos), y además la 1 (15 rutas y 16 esquemas), la 8 (licencias de la búsqueda) y la 23 (no suma conjuntos); `slides.md` (capturas C8–C10 de deploy-39, de reserva) y `modelo_negocio.md`. «Piloto en Madrid» dice ahora lo exacto: la búsqueda llega a toda Madrid capital, y el piloto de la M-40 es el contexto completo del barrio y «Explorar barrios». **La línea del pie de la slide 3**, aprobada por Mariano el 19 nov por la tarde: «Ya está, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.» Medida a 1920 × 1080: 3 líneas, sin desborde (`slides.md`) |
+| Contador 36 → 39 CM y 53 → 59 en total | `datasets_cm.md` (y la instantánea del portal, leída el 19 nov), slide 2, guion, preguntas 7 y 23, `slides.md`, `metodologia.md`, `textos_web.md`, `README_publico.md` y `video_respaldo.md` | **Hecho el 19 nov.** `pitch/formulario.md` no se toca. **Para Mariano:** en la slide 2, «Vivienda» pasa a 12 y ocupa una línea más; las filas de la tabla van 2 px más justas para que «Apoyo (no CM)» siga dentro de la tarjeta (`slides.md`, slide 2) |
+| La API pública y el MCP, gratis para todos (decisión de Mariano del 19 nov) | `modelo_negocio.md`, preguntas 1, 2 y 6, y bloque 4 del guion | **Hecho el 19 nov.** La página `/desarrolladores` está en producción (D-249, despliegue de `20b46d9`, PR #99; confirmado por datamad-10 y comprobado por D: 200, 7 herramientas, «Funciona en local» y lo planteado como «Aún no disponible»). Mariano dejó a D si iba en la voz o en la slide. **Propuesta de D:** una frase en el bloque 4, «La API y el MCP para agentes de IA son gratis para todos.» (106 palabras; margen, unos 26 s), y la slide 3 sin cambios, para no rehacer la maqueta. **Slide 3, hecho el 19 nov:** Mariano aprobó la viñeta «Código abierto, y API y MCP gratis.» (antes, «Código abierto: cualquiera puede repetir los cálculos.»). Medida por D a 1920 × 1080 con `build.py` en borrador: una línea, sin desborde, y las tarjetas acaban a 834 px (la banda empieza a 858) |
 
 ---
 

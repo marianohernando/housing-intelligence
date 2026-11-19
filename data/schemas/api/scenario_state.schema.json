@@ -2,12 +2,13 @@
   "$defs": {
     "Anchor": {
       "additionalProperties": false,
-      "description": "A place the household travels to often («Trabajo en»).",
+      "description": "A place the household travels to often: where they work, or family and friends.",
       "properties": {
         "days_per_week": {
           "default": 5,
+          "description": "Days they go there in a week: 1-2 halve the weight of the trip; 0 = never (full telework), the trip is not scored but its max_minutes still applies (D-240)",
           "maximum": 7,
-          "minimum": 1,
+          "minimum": 0,
           "title": "Days Per Week",
           "type": "integer"
         },
@@ -101,7 +102,7 @@
     },
     "Household": {
       "additionalProperties": false,
-      "description": "«Tu hogar»: adults, children and older people they look after (all live together).",
+      "description": "«Tu hogar»: adults, children and older people they look after (all live together).\n\n`seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no\none to the household, unlike `seniors_in_care`.",
       "properties": {
         "adults": {
           "default": 1,
@@ -124,6 +125,12 @@
           "minimum": 0,
           "title": "Minors",
           "type": "integer"
+        },
+        "seniors": {
+          "default": false,
+          "description": "Every adult is 65+ («Somos mayores»)",
+          "title": "Seniors",
+          "type": "boolean"
         },
         "seniors_in_care": {
           "default": 0,
@@ -165,29 +172,45 @@
       "type": "object"
     },
     "NeedKey": {
-      "description": "Everyday services the search and the per-zone list both talk about.",
+      "description": "Everyday services the search and the per-zone list both talk about, and the leisure\ngroups of «Ocio» (D-236), which only the search knows: they are never rows of the list.\n\nA leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the\nAPI or the MCP may, it is ignored with a warning: `required` is True by default, so it would\notherwise filter zones by places OpenStreetMap may not have.",
       "enum": [
         "escuela_infantil",
         "colegio",
         "centro_salud",
         "farmacia",
         "mayores",
-        "transporte"
+        "transporte",
+        "bares",
+        "restaurantes",
+        "gimnasios",
+        "cultura"
       ],
       "title": "NeedKey",
       "type": "string"
     },
     "PriorityKey": {
-      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional.",
+      "description": "«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio\n(D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing.",
       "enum": [
         "transporte",
         "salud",
         "colegios",
         "zonas_verdes",
         "seguridad",
-        "sin_escaleras"
+        "sin_escaleras",
+        "ocio"
       ],
       "title": "PriorityKey",
+      "type": "string"
+    },
+    "SearchScope": {
+      "description": "«Dónde buscar» (D-238): the whole region, or one of its three parts by the statistical\nzoning of the Comunidad de Madrid (data/catalog/zoning/search_scope.yaml).",
+      "enum": [
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos"
+      ],
+      "title": "SearchScope",
       "type": "string"
     }
   },
@@ -237,7 +260,7 @@
       "items": {
         "$ref": "#/$defs/NearbyNeed"
       },
-      "maxItems": 6,
+      "maxItems": 10,
       "title": "Nearby",
       "type": "array"
     },
@@ -246,7 +269,7 @@
       "items": {
         "$ref": "#/$defs/PriorityKey"
       },
-      "maxItems": 6,
+      "maxItems": 7,
       "title": "Priorities",
       "type": "array"
     },
@@ -255,6 +278,11 @@
       "default": 2,
       "title": "Schema Version",
       "type": "integer"
+    },
+    "scope": {
+      "$ref": "#/$defs/SearchScope",
+      "default": "all",
+      "description": "Where to search; Madrid capital is ranked by barrio instead of by district"
     }
   },
   "title": "ScenarioState",

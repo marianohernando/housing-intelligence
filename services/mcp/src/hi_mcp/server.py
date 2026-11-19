@@ -1,4 +1,4 @@
-"""Vida Fácil MCP server (MCP-001, D-225): five read-only tools over the domain services.
+"""Vida Fácil MCP server (MCP-001, D-225, D-249): seven read-only tools over the domain services.
 
 Local only, by stdio, for the demo and the jury: `make mcp` or `uv run hi-mcp`. DATABASE_URL
 picks the database (the local one by default, as the API). Every tool reads through a
@@ -25,10 +25,13 @@ from hi_api.deps import get_engine
 from hi_api.services.explanation import ZoneNotInSearchError
 from hi_api.services.gaps import ZoneNotFoundError
 from hi_contracts.catalog.enums import TerritoryLevel
+from hi_contracts.pro.investors import ViabilityRequest
 from hi_contracts.public import ScenarioState
 from hi_contracts.public.responses import (
     DatasetListResponse,
+    InvestorZoneResponse,
     SearchResponse,
+    ViabilityResponse,
     ZoneExplanationResponse,
     ZoneGapListResponse,
     ZoneLookupResponse,
@@ -55,11 +58,26 @@ nunca 0 ni PASS. Dilo con la razón (null_reason) si la hay.
 Flujo: encontrar_zona da el nivel y el código INE de un municipio o distrito de Madrid; con \
 ellos, que_falta (lo que falta frente a municipios parecidos) y explicar_zona (hechos e \
 indicadores con sus fuentes). buscar_zonas ordena las zonas para un ScenarioState (presupuesto, \
-hogar, trabajo, servicios cerca y prioridades). fuentes_de_datos lista los datasets."""
+hogar, trabajo, servicios cerca y prioridades). fuentes_de_datos lista los datasets.
+Para quien construye o invierte (piloto: los barrios de Madrid capital dentro de la M-40): \
+ficha_inversor da la ficha de un barrio (quién vive, precios, qué falta en su distrito, suelo y \
+los valores de partida de la viabilidad, cada cifra con su fuente y marcada dato o supuesto); \
+viabilidad hace el método residual con esas cifras o las de la persona. Repite sus avisos \
+(notices): no es una tasación ni una garantía de rentabilidad."""
 
 READ_ONLY = ToolAnnotations(
     read_only_hint=True, destructive_hint=False, idempotent_hint=True, open_world_hint=False
 )
+BarrioQuery = Annotated[
+    str,
+    Field(
+        min_length=2,
+        max_length=80,
+        description="Un barrio del piloto (Madrid capital dentro de la M-40) por su nombre o su "
+        "código: Pinar del Rey, 28079164 o ES.28.BAR.28079164",
+        examples=["Pinar del Rey"],
+    ),
+]
 ZoneCode = Annotated[
     str,
     Field(
@@ -80,6 +98,11 @@ def reply(response: BaseModel) -> CallToolResult:
     return CallToolResult(content=[TextContent(type="text", text=text)], structured_content=payload)
 
 
+def answered(tool: str, started: float, response: BaseModel) -> CallToolResult:
+    log.info("%s answered in %.2f s", tool, time.perf_counter() - started)
+    return reply(response)
+
+
 def run_tool(tool: str, engine: Engine, work: Callable[[Connection], BaseModel]) -> CallToolResult:
     """Run one tool in a read-only transaction; anticipated failures become tool errors the
     agent can read (the API answers them with 404)."""
@@ -92,8 +115,7 @@ def run_tool(tool: str, engine: Engine, work: Callable[[Connection], BaseModel])
         raise ToolError(DB_UNAVAILABLE) from exc
     except (ZoneNotFoundError, ZoneNotInSearchError) as exc:
         raise ToolError(str(exc)) from exc
-    log.info("%s answered in %.2f s", tool, time.perf_counter() - started)
-    return reply(response)
+    return answered(tool, started, response)
 
 
 # Title and description of each tool, as the agent reads them.
@@ -102,10 +124,14 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
         "Buscar zonas para vivir",
         "Ordena los municipios de la Comunidad de Madrid (Madrid capital por sus 21 distritos) "
         "para un ScenarioState: lo mismo que POST /api/v1/search y el buscador de la web. "
-        "Devuelve las 10 mejores zonas que cumplen todas las condiciones, hasta 5 que fallan "
-        "una, el Reality Check (qué añade relajar cada condición) y los datasets. Cada zona trae "
-        "su % de encaje y 3-5 hechos con su confianza. include_map=true añade all_zones (las 199 "
-        "zonas para pintar un mapa, la mitad de la respuesta).",
+        "scope (D-238) busca solo en una parte, por las zonas estadísticas de la Comunidad: "
+        "all (por defecto, toda la región), madrid (los 131 barrios de la capital en lugar de "
+        "sus distritos), alrededores (los 40 municipios metropolitanos) o pueblos (los otros "
+        "138). Devuelve las 10 mejores zonas que cumplen todas las condiciones, hasta 5 que "
+        "fallan una, el Reality Check (qué añade relajar cada condición) y los datasets. Cada "
+        "zona trae su % de encaje y 3-5 hechos con su confianza. include_map=true añade "
+        "all_zones (todas las zonas evaluadas, 199 con scope all, para pintar un mapa; la mitad "
+        "de la respuesta). Un barrio no se explica con explicar_zona: explica su distrito.",
     ),
     "que_falta": (
         "Qué falta en una zona",
@@ -121,7 +147,8 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
         "datasets con el texto que pide su licencia (attribution_text) y cuántos son de la "
         "Comunidad de Madrid. Sin scenario no se pide nada (encaje 100 %, como en el buscador) "
         "y los hechos son los minutos a pie a los servicios. Solo municipios y distritos de "
-        "Madrid (Madrid capital va por distritos).",
+        "Madrid (Madrid capital va por distritos), nunca barrios, aunque buscar_zonas con scope "
+        "madrid los devuelva; el scope del escenario no deja fuera la zona.",
     ),
     "encontrar_zona": (
         "Encontrar una zona por su nombre",
@@ -134,6 +161,29 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
         "Los datasets con una versión válida detrás del producto: editor, licencia, versión, "
         "enlace, attribution_text y si son del portal de datos abiertos de la Comunidad de "
         "Madrid. Lo mismo que GET /api/v1/datasets; cm_only=true deja solo los de la CM.",
+    ),
+    "ficha_inversor": (
+        "Ficha de inversor de un barrio",
+        "La ficha de un barrio del piloto (Madrid capital dentro de la M-40) para quien construye "
+        "o invierte: quién vive (renta, hogares, edad), precios (venta estimada, prima de la "
+        "vivienda nueva, alquiler), qué falta (las filas de su distrito: no se calcula por "
+        "barrio) y el comercio, suelo (parcelas públicas del Portal del Suelo y edificabilidad "
+        "que queda) y los valores de partida de la viabilidad (defaults). Cada cifra trae su "
+        "fuente, su nivel (barrio, distrito o ciudad) y si es dato o supuesto; la que falta es "
+        "null con su motivo. barrio es su nombre (sin importar mayúsculas ni tildes) o su "
+        "código. Lo mismo que GET /api/v1/investors/zones/{admin_unit_id}.",
+    ),
+    "viabilidad": (
+        "Viabilidad de una promoción",
+        "El método residual (viability-0.1) sobre las cifras de request, el mismo cuerpo que "
+        "POST /api/v1/investors/viability: m² construidos (50 como mínimo), precio de venta, "
+        "PEM y, si se quiere, alquiler, prima de la vivienda nueva, coeficiente sobre el PEM, "
+        "comercialización, margen objetivo, precio del suelo (en total o por m² edificable, no "
+        "los dos) y la comprobación de demanda. Los valores de partida de un barrio están en "
+        "ficha_inversor (defaults). Devuelve tres escenarios (base, optimista y pesimista): sin "
+        "precio del suelo, lo máximo que se puede pagar por él (valor residual) y sin veredicto; "
+        "con precio, el margen sobre ventas y «Sale», «Ajustar» o «No sale». No usa la base de "
+        "datos.",
     ),
 }
 
@@ -186,6 +236,20 @@ def build_server(engine: Callable[[], Engine] = get_engine) -> MCPServer:
     @register("fuentes_de_datos")
     def fuentes_de_datos(cm_only: bool = False) -> Annotated[CallToolResult, DatasetListResponse]:
         return run_tool("fuentes_de_datos", engine(), partial(tools.datasets, cm_only=cm_only))
+
+    @register("ficha_inversor")
+    def ficha_inversor(barrio: BarrioQuery) -> Annotated[CallToolResult, InvestorZoneResponse]:
+        # Resolved in Python before opening the database: a name that is no barrio never reaches it
+        try:
+            admin_unit_id, warnings = tools.resolve_barrio(barrio)
+        except tools.BarrioNotResolvedError as exc:
+            raise ToolError(str(exc)) from exc
+        work = partial(tools.investor_sheet, admin_unit_id=admin_unit_id, warnings=warnings)
+        return run_tool("ficha_inversor", engine(), work)
+
+    @register("viabilidad")
+    def viabilidad(request: ViabilityRequest) -> Annotated[CallToolResult, ViabilityResponse]:
+        return answered("viabilidad", time.perf_counter(), tools.viability(request))
 
     return server
 

@@ -14,9 +14,13 @@ export type ContractVersion = string;
 export type Coordinates = [unknown, unknown, ...unknown[]];
 export type Type = "Point";
 export type Id = string;
+/**
+ * Car parks (D-237): 'free', 'paid' or 'mixed' (some spaces free), as the CRTM publishes it for its park-and-ride car parks (None elsewhere)
+ */
+export type AccessFee = ("free" | "paid" | "mixed") | null;
 export type DatasetId = string;
 /**
- * Hospitals (D-218): who runs it, from the CM register; mutuas count as private
+ * Hospitals (D-218): who runs it, from the CM register; mutuas count as private. Kept as the register says it: the public network is `dependency` of the place (D-239)
  */
 export type Dependency = ("publica" | "privada") | null;
 /**
@@ -46,6 +50,10 @@ export type Confidence = number;
  */
 export type Coordinates1 = "source" | "geocoded";
 /**
+ * Health places (D-239): 'publica' for the network of the Servicio Madrileño de Salud (the CM register's dependencia funcional, or a network hospital a private company runs), 'privada' for the rest; mutuas count as private (None elsewhere)
+ */
+export type Dependency1 = ("publica" | "privada") | null;
+/**
  * Rows of the per-zone list of what is missing (GAP-001, D-194).
  */
 export type GapRowKey =
@@ -54,6 +62,10 @@ export type GapRowKey =
  * Rows of the list of what is missing that count this place (same filters)
  */
 export type GapRows = GapRowKey[];
+/**
+ * Hospitals (D-239): who runs it. 'privada' for a private hospital and for a hospital of the public network run by a private company by concession or concierto singular (a versioned list with its official source), 'publica' for the rest of the public ones (None elsewhere)
+ */
+export type Management = ("publica" | "privada") | null;
 export type Municipio = string | null;
 /**
  * Institutional name; '<type> (<municipio>)' when no official one is known
@@ -105,11 +117,14 @@ export interface PointGeometry {
   type?: Type;
 }
 export interface PlaceProperties {
+  access_fee?: AccessFee;
   capacity?: PlaceCapacity | null;
   category: PlaceCategory;
   confidence: Confidence;
   coordinates?: Coordinates1;
+  dependency?: Dependency1;
   gap_rows?: GapRows;
+  management?: Management;
   municipio?: Municipio;
   name: Name;
   ownership?: Ownership;

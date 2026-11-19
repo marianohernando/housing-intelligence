@@ -120,6 +120,7 @@ def test_hospitals_carry_their_name_and_installed_beds(client: TestClient) -> No
         "dependency": "privada",
         "kind": "Hospital general",
     }
+    assert fuensanta["dependency"] == "privada"  # D-239: on the place itself too
     assert by_name["Clínica La Luz"]["capacity"]["value"] == 152.0  # «, S.L.» is not the name
     assert not any(name.startswith("Hospital general (") for name in by_name)
 

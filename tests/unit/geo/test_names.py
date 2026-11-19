@@ -2,7 +2,13 @@
 
 import pytest
 
-from hi_domain.geo.names import display_name, invalid_name_chars, match_rank, name_key
+from hi_domain.geo.names import (
+    display_name,
+    invalid_name_chars,
+    match_rank,
+    name_key,
+    title_case,
+)
 
 
 @pytest.mark.parametrize(
@@ -90,3 +96,29 @@ def test_match_rank_orders_exact_prefix_word_and_inside(
     query: str, name: str, rank: int | None
 ) -> None:
     assert match_rank(query, name) == rank
+
+
+KEEP = frozenset({"PMM", "ONCE", "UVA", "S.A.", "II"})
+
+
+@pytest.mark.parametrize(
+    ("register", "readable"),
+    [
+        ("DESARROLLO DEL ESTE - LOS AHIJONES", "Desarrollo del Este - Los Ahijones"),
+        ("C/ VILLANUEVA, 16", "C/ Villanueva, 16"),
+        (
+            "CIUDAD DE SERVICIOS DE LA ONCE - CALLE DE MARIA GILHOU",
+            "Ciudad de Servicios de la ONCE - Calle de Maria Gilhou",
+        ),
+        ("ZELTIA, S.A.", "Zeltia, S.A."),
+        ("MÉNDEZ ÁLVARO NORTE II", "Méndez Álvaro Norte II"),
+        ("LABORATORIO ALTER-NORTE", "Laboratorio Alter-Norte"),
+        ('BARRIO DE "EXPERIMENTALES"', 'Barrio de "Experimentales"'),
+        ("SAN FRANCISCO EL GRANDE (GRAN VÍA)", "San Francisco el Grande (Gran Vía)"),
+        ("UVA DE HORTALEZA", "UVA de Hortaleza"),
+        ("Mixed  Case", "Mixed Case"),
+    ],
+)
+def test_title_case_keeps_acronyms_and_the_sources_accents(register: str, readable: str) -> None:
+    """D-241: VEDA writes its area names in capitals; none gains an accent it does not have."""
+    assert title_case(register, KEEP) == readable

@@ -1,0 +1,4 @@
+kind: pilot_zones
+dataset_id: osm_m40
+metric_id: barrio_piloto_inversores
+table: inversores_barrios_m40.yaml

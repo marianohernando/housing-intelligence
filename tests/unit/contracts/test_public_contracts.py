@@ -16,12 +16,15 @@ from hi_contracts.public import (
     GapMethod,
     GapRow,
     GapRowMap,
+    NeedKey,
+    PriorityKey,
     RealityCheck,
     ScenarioState,
     SearchResult,
     ZoneGapList,
 )
 from hi_contracts.public.places import PlaceCollection
+from hi_contracts.public.scenario import LEISURE_NEEDS
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.catalog.provenance import dataset_ref, is_cm_open_data
 
@@ -105,16 +108,59 @@ def test_reality_check_counts_add_up() -> None:
         {"household": {"adults": 1, "minors": 1, "minor_ages": [19]}},
         {"household": {"adults": 0}},
         {"anchors": [{"label": "Lisboa", "lon": -9.14, "lat": 38.72}]},
+        {"anchors": [{"label": "Azca", "lon": -3.69, "lat": 40.45, "days_per_week": 8}]},
+        {"anchors": [{"label": "Azca", "lon": -3.69, "lat": 40.45, "days_per_week": -1}]},
         {"budget": {"kind": "rent", "amount_eur": 300_000}},  # a purchase price as rent
         {"budget": {"kind": "buy", "amount_eur": 1200}},  # a rent as purchase price
         {"budget_monthly_eur": 1200},  # v1 field
         {"schema_version": 1},
         {"sexo": "mujer"},
+        {"scope": "sierra"},  # not one of the parts of «Dónde buscar» (D-238)
     ],
 )
 def test_scenario_rejects_incoherent_or_unknown_input(change: dict[str, Any]) -> None:
     with pytest.raises(ValidationError):
         ScenarioState.model_validate(change)
+
+
+def test_a_place_can_be_one_never_gone_to_and_of_family_or_friends() -> None:
+    """D-240: 0 days a week is full telework; `family` is the second place of the search."""
+    place = {"label": "Azca", "lon": -3.69, "lat": 40.45}
+    scenario = ScenarioState.model_validate(
+        {"anchors": [place | {"days_per_week": 0}, place | {"kind": "family"}]}
+    )
+    assert [(a.kind, a.days_per_week) for a in scenario.anchors] == [("work", 0), ("family", 5)]
+
+
+def test_leisure_is_additive_and_a_scenario_without_it_reads_the_same() -> None:
+    """D-236: four leisure needs and the «ocio» priority join the enums; nothing else changes,
+    so a scenario written before them validates to the same state and serialises the same."""
+    old = {
+        "schema_version": 2,
+        "budget": {"kind": "rent", "amount_eur": 1500},
+        "household": {"adults": 2, "minors": 2, "minor_ages": [4, 8], "seniors_in_care": 0},
+        "nearby": [{"need": "colegio", "max_walk_minutes": 10, "required": True}],
+        "priorities": ["colegios", "transporte", "salud"],
+    }
+    scenario = ScenarioState.model_validate(old)
+    dumped = scenario.model_dump(mode="json")
+    # D-244 adds «Somos mayores» to the household, False unless the person says so
+    assert {k: dumped[k] for k in old} == old | {"household": old["household"] | {"seniors": False}}
+    assert set(dumped) == {*old, "min_floor_area_m2", "anchors", "scope"}  # scope: D-238
+    everything = ScenarioState.model_validate(
+        {
+            "nearby": [{"need": need.value} for need in NeedKey],
+            "priorities": [priority.value for priority in PriorityKey],
+        }
+    )
+    assert len(everything.nearby) == 10
+    assert everything.priorities[-1] is PriorityKey.OCIO
+    assert LEISURE_NEEDS == (
+        NeedKey.BARES,
+        NeedKey.RESTAURANTES,
+        NeedKey.GIMNASIOS,
+        NeedKey.CULTURA,
+    )
 
 
 def test_default_scenario_and_household_size() -> None:
@@ -128,6 +174,33 @@ def test_default_scenario_and_household_size() -> None:
     buy = ScenarioState.model_validate({"budget": {"kind": "buy", "amount_eur": 320_000}})
     assert buy.budget is not None
     assert buy.budget.kind == "buy"
+
+
+def test_somos_mayores_is_additive_and_adds_no_one() -> None:
+    """D-244: `seniors` («Somos mayores») is optional and False by default, so a household saved
+    before it means the same; it says who the adults are and never adds a person."""
+    old = {"adults": 2, "minors": 0, "minor_ages": [], "seniors_in_care": 0}
+    household = ScenarioState.model_validate({"household": old}).household
+    assert household.seniors is False
+    assert household.model_dump(mode="json") == old | {"seniors": False}
+    retired = ScenarioState.model_validate({"household": old | {"seniors": True}}).household
+    assert retired.seniors is True
+    assert retired.people == household.people == 2
+    schema = ScenarioState.model_json_schema()["$defs"]["Household"]["properties"]["seniors"]
+    assert schema["default"] is False
+    assert schema["description"] == "Every adult is 65+ («Somos mayores»)"
+
+
+def test_a_scenario_without_scope_searches_the_whole_region() -> None:
+    """D-238: a search saved or shared before «Dónde buscar» means what it meant."""
+    assert ScenarioState().scope == "all"
+    assert ScenarioState.model_validate({"scope": "madrid"}).scope == "madrid"
+    assert {s.value for s in type(ScenarioState().scope)} == {
+        "all",
+        "madrid",
+        "alrededores",
+        "pueblos",
+    }
 
 
 def test_search_fixture_never_shows_a_grade_and_maps_every_zone() -> None:

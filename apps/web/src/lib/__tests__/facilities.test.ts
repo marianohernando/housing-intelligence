@@ -5,20 +5,32 @@ import { describe, expect, it } from "vitest";
 import type { DatasetRef } from "../../contracts/dataset_list_response";
 import type { PlaceCategory } from "../../contracts/places_response";
 import {
+  allServicesOn,
   type Facility,
   type FacilityKey,
   FACILITY_TYPES,
+  DEPENDENCY_PILL,
+  HOSPITAL_DEPENDENCY_NOTE,
+  hospitalLine,
+  hospitalSplitText,
   facilitiesGeoJSON,
   capacitySources,
   facilityCountText,
   facilityQueries,
+  facilityType,
   groupFacilities,
+  isLeisureFacility,
+  LEISURE_FACILITY_KEYS,
+  leisureAvailable,
+  leisureQuery,
+  offeredTypes,
+  parkingAvailable,
   orderedTypes,
   selectedCountText,
   selectedFacilities,
+  SERVICE_FACILITY_KEYS,
 } from "../map/facilities";
 import type { PlaceFeature } from "../map/places";
-import { searchable } from "../map/zones";
 
 function place(
   id: string,
@@ -59,7 +71,10 @@ describe("facility types", () => {
 
   it("ask /places once per category, by zone and subcategory, never a whole layer", () => {
     const queries = facilityQueries();
-    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green"]);
+    // Leisure (D-236) is asked apart, only when one of its types is pressed (R-07); car parks (D-237) are in it
+    expect(queries.map((q) => q.category)).toEqual(["education", "health", "pharmacy", "social", "green", "other"]);
+    // Car parks (D-237): never the air quality stations, which are places of the same category
+    expect(queries.find((q) => q.category === "other")?.subcategories).not.toContain("Estación de calidad del aire");
     const health = queries.find((q) => q.category === "health");
     expect(health?.subcategories).toContain("Hospital general");
     // Pharmacies have their own category since D-216
@@ -151,22 +166,79 @@ describe("groupFacilities", () => {
     expect(typed.farmacia[0]).toMatchObject({ name: "Calle de Serrano 1" });
   });
 
-  it("names hospitals and their beds from the Catálogo Nacional de Hospitales, «gestión privada» never «privado» (D-218)", () => {
+  it("names hospitals and their beds from the Catálogo Nacional de Hospitales, public or private in a pill (D-218, D-239)", () => {
     // Test fixture published by line A with the contract (data/fixtures/contracts), not demo data.
     const url = new URL("../../../../../data/fixtures/contracts/places.hospitales_madrid.fixture.json", import.meta.url);
     const { features } = JSON.parse(readFileSync(url, "utf8")) as { features: PlaceFeature[] };
     const hospitals = groupFacilities(features).hospital;
     const doce = hospitals.find((f) => f.name === "Hospital Universitario 12 de Octubre");
-    expect(doce).toMatchObject({ detail: "1.161 camas instaladas · gestión pública", source: "ms_catalogo_nacional_hospitales" });
-    // Found with or without its tildes: the API spells it «Fundación Jiménez Díaz» since D-221, the
-    // fixture will when line A regenerates it; what is checked here is its beds and management
-    const jd = hospitals.find((f) => searchable(f.name ?? "") === "hospital universitario fundacion jimenez diaz");
-    expect(jd).toBeDefined();
-    expect(jd?.detail).toBe("651 camas instaladas · gestión privada");
-    for (const f of hospitals) expect(f.detail ?? "").not.toMatch(/privado|(^|· )privada/);
+    expect(doce).toMatchObject({ label: "Hospital", dependency: "publica", detail: "1.161 camas instaladas", source: "ms_catalogo_nacional_hospitales" });
+    // The name first, the pill before it and the beds as a figure (Mariano, 15 nov), read aloud whole
+    expect(hospitalLine(doce as Facility)).toEqual({
+      dependency: "publica",
+      name: "Hospital Universitario 12 de Octubre",
+      notes: [],
+      beds: { short: "1.161", full: "1.161 camas instaladas" },
+    });
+    // «Privado No Benéfico» in the register, in the network of the Servicio Madrileño de Salud by
+    // concierto singular: public, run by a company (D-239). «gestión privada» goes under its name
+    const jd = hospitals.find((f) => f.name === "Hospital Universitario Fundación Jiménez Díaz");
+    expect(jd).toMatchObject({ label: "Hospital", detail: "651 camas instaladas", dependency: "publica", managedPrivately: true });
+    expect(hospitalLine(jd as Facility)).toMatchObject({ dependency: "publica", notes: ["gestión privada"], beds: { short: "651", full: "651 camas instaladas" } });
+    expect(hospitals.filter((f) => hospitalLine(f).notes.includes("gestión privada"))).toHaveLength(1);
+    expect(HOSPITAL_DEPENDENCY_NOTE).toMatch(/^Público: de la red del Servicio Madrileño de Salud.*«gestión privada».*Privado: el resto/);
+    // The pill says it once: neither the label nor the detail repeats who runs it
+    for (const f of hospitals) expect(`${f.label} ${f.detail ?? ""}`).not.toMatch(/gestión|públic|privad/);
     // Beds only with their source, and never a made-up name: the generic «Hospital general (Madrid)» stays unnamed
     expect(hospitals.some((f) => f.name === null)).toBe(true);
     for (const f of hospitals) expect(f.source !== null).toBe(/camas/.test(f.detail ?? ""));
+  });
+
+  it("labels each hospital as public or private from the place itself or, with an older API, from its beds (D-239)", () => {
+    // Test fixture: made-up hospitals for the test only
+    const beds = (dependency: "publica" | "privada") => ({ value: 100, unit: "camas instaladas", dataset_id: "ms_catalogo_nacional_hospitales", dependency });
+    const { hospital, centro_salud } = groupFacilities([
+      place("z", "health", "Hospital general", "HOSPITAL ZETA", -3.7, 40.4, { dependency: "privada" }),
+      place("m", "health", "Hospital de salud mental y tratamiento de toxicomanías", "HOSPITAL EME", -3.7, 40.4, { capacity: beds("publica") }),
+      place("e", "health", "Hospital especializado", "HOSPITAL E", -3.7, 40.4, { dependency: "privada", capacity: beds("publica") }),
+      place("u", "health", "Hospital general", "HOSPITAL U"),
+      place("a", "health", "Hospital general", "HOSPITAL A", -3.7, 40.4, { dependency: "publica" }),
+      place("c", "health", "Centro de salud", "Centro de salud Uno", -3.7, 40.4, { dependency: "publica" }),
+    ]);
+    // Public first, then private, then the one the API does not class; by name inside each. The
+    // type goes under the name when the name does not say it is a general hospital
+    expect(hospital.map((f) => [hospitalLine(f).name, f.dependency, hospitalLine(f).notes])).toEqual([
+      ["Hospital A", "publica", []],
+      ["Hospital Eme", "publica", ["Hospital de salud mental"]],
+      ["Hospital e", "privada", ["Hospital especializado"]], // the place's own field wins over the beds'
+      ["Hospital Zeta", "privada", []],
+      ["Hospital U", null, []],
+    ]);
+    expect(Object.values(DEPENDENCY_PILL)).toEqual(["Público", "Privado"]);
+    expect(hospitalSplitText(hospital)).toBe("2 públicos y 2 privados");
+    // A hospital of the public network a company runs is public, and says so; «gestión privada»
+    // never goes with a private one (all of them are run privately)
+    const managed = groupFacilities([
+      place("g", "health", "Hospital general", "HOSPITAL GE", -3.7, 40.4, { dependency: "publica", management: "privada" }),
+      place("p", "health", "Hospital general", "HOSPITAL PE", -3.7, 40.4, { dependency: "privada", management: "privada" }),
+      place("s", "health", "Hospital general", "HOSPITAL ESE", -3.7, 40.4, { dependency: "publica", management: "publica" }),
+    ]).hospital;
+    expect(managed.map((f) => [DEPENDENCY_PILL[f.dependency ?? "publica"], hospitalLine(f).notes.join()])).toEqual([
+      ["Público", ""],
+      ["Público", "gestión privada"],
+      ["Privado", ""],
+    ]);
+    expect(hospitalSplitText(managed)).toBe("2 públicos y 1 privado");
+    expect(hospitalSplitText(hospital.slice(0, 1))).toBe("1 público");
+    expect(hospitalSplitText(hospital.slice(4))).toBeNull();
+    expect(hospitalSplitText([])).toBeNull();
+    // Without a name, its type stands for it; placed by its address, it says so under the name
+    const [unnamed] = groupFacilities([
+      place("n", "health", "Hospital especializado", "Hospital especializado (Madrid)", -3.7, 40.4, { dependency: "privada", coordinates: "geocoded" }),
+    ]).hospital;
+    expect(hospitalLine(unnamed as Facility)).toEqual({ dependency: "privada", name: "Hospital especializado", notes: ["ubicación aproximada"], beds: null });
+    // Only hospitals are told apart
+    expect(centro_salud[0]).toMatchObject({ label: "Centro de salud", dependency: null });
   });
 
   it("sorts named places by name, after them the ones without a name", () => {
@@ -245,7 +317,20 @@ describe("facilitiesGeoJSON", () => {
 });
 
 describe("capacitySources", () => {
-  const bed = (id: string, source: string | null) => ({ id, type: "hospital" as const, label: "Hospital", name: id, detail: null, source, lon: 0, lat: 0 });
+  const bed = (id: string, source: string | null): Facility => ({
+    id,
+    type: "hospital",
+    label: "Hospital",
+    name: id,
+    detail: null,
+    source,
+    dependency: null,
+    managedPrivately: false,
+    capacity: null,
+    approximate: false,
+    lon: 0,
+    lat: 0,
+  });
   const items = [bed("a", "ms_catalogo_nacional_hospitales"), bed("b", "ms_catalogo_nacional_hospitales"), bed("c", null)];
   const ref = {
     dataset_id: "ms_catalogo_nacional_hospitales",
@@ -294,7 +379,20 @@ describe("capacitySources", () => {
 });
 
 describe("several types at once («Todos los centros», petición de Mariano)", () => {
-  const f = (id: string, type: FacilityKey): Facility => ({ id, type, label: id, name: null, detail: null, source: null, lon: 0, lat: 0 });
+  const f = (id: string, type: FacilityKey): Facility => ({
+    id,
+    type,
+    label: id,
+    name: null,
+    detail: null,
+    source: null,
+    dependency: null,
+    managedPrivately: false,
+    capacity: null,
+    approximate: false,
+    lon: 0,
+    lat: 0,
+  });
   const groups = {
     colegio: [f("c1", "colegio"), f("c2", "colegio")],
     escuela_infantil: [],
@@ -303,6 +401,11 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     farmacia: [f("f1", "farmacia")],
     mayores: [],
     parque: [f("p1", "parque")],
+    bares: [],
+    restaurantes: [],
+    gimnasios: [],
+    cultura: [],
+    aparcamiento: [],
   } as Record<FacilityKey, Facility[]>;
 
   it("keeps the order of the buttons, whatever the order they were pressed", () => {
@@ -321,5 +424,109 @@ describe("several types at once («Todos los centros», petición de Mariano)", 
     );
     expect(selectedCountText(groups, ["hospital"], "Chamartín", { empty: false })).toBeNull();
     expect(selectedCountText(groups, [], "Chamartín")).toBeNull();
+  });
+});
+
+describe("car parks (D-237)", () => {
+  // Test fixture: places shaped as /places gives them (places-1), names and figures from 14 nov
+  const parks = groupFacilities([
+    place("a", "other", "Aparcamiento disuasorio", "Aparcamiento disuasorio Doce de Octubre", -3.69, 40.37, {
+      capacity: { value: 210, unit: "plazas", dataset_id: "crtm_aparcamientos_disuasion" },
+      access_fee: "free",
+    }),
+    place("b", "other", "Aparcamiento público", "Aparcamiento público. Plaza de España"),
+    place("c", "other", "Aparcamiento para residentes", "Aparcamiento para residentes Barceló"),
+    place("d", "other", "Estación de calidad del aire", "Getafe"),
+  ]).aparcamiento;
+
+  it("lists the public, park-and-ride and residents' ones, never the air stations", () => {
+    expect(parks.map((f) => f.id).sort()).toEqual(["a", "b", "c"]);
+  });
+
+  it("leads with the name and says the spaces and whether it is free, from the CRTM", () => {
+    const doce = parks.find((f) => f.id === "a");
+    expect(doce).toMatchObject({ label: "Aparcamiento disuasorio", detail: "210 plazas · gratuito", fee: "free", spaces: 210 });
+    expect(parks.find((f) => f.id === "b")).toMatchObject({ detail: null, fee: null, spaces: null });
+    expect(facilityType("aparcamiento").nameFirst).toBe(true);
+  });
+
+  it("is never counted by a row of «Qué falta»", () => {
+    expect(facilityType("aparcamiento").row).toBeUndefined();
+  });
+
+  it("is offered once its datasets are published, never turned on by «Todos» (R-05, R-06)", () => {
+    expect(parkingAvailable(null)).toBe(false);
+    expect(parkingAvailable([{ dataset_id: "osm_parques" }])).toBe(false);
+    expect(parkingAvailable([{ dataset_id: "crtm_aparcamientos_disuasion" }])).toBe(true);
+    expect(offeredTypes(false).map((t) => t.key)).not.toContain("aparcamiento");
+    expect(SERVICE_FACILITY_KEYS).not.toContain("aparcamiento");
+    // «Todos» neither turns car parks on nor off (R-01 of the second review), as with leisure
+    expect(allServicesOn(["colegio"])).toEqual([...SERVICE_FACILITY_KEYS]);
+    expect(allServicesOn(["aparcamiento", "bares"])).toEqual([...SERVICE_FACILITY_KEYS, "aparcamiento", "bares"]);
+    // «Entorno» still needs them in the zone's request
+    expect(facilityQueries().find((q) => q.category === "other")?.subcategories).toContain("Aparcamiento disuasorio");
+  });
+});
+
+describe("leisure from OpenStreetMap (D-236)", () => {
+  const places = [
+    place("b1", "commerce", "Bar", "Casa Paco"),
+    place("b2", "commerce", "Pub", "Pub sin nombre"),
+    place("b3", "commerce", "Cafetería", "LA TAPE"),
+    place("r1", "commerce", "Restaurante", "Restaurante sin nombre"),
+    place("g1", "sport", "Centro deportivo", "Polideportivo Municipal"),
+    place("t1", "culture", "Teatro", "Teatro Real"),
+    place("m1", "culture", "Museo", "Museo del Prado"),
+    place("l1", "culture", "Biblioteca", "Biblioteca Eugenio Trías"),
+    place("x1", "commerce", "Comida rápida", "Burger"), // not a class of any type: left out
+  ];
+  const groups = groupFacilities(places);
+
+  it("groups the places in the four groups of «Ocio», each with what it is", () => {
+    expect(groups.bares.map((f) => [f.label, f.name])).toEqual([
+      ["Bar", "Casa Paco"],
+      ["Cafetería", "LA TAPE"], // as OpenStreetMap writes it: never recased
+      ["Pub", null], // «Pub sin nombre»: no name, only what it is
+    ]);
+    expect(groups.restaurantes.map((f) => [f.label, f.name])).toEqual([["Restaurante", null]]);
+    expect(groups.gimnasios.map((f) => f.label)).toEqual(["Centro deportivo"]);
+    // «Cultura»: museums and libraries too, each with what it is (D-236)
+    expect(groups.cultura.map((f) => [f.label, f.name])).toEqual([
+      ["Biblioteca", "Biblioteca Eugenio Trías"],
+      ["Museo", "Museo del Prado"],
+      ["Teatro", "Teatro Real"],
+    ]);
+    expect(Object.values(groups).flat()).toHaveLength(8);
+  });
+
+  it("counts them in plain words, and with none says what OpenStreetMap lacks, not what the zone lacks", () => {
+    expect(facilityCountText("bares", 3, "Centro")).toBe("3 bares y cafeterías en Centro");
+    expect(facilityCountText("restaurantes", 1, "Centro")).toBe("1 restaurante en Centro");
+    expect(facilityCountText("bares", 0, "Patones")).toBe("OpenStreetMap no tiene ningún bar ni cafetería en Patones");
+    expect(facilityCountText("restaurantes", 0, "Patones")).toBe("OpenStreetMap no tiene ningún restaurante en Patones");
+    expect(facilityCountText("gimnasios", 0, "Patones")).toBe("OpenStreetMap no tiene ningún gimnasio ni centro deportivo en Patones");
+    expect(facilityCountText("cultura", 2, "Centro")).toBe("2 espacios culturales en Centro");
+    expect(facilityCountText("cultura", 1, "Patones")).toBe("1 espacio cultural en Patones");
+    expect(facilityCountText("cultura", 0, "Patones")).toBe("OpenStreetMap no tiene ningún espacio cultural en Patones");
+  });
+
+  it("offers the leisure types once their dataset is published, and keeps them out of «Todos» and the zone's request", () => {
+    const keys = (leisure: boolean) => offeredTypes(leisure).map((t) => t.key);
+    const services = ["colegio", "escuela_infantil", "centro_salud", "hospital", "farmacia", "mayores", "parque"];
+    expect(keys(false)).toEqual(services);
+    expect(keys(true)).toEqual([...services, "bares", "restaurantes", "gimnasios", "cultura"]);
+    expect(offeredTypes(true, true).map((t) => t.key)).toEqual([...services, "bares", "restaurantes", "gimnasios", "cultura", "aparcamiento"]);
+    expect(SERVICE_FACILITY_KEYS).toEqual(services);
+    expect(LEISURE_FACILITY_KEYS.every(isLeisureFacility)).toBe(true);
+    expect(services.some((key) => isLeisureFacility(key as FacilityKey))).toBe(false);
+    expect(leisureQuery("cultura")).toEqual({ category: "culture", subcategories: ["Museo", "Biblioteca", "Teatro", "Cine", "Centro cultural"] });
+    expect(leisureQuery("bares")).toEqual({ category: "commerce", subcategories: ["Bar", "Pub", "Cafetería"] });
+    expect(FACILITY_TYPES).toHaveLength(services.length + LEISURE_FACILITY_KEYS.length + 1); // + car parks (D-237)
+  });
+
+  it("offers «Ocio» in the search once its dataset is published", () => {
+    expect(leisureAvailable(null)).toBe(false);
+    expect(leisureAvailable([{ dataset_id: "osm_parques" }])).toBe(false);
+    expect(leisureAvailable([{ dataset_id: "osm_parques" }, { dataset_id: "osm_ocio" }])).toBe(true);
   });
 });

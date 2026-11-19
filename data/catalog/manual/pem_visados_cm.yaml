@@ -1,0 +1,107 @@
+# D-248: presupuesto de ejecución material (PEM) por m² de los visados de obra nueva de
+# vivienda, recalculado del fichero oficial por scripts/pem_visados_cm.py. No editar a mano:
+# volver a lanzar el script. Es un PEM declarado en el visado, no el coste total de la obra:
+# la viabilidad lo multiplica por un coeficiente editable (gastos generales, beneficio
+# industrial, honorarios, licencias e impuestos) y avisa de que suele declararse a la baja.
+title: Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características
+  de los edificios
+publisher: Comunidad de Madrid (portal de datos abiertos)
+source: Estadística de Obras en Edificación. Ministerio de Vivienda y Agenda Urbana.
+license: CC BY 4.0
+portal_id: '1006022'
+url: https://datos.comunidad.madrid/dataset/1006022
+csv_url: https://datos.comunidad.madrid/dataset/6f917bba-b8cd-448b-997a-c3710b96480c/resource/073b9a57-8d89-4e5f-b496-4db418e8af09/download/visados-superficie-y-presupuesto-de-direccion-de-obra-de-edificios-por-tipo-de-obra-y-caracteris.csv
+updated: 05-03-2026
+metadata_modified: '2026-11-18'
+consulted: '2026-11-19'
+sha256: 6dae676474fdffaf02ec87f7bea75870e14714e4b155a3909b176ce4af89160c
+territory: 'Comunidad de Madrid. El fichero no trae columna de territorio y su ficha dice «Ámbito: Toda
+  España», pero el portal es el de la Comunidad y la escala es la de la región: 1641 visados de obra nueva
+  en 2025, cuando España suma decenas de miles al año'
+method: PEM por m² = presupuesto de ejecución material de dirección de obra nueva (miles de euros × 1.000)
+  / superficie a construir (m²), por año y tipo de edificio. Es la superficie construida total del edificio
+  que declara el visado.
+default:
+  kind: viviendas_en_bloque
+  year: 2025
+series:
+- year: 2021
+  viviendas_en_bloque:
+    pem_miles_eur: 1249773
+    superficie_m2: 2498183
+    pem_eur_m2: 500
+    provisional: false
+  unifamiliar_adosada:
+    pem_miles_eur: 246447
+    superficie_m2: 452779
+    pem_eur_m2: 544
+    provisional: false
+  unifamiliar_aislada:
+    pem_miles_eur: 292578
+    superficie_m2: 452023
+    pem_eur_m2: 647
+    provisional: false
+- year: 2022
+  viviendas_en_bloque:
+    pem_miles_eur: 1633447
+    superficie_m2: 2936060
+    pem_eur_m2: 556
+    provisional: false
+  unifamiliar_adosada:
+    pem_miles_eur: 207725
+    superficie_m2: 314151
+    pem_eur_m2: 661
+    provisional: false
+  unifamiliar_aislada:
+    pem_miles_eur: 229888
+    superficie_m2: 338728
+    pem_eur_m2: 679
+    provisional: false
+- year: 2023
+  viviendas_en_bloque:
+    pem_miles_eur: 1479407
+    superficie_m2: 2521790
+    pem_eur_m2: 587
+    provisional: false
+  unifamiliar_adosada:
+    pem_miles_eur: 100691
+    superficie_m2: 158237
+    pem_eur_m2: 636
+    provisional: false
+  unifamiliar_aislada:
+    pem_miles_eur: 103534
+    superficie_m2: 146005
+    pem_eur_m2: 709
+    provisional: false
+- year: 2024
+  viviendas_en_bloque:
+    pem_miles_eur: 1776386
+    superficie_m2: 2801299
+    pem_eur_m2: 634
+    provisional: false
+  unifamiliar_adosada:
+    pem_miles_eur: 99621
+    superficie_m2: 129742
+    pem_eur_m2: 768
+    provisional: false
+  unifamiliar_aislada:
+    pem_miles_eur: 144834
+    superficie_m2: 183942
+    pem_eur_m2: 787
+    provisional: false
+- year: 2025
+  viviendas_en_bloque:
+    pem_miles_eur: 1712790
+    superficie_m2: 2658184
+    pem_eur_m2: 644
+    provisional: false
+  unifamiliar_adosada:
+    pem_miles_eur: 89034
+    superficie_m2: 130156
+    pem_eur_m2: 684
+    provisional: false
+  unifamiliar_aislada:
+    pem_miles_eur: 85814
+    superficie_m2: 106213
+    pem_eur_m2: 808
+    provisional: false

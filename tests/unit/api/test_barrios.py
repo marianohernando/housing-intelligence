@@ -57,7 +57,9 @@ def test_a_barrio_keeps_its_own_trip_and_borrows_only_what_it_lacks() -> None:
 
 
 def test_an_empty_or_unfed_district_never_answers_silently() -> None:
-    assert any("no barrio" in w for w in barrio_warnings(0, False, 0))
+    assert any("no barrio of this district" in w for w in barrio_warnings(0, False, 0))
+    capital = barrio_warnings(0, False, 0, whole_capital=True)  # `scope: madrid` (D-238)
+    assert any("no barrio of Madrid capital" in w for w in capital)
     assert any("no indicator by barrio" in w for w in barrio_warnings(8, False, 0))
     assert any("2 barrios" in w for w in barrio_warnings(8, True, 2))
     assert barrio_warnings(8, True, 0) == []

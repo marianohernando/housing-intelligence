@@ -18,7 +18,9 @@ export default function MapaPage() {
           <h1 id="titulo" className={styles.title}>
             Encuentra tu sitio <span className={styles.accent}>en Madrid</span>
           </h1>
-          <p className={styles.lead}>Te decimos qué zonas encajan con tu vida y qué le falta a cada una, con datos oficiales.</p>
+          <p className={styles.lead}>
+            Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca.
+          </p>
           <ExampleButton />
         </section>
         <SearchCard />
@@ -30,13 +32,13 @@ export default function MapaPage() {
               <h2 id="como-funciona">Así funciona</h2>
               <ol className={styles.list}>
                 <li>
-                  <strong>Cuéntanos cómo es tu hogar</strong> y lo que te importa: colegios, salud, transporte…
+                  <strong>Cuéntanos cómo es tu hogar</strong> y lo que quieres tener cerca: colegios, centro de salud, transporte…
                 </li>
                 <li>
-                  <strong>Mira las zonas que encajan</strong> y por qué, con hechos que puedes comprobar.
+                  <strong>Mira las zonas que te convienen</strong> y por qué, con hechos que puedes comprobar.
                 </li>
                 <li>
-                  <strong>Entra en una zona</strong> y mira qué le falta frente a zonas parecidas.
+                  <strong>Entra en una zona</strong> y mira qué le falta comparada con zonas parecidas.
                 </li>
               </ol>
             </GlassCard>

@@ -1,0 +1,16 @@
+metric_id: infracciones_penales_conocidas
+human_name: Hechos conocidos de infracciones penales
+description: >-
+  Hechos conocidos de infracciones penales en el año: los que conocen las Fuerzas y Cuerpos de
+  Seguridad por denuncia o por actuación policial (Estadísticas de Criminalidad del Ministerio
+  del Interior, publicadas por el Instituto de Estadística de la Comunidad de Madrid). Por
+  tipología: el total (`total`) y la parte de cibercriminalidad (`cibercriminalidad`), que el
+  total incluye. Solo municipios de más de 20.000 habitantes; se cuentan donde se conocen, no
+  donde vive quien los sufre. Solo años definitivos (D-235).
+domain: safety
+unit: hechos
+aggregation_method: sum
+geo_resolution_min: municipio
+temporal_resolution: annual
+dataset_id: cm_infracciones_penales_municipios
+dimensions: [tipologia]

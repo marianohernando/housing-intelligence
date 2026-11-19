@@ -5,21 +5,46 @@ import { describe, expect, it } from "vitest";
 import type { RankedZone, RealityCheck, SearchResult, ZoneMatch } from "@/contracts/search_response";
 
 import {
+  asksForPlace,
+  byBarrio,
   constraintLabels,
   countFit,
-  failedLabels,
+  evaluatedText,
+  factText,
   fewZones,
+  floorAreaOf,
   fitClass,
   hasWalkingFact,
+  limitingConstraint,
+  nearbyWalks,
+  noneText,
   optionText,
   paintFit,
+  loadingText,
+  nearHelpText,
   passingText,
   rankText,
+  resultsTitle,
+  speaksToMany,
+  voice,
   relaxOptions,
+  BUY_LIST_NOTICE,
+  PRICE_HINT,
+  RENT_2024_NOTICE,
+  RENT_LIST_NOTICE,
+  rentNotice,
+  rentReferenceAvailable,
+  rentUnknownText,
+  tiedAtTop,
+  tiedText,
   unknownText,
   WALK_MINUTES_FEATURE_PREFIX,
+  zonesWithoutPrice,
   zoneFit,
   zoneKeyOf,
+  zonePrice,
+  zonePriceOf,
+  zoneWord,
 } from "../fit";
 import type { ZoneCollection, ZoneFeature, ZoneLevel } from "../map/zones";
 
@@ -126,15 +151,84 @@ describe("zoneFit and the names of the conditions", () => {
     expect(zoneFit(result, "municipio/3")).toEqual({ match: null, ranked: null });
   });
 
-  it("names the conditions a zone fails, leaving out the unnamed ones", () => {
+  it("names each condition of the search by the API's label, from the results and the near misses", () => {
     const labels = constraintLabels(result);
     expect(labels.get("near:colegio")).toBe("Colegio a 10 min andando como mucho");
-    expect(failedLabels(["budget", "commute:0"], labels)).toEqual(["Alquiler hasta 1.500 €/mes para 77 m²"]);
-    expect(failedLabels(undefined, labels)).toEqual([]);
+    expect(labels.get("budget")).toBe("Alquiler hasta 1.500 €/mes para 77 m²");
   });
 
   it("keys zones like the map does", () => {
     expect(zoneKeyOf({ level: "distrito", code: "2807905" })).toBe("distrito/2807905");
+  });
+});
+
+describe("where the search looked («¿Dónde?», D-238)", () => {
+  const compared = (scope: SearchResult["scenario"]["scope"], n: number) => ({ scenario: { scope }, reality_check: { zones_evaluated: n } });
+
+  it("says how many zones it compared, and where (resultados.de)", () => {
+    expect(evaluatedText(compared(undefined, 199))).toBe("Hemos mirado las 199 zonas de la Comunidad de Madrid.");
+    expect(evaluatedText(compared("all", 199))).toBe("Hemos mirado las 199 zonas de la Comunidad de Madrid.");
+    expect(evaluatedText(compared("madrid", 131))).toBe("Hemos mirado los 131 barrios de Madrid capital.");
+    expect(evaluatedText(compared("alrededores", 40))).toBe("Hemos mirado los 40 municipios de los alrededores de Madrid.");
+    expect(evaluatedText(compared("pueblos", 138))).toBe("Hemos mirado los 138 pueblos de la Comunidad de Madrid.");
+  });
+
+  it("ranks Madrid capital by barrio only when the search was over the capital", () => {
+    expect(byBarrio({ scenario: { scope: "madrid" } })).toBe(true);
+    expect(byBarrio({ scenario: { scope: "alrededores" } })).toBe(false);
+    expect(byBarrio({ scenario: {} })).toBe(false);
+    expect(byBarrio(null)).toBe(false);
+  });
+
+  it("names the zones by the scope's word, with its gender", () => {
+    expect(zoneWord({ scenario: {} })).toBe("zona");
+    expect(zoneWord({ scenario: { scope: "pueblos" } })).toBe("pueblo");
+    expect(passingText(78, false, "barrio")).toBe("Hemos encontrado 78 barrios para ti.");
+    expect(passingText(2, false, "pueblo")).toBe("Hemos encontrado 2 pueblos para ti.");
+    expect(passingText(1, true, "municipio")).toBe("Con este cambio sale 1 municipio.");
+    expect(passingText(0, false, "barrio")).toBe("No hemos encontrado ningún barrio para ti.");
+    expect(passingText(0)).toBe("No hemos encontrado ninguna zona para ti.");
+    expect(noneText("pueblo")).toBe("Ningún pueblo cumple todo lo que pides. Mira abajo qué pasa si cambias algo.");
+    expect(unknownText(136, "pueblo")).toBe("En 136 pueblos no podemos comprobarlo todo por falta de datos. No los contamos como buenos.");
+    expect(unknownText(1, "barrio")).toBe("En 1 barrio no podemos comprobarlo todo por falta de datos. No lo contamos como bueno.");
+    expect(optionText({ label: "+150 €/mes", zones_if_relaxed: 93, added_zones: 15 }, "barrio").count).toBe("saldrían 15 más: 93 barrios en total");
+    expect(rankText(1, "barrio")).toBe("El 1.º que más te conviene");
+    expect(rankText(3)).toBe("La 3.ª que más te conviene");
+  });
+
+  it("says why the villages come out «Sin datos» when renting, and only then", () => {
+    const search = (scope: "pueblos" | "alrededores", kind: "rent" | "buy", unknown: number) => ({
+      scenario: { scope, budget: { kind } },
+      reality_check: { zones_unknown: unknown, zones_evaluated: 138 },
+    });
+    expect(rentUnknownText(search("pueblos", "rent", 136))).toBe(
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar tu presupuesto.",
+    );
+    // D-242: before the reference rent is synced (not in /datasets), the D-238 reason stays
+    expect(rentUnknownText(search("pueblos", "rent", 136), false)).toBe(
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque el alquiler solo se publica en los municipios de más de 20.000 habitantes: no podemos comprobar tu presupuesto.",
+    );
+    expect(rentReferenceAvailable([{ dataset_id: "osm_ocio" }, { dataset_id: "mivau_serpavi_alquiler" }])).toBe(true);
+    expect(rentReferenceAvailable([{ dataset_id: "osm_ocio" }])).toBe(false);
+    expect(rentReferenceAvailable(null)).toBe(false);
+    // A couple (review M-01 of PR #81)
+    expect(rentUnknownText({ ...search("pueblos", "rent", 136), scenario: { scope: "pueblos", budget: { kind: "rent" }, household: { adults: 2 } } })).toBe(
+      "136 de los 138 pueblos salen «Sin datos», sobre todo porque tienen tan pocas viviendas alquiladas que no se publica su alquiler: no podemos comprobar vuestro presupuesto.",
+    );
+    expect(rentUnknownText(search("pueblos", "rent", 0))).toBeNull();
+    expect(rentUnknownText(search("pueblos", "buy", 136))).toBeNull();
+    expect(rentUnknownText(search("alrededores", "rent", 6))).toBeNull();
+  });
+
+  it("names what limits the search only when its FAILs, not missing data, leave the zones out", () => {
+    const limited = (failing: number, unknown: number) =>
+      limitingConstraint({
+        all_zones: [...Array.from({ length: failing }, (_, i) => match("municipio", `28${i}`, 90, false, ["budget"])), match("municipio", "28999", null, false)],
+        reality_check: { ...rc(0, []), zones_unknown: unknown, binding_constraint: "budget" },
+      });
+    expect(limited(20, 15)).toBe("budget");
+    expect(limited(0, 136)).toBeNull();
+    expect(limited(3, 6)).toBeNull();
   });
 });
 
@@ -151,11 +245,55 @@ describe("«¿Y si cambias algo?»", () => {
   });
 
   it("says how many zones there are, in plain words (rc.ninguna, rc.una, rc.varias)", () => {
-    expect(passingText(0)).toBe("Con tu búsqueda tal cual no sale ninguna zona.");
-    expect(passingText(1)).toBe("Con tu búsqueda tal cual sale 1 zona.");
-    expect(passingText(32)).toBe("Con tu búsqueda tal cual salen 32 zonas.");
+    expect(passingText(0)).toBe("No hemos encontrado ninguna zona para ti.");
+    expect(passingText(1)).toBe("Hemos encontrado 1 zona para ti.");
+    expect(passingText(32)).toBe("Hemos encontrado 32 zonas para ti.");
     expect(passingText(49, true)).toBe("Con este cambio salen 49 zonas.");
     expect(passingText(1, true)).toBe("Con este cambio sale 1 zona.");
+  });
+
+  it("speaks to one person as «tú» and to more as «vosotros», in one place (review R-03 of PR #81)", () => {
+    expect(voice(false)).toMatchObject({ te: "te", ti: "ti", tu: "tu", buscas: "buscas", pides: "pides", trabajas: "trabajas" });
+    expect(voice(true)).toMatchObject({ te: "os", ti: "vosotros", tu: "vuestra", buscas: "buscáis", pides: "pedís", trabajas: "trabajáis" });
+    expect(loadingText(false)).toBe("Buscando zonas para ti…");
+    expect(loadingText(true)).toBe("Buscando zonas para vosotros…");
+    expect(nearHelpText(false)).toBe("Les falta una sola cosa de lo que pides.");
+    expect(nearHelpText(true)).toBe("Les falta una sola cosa de lo que pedís.");
+    expect(rankText(1, "zona", true)).toBe("La 1.ª que más os conviene");
+    expect(rankText(3, "barrio")).toBe("El 3.º que más te conviene");
+  });
+
+  it("speaks to the household in the rest of the results too (review M-01 of PR #81)", () => {
+    expect(voice(false)).toMatchObject({ presupuesto: "tu presupuesto", tienes: "tienes", cambias: "cambias", gastes: "gastes", mira: "mira", dinos: "dinos" });
+    expect(voice(true)).toMatchObject({ presupuesto: "vuestro presupuesto", tienes: "tenéis", cambias: "cambiáis", gastes: "gastéis", mira: "mirad", dinos: "decidnos" });
+    expect(noneText("zona", true)).toBe("Ninguna zona cumple todo lo que pedís. Mirad abajo qué pasa si cambiáis algo.");
+    expect(noneText("barrio", false)).toBe("Ningún barrio cumple todo lo que pides. Mira abajo qué pasa si cambias algo.");
+  });
+
+  it("has the words of «¿Cerca de dónde quieres vivir?» for one person and for more (lugar.*, D-244)", () => {
+    expect(voice(false)).toMatchObject({ quieres: "quieres", mi: "mi", vives: "vives", fueras: "fueras" });
+    expect(voice(true)).toMatchObject({ quieres: "queréis", mi: "nuestra", vives: "vivís", fueras: "fuerais" });
+  });
+
+  it("titles the list for the household, as the line under it", () => {
+    expect(resultsTitle(false)).toBe("Zonas que te convienen");
+    expect(resultsTitle(true)).toBe("Zonas que os convienen");
+    expect(resultsTitle(speaksToMany(fixture.scenario.household))).toBe("Zonas que os convienen");
+    expect(resultsTitle(speaksToMany({ adults: 1 }))).toBe("Zonas que te convienen");
+  });
+
+  it("speaks to a household of more than one as «vosotros» (second delivery of the UX mobile audit)", () => {
+    expect(passingText(12, false, "zona", true)).toBe("Hemos encontrado 12 zonas para vosotros.");
+    expect(passingText(0, false, "barrio", true)).toBe("No hemos encontrado ningún barrio para vosotros.");
+    expect(passingText(40, true, "zona", true)).toBe("Con este cambio salen 40 zonas.");
+    expect(speaksToMany({ adults: 2, minors: 0, seniors_in_care: 0 })).toBe(true);
+    expect(speaksToMany({ adults: 1, minors: 1 })).toBe(true);
+    expect(speaksToMany({ adults: 1, seniors_in_care: 1 })).toBe(true);
+    expect(speaksToMany({ adults: 1, minors: 0, seniors_in_care: 0, seniors: true } as never)).toBe(false);
+    // The API's defaults: one adult
+    expect(speaksToMany({})).toBe(false);
+    expect(speaksToMany(null)).toBe(false);
+    expect(speaksToMany(fixture.scenario.household)).toBe(true);
   });
 
   it("says in how many zones something could not be checked, in singular with one (rc.sin_dato)", () => {
@@ -163,15 +301,54 @@ describe("«¿Y si cambias algo?»", () => {
     expect(unknownText(1)).toBe("En 1 zona no podemos comprobarlo todo por falta de datos. No la contamos como buena.");
   });
 
+  it("says why when buying: municipios with no published purchase price (rc.sin_dato.compra, D-234)", () => {
+    expect(unknownText(151, "zona", { n: 151, onlyMunicipios: true })).toBe(
+      "En 151 zonas no podemos comprobarlo todo: sin precio de compra publicado en 151 municipios (solo lo tienen los de más de 25.000 habitantes). No las contamos como buenas.",
+    );
+    expect(unknownText(1, "zona", { n: 1, onlyMunicipios: true })).toBe(
+      "En 1 zona no podemos comprobarlo todo: sin precio de compra publicado en 1 municipio (solo lo tienen los de más de 25.000 habitantes). No la contamos como buena.",
+    );
+    expect(unknownText(40, "pueblo", { n: 40, onlyMunicipios: true })).toContain("sin precio de compra publicado en 40 pueblos");
+    expect(unknownText(3, "zona", { n: 0, onlyMunicipios: true })).toBe(unknownText(3));
+  });
+
+  it("never calls the districts municipios nor promises an estimate before the sync (D-234)", () => {
+    // The code deployed and the estimate not synced yet: 151 municipios and the 21 districts unpriced
+    expect(unknownText(172, "zona", { n: 172, onlyMunicipios: false })).toBe(
+      "En 172 zonas no podemos comprobarlo todo: sin precio de compra en 172 zonas (el valor tasado de la vivienda solo se publica por municipio, y solo en los de más de 25.000 habitantes). No las contamos como buenas.",
+    );
+    expect(unknownText(131, "barrio", { n: 131, onlyMunicipios: false })).toContain("sin precio de compra en 131 barrios");
+  });
+
+  it("counts the zones without a purchase price from all_zones, by level, only with a budget to buy", () => {
+    const priced = (z: ZoneMatch, cost: number | null): ZoneMatch => ({ ...z, estimated_cost_eur: cost });
+    const zones = [
+      priced(match("municipio", "28001", null, false), null),
+      priced(match("municipio", "28002", null, false), null),
+      priced(match("municipio", "28003", 0, false, ["budget"]), 420_000), // fails: not unknown
+      priced(match("municipio", "28004", null, false, ["near:colegio"]), null), // fails something else
+      priced(match("municipio", "28005", 100, true), 200_000),
+    ];
+    const district = priced(match("distrito", "2807906", null, false), null);
+    const check = { ...rc(10), zones_unknown: 2, unknown_by_constraint: { budget: 2 } };
+    const buy = { schema_version: 2, budget: { kind: "buy", amount_eur: 400_000 } } as const;
+    const rent = { schema_version: 2, budget: { kind: "rent", amount_eur: 1_200 } } as const;
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check, all_zones: zones })).toEqual({ n: 2, onlyMunicipios: true });
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: check, all_zones: [...zones, district] })).toEqual({ n: 3, onlyMunicipios: false });
+    expect(zonesWithoutPrice({ scenario: rent, reality_check: check, all_zones: zones }).n).toBe(0);
+    // An API from before D-234 has no unknown_by_constraint: the generic text stays
+    expect(zonesWithoutPrice({ scenario: buy, reality_check: rc(10), all_zones: zones }).n).toBe(0);
+  });
+
   it("tells each option with the API's figures, never recomputed", () => {
     const option = { label: "+5 min a pie hasta colegio con primaria", zones_if_relaxed: 49, added_zones: 17 };
-    expect(optionText(option)).toEqual({ label: option.label, count: "saldrían 49 zonas, 17 más" });
+    expect(optionText(option)).toEqual({ label: option.label, count: "saldrían 17 más: 49 zonas en total" });
     // Singular with 1 zone (rc.opcion.cuenta, pitch/textos_web.md 8c49e33)
-    expect(optionText({ ...option, zones_if_relaxed: 1, added_zones: 1 }).count).toBe("saldría 1 zona, 1 más");
+    expect(optionText({ ...option, zones_if_relaxed: 1, added_zones: 1 }).count).toBe("saldría 1 más: 1 zona en total");
   });
 
   it("writes the place in the ranking (zona.puesto)", () => {
-    expect(rankText(8)).toBe("La 8.ª que más encaja");
+    expect(rankText(8)).toBe("La 8.ª que más te conviene");
   });
 });
 
@@ -190,5 +367,209 @@ describe("facts in plain words (a_pie.mediana)", () => {
     // A park out of range says «sin parque… a un paseo»: no minutes, no indicator, no median note
     expect(hasWalkingFact([{ indicator: null }])).toBe(false);
     expect(hasWalkingFact([{ indicator: { feature_id: "centros_salud_a_pie_por_10000_hab" } }])).toBe(false);
+  });
+});
+
+describe("the approximate price of a zone (D-234)", () => {
+  it("says the purchase price or the monthly rent the API gives, never recomputed", () => {
+    expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_confidence: 0.8 }, true)).toEqual({
+      short: "Unos\u00a0385.000\u00a0€",
+      m2: null,
+      aria: "Comprar: unos 385.000 €",
+      confidence: null,
+      range: null,
+      notice: null,
+    });
+    const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false);
+    // The row and the card's essentials say it in words, without «≈» (second delivery of the UX mobile audit)
+    expect([rent?.short, rent?.aria]).toEqual(["Unos\u00a01.101\u00a0€ al\u00a0mes", "Alquiler: unos 1.101 € al mes"]);
+  });
+
+  it("says the m² the price is for, the person's or the household's usual (zona.precio.m2)", () => {
+    const rent = zonePrice({ estimated_cost_eur: 1_101, estimated_cost_confidence: 0.9 }, false, 68);
+    expect([rent?.short, rent?.m2, rent?.aria]).toEqual(["Unos\u00a01.101\u00a0€ al\u00a0mes", 68, "Alquiler: unos 1.101 € al mes por 68 m²"]);
+    expect(zonePrice({ estimated_cost_eur: 385_000 }, true, 90)?.aria).toBe("Comprar: unos 385.000 € por 90 m²");
+    // The example (2 adults and 2 children, min_floor_area_m2 null) is priced for 77 m², as its facts say
+    expect(floorAreaOf(fixture)).toBe(77);
+    expect(fixture.results[0]?.constraints.find((c) => c.constraint_id === "budget")?.label).toContain("77 m²");
+    expect(floorAreaOf({ scenario: { ...fixture.scenario, min_floor_area_m2: 55 } })).toBe(55);
+    expect(floorAreaOf({})).toBeNull();
+    expect(zonePriceOf(fixture, zoneKeyOf(fixture.results[0]!.zone))?.m2).toBe(77);
+  });
+
+  it("marks an estimate with the card's words, and shows nothing without a price", () => {
+    expect(zonePrice({ estimated_cost_eur: 411_000, estimated_cost_confidence: 0.5 }, true)?.confidence?.label).toBe("Dato aproximado");
+    expect(zonePrice({ estimated_cost_eur: 900, estimated_cost_confidence: 0.3 }, false)?.confidence?.label).toBe("Dato poco seguro");
+    // An API from before D-234 sends no confidence: the figure goes without a mark
+    expect(zonePrice({ estimated_cost_eur: 900 }, false)?.confidence).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: null, estimated_cost_confidence: null }, true)).toBeNull();
+    expect(zonePrice({}, true)).toBeNull();
+  });
+
+  it("says where half the leases fall and who publishes it, renting with the Ministry's reference (D-242)", () => {
+    const range = { low_eur: 510, high_eur: 820, source: "Ministerio de Vivienda (SERPAVI), 2024" };
+    const rent = zonePrice({ estimated_cost_eur: 571, estimated_cost_confidence: 0.7, estimated_cost_range: range }, false);
+    expect(rent?.short).toBe("Unos\u00a0571\u00a0€ al\u00a0mes");
+    expect(rent?.confidence?.label).toBe("Dato aproximado");
+    expect(rent?.range).toEqual({
+      text: "Lo normal: entre 510 y 820\u00a0€ al mes",
+      source: "Ministerio de Vivienda (SERPAVI), 2024",
+      aria: "Lo normal: entre 510 y 820 € al mes, según Ministerio de Vivienda (SERPAVI), 2024",
+    });
+    expect(zonePrice({ estimated_cost_eur: 1_010, estimated_cost_range: { ...range, low_eur: 1_010, high_eur: 1_500 } }, false)?.range?.text).toBe(
+      "Lo normal: entre 1.010 y 1.500\u00a0€ al mes",
+    );
+    // Buying, or a rent from the CM (no spread published), or an API from before D-242: no range
+    expect(zonePrice({ estimated_cost_eur: 385_000, estimated_cost_range: range }, true)?.range).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: 1_101, estimated_cost_range: null }, false)?.range).toBeNull();
+    expect(zonePrice({ estimated_cost_eur: 1_101 }, false)?.range).toBeNull();
+  });
+
+  it("gives the card the price of any zone, from all_zones, else from its ranked entry", () => {
+    const first = fixture.results[0]!;
+    const key = zoneKeyOf(first.zone);
+    const withAll: SearchResult = {
+      ...fixture,
+      all_zones: fixture.all_zones.map((z) =>
+        zoneKeyOf(z.zone) === key ? { ...z, estimated_cost_eur: 1_234, estimated_cost_confidence: 0.8 } : z,
+      ),
+    };
+    expect(zonePriceOf(withAll, key)?.short).toBe("Unos\u00a01.234\u00a0€ al\u00a0mes");
+    const older: SearchResult = { ...fixture, all_zones: fixture.all_zones.map((z) => ({ ...z, estimated_cost_eur: undefined })) };
+    const cost = first.estimated_cost_eur;
+    expect(zonePriceOf(older, key)?.short).toBe(cost == null ? undefined : zonePrice(first, false)?.short);
+    expect(zonePriceOf(fixture, "municipio/00000")).toBeNull();
+  });
+});
+
+describe("many zones tied at the top (resultados.empate, D-239)", () => {
+  const ranked = (pct: number) => ({ match_pct: pct }) as RankedZone;
+  const tied = (n: number, pct = 100) => Array.from({ length: n }, (_, i) => match("municipio", `28${String(i).padStart(3, "0")}`, pct, true));
+
+  it("counts the zones that meet everything with the first one's %, not those that fail or have no %", () => {
+    const all = [...tied(3), match("municipio", "28900", 100, false, ["budget"]), match("municipio", "28901", null, false), match("municipio", "28902", 97, true)];
+    expect(tiedAtTop({ results: [ranked(100)], all_zones: all })).toBe(3);
+    expect(tiedAtTop({ results: [], all_zones: all })).toBe(0);
+  });
+
+  it("says so only with more than 10, with the number of zones", () => {
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(10), scenario: {} })).toBeNull();
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(57), scenario: {} })).toBe(
+      "Hay 57 zonas igual de buenas: marca qué quieres tener cerca o dónde trabajas para afinar el orden.",
+    );
+  });
+
+  it("names the zones of the scope: 106 barrios of Madrid capital (D-238)", () => {
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: { scope: "madrid" } })).toBe(
+      "Hay 106 barrios igual de buenos: marca qué quieres tener cerca o dónde trabajas para afinar el orden.",
+    );
+  });
+
+  it("asks «Somos mayores» where they want to live, never where they work (D-244, R-13 of PR #79)", () => {
+    const older = { scope: "madrid" as const, household: { adults: 2, seniors: true } };
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: older })).toBe(
+      // A couple: «vosotros» (review R-03 of PR #81)
+      "Hay 106 barrios igual de buenos: marcad qué queréis tener cerca o elegid cerca de dónde queréis vivir para afinar el orden.",
+    );
+    // One person of 65 or more who lives alone: «tú» all along (review R-02 of PR #82)
+    const alone = { scope: "madrid" as const, household: { adults: 1, seniors: true } };
+    expect(tiedText({ results: [ranked(100)], all_zones: tied(106), scenario: alone })).toBe(
+      "Hay 106 barrios igual de buenos: marca qué quieres tener cerca o elige cerca de dónde quieres vivir para afinar el orden.",
+    );
+  });
+
+  it("stays quiet on line A's search fixture, where the top is not a crowd", () => {
+    expect(tiedText(fixture)).toBeNull();
+  });
+});
+
+describe("services the search found a short walk away (zona.cerca_pocas)", () => {
+  it("takes the minutes of a service asked for and met, else of a walking fact that is a strength", () => {
+    // The example: «Colegio a 10 min como mucho» met at 5,6 min; the health centre from its fact
+    const walks = nearbyWalks(fixture.results[0]!);
+    expect(walks.colegio).toBe(5.6);
+    expect(walks.centro_salud).toBeGreaterThan(0);
+    expect(walks.escuela_infantil).toBeUndefined();
+    // Not met, or a weakness, is not close
+    const far = {
+      constraints: [{ constraint_id: "near:escuela_infantil", status: "FAIL", value: 14, label: "", explanation: "", confidence: 1 }],
+      facts: [{ kind: "weakness", topic: "salud", text: "", confidence: 1, indicator: { feature_id: "min_a_pie_centro_salud", value: 25 } }],
+    } as unknown as RankedZone;
+    expect(nearbyWalks(far)).toEqual({});
+    expect(nearbyWalks(null)).toEqual({});
+  });
+});
+
+describe("the rent of 2024 (F5 of fit-0.9: zona.precio.aviso_2024, resultados.aviso_2024)", () => {
+  it("is explained by every rent behind «Ver más» of the card, never by a purchase price", () => {
+    // Second delivery of the UX mobile audit: «Precio orientativo» by the price, the why in «Ver más»
+    expect(PRICE_HINT).toBe("Precio orientativo");
+    expect(RENT_2024_NOTICE).toBe("Precio de contratos firmados en 2024; los anuncios de hoy suelen pedir más.");
+    expect(zonePrice({ estimated_cost_eur: 1_101 }, false)?.notice).toBe(RENT_2024_NOTICE);
+    expect(zonePrice({ estimated_cost_eur: 385_000 }, true)?.notice).toBeNull();
+  });
+
+  it("is said once under the results whose prices are rents, also without a budget, and never buying", () => {
+    expect(RENT_LIST_NOTICE).toBe("Precios orientativos: hoy pueden ser algo más caros.");
+    expect(rentNotice(fixture)).toBe(RENT_LIST_NOTICE);
+    expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: null } })).toBe(RENT_LIST_NOTICE);
+    // Buying, the purchase prices are orientative too (review R-10 of PR #81)
+    expect(rentNotice({ ...fixture, scenario: { ...fixture.scenario, budget: { kind: "buy", amount_eur: 400_000 } } })).toBe(BUY_LIST_NOTICE);
+    expect(BUY_LIST_NOTICE).toBe("Precios orientativos: son una estimación del precio de compra.");
+    // No price on screen, nothing to warn about
+    const unpriced = fixture.results.map((z) => ({ ...z, estimated_cost_eur: null }));
+    expect(rentNotice({ ...fixture, results: unpriced, near_misses: [] })).toBeNull();
+  });
+
+  it("is not said again in other words by the API's rent fact, and the cost says its figure in words (R-03)", () => {
+    const rent = {
+      topic: "coste" as const,
+      text: "Alquiler ≈ 1.101 €/mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)",
+    };
+    expect(factText(rent, false)).toBe("Alquiler unos 1.101 € al mes por 77 m² (14,3 €/m², contratos firmados en 2024)");
+    const village = {
+      topic: "coste" as const,
+      text: "Alquiler ≈ 571 €/mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024; un anuncio de hoy puede pedir más); la mitad de los contratos, entre 500 y 790 €",
+    };
+    expect(factText(village, false)).toBe(
+      "Alquiler unos 571 € al mes por 68 m² (8,4 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 500 y 790 €",
+    );
+    // Buying the card has no rent notice, so the cost fact only says its figure in words; other facts never change
+    expect(factText(rent, true)).toBe("Alquiler unos 1.101 € al mes por 77 m² (14,3 €/m², contratos firmados en 2024; un anuncio de hoy puede pedir más)");
+    const buy = { topic: "coste" as const, text: "Comprar ≈ 385.000 € por 68 m² (5.660 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)" };
+    expect(factText(buy, true)).toBe("Comprar unos 385.000 € por 68 m² (5.660 €/m², valor tasado medio de la vivienda libre, no el precio de un anuncio)");
+    expect(factText({ topic: "colegios", text: "Colegio; un anuncio de hoy puede pedir más" }, false)).toBe("Colegio; un anuncio de hoy puede pedir más");
+  });
+});
+
+describe("no place to go in the whole region (resultados.sin_lugar)", () => {
+  const ranked = (pct: number) => ({ match_pct: pct }) as RankedZone;
+  const few = Array.from({ length: 3 }, (_, i) => match("municipio", `28${String(i).padStart(3, "0")}`, 98 - i, true));
+  const base = { results: [ranked(98)], all_zones: few, reality_check: rc(3), scenario: { schema_version: 2 as const, anchors: [] } };
+
+  it("asks for the work place or «Madrid capital» with no place and the whole region, with zones that fit", () => {
+    expect(asksForPlace(base)).toBe(true);
+    expect(asksForPlace({ ...base, scenario: { schema_version: 2 } })).toBe(true);
+  });
+
+  it("stays quiet with a place, with a part of the region, without zones or with a crowd at the top", () => {
+    const place = { kind: "family" as const, label: "Getafe Central (Cercanías)", lon: 0, lat: 0 };
+    expect(asksForPlace({ ...base, scenario: { ...base.scenario, anchors: [place] } })).toBe(false);
+    expect(asksForPlace({ ...base, scenario: { ...base.scenario, scope: "madrid" } })).toBe(false);
+    expect(asksForPlace({ ...base, scenario: { ...base.scenario, scope: "pueblos" } })).toBe(false);
+    expect(asksForPlace({ ...base, reality_check: rc(0) })).toBe(false);
+    // resultados.empate already asks for the work place
+    const crowd = Array.from({ length: 12 }, (_, i) => match("municipio", `28${String(i).padStart(3, "0")}`, 100, true));
+    expect(asksForPlace({ ...base, results: [ranked(100)], all_zones: crowd })).toBe(false);
+  });
+
+  it("never asks «Somos mayores» where they work (D-244): a retired couple has no place to go", () => {
+    const older = { ...base.scenario, household: { adults: 2, seniors: true } };
+    expect(asksForPlace({ ...base, scenario: older })).toBe(false);
+    expect(asksForPlace({ ...base, scenario: { ...older, household: { adults: 2, seniors: false } } })).toBe(true);
+  });
+
+  it("stays quiet on line A's fixture, which has a work place", () => {
+    expect(asksForPlace(fixture)).toBe(false);
   });
 });

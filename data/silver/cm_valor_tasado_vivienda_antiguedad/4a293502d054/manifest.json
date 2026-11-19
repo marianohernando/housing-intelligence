@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_valor_tasado_vivienda_antiguedad",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_valor_tasado_vivienda_antiguedad/7daa22cea4ad/valor-tasado-vivienda-libre-en-municipios-de-mas-de-25.000-habitantes-por-antiguedad-eurosm2.-mu.csv",
+      "sha256": "7daa22cea4adbfa04e92cd4c7143d4e0ed22e935904cb1297e90ff297192e3ae",
+      "bytes": 322917,
+      "url": "https://datos.comunidad.madrid/dataset/d52ffa6f-b1e7-4511-8b25-23c4b1e193ca/resource/9946f275-020c-41f9-9d3f-c6ada055c315/download/valor-tasado-vivienda-libre-en-municipios-de-mas-de-25.000-habitantes-por-antiguedad-eurosm2.-mu.csv",
+      "retrieved_at": "2026-11-15T11:05:32.158102+00:00"
+    }
+  ],
+  "checksum": "4a293502d05473175e6a91200e382f897bbb7d0d997a59e2db2687b635bc7690",
+  "parser_version": "stat_tables-1.1.0"
+}

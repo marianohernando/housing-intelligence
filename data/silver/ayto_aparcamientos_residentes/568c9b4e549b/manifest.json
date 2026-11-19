@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "ayto_aparcamientos_residentes",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_aparcamientos_residentes/f0d656337f28/202584-0-aparcamientos-residentes.csv",
+      "sha256": "f0d656337f28f35cfe95cd7461b7237a2b5eaf7814c27582a14d4addc49e0a50",
+      "bytes": 147434,
+      "url": "https://datos.madrid.es/dataset/202584-0-aparcamientos-residentes/resource/202584-1-aparcamientos-residentes-csv/download/202584-0-aparcamientos-residentes.csv",
+      "retrieved_at": "2026-11-15T11:05:45.187868+00:00"
+    }
+  ],
+  "checksum": "568c9b4e549bd35f208c8bec8dbbd0a615306631551b65e3cc4eca086874889a",
+  "parser_version": "places-1.8.1"
+}

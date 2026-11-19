@@ -1,0 +1,39 @@
+dataset_id: ayto_usos_suelo_urbanismo
+source_id: ayuntamiento_madrid_urbanismo_sigma
+name: Urbanismo. Destino urbanístico del suelo
+domain: urbanism
+owner: Ayuntamiento de Madrid
+format: ArcGIS REST (JSON)
+geography: polygon
+geo:
+  resolution: parcela
+  crs_expected: EPSG:25830
+temporal_resolution: null
+refresh_policy: continuo
+landing_url: https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo
+resources:
+- name: Parcelas urbanísticas (capa 3 de USOS_SUELO), consulta por punto
+  format: JSON
+  url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/3/query
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 1
+  product_impact: 5
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-250. Ayuntamiento de Madrid, CC BY 4.0 (license_id cc-by en su CKAN, comprobado el 19
+    nov). El destino urbanístico de cada parcela del término municipal (40.021 polígonos), «interpretando
+    lo contemplado en el PGOUM y sus alteraciones posteriores»; su ficha dice que la
+    información carece de valor jurídico. La búsqueda por parcela lo lee en vivo, por un punto,
+    y no lo carga en la base: la norma zonal y su grado o el ámbito, el uso pormenorizado y la
+    parcela urbanística.
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T20:00:00+00:00'
+notes: >-
+  Complementario, no es dataset CM (D-205): solo Madrid capital. Contexto de la ficha de
+  parcela para inversores (D-250); no puntúa.

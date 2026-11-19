@@ -57,7 +57,7 @@
   top: calc(100% + 0.1rem);
   left: 0;
   color: var(--ink);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   white-space: nowrap;
   transform: translateX(-50%);
 }
@@ -74,5 +74,5 @@
   margin-left: calc(4.5rem + var(--space-2));
   margin-right: calc(2.25rem + var(--space-2));
   color: var(--ink-soft);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
 }

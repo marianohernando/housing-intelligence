@@ -12,12 +12,12 @@ Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el 
 
 ## Qué datos usamos
 
-**26 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid) en la demo, todos con su control de calidad superado:**
+**39 conjuntos de datos del [Portal de Datos Abiertos de la Comunidad de Madrid](https://datos.comunidad.madrid), todos con su control de calidad superado (59 contando los de apoyo):**
 - población, hogares, vivienda, renta y alquiler;
 - colegios y sus aulas, centros de salud, servicios para mayores y farmacias, y los hospitales y camas de la región;
 - las 6 redes de transporte público del Consorcio Regional de Transportes, que también publica ese portal, y la accesibilidad de las estaciones de metro, Metro Ligero y Cercanías.
 
-El código ya incluye uno más, el valor tasado de la vivienda para comprar (27 en total), que llegará a la demo en su próxima actualización.
+Todos están en la demo desde el 19 nov. Los últimos en llegar son los de la versión para inversores: el Catastro por uso de la Comunidad (D-247) y los visados con el presupuesto de las obras (D-248).
 
 → **[Ficha de cada conjunto, con su enlace, su licencia y para qué lo usamos](data/catalog/datasets/)** (también en la API: `GET /api/v1/datasets?cm_only=true`).
 
@@ -32,7 +32,7 @@ Como apoyo, sin contarlos como datos de la Comunidad, usamos:
 ## Cómo funciona
 
 1. **Cuéntanos cómo es tu hogar:** quién vive contigo, cuánto puedes pagar de alquiler, dónde trabajas y qué te importa: transporte, salud, colegios, zonas verdes o estaciones sin escaleras.
-2. **Mira las zonas que encajan contigo,** con su % de encaje y, debajo, hechos que puedes comprobar, como «colegio con primaria a 5 min andando» o los minutos en transporte público hasta tu trabajo, llegando a las 9:00. Cada hecho dice cuánto nos fiamos del dato.
+2. **Mira las zonas que te convienen,** cada una con lo que cuesta al mes y su valoración en palabras, de «Muy buena opción» a «Poco recomendable», y, al abrirla, hechos que puedes comprobar, como «colegio con primaria a 5 min andando» o los minutos en transporte público hasta tu trabajo, llegando a las 9:00. Cada hecho dice cuánto nos fiamos del dato.
    - **Comprar:** el código ya usa el valor tasado medio por municipio. En la demo, hasta su próxima actualización, comprar sale «sin datos».
    - **Seguridad:** no la puntuamos, porque no hay un dato oficial que la mida para quien vive en cada zona (D-224 y D-226).
 3. **¿Salen pocas?** Te enseñamos cuántas zonas aparecen si cambias una sola cosa, por ejemplo 150 € más al mes o el colegio a 5 minutos más.
@@ -46,7 +46,9 @@ Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»
 
 ## Para agentes de IA (MCP)
 
-Un servidor MCP local deja que un asistente (Claude Desktop, Claude Code u otro cliente MCP) pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Tiene 5 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre y listar las fuentes. Nunca ejecuta SQL. Se arranca con `make mcp` y funciona solo en tu ordenador, contra tu base local; no está desplegado. Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225).
+Un servidor MCP local deja que un asistente (Claude Desktop, Claude Code u otro cliente MCP) pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Tiene 7 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre, listar las fuentes y, para inversores, la ficha de un barrio y la viabilidad de una promoción. Nunca ejecuta SQL. Se arranca con `make mcp` y funciona solo en tu ordenador, contra tu base local; no está desplegado. Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225, D-249).
+
+La API pública y el MCP son gratis para todos, sin clave. Rutas, ejemplos con `curl` y cómo conectar el MCP: [vidafacil-madrid.vercel.app/desarrolladores](https://vidafacil-madrid.vercel.app/desarrolladores).
 
 ## Arráncalo en tu ordenador
 
@@ -81,7 +83,7 @@ El progreso, fase a fase, está en [`board/BOARD.md`](board/BOARD.md).
   - Comunidad de Madrid, CC BY 4.0;
   - Consorcio Regional de Transportes de Madrid, licencia de datos abiertos del CRTM («Powered by CRTM»);
   - Ayuntamiento de Madrid, CC BY 4.0;
-  - OpenStreetMap, ODbL;
+  - OpenStreetMap, ODbL (también el anillo de la M-40 que delimita los barrios piloto de la versión para inversores, `data/catalog/manual/inversores_barrios_m40.yaml`, que es un derivado de OSM y conserva la ODbL aunque el resto del catálogo sea CC BY 4.0);
   - CartoCiudad (IGN), CC BY 4.0 scne.es;
   - Ministerio de Sanidad, reutilización autorizada citando la fuente y la fecha de actualización («Catálogo Nacional de Hospitales 2025, actualizado a 31/12/2024» y «Catálogo de Centros de Atención Primaria del SNS 2026, actualizado a 31/12/2025». Ministerio de Sanidad).
 

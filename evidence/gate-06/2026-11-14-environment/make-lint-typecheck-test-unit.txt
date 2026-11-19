@@ -1,0 +1,49 @@
+uv run ruff check .
+All checks passed!
+uv run ruff format --check .
+477 files already formatted
+uv run python scripts/export_schemas.py --check
+uv run python scripts/export_search_scope.py --check
+uv run python scripts/check_docs_manifest.py docs
+278 files OK, 0 changed, 0 missing
+
+> @hi/web@0.0.1 lint
+> eslint .
+
+uv run pyright
+0 errors, 0 warnings, 0 informations
+
+> @hi/web@0.0.1 typecheck
+> tsc --noEmit
+
+DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_tests uv run pytest tests/unit tests/data -q
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 23%]
+........................................................................ [ 30%]
+........................................................................ [ 38%]
+........................................................................ [ 46%]
+........................................................................ [ 54%]
+........................................................................ [ 61%]
+........................................................................ [ 69%]
+........................................................................ [ 77%]
+........................................................................ [ 84%]
+........................................................................ [ 92%]
+....................................................................     [100%]
+932 passed in 18.74s
+
+> @hi/web@0.0.1 test
+> vitest --run
+
+
+ RUN  v5.0.5 apps/web
+
+
+ Test Files  35 passed (35)
+      Tests  485 passed (485)
+   Start at  23:59:06
+   Duration  840ms (tests 45%, import 33%, transform 16%, worker 6%)
+
+    Isolate  35 workers spawned · ~120ms startup each (spawn + environment, per file)
+             at least ~346ms faster with isolate: false — reuses workers across files instead of one per file
+

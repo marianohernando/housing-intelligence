@@ -37,7 +37,7 @@ const osm: DatasetRef = {
 describe("counterText (pie.contador)", () => {
   it("counts the CM portal datasets and names the other publishers", () => {
     expect(counterText(23)).toBe(
-      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del CRTM) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria",
+      "Datos: 23 conjuntos de la Comunidad de Madrid (con los del Consorcio Regional de Transportes) + Ayuntamiento de Madrid + Ministerio de Sanidad + Agencia Tributaria + Ministerio de Vivienda",
     );
   });
 });
@@ -57,7 +57,9 @@ describe("attributions (attribution_text of /datasets, from the source catalogue
     expect(new Set(cited).size).toBe(cited.length);
     expect(cited.some((c) => c.includes("Ministerio de Sanidad") && c.includes("actualizado a 31/12/2024"))).toBe(true);
     expect(cited.filter((c) => c.includes("CartoCiudad"))).toHaveLength(1);
-    expect(cited.filter((c) => c.includes("Comunidad de Madrid"))).toHaveLength(1);
+    expect(cited.filter((c) => c.includes("datos.comunidad.madrid"))).toHaveLength(1);
+    // D-241: the Plan Vive page is the Comunidad's too, but not its open data portal: its own citation, with the date
+    expect(cited.filter((c) => c.includes("Plan Vive"))).toEqual(["Fuente: Comunidad de Madrid — Plan Vive (comunidad.madrid/plan-vive), datos extraídos el 14/11/2026."]);
   });
 
   it("cites the Agencia Tributaria with its date and links it (fit-0.6, D-228; the text is the catalogue's)", () => {
@@ -67,6 +69,15 @@ describe("attributions (attribution_text of /datasets, from the source catalogue
     const cited = attributions([...datasets, aeat("aeat_alquiler_nuevos_contratos_municipios"), aeat("aeat_alquiler_nuevos_contratos_codigo_postal")]);
     expect(cited.filter((c) => c.text === text)).toEqual([
       { text, href: "https://sede.agenciatributaria.gob.es/AEAT/Contenidos_Comunes/La_Agencia_Tributaria/Estadisticas/Publicaciones/sites/irpfvivienda/2024/home.html" },
+    ]);
+  });
+
+  it("cites the Ministry's rent reference with its date and links it (D-242; the text is the catalogue's)", () => {
+    const text =
+      "Ministerio de Vivienda y Agenda Urbana, Sistema Estatal de Referencia del Precio del Alquiler de Vivienda (SERPAVI), base de datos 2011-2024, actualizada el 9 de marzo de 2026.";
+    const serpavi: DatasetRef = { ...osm, dataset_id: "mivau_serpavi_alquiler", name: "SERPAVI", publisher: "Ministerio de Vivienda y Agenda Urbana", attribution_text: text };
+    expect(attributions([...datasets, serpavi]).filter((c) => c.text === text)).toEqual([
+      { text, href: "https://www.mivau.gob.es/vivienda/alquila-bien-es-tu-derecho/serpavi" },
     ]);
   });
 

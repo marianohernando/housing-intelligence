@@ -63,26 +63,42 @@ class GapRowBinding(BaseModel):
 
 class FitBinding(BaseModel):
     """Where the people search (CORE-003) reads the feature: the rent or the appraised purchase
-    value per m² of the budget condition (D-227), or the walking minutes to the nearest place
-    of a kind, either a service (a ScenarioState NeedKey) or what a «me importa» priority
-    measures (a PriorityKey: the park for «Zonas verdes», D-222). The search has no feature id
+    value per m² of the budget condition (D-227), or an estimated purchase price per m² used only
+    where none is published (`price_m2_estimate`, D-234: its own role, so a search that does not
+    know it ignores it), or the walking minutes to the nearest place of a kind, either a
+    service (a ScenarioState NeedKey) or what a «me importa» priority measures (a PriorityKey:
+    the park for «Zonas verdes», D-222), or the walk to one kind of public transport
+    (`transit_mode`, D-233): it only informs the transport fact and never scores. A rent per m²
+    used only where the CM publishes none (`rent_m2_fill`, D-242: the Ministry's reference, with
+    its own role so a search that does not know it ignores it). The search has no feature id
     written in its code."""
 
     model_config = ConfigDict(extra="forbid")
 
-    role: Literal["rent_m2", "price_m2", "walk_minutes"]
+    role: Literal[
+        "rent_m2", "rent_m2_fill", "price_m2", "price_m2_estimate", "walk_minutes", "transit_mode"
+    ]
     need: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="NeedKey, only for walk_minutes"
     )
     priority: str | None = Field(
         default=None, pattern=r"^[a-z_]+$", description="PriorityKey, only for walk_minutes"
     )
+    mode: Literal["bus", "metro"] | None = Field(
+        default=None, description="Kind of stop the walk is to, only for transit_mode (D-233)"
+    )
     note: str | None = Field(
         default=None,
         min_length=1,
         description="What the cost figure is, in the fact the search writes («contratos "
-        "firmados en 2024; …», D-228); only for rent_m2. It travels with the data, so code and "
+        "firmados en 2024; …», D-228); only for the rents. It travels with the data, so code and "
         "data never disagree on what the number means",
+    )
+    source: str | None = Field(
+        default=None,
+        min_length=1,
+        description="Who publishes the figure and its year, next to the range of the leases in "
+        "the zone card («Ministerio de Vivienda (SERPAVI), 2024», D-242); only for rent_m2_fill",
     )
 
     @model_validator(mode="after")
@@ -91,10 +107,16 @@ class FitBinding(BaseModel):
         if (self.role == "walk_minutes") != (targets == 1) or (
             self.role != "walk_minutes" and targets
         ):
-            msg = "walk_minutes needs one of `need` or `priority`; rent_m2 and price_m2 take none"
+            msg = "walk_minutes needs one of `need` or `priority`; the cost roles take none"
             raise ValueError(msg)
-        if self.note is not None and self.role != "rent_m2":
-            msg = "only rent_m2 takes a `note`"
+        if (self.role == "transit_mode") != (self.mode is not None):
+            msg = "`mode` is for transit_mode and transit_mode needs it"
+            raise ValueError(msg)
+        if self.note is not None and self.role not in {"rent_m2", "rent_m2_fill"}:
+            msg = "only the rents take a `note`"
+            raise ValueError(msg)
+        if (self.source is not None) != (self.role == "rent_m2_fill"):
+            msg = "rent_m2_fill needs its `source`, and only it takes one"
             raise ValueError(msg)
         return self
 

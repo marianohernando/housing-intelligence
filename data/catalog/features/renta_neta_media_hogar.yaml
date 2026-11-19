@@ -1,0 +1,27 @@
+feature_id: renta_neta_media_hogar
+version: 1
+human_name: Renta neta media anual por hogar
+domain: income
+type: raw
+unit: EUR/hogar/año
+direction: neutral
+geo_level: distrito
+time_semantics: snapshot
+sources:
+  - {dataset_id: ayto_panel_indicadores_distritos_barrios, role: primary}
+formula:
+  method: metric_value
+  metric: renta_neta_media_hogar
+  dims: {}
+  levels:
+    barrio: {}
+null_policy: {no_coverage: unknown, confirmed_zero: unknown}
+confidence: {inputs: [source_freshness]}
+public_use: true
+pro_use: true
+models: []
+tests: [positive, unknown_never_zero, context_only]
+limitations:
+  - "Renta neta media anual de los hogares (Urban Audit, INE), tal como la publica el panel de indicadores del Ayuntamiento de Madrid. Una media: no dice cómo se reparte la renta dentro de la zona."
+  - "Solo los distritos y barrios de Madrid. En los municipios se muestra otra medida, la renta disponible bruta por persona del Instituto de Estadística de la Comunidad de Madrid: no son comparables."
+  - "Dato de contexto: no puntúa en el buscador, no filtra ni ordena zonas y no entra en «Qué falta». Se muestra como una cifra con su fuente y su año, sin etiquetas (D-235)."

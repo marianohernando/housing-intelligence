@@ -257,6 +257,7 @@ Estamos en **fase de competición DATAMAD 2026** (hasta el 26 nov 2026).
 - Every significant task must identify which tests/gate it affects.
 - Critical invariant, tenant isolation, privacy or data-lineage failure blocks progress.
 - Evidence for completed gates goes under `evidence/gate-XX/`.
+- Evidence carries no local paths (`scripts/redact_paths.py`). Its markers: `~` the home folder, `<repo>` the repo checkout, `<workspace>` the folder that holds it with its sibling worktrees, `<desktop>` any other Desktop folder, `<scratchpad>` a session's temporary folder and `<project-slug>` a Claude Code project folder.
 - “Works on my machine” is not acceptance.
 
 ## 19. Cross-cutting production rules
@@ -284,7 +285,7 @@ Estamos en **fase de competición DATAMAD 2026** (hasta el 26 nov 2026).
 - Puertos locales: Postgres 5440, Redis 6390, API 8010, Web 3010 (configurables en `.env`). 3000/5432/8000 están ocupados por otros proyectos.
 - Postgres 17 + PostGIS + pgvector en Docker (`infra/docker/postgres`). Extensiones en schema `extensions`.
 - Supabase (proyecto free `ilvbivfnqvfqslbbiuts`) es entorno remoto/demo; sin h3-pg: **H3 se calcula siempre en Python**.
-- MCP `supabase-datamad`: registrado por Mariano con scope local en `~/Desktop/DATAMAD` y `--read-only` (11 nov). `.mcp.json` es la plantilla y necesita `SUPABASE_DATAMAD_ACCESS_TOKEN`. No confundir con el conector claude.ai "Supabase" (otra cuenta).
+- MCP `supabase-datamad`: registrado por Mariano con scope local en la carpeta de trabajo (la que contiene el repo) y `--read-only` (11 nov). `.mcp.json` es la plantilla y necesita `SUPABASE_DATAMAD_ACCESS_TOKEN`. No confundir con el conector claude.ai "Supabase" (otra cuenta).
 - Supabase remoto (11 nov): esquema en head, RLS en todas las tablas (D-197) y perfil demo cargado. Para volver a cargar datos tras cambiar features o lugares: `make supabase-migrate` y después `make supabase-sync PROFILE=demo`.
 - `make` es la entrada única: `make dev`, `make lint`, `make typecheck`, `make test`, `make ingest DATASET=...`.
 

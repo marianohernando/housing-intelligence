@@ -128,3 +128,14 @@ def test_fit_binding_walks_to_a_need_or_to_a_priority_never_both() -> None:
         FitBinding(role="walk_minutes", need="colegio", priority="zonas_verdes")
     with pytest.raises(ValidationError):
         FitBinding(role="rent_m2", priority="zonas_verdes")
+
+
+def test_fit_binding_transit_mode_needs_its_mode_and_nothing_else() -> None:
+    """D-233: the walk to a bus stop or to Metro/Cercanías only words the transport fact."""
+    assert FitBinding(role="transit_mode", mode="bus").mode == "bus"
+    with pytest.raises(ValidationError):
+        FitBinding(role="transit_mode")
+    with pytest.raises(ValidationError):
+        FitBinding(role="transit_mode", mode="bus", need="transporte")
+    with pytest.raises(ValidationError):
+        FitBinding(role="walk_minutes", need="colegio", mode="bus")

@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "cm_parcelas_portal_suelo",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_parcelas_portal_suelo/7840efb91ba3/parcelas_portal_suelo.csv",
+      "sha256": "7840efb91ba32f9b267d972de3f52f15bf6ef557782791864b6a378e9f744bbc",
+      "bytes": 330273,
+      "url": "https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/32af1c4e-1e19-4c22-87c9-df1c5b656f56/download/parcelas_portal_suelo.csv",
+      "retrieved_at": "2026-11-18T19:53:43.038984+00:00"
+    }
+  ]
+}

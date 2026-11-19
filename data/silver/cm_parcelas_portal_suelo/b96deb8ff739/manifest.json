@@ -1,0 +1,24 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "cm_parcelas_portal_suelo",
+      "role": "primary",
+      "path": "data/bronze/datasets/cm_parcelas_portal_suelo/7840efb91ba3/parcelas_portal_suelo.csv",
+      "sha256": "7840efb91ba32f9b267d972de3f52f15bf6ef557782791864b6a378e9f744bbc",
+      "bytes": 330273,
+      "url": "https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/32af1c4e-1e19-4c22-87c9-df1c5b656f56/download/parcelas_portal_suelo.csv",
+      "retrieved_at": "2026-11-18T19:53:43.038984+00:00"
+    },
+    {
+      "dataset_id": "cm_parcelas_portal_suelo",
+      "role": "points",
+      "path": "data/catalog/manual/portal_suelo_madrid_puntos.yaml",
+      "sha256": "c3dd08ecdc2ae80e2d9697543c884128be212148bc323def312642a11ff2c6cc",
+      "bytes": 3094,
+      "url": "https://idem.comunidad.madrid/geoidem/UsoDelSuelo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=UsoDelSuelo:IDEM_V_SUELO_PARCELA&outputFormat=application/json",
+      "retrieved_at": "2026-11-18T00:00:00+00:00"
+    }
+  ],
+  "checksum": "b96deb8ff7397e484de0616f938483cb62595b4440bc62be2a562ff8f786ac68",
+  "parser_version": "public_land_parcels-1.1.0"
+}

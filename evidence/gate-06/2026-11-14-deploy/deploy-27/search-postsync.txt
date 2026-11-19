@@ -1,0 +1,28 @@
+After the sync of D-233 (code ad4a8f2, dpl_HDY4ezEb35YLdtw5TXZCwXiKPnKq), 2026-11-14T16:46:44Z
+POST /api/v1/search, demo case: 27 of 199 zones, 1st Latina 98 %, warnings 0
+Transport facts of the 10 results (minutes as N), by text:
+  10 Parada de autobús a unos N min andando · Metro o Cercanías a unos N min
+Indicators of those facts: min_a_pie_transporte 10
+Per zone:
+  1. Latina 98 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min
+  2. Moratalaz 98 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min
+  3. Ciudad Lineal 98 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min
+  4. Puente de Vallecas 98 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min
+  5. Fuencarral-El Pardo 97 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min
+  6. Usera 97 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 11 min
+  7. Carabanchel 97 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min
+  8. Hortaleza 97 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 11 min
+  9. San Blas-Canillejas 97 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 10 min
+  10. Villaverde 97 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 12 min
+Ranking before -> after: Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+                       -> Latina 98, Moratalaz 98, Ciudad Lineal 98, Puente de Vallecas 98, Fuencarral-El Pardo 97, Usera 97, Carabanchel 97, Hortaleza 97, San Blas-Canillejas 97, Villaverde 97
+
+POST /api/v1/search/barrios 2807920: 7 of 8 barrios, 1st Canillejas
+  Canillejas 97 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 9 min
+  Arcos 97 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min
+  Simancas 97 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 7 min
+  Rosas 96 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 7 min
+  Amposta 96 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 9 min
+  El Salvador 95 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 14 min
+  Hellín 93 % · Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min
+  Rejas 55 % · Parada de autobús a unos 3 min andando · Metro o Cercanías a unos 35 min

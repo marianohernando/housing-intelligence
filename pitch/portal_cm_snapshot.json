@@ -19,6 +19,36 @@
       "slug": "barrios_municipio_madrid",
       "title": "Barrios del Municipio de Madrid"
     },
+    "cm_calidad_aire_estaciones": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "calidad_aire_estaciones",
+      "title": "Red de Calidad del Aire. Estaciones"
+    },
+    "cm_calidad_aire_horario_2025": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "calidad_aire_datos_historico",
+      "title": "Red de Calidad del Aire. Datos horarios desde 2005"
+    },
+    "cm_calidad_aire_zonas": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "calidad_aire_zonas",
+      "title": "Red de Calidad del Aire. Municipios por zonas"
+    },
+    "cm_catastro_inmuebles_distrito_uso": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "catastro_inmuebles_por_distrito_y_uso",
+      "title": "Catastro Inmobiliario. Inmuebles por distrito y uso"
+    },
+    "cm_catastro_unidades_urbanas_uso": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "unidades_urbanas_por_uso",
+      "title": "Catastro Inmobiliario. Unidades urbanas por uso. Municipios"
+    },
     "cm_centros_atencion_social": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
@@ -66,6 +96,12 @@
       "license_title": "Creative Commons Attribution",
       "slug": "1912744",
       "title": "Hospitales y datos asistenciales"
+    },
+    "cm_infracciones_penales_municipios": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio",
+      "title": "Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio"
     },
     "cm_municipios_distritos_2020": {
       "license_id": "cc-by",
@@ -133,11 +169,29 @@
       "slug": "unidades_centros_no_universitarios_general_por_tipo_y_ensenanza",
       "title": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios"
     },
+    "cm_valor_tasado_vivienda_antiguedad": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "valor_tasado_por_antiguedad",
+      "title": "Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios"
+    },
     "cm_valor_tasado_vivienda_municipios": {
       "license_id": "cc-by",
       "license_title": "Creative Commons Attribution",
       "slug": "1004050",
       "title": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios"
+    },
+    "cm_visados_presupuesto_obra": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "1006022",
+      "title": "Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características de los edificios"
+    },
+    "cm_viviendas_antiguedad": {
+      "license_id": "cc-by",
+      "license_title": "Creative Commons Attribution",
+      "slug": "censo_anual_vivienda_por_antiguedad",
+      "title": "Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios"
     },
     "cm_viviendas_superficie": {
       "license_id": "cc-by",
@@ -150,6 +204,12 @@
       "license_title": "Creative Commons Attribution",
       "slug": "censo_2021_viviendas_familiares_por_tenencia",
       "title": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios"
+    },
+    "crtm_aparcamientos_disuasion": {
+      "license_id": "CRTM-LDA",
+      "license_title": "CRTM Licencia de datos abiertos (LDA)",
+      "slug": "aparcamientos_disuasion",
+      "title": "Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid"
     },
     "crtm_gtfs_autobuses_urbanos": {
       "license_id": "CRTM-LDA",
@@ -206,5 +266,5 @@
       "title": "Topología de la Red de Metro Ligero / Tranvía"
     }
   },
-  "fetched_at": "2026-11-12"
+  "fetched_at": "2026-11-19"
 }

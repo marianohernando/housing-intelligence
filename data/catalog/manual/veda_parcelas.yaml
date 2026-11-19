@@ -1,0 +1,1122 @@
+# D-250: parcelas de Madrid capital con su edificabilidad oficial, por referencia catastral, para
+# la búsqueda por parcela de la versión para inversores. Leídas una vez el día `consulted` por
+# scripts/buildable_parcels.py; scripts/export_investor_data.py las pasa a hi_domain.parcel_data.
+# No editar a mano.
+title: 'VEDA Madrid: parcelas catastrales con edificabilidad (julio de 2026)'
+publisher: Ayuntamiento de Madrid (VEDA Madrid, Departamento de Análisis Urbano)
+url: https://sigma.madrid.es/hosted/rest/services/ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual/FeatureServer/1/query
+layer: 'ANALISIS_URBANO/Visor_Edificabilidad_julio_2026_actual: Parcelas_Catastrales_julio2026'
+consulted: '2026-11-19'
+dataset_id: ayto_edificabilidad_remanente_ambitos
+source_text: 'VEDA Madrid (Ayuntamiento de Madrid), julio de 2026: edificabilidad de la parcela'
+municipio_ine: '28079'
+parcels:
+- {rc14: 0009543VK4700G, buildable_m2: 1902.0, area_m2: 570.1, planning: API.12.06, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0023701VK5702C, buildable_m2: 8590.0, area_m2: 3126.7, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0025305VK5702E, buildable_m2: 31386.0, area_m2: 15693.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0025308VK5702E, buildable_m2: 14704.0, area_m2: 7352.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0025309VK5702E, buildable_m2: 3228.0, area_m2: 1614.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0025310VK5702E, buildable_m2: 3286.0, area_m2: 1643.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0025311VK5702E, buildable_m2: 3356.0, area_m2: 1678.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0108101VK5800G, buildable_m2: 1948.0, area_m2: 2557.8, planning: UZP.1.01, use: SERVICIOS TERCIARIOS}
+- {rc14: 0118303VK5701G, buildable_m2: 7213.0, area_m2: 7348.7, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 0118304VK5701G, buildable_m2: 4358.0, area_m2: 4438.6, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 0121902VK5702A, buildable_m2: 5110.0, area_m2: 2554.9, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0121904VK5702A, buildable_m2: 5916.0, area_m2: 2958.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0121912VK5702A, buildable_m2: 17910.0, area_m2: 8955.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0126301VK5702E, buildable_m2: 12226.0, area_m2: 6113.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0126305VK5702E, buildable_m2: 9564.0, area_m2: 4782.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0160101VK3696B, buildable_m2: 4516.99, area_m2: 2258.5, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 0192603VK5609C, buildable_m2: 9692.0, area_m2: 4255.1, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0220702VK5702A, buildable_m2: 16086.0, area_m2: 8042.7, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0220703VK5702A, buildable_m2: 7032.0, area_m2: 3516.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0220709VK5702A, buildable_m2: 4434.0, area_m2: 2217.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0220710VK5702A, buildable_m2: 3634.0, area_m2: 1817.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0220711VK5702A, buildable_m2: 12082.0, area_m2: 6041.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0220715VK5702A, buildable_m2: 1760.0, area_m2: 880.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0224903VK5702C, buildable_m2: 3762.0, area_m2: 1881.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0224904VK5702C, buildable_m2: 107.0, area_m2: 53.5, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0229801VK5702G, buildable_m2: 8268.0, area_m2: 4134.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0229802VK5702G, buildable_m2: 3572.0, area_m2: 1786.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0229803VK5702G, buildable_m2: 1990.0, area_m2: 994.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0230302VK5703A, buildable_m2: 10008.0, area_m2: 5004.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0230304VK5703A, buildable_m2: 6546.0, area_m2: 3273.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0239719VK4083H, buildable_m2: 175.0, area_m2: 220.5, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0239720VK4083H, buildable_m2: 175.0, area_m2: 220.2, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0239723VK4083H, buildable_m2: 175.0, area_m2: 220.6, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0276904VK5607E, buildable_m2: 234.0, area_m2: 387.0, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 0280339VK4708A, buildable_m2: 491.0, area_m2: 147.6, planning: APR.06.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0284912VK5608C, buildable_m2: 5513.25, area_m2: 1390.4, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0284913VK5608C, buildable_m2: 5513.25, area_m2: 1390.3, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0284922VK5608C, buildable_m2: 3445.0, area_m2: 1390.3, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0287301VK5608G, buildable_m2: 5911.0, area_m2: 884.1, planning: UZP.1.03, use: SERVICIOS TERCIARIOS}
+- {rc14: 0287305VK5608G, buildable_m2: 8078.0, area_m2: 1208.3, planning: UZP.1.03, use: SERVICIOS TERCIARIOS}
+- {rc14: 0293902VK5609C, buildable_m2: 2000.0, area_m2: 975.7, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0297801VK5609E, buildable_m2: 2846.0, area_m2: 966.7, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 0297802VK5609E, buildable_m2: 2771.0, area_m2: 855.6, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 0297803VK5609E, buildable_m2: 2650.0, area_m2: 1193.6, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 0308402VK5800G, buildable_m2: 2400.0, area_m2: 3250.2, planning: UZP.1.01, use: SERVICIOS TERCIARIOS}
+- {rc14: 0315601VK5701E, buildable_m2: 3714.0, area_m2: 1629.0, planning: APE.19.07, use: INDUSTRIAL}
+- {rc14: 0315604VK5701E, buildable_m2: 4470.0, area_m2: 1977.0, planning: APE.19.07, use: INDUSTRIAL}
+- {rc14: 0315605VK5701E, buildable_m2: 4561.0, area_m2: 2018.0, planning: APE.19.07, use: INDUSTRIAL}
+- {rc14: 0315606VK5701E, buildable_m2: 7913.0, area_m2: 3500.0, planning: APE.19.07, use: INDUSTRIAL}
+- {rc14: 0315610VK5701E, buildable_m2: 2632.0, area_m2: 1187.6, planning: APE.19.07, use: INDUSTRIAL}
+- {rc14: 0315611VK5701E, buildable_m2: 2137.0, area_m2: 952.5, planning: APE.19.07, use: INDUSTRIAL}
+- {rc14: 0323701VK5702C, buildable_m2: 3230.0, area_m2: 1615.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0323703VK5702C, buildable_m2: 33794.0, area_m2: 16897.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328101VK5702G, buildable_m2: 1001.0, area_m2: 500.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328102VK5702G, buildable_m2: 1259.0, area_m2: 629.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328103VK5702G, buildable_m2: 13110.0, area_m2: 6555.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328104VK5702G, buildable_m2: 6418.0, area_m2: 3208.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328105VK5702G, buildable_m2: 9954.0, area_m2: 4977.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328106VK5702G, buildable_m2: 20990.0, area_m2: 10495.5, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328108VK5702G, buildable_m2: 2998.0, area_m2: 1499.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0328111VK5702G, buildable_m2: 113.0, area_m2: 56.7, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0353215VK4605C, buildable_m2: 5902.0, area_m2: 2270.2, planning: UZI.0.01, use: INDUSTRIAL}
+- {rc14: 0353224VK4605C, buildable_m2: 1611.0, area_m2: 2013.7, planning: UZI.0.01, use: INDUSTRIAL}
+- {rc14: 0379505VK5607G, buildable_m2: 209.0, area_m2: 348.3, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 0426601VK5702E, buildable_m2: 24348.0, area_m2: 12174.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0426604VK5702E, buildable_m2: 9475.0, area_m2: 3790.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427101VK5702E, buildable_m2: 4382.0, area_m2: 2191.7, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427102VK5702E, buildable_m2: 4454.0, area_m2: 2227.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427103VK5702E, buildable_m2: 22688.0, area_m2: 11344.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427105VK5702E, buildable_m2: 6280.0, area_m2: 3140.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427106VK5702E, buildable_m2: 3126.0, area_m2: 1562.9, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427107VK5702E, buildable_m2: 3240.0, area_m2: 1620.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427108VK5702E, buildable_m2: 3196.0, area_m2: 1598.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427109VK5702E, buildable_m2: 6169.0, area_m2: 3084.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0427110VK5702E, buildable_m2: 7550.0, area_m2: 3775.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0431701VK5703A, buildable_m2: 25404.0, area_m2: 12647.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0431705VK5703A, buildable_m2: 9182.0, area_m2: 4591.5, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0432104VK5703A, buildable_m2: 6306.0, area_m2: 2993.5, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0438508VK4083H, buildable_m2: 167.0, area_m2: 209.5, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0438525VK4083H, buildable_m2: 163.0, area_m2: 205.4, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0438526VK4083H, buildable_m2: 163.0, area_m2: 205.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0438527VK4083H, buildable_m2: 167.0, area_m2: 209.5, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0480403VK5608A, buildable_m2: 176.0, area_m2: 294.3, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 0480415VK5608A, buildable_m2: 479.0, area_m2: 802.6, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 0480440VK5608A, buildable_m2: 146.0, area_m2: 230.0, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 0483205VK5608C, buildable_m2: 196.0, area_m2: 290.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0491902VK5609A, buildable_m2: 3900.0, planning: UZPP.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0491905VK5609A, buildable_m2: 11799.0, planning: UZPP.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0491907VK5609A, buildable_m2: 4207.75, area_m2: 1325.3, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0496101VK5609E, buildable_m2: 2880.0, area_m2: 1193.5, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0496102VK5609E, buildable_m2: 2000.0, area_m2: 855.7, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0498907VK5609G, buildable_m2: 4099.0, area_m2: 1310.9, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0498908VK5609G, buildable_m2: 3964.0, area_m2: 1200.9, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0498910VK5609G, buildable_m2: 4099.0, area_m2: 1255.0, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0498911VK5609G, buildable_m2: 3964.0, area_m2: 1369.2, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0498912VK5609G, buildable_m2: 4154.0, area_m2: 1413.3, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0519202VK5701H, buildable_m2: 4906.0, area_m2: 2452.9, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0519203VK5701H, buildable_m2: 5714.0, area_m2: 2857.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0519205VK5701H, buildable_m2: 35856.0, area_m2: 17928.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0530805VK5703B, buildable_m2: 6830.0, area_m2: 3414.9, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0530806VK5703B, buildable_m2: 28406.0, area_m2: 14203.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0582304VK5608D, buildable_m2: 222.0, area_m2: 377.7, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0582308VK5608D, buildable_m2: 167.0, area_m2: 284.5, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0582313VK5608D, buildable_m2: 240.0, area_m2: 408.5, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0586607VK5608F, buildable_m2: 920.0, area_m2: 575.3, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0586608VK5608F, buildable_m2: 920.0, area_m2: 574.9, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0586609VK5608F, buildable_m2: 920.0, area_m2: 575.2, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0586610VK5608F, buildable_m2: 920.0, area_m2: 575.1, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0586611VK5608F, buildable_m2: 1180.0, area_m2: 737.6, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0586612VK5608F, buildable_m2: 1180.0, area_m2: 737.5, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0597213VK4709F, buildable_m2: 456.0, area_m2: 151.5, planning: APR.06.05, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0604518VK5800F, buildable_m2: 327.0, area_m2: 110.1, planning: APE.21.05, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0604519VK5800F, buildable_m2: 651.0, area_m2: 207.1, planning: APE.21.05, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0682351VK4708B, buildable_m2: 2705.0, area_m2: 416.5, planning: API.06.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0682352VK4708B, buildable_m2: 3563.0, area_m2: 459.9, planning: API.06.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0682832VK4708B, buildable_m2: 1828.0, area_m2: 511.8, planning: API.06.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0682835VK4708B, buildable_m2: 2716.0, area_m2: 1016.5, planning: API.06.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0697808VK5609F, buildable_m2: 4762.06, area_m2: 1427.8, planning: UZPP.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0697811VK5609F, buildable_m2: 4761.81, area_m2: 1343.7, planning: UZPP.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0697826VK5609F, buildable_m2: 2639.87, area_m2: 1135.7, planning: UZPP.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0697827VK5609F, buildable_m2: 4816.53, area_m2: 1530.1, planning: UZPP.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0720202VK5702B, buildable_m2: 16306.0, area_m2: 8248.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0720204VK5702B, buildable_m2: 3908.0, area_m2: 1954.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0720205VK5702B, buildable_m2: 18270.0, area_m2: 9135.2, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0720206VK5702B, buildable_m2: 12022.0, area_m2: 6011.1, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0720211VK5702B, buildable_m2: 18176.0, area_m2: 9088.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0722201VK5702B, buildable_m2: 2292.0, area_m2: 1146.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0722209VK5702B, buildable_m2: 4052.0, area_m2: 2025.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0736222VK4083E, buildable_m2: 162.0, area_m2: 203.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0736225VK4083E, buildable_m2: 162.0, area_m2: 202.9, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0736226VK4083E, buildable_m2: 162.0, area_m2: 202.8, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0736235VK4083E, buildable_m2: 162.0, area_m2: 202.8, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0736242VK4083E, buildable_m2: 162.0, area_m2: 203.0, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0736243VK4083E, buildable_m2: 162.0, area_m2: 203.0, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0736244VK4083E, buildable_m2: 162.0, area_m2: 203.1, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 0786801VK5608F, buildable_m2: 835.73, area_m2: 508.8, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786802VK5608F, buildable_m2: 835.73, area_m2: 508.7, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786803VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786804VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786805VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786806VK5608F, buildable_m2: 835.73, area_m2: 524.7, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786807VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786808VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786809VK5608F, buildable_m2: 835.73, area_m2: 524.7, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786810VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786811VK5608F, buildable_m2: 835.73, area_m2: 525.0, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786812VK5608F, buildable_m2: 835.73, area_m2: 524.9, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786813VK5608F, buildable_m2: 835.73, area_m2: 508.9, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786818VK5608F, buildable_m2: 835.73, area_m2: 524.8, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786819VK5608F, buildable_m2: 835.73, area_m2: 525.1, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786820VK5608F, buildable_m2: 835.73, area_m2: 525.1, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786821VK5608F, buildable_m2: 835.73, area_m2: 524.8, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786822VK5608F, buildable_m2: 835.73, area_m2: 525.1, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786823VK5608F, buildable_m2: 835.73, area_m2: 525.1, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0786824VK5608F, buildable_m2: 835.73, area_m2: 525.1, planning: UZP.1.03, use: INDUSTRIAL}
+- {rc14: 0796715VK5609F, buildable_m2: 2421.0, area_m2: 911.7, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0796716VK5609F, buildable_m2: 4446.0, area_m2: 1325.2, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 0826302VK5702F, buildable_m2: 9117.5, area_m2: 3647.0, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 0993104VK5609D, buildable_m2: 7339.0, area_m2: 3288.2, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 0996434VK4709F, buildable_m2: 1944.0, area_m2: 610.3, planning: API.06.02, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1094910VK5619C, buildable_m2: 9653.0, area_m2: 3332.9, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1191602VK5619A, buildable_m2: 2236.0, area_m2: 855.7, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1191603VK5619A, buildable_m2: 2727.0, area_m2: 1193.4, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1191604VK5619A, buildable_m2: 4760.0, area_m2: 2152.2, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1191605VK5619A, buildable_m2: 2734.0, area_m2: 1136.3, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1211601VK5711A, buildable_m2: 2070.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCIO}
+- {rc14: 1211602VK5711A, buildable_m2: 851.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCIO}
+- {rc14: 1211603VK5711A, buildable_m2: 851.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCIO}
+- {rc14: 1211606VK5711A, buildable_m2: 851.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCIO}
+- {rc14: 1211607VK5711A, buildable_m2: 851.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCIO}
+- {rc14: 1211608VK5711A, buildable_m2: 2079.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCIO}
+- {rc14: 1237502VK5713E, buildable_m2: 28397.0, area_m2: 945.6, planning: UZP.2.01, use: INDUSTRIAL INDUSTRIA TRADICIONAL}
+- {rc14: 1288205VK4618G, buildable_m2: 2636.0, area_m2: 1754.1, planning: API.12.02, use: INDUSTRIAL}
+- {rc14: 1288504VK4618G, buildable_m2: 1947.6, area_m2: 1248.5, planning: API.12.02, use: INDUSTRIAL}
+- {rc14: 1310401VK5711A, buildable_m2: 2255.0, area_m2: 946.4, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1310403VK5711A, buildable_m2: 2255.0, area_m2: 946.4, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1310404VK5711A, buildable_m2: 2255.0, area_m2: 946.4, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1310405VK5711A, buildable_m2: 1342.0, area_m2: 958.9, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1310406VK5711A, buildable_m2: 2255.0, area_m2: 946.4, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1311604VK4711A, buildable_m2: 515.0, area_m2: 128.8, planning: APR.02.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1312901VK5711C, buildable_m2: 2498.0, area_m2: 1121.8, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCI}
+- {rc14: 1312902VK5711C, buildable_m2: 851.0, area_m2: 608.3, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCI}
+- {rc14: 1312903VK5711C, buildable_m2: 2498.0, area_m2: 1121.4, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCI}
+- {rc14: 1312905VK5711C, buildable_m2: 851.0, area_m2: 608.1, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCI}
+- {rc14: 1312906VK5711C, buildable_m2: 2258.0, area_m2: 1025.4, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PROTECCI}
+- {rc14: 1372805VK5717A, buildable_m2: 1795.48, area_m2: 897.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1412602VK5711C, buildable_m2: 888.0, area_m2: 608.3, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1412603VK5711C, buildable_m2: 888.0, area_m2: 608.1, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1412604VK5711C, buildable_m2: 2165.0, area_m2: 817.6, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1412605VK5711C, buildable_m2: 2165.0, area_m2: 817.6, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1412607VK5711C, buildable_m2: 888.0, area_m2: 608.1, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1412608VK5711C, buildable_m2: 2165.0, area_m2: 817.5, planning: UZPP.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1441802VK4814D, buildable_m2: 151.83, area_m2: 407.5, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1441810VK4814D, buildable_m2: 196.0, area_m2: 527.1, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1509601VK5710H, buildable_m2: 4084.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1509602VK5710H, buildable_m2: 2384.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1509605VK5710H, buildable_m2: 625.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1509606VK5710H, buildable_m2: 1051.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1509607VK5710H, buildable_m2: 2631.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1511801VK5711B, buildable_m2: 2341.0, area_m2: 883.3, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1511802VK5711B, buildable_m2: 2341.0, area_m2: 883.3, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA PRECIO TA}
+- {rc14: 1512801VK5711B, buildable_m2: 2167.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1512802VK5711B, buildable_m2: 2167.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1512804VK5711B, buildable_m2: 2167.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1534601VK4813D, buildable_m2: 2262.45, area_m2: 515.0, planning: API.08.05, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 1537808VK4813F, buildable_m2: 107.29, area_m2: 143.6, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 1537809VK4813F, buildable_m2: 107.6, area_m2: 144.1, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 1572703VK5717B, buildable_m2: 397.59, area_m2: 568.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1572704VK5717B, buildable_m2: 102.97, area_m2: 147.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1572705VK5717B, buildable_m2: 106.02, area_m2: 151.5, planning: APE.20.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1572706VK5717B, buildable_m2: 70.6, area_m2: 100.9, planning: APE.20.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1572708VK5717B, buildable_m2: 3465.34, area_m2: 3982.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1575802VK5717F, buildable_m2: 201.85, area_m2: 288.4, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1575804VK5717D, buildable_m2: 259.32, area_m2: 370.5, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1575807VK5717F, buildable_m2: 108.14, area_m2: 154.5, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1575825VK5717F, buildable_m2: 44.84, area_m2: 64.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1578501VK5717H, buildable_m2: 158.29, area_m2: 226.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1578514VK5717H, buildable_m2: 151.32, area_m2: 216.2, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1578515VK5717H, buildable_m2: 158.17, area_m2: 226.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1578524VK5717H, buildable_m2: 173.39, area_m2: 247.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1578525VK5717H, buildable_m2: 173.59, area_m2: 248.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1579503VK5717H, buildable_m2: 479.04, area_m2: 958.1, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579504VK5717H, buildable_m2: 402.45, area_m2: 804.9, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579505VK5717H, buildable_m2: 129.36, area_m2: 258.7, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579506VK5717H, buildable_m2: 130.06, area_m2: 260.1, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579507VK5717H, buildable_m2: 185.57, area_m2: 371.1, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579513VK5717H, buildable_m2: 156.54, area_m2: 313.1, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579514VK5717H, buildable_m2: 132.57, area_m2: 265.1, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579515VK5717H, buildable_m2: 386.22, area_m2: 772.4, planning: APE.20.10, use: SERVICIOS TERCIARIOS}
+- {rc14: 1579710VK5717H, buildable_m2: 171.8, area_m2: 245.4, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1579711VK5717H, buildable_m2: 171.91, area_m2: 245.6, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1587402VK5618H, buildable_m2: 2804.0, area_m2: 1662.7, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1587403VK5618H, buildable_m2: 11429.0, area_m2: 6840.8, planning: UZPp.02.04-RP, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 1617813VK4711B, buildable_m2: 3198.0, area_m2: 1042.9, planning: APE.02.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1617814VK4711B, buildable_m2: 3472.0, area_m2: 1131.8, planning: APE.02.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1643131VK4814D, buildable_m2: 168.71, area_m2: 548.9, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1643150VK4814D, buildable_m2: 312.81, area_m2: 1017.5, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1672704VK5717B, buildable_m2: 72.51, area_m2: 103.6, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1672708VK5717B, buildable_m2: 797.53, area_m2: 797.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1672712VK5717B, buildable_m2: 599.03, area_m2: 599.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1674405VK5717D, buildable_m2: 2376.83, area_m2: 4753.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1676504VK5717F, buildable_m2: 47.31, area_m2: 67.6, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1676505VK5717F, buildable_m2: 46.67, area_m2: 66.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1676506VK5717F, buildable_m2: 94.89, area_m2: 135.6, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1676507VK5717F, buildable_m2: 159.05, area_m2: 227.2, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1676510VK5717F, buildable_m2: 408.97, area_m2: 817.9, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1678501VK5717H, buildable_m2: 354.43, area_m2: 221.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1678502VK5717H, buildable_m2: 470.69, area_m2: 294.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1678503VK5717H, buildable_m2: 464.18, area_m2: 290.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1678504VK5717H, buildable_m2: 482.67, area_m2: 301.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1678511VK5717H, buildable_m2: 349.0, area_m2: 218.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1678512VK5717H, buildable_m2: 367.39, area_m2: 229.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1710401VK5711B, buildable_m2: 2167.0, area_m2: 883.2, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1710402VK5711B, buildable_m2: 2167.0, area_m2: 883.2, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1710403VK5711B, buildable_m2: 2167.0, area_m2: 883.4, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1738818VK4813F, buildable_m2: 203.86, area_m2: 478.5, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1738824VK4813H, buildable_m2: 136.8, area_m2: 357.0, planning: API.08.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1746202VK4184E, buildable_m2: 251.0, area_m2: 641.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1746206VK4184E, buildable_m2: 191.0, area_m2: 488.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1746209VK4184E, buildable_m2: 232.0, area_m2: 593.4, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1771901VK5717B, buildable_m2: 388.91, area_m2: 388.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1772802VK5717B, buildable_m2: 785.19, area_m2: 785.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1772805VK5717B, buildable_m2: 803.84, area_m2: 803.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1773501VK5717D, buildable_m2: 456.0, area_m2: 912.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1774502VK5717D, buildable_m2: 396.84, area_m2: 793.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1774503VK5717D, buildable_m2: 407.02, area_m2: 814.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1774505VK5717D, buildable_m2: 56.1, area_m2: 80.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1774508VK5717D, buildable_m2: 87.74, area_m2: 125.3, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1774514VK5717D, buildable_m2: 388.49, area_m2: 777.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1774807VK5717D, buildable_m2: 131.33, area_m2: 187.6, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1775504VK5717F, buildable_m2: 791.75, area_m2: 791.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1775505VK5717F, buildable_m2: 804.11, area_m2: 804.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1775506VK5717F, buildable_m2: 800.68, area_m2: 800.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1775509VK5717F, buildable_m2: 781.62, area_m2: 781.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1776501VK5717F, buildable_m2: 99.25, area_m2: 99.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1776506VK5717F, buildable_m2: 66.54, area_m2: 66.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1776507VK5717F, buildable_m2: 372.59, area_m2: 372.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1776508VK5717F, buildable_m2: 71.49, area_m2: 71.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1776509VK5717F, buildable_m2: 2228.98, area_m2: 2229.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1777608VK5717H, buildable_m2: 778.25, area_m2: 778.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1777609VK5717H, buildable_m2: 2372.39, area_m2: 2372.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1777613VK5717H, buildable_m2: 481.25, area_m2: 481.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1777614VK5717H, buildable_m2: 561.3, area_m2: 561.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1811601VK5711B, buildable_m2: 9492.0, area_m2: 2494.4, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1811602VK5711B, buildable_m2: 2594.0, area_m2: 1853.0, planning: UZPp.02.03-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 1844403VK4184D, buildable_m2: 179.0, area_m2: 394.1, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1844404VK4184D, buildable_m2: 179.0, area_m2: 392.9, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1844406VK4184D, buildable_m2: 176.0, area_m2: 386.4, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1844417VK4184D, buildable_m2: 175.0, area_m2: 384.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1844418VK4184D, buildable_m2: 174.0, area_m2: 383.6, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1844419VK4184D, buildable_m2: 194.0, area_m2: 426.1, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1844420VK4184D, buildable_m2: 188.0, area_m2: 413.7, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851729VK4185B, buildable_m2: 163.0, area_m2: 406.4, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851730VK4185B, buildable_m2: 163.0, area_m2: 406.4, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851731VK4185B, buildable_m2: 163.0, area_m2: 406.5, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851732VK4185B, buildable_m2: 163.0, area_m2: 406.4, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851733VK4185B, buildable_m2: 182.0, area_m2: 454.2, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851734VK4185B, buildable_m2: 162.0, area_m2: 404.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1851752VK4185B, buildable_m2: 163.0, area_m2: 408.3, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1853998VK4815D, buildable_m2: 200.0, area_m2: 600.0, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1853999VK4815D, buildable_m2: 200.0, area_m2: 600.0, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 18539A0VK4815D, buildable_m2: 200.0, area_m2: 600.0, planning: UZI.0.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1871801VK5717B, buildable_m2: 583.8, area_m2: 583.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1871803VK5717B, buildable_m2: 834.1, area_m2: 834.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1871807VK5717B, buildable_m2: 789.49, area_m2: 789.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1871808VK5717B, buildable_m2: 774.96, area_m2: 775.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1872811VK5717B, buildable_m2: 798.28, area_m2: 798.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1872812VK5717B, buildable_m2: 798.29, area_m2: 798.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1873402VK5717D, buildable_m2: 405.44, area_m2: 810.9, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1873404VK5717D, buildable_m2: 199.06, area_m2: 398.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1874513VK5717D, buildable_m2: 42.44, area_m2: 60.6, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1874514VK5717D, buildable_m2: 40.36, area_m2: 57.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1875405VK5717F, buildable_m2: 782.82, area_m2: 782.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1875406VK5717F, buildable_m2: 785.62, area_m2: 785.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1877505VK5717H, buildable_m2: 621.22, area_m2: 621.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1877506VK5717H, buildable_m2: 621.76, area_m2: 621.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1878205VK5717H, buildable_m2: 419.01, area_m2: 261.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1878210VK5717H, buildable_m2: 428.07, area_m2: 267.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1971811VK5717B, buildable_m2: 1192.74, area_m2: 1192.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1972811VK5717B, buildable_m2: 805.24, area_m2: 805.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1972812VK5717B, buildable_m2: 788.19, area_m2: 788.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1972813VK5717B, buildable_m2: 795.56, area_m2: 795.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1972814VK5717B, buildable_m2: 795.54, area_m2: 795.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1973412VK5717D, buildable_m2: 140.6, area_m2: 200.9, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1974408VK5717D, buildable_m2: 82.07, area_m2: 117.2, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1974412VK5717D, buildable_m2: 27.2, area_m2: 38.9, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1974415VK5717D, buildable_m2: 67.94, area_m2: 97.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1974422VK5717D, buildable_m2: 138.05, area_m2: 197.2, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 1976903VK5717F, buildable_m2: 2365.92, area_m2: 2365.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1977901VK5717H, buildable_m2: 1323.32, area_m2: 1323.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1977902VK5717H, buildable_m2: 612.8, area_m2: 612.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1977906VK5717H, buildable_m2: 788.87, area_m2: 788.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1977907VK5717H, buildable_m2: 799.02, area_m2: 799.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 1979102VK5717H, buildable_m2: 178.07, area_m2: 254.4, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2004643VK4820C, buildable_m2: 1527.0, area_m2: 491.4, planning: APE.05.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 2070312VK5727A, buildable_m2: 802.46, area_m2: 802.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2072101VK5727A, buildable_m2: 787.34, area_m2: 787.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2072102VK5727A, buildable_m2: 895.37, area_m2: 895.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2072105VK5727A, buildable_m2: 782.72, area_m2: 782.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2072106VK5727A, buildable_m2: 782.96, area_m2: 783.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2072107VK5727A, buildable_m2: 806.0, area_m2: 806.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2072108VK5727A, buildable_m2: 797.06, area_m2: 797.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2073404VK5727C, buildable_m2: 69.3, area_m2: 99.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2073411VK5727C, buildable_m2: 41.51, area_m2: 59.3, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2073416VK5727C, buildable_m2: 397.61, area_m2: 795.2, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2073807VK5727C, buildable_m2: 166.91, area_m2: 238.4, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2073810VK5727C, buildable_m2: 393.85, area_m2: 787.7, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2073811VK5727C, buildable_m2: 398.51, area_m2: 797.0, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2073816VK5727C, buildable_m2: 192.03, area_m2: 384.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2074404VK5727C, buildable_m2: 398.15, area_m2: 796.3, planning: APE.20.10, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 2075404VK5727E, buildable_m2: 1645.49, area_m2: 1645.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075407VK5727E, buildable_m2: 63.06, area_m2: 63.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075408VK5727E, buildable_m2: 72.36, area_m2: 72.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075409VK5727E, buildable_m2: 53.81, area_m2: 53.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075410VK5727E, buildable_m2: 90.04, area_m2: 90.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075411VK5727E, buildable_m2: 55.88, area_m2: 55.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075412VK5727E, buildable_m2: 54.27, area_m2: 54.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075413VK5727E, buildable_m2: 41.89, area_m2: 41.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075414VK5727E, buildable_m2: 67.14, area_m2: 67.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2075416VK5727E, buildable_m2: 82.5, area_m2: 82.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2077917VK5727G, buildable_m2: 800.87, area_m2: 800.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2078906VK5727G, buildable_m2: 153.79, area_m2: 153.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2078907VK5727G, buildable_m2: 181.49, area_m2: 181.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2078908VK5727G, buildable_m2: 49.46, area_m2: 49.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2079102VK5727G, buildable_m2: 865.04, area_m2: 540.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2079103VK5727G, buildable_m2: 428.0, area_m2: 267.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2122202VK4722A, buildable_m2: 13121.0, area_m2: 2843.2, planning: APR.02.06, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 2171101VK5727A, buildable_m2: 802.77, area_m2: 802.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2172101VK5727A, buildable_m2: 808.34, area_m2: 808.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2172104VK5727A, buildable_m2: 797.4, area_m2: 797.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2172105VK5727A, buildable_m2: 1563.18, area_m2: 1563.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2172107VK5727A, buildable_m2: 797.4, area_m2: 797.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173101VK5727C, buildable_m2: 716.2, area_m2: 716.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173104VK5727C, buildable_m2: 796.12, area_m2: 796.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173105VK5727C, buildable_m2: 829.2, area_m2: 829.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173106VK5727C, buildable_m2: 203.06, area_m2: 203.1, planning: APE.20.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 2173111VK5727C, buildable_m2: 824.85, area_m2: 824.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173301VK5727C, buildable_m2: 782.84, area_m2: 782.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173304VK5727C, buildable_m2: 459.64, area_m2: 459.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2173307VK5727C, buildable_m2: 600.79, area_m2: 600.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2174306VK5727C, buildable_m2: 816.84, area_m2: 816.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2174312VK5727C, buildable_m2: 785.9, area_m2: 785.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2175302VK5727E, buildable_m2: 803.42, area_m2: 803.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2175303VK5727E, buildable_m2: 793.51, area_m2: 793.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2175305VK5727E, buildable_m2: 805.97, area_m2: 806.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2176902VK5727E, buildable_m2: 796.87, area_m2: 796.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2176906VK5727E, buildable_m2: 440.36, area_m2: 440.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2176908VK5727E, buildable_m2: 798.07, area_m2: 798.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2177903VK5727E, buildable_m2: 308.61, area_m2: 308.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2177904VK5727E, buildable_m2: 307.59, area_m2: 307.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2179818VK5727G, buildable_m2: 456.8, area_m2: 425.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2271103VK5727A, buildable_m2: 800.47, area_m2: 800.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2271107VK5727A, buildable_m2: 873.11, area_m2: 873.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2271918VK4626G, buildable_m2: 1787.0, area_m2: 730.4, planning: APE.17.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 2272103VK5727A, buildable_m2: 1604.07, area_m2: 1604.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2273104VK5727C, buildable_m2: 823.52, area_m2: 823.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2273105VK5727C, buildable_m2: 806.19, area_m2: 806.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2273302VK5727C, buildable_m2: 783.2, area_m2: 783.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2275302VK5727E, buildable_m2: 786.83, area_m2: 786.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2275304VK5727E, buildable_m2: 793.53, area_m2: 793.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2276203VK5727E, buildable_m2: 786.17, area_m2: 786.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2277401VK5727G, buildable_m2: 770.97, area_m2: 771.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2277402VK5727G, buildable_m2: 789.85, area_m2: 789.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2277408VK5727G, buildable_m2: 1249.99, area_m2: 1250.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2357201VK4625G, buildable_m2: 863.0, area_m2: 676.4, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357202VK4625G, buildable_m2: 720.0, area_m2: 617.2, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357203VK4625G, buildable_m2: 790.0, area_m2: 564.5, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357204VK4625G, buildable_m2: 1240.0, area_m2: 973.0, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357205VK4625G, buildable_m2: 2238.0, area_m2: 1751.8, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357207VK4625G, buildable_m2: 1485.0, area_m2: 1163.8, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357208VK4625G, buildable_m2: 1521.0, area_m2: 1191.6, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2357209VK4625G, buildable_m2: 1280.0, area_m2: 1001.6, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2371802VK5727A, buildable_m2: 1624.28, area_m2: 1600.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2371804VK5727A, buildable_m2: 803.84, area_m2: 756.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2371811VK5727A, buildable_m2: 800.32, area_m2: 441.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372301VK5727C, buildable_m2: 1646.4, area_m2: 1646.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372302VK5727C, buildable_m2: 849.49, area_m2: 849.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372303VK5727C, buildable_m2: 851.82, area_m2: 851.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372304VK5727C, buildable_m2: 789.75, area_m2: 789.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372306VK5727C, buildable_m2: 795.54, area_m2: 795.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372801VK5727A, buildable_m2: 797.62, area_m2: 797.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372802VK5727A, buildable_m2: 797.04, area_m2: 797.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372807VK5727A, buildable_m2: 809.88, area_m2: 809.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372809VK5727A, buildable_m2: 802.55, area_m2: 802.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2372813VK5727A, buildable_m2: 2428.1, area_m2: 2428.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2373302VK5727C, buildable_m2: 799.92, area_m2: 799.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2373305VK5727C, buildable_m2: 800.07, area_m2: 800.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2373306VK5727C, buildable_m2: 799.92, area_m2: 799.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2373307VK5727C, buildable_m2: 800.09, area_m2: 800.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2373308VK5727C, buildable_m2: 799.88, area_m2: 799.9, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2373309VK5727C, buildable_m2: 800.26, area_m2: 800.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2374301VK5727C, buildable_m2: 3205.5, area_m2: 3205.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2374502VK5727C, buildable_m2: 1283.35, area_m2: 1283.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2374503VK5727C, buildable_m2: 382.17, area_m2: 382.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2375203VK5727E, buildable_m2: 801.49, area_m2: 801.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2375208VK5727E, buildable_m2: 403.52, area_m2: 403.5, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2376201VK5727E, buildable_m2: 598.26, area_m2: 598.3, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2376202VK5727E, buildable_m2: 801.23, area_m2: 801.2, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2376204VK5727E, buildable_m2: 3527.66, area_m2: 3143.1, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2376205VK5727E, buildable_m2: 955.0, area_m2: 955.0, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2377101VK5727E, buildable_m2: 783.7, area_m2: 783.7, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2377102VK5727E, buildable_m2: 918.62, area_m2: 918.6, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2555201VK4625F, buildable_m2: 1200.0, area_m2: 1027.1, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2555203VK4625F, buildable_m2: 2067.0, area_m2: 1769.0, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2555205VK4625F, buildable_m2: 1620.0, area_m2: 1397.2, planning: UZP.1.05, use: INDUSTRIAL}
+- {rc14: 2574315VK5727D, buildable_m2: 332.38, area_m2: 332.4, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2574317VK5727D, buildable_m2: 2643.83, area_m2: 2643.8, planning: APE.20.10, use: INDUSTRIAL}
+- {rc14: 2668904VK4626H, buildable_m2: 8104.0, area_m2: 3201.3, planning: API.17.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 2761502VK4626B, buildable_m2: 1830.0, area_m2: 2555.0, planning: API.17.12, use: SERVICIOS TERCIARIOS}
+- {rc14: 2794404VK3729D, buildable_m2: 12470.46, area_m2: 17814.9, planning: APR.09.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3003230VK3730C, buildable_m2: 435.35, area_m2: 838.9, planning: APR.10.01, use: TERCIARIO COMERCIAL}
+- {rc14: 3003231VK3730C, buildable_m2: 435.1, area_m2: 838.6, planning: APR.10.01, use: TERCIARIO COMERCIAL}
+- {rc14: 3102301VK3730C, buildable_m2: 4297.0, area_m2: 1522.1, planning: APR.10.01, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 3102302VK3730C, buildable_m2: 5286.0, area_m2: 1872.8, planning: APR.10.01, use: RESIDENCIAL VIVIENDA COLECTIVA LIBRE}
+- {rc14: 3436701VK4833E, buildable_m2: 40975.0, area_m2: 25137.9, planning: APE.08.14, use: INDUSTRIAL}
+- {rc14: 3568502VK4736G, buildable_m2: 4030.0, area_m2: 1171.1, planning: APE.04.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3605351VK4730F, buildable_m2: 274.0, area_m2: 167.2, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3605374VK4730F, buildable_m2: 2980.0, area_m2: 786.8, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3605375VK4730F, buildable_m2: 1872.0, area_m2: 1190.6, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3605376VK4730F, buildable_m2: 2232.0, area_m2: 434.3, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3605377VK4730F, buildable_m2: 1058.0, area_m2: 375.5, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606104VK4730F, buildable_m2: 232.0, area_m2: 80.4, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606407VK4730F, buildable_m2: 302.0, area_m2: 80.3, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606408VK4730F, buildable_m2: 288.0, area_m2: 74.7, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606409VK4730F, buildable_m2: 301.0, area_m2: 75.2, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606411VK4730F, buildable_m2: 326.0, area_m2: 81.6, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606412VK4730F, buildable_m2: 350.0, area_m2: 87.6, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606413VK4730F, buildable_m2: 302.0, area_m2: 78.7, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606414VK4730F, buildable_m2: 296.0, area_m2: 75.6, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3606418VK4730F, buildable_m2: 354.0, area_m2: 127.1, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3616511VK4731F, buildable_m2: 281.0, area_m2: 153.1, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3631407VK5733B, buildable_m2: 212.88, area_m2: 316.0, planning: UZP.2.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 3635145VK4833C, buildable_m2: 37854.0, area_m2: 17083.4, planning: APE.08.14, use: INDUSTRIAL}
+- {rc14: 3635147VK4833F, buildable_m2: 4737.0, area_m2: 2905.9, planning: APE.08.14, use: INDUSTRIAL}
+- {rc14: 3636902VK4833F, buildable_m2: 6227.0, area_m2: 3820.3, planning: APE.08.14, use: INDUSTRIAL}
+- {rc14: 3668702VK4736H, buildable_m2: 885.1, area_m2: 553.2, planning: APE.04.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3668703VK4736H, buildable_m2: 1176.85, area_m2: 736.5, planning: APE.04.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3706414VK4730F, buildable_m2: 1380.0, area_m2: 351.9, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3714306VK4731D, buildable_m2: 320.0, area_m2: 171.2, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3714322VK4731D, buildable_m2: 328.0, area_m2: 109.5, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3714323VK4731D, buildable_m2: 263.0, area_m2: 87.5, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 37143B4VK4731D, buildable_m2: 341.0, area_m2: 109.7, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 37143C0VK4731D, buildable_m2: 288.0, area_m2: 153.4, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 37143C6VK4731D, buildable_m2: 3247.0, area_m2: 748.2, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3735101VK4833F, buildable_m2: 11131.0, area_m2: 6829.1, planning: APE.08.14, use: INDUSTRIAL}
+- {rc14: 3809203VK4730H, buildable_m2: 264.0, area_m2: 70.7, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3809204VK4730H, buildable_m2: 308.0, area_m2: 77.6, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3809207VK4730H, buildable_m2: 352.0, area_m2: 90.3, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3809250VK4730H, buildable_m2: 704.0, area_m2: 176.9, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811615VK4731B, buildable_m2: 300.0, area_m2: 77.5, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811616VK4731B, buildable_m2: 124.0, area_m2: 31.3, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811617VK4731B, buildable_m2: 191.0, area_m2: 50.3, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811618VK4731B, buildable_m2: 288.0, area_m2: 82.0, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811619VK4731B, buildable_m2: 286.0, area_m2: 84.5, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811620VK4731B, buildable_m2: 624.0, area_m2: 162.9, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3811621VK4731B, buildable_m2: 281.0, area_m2: 69.9, planning: API.13.15, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3812142VK4731B, buildable_m2: 148.0, area_m2: 57.8, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3812143VK4731B, buildable_m2: 151.0, area_m2: 58.2, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816303VK4731F, buildable_m2: 288.0, area_m2: 138.8, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816309VK4731F, buildable_m2: 299.0, area_m2: 136.9, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816314VK4731F, buildable_m2: 173.0, area_m2: 57.9, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816317VK4731F, buildable_m2: 162.0, area_m2: 67.1, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816318VK4731F, buildable_m2: 177.0, area_m2: 59.0, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816322VK4731F, buildable_m2: 90.0, area_m2: 30.2, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816323VK4731F, buildable_m2: 150.0, area_m2: 50.4, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816324VK4731F, buildable_m2: 318.0, area_m2: 105.9, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816714VK4731F, buildable_m2: 1062.0, area_m2: 444.5, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816715VK4731F, buildable_m2: 252.0, area_m2: 217.3, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816716VK4731F, buildable_m2: 252.0, area_m2: 188.7, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3816929VK4731F, buildable_m2: 288.0, area_m2: 143.1, planning: API.13.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 3827105VK4842H, buildable_m2: 858.0, area_m2: 999.8, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 4297304VK3649G, buildable_m2: 2824.0, area_m2: 1407.8, planning: APE.10.03, use: INDUSTRIAL}
+- {rc14: 4297305VK3649G, buildable_m2: 2389.0, area_m2: 1193.9, planning: APE.10.03, use: INDUSTRIAL}
+- {rc14: 4301702VK3840A, buildable_m2: 1265.0, area_m2: 4217.0, planning: APE.09.24/UE-5, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4301703VK3840A, buildable_m2: 1638.0, area_m2: 4940.5, planning: APE.09.24/UE-5, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4301704VK3840A, buildable_m2: 471.0, area_m2: 1577.5, planning: APE.09.24/UE-5, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4313701VK4741C, buildable_m2: 256.0, area_m2: 82.7, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313703VK4741C, buildable_m2: 607.0, area_m2: 196.3, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313704VK4741C, buildable_m2: 369.0, area_m2: 119.2, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313705VK4741C, buildable_m2: 397.0, area_m2: 128.0, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313706VK4741C, buildable_m2: 375.0, area_m2: 121.7, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313707VK4741C, buildable_m2: 369.0, area_m2: 119.3, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313719VK4741C, buildable_m2: 435.0, area_m2: 139.1, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313721VK4741C, buildable_m2: 247.0, area_m2: 79.4, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313722VK4741C, buildable_m2: 247.0, area_m2: 78.8, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313723VK4741C, buildable_m2: 201.0, area_m2: 64.3, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313724VK4741C, buildable_m2: 245.0, area_m2: 81.7, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4313725VK4741C, buildable_m2: 231.0, area_m2: 131.3, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4332601VK4843C, buildable_m2: 9624.0, area_m2: 4497.6, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4332602VK4843A, buildable_m2: 9718.0, area_m2: 4541.9, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4339504VK4843H, buildable_m2: 1324.0, area_m2: 1165.5, planning: UZI.0.09, use: SERVICIOS TERCIARIOS}
+- {rc14: 4356102VK3845E, buildable_m2: 4939.0, area_m2: 2570.0, planning: APE.08.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4396901VK3649E, buildable_m2: 3307.0, area_m2: 1653.9, planning: APE.10.03, use: INDUSTRIAL}
+- {rc14: 4396903VK3649E, buildable_m2: 14599.0, area_m2: 7299.8, planning: APE.10.03, use: INDUSTRIAL}
+- {rc14: 4412501VK4741C, buildable_m2: 226.0, area_m2: 94.4, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4412502VK4741C, buildable_m2: 254.0, area_m2: 106.4, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4412514VK4741C, buildable_m2: 313.0, area_m2: 211.8, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4412517VK4741C, buildable_m2: 425.0, area_m2: 177.5, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4412518VK4741C, buildable_m2: 154.0, area_m2: 64.4, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4499351VK3840A, buildable_m2: 300.0, area_m2: 1009.8, planning: APE.09.24/UE-5, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4499353VK3840A, buildable_m2: 300.0, area_m2: 1003.3, planning: APE.09.24/UE-5, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4508437VK3840H, buildable_m2: 929.0, area_m2: 3428.3, planning: APE.09.27, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4508439VK3840H, buildable_m2: 953.0, area_m2: 3387.7, planning: APE.09.27, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 45084P1VK3840H, buildable_m2: 246.16, area_m2: 736.9, planning: APE.09.27, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512601VK4741D, buildable_m2: 740.0, area_m2: 229.3, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512602VK4741D, buildable_m2: 739.0, area_m2: 229.2, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512603VK4741D, buildable_m2: 258.0, area_m2: 80.6, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512604VK4741D, buildable_m2: 216.0, area_m2: 67.4, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512624VK4741D, buildable_m2: 526.0, area_m2: 164.0, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512630VK4741D, buildable_m2: 213.0, area_m2: 157.5, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4512631VK4741D, buildable_m2: 253.0, area_m2: 186.3, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4534106VK4843A, buildable_m2: 3513.0, area_m2: 1460.4, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4596801VK3649F, buildable_m2: 5040.0, area_m2: 2520.0, planning: APE.10.03, use: INDUSTRIAL}
+- {rc14: 4596807VK3649F, buildable_m2: 2583.0, area_m2: 1291.0, planning: APE.10.03, use: INDUSTRIAL}
+- {rc14: 4611405VK4741B, buildable_m2: 1380.0, area_m2: 259.8, planning: API.13.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4729904VK4482H, buildable_m2: 1677.0, area_m2: 1071.7, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 4796403VK3749F, buildable_m2: 168.0, area_m2: 419.3, planning: APE.09.24/UE-4, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4796404VK3749F, buildable_m2: 168.0, area_m2: 419.9, planning: APE.09.24/UE-4, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4801703VK4840B, buildable_m2: 300.0, area_m2: 250.3, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4801705VK4840B, buildable_m2: 123.0, area_m2: 102.8, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4802119VK4840B, buildable_m2: 380.0, area_m2: 267.6, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4802120VK4840B, buildable_m2: 206.0, area_m2: 171.6, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4802122VK4840B, buildable_m2: 211.0, area_m2: 176.1, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4802130VK4840B, buildable_m2: 153.0, area_m2: 127.7, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4802135VK4840B, buildable_m2: 209.0, area_m2: 174.5, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4802149VK4840B, buildable_m2: 328.0, area_m2: 247.3, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4811323VK4741B, buildable_m2: 262.0, area_m2: 135.0, planning: API.13.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4901510VK4840B, buildable_m2: 534.0, area_m2: 445.1, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 4911204VK4741B, buildable_m2: 564.23, area_m2: 215.2, planning: API.13.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4911206VK4741B, buildable_m2: 248.88, area_m2: 94.9, planning: API.13.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4912801VK4741B, buildable_m2: 542.84, area_m2: 107.7, planning: API.13.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4913716VK4741D, buildable_m2: 2448.0, area_m2: 483.4, planning: API.13.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 4913717VK4741D, buildable_m2: 2615.0, area_m2: 516.3, planning: API.13.04, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 5002320VK4850C, buildable_m2: 190.0, area_m2: 158.0, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 50023Z8VK4850C, buildable_m2: 168.0, area_m2: 165.1, planning: API.16.15, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5024601VK4582C, buildable_m2: 7561.0, area_m2: 3703.5, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 5182301VK3658C, buildable_m2: 5345.0, area_m2: 4178.0, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 5182302VK3658C, buildable_m2: 5672.1, area_m2: 4433.1, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 5223407VK4852C, buildable_m2: 6150.0, area_m2: 3318.8, planning: UZI.0.09, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 5290803VK3759B, buildable_m2: 500.0, area_m2: 1000.0, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5290806VK3759B, buildable_m2: 500.0, area_m2: 1000.0, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5290809VK3759B, buildable_m2: 500.0, area_m2: 1008.1, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5290811VK3759B, buildable_m2: 500.0, area_m2: 963.9, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5290813VK3759B, buildable_m2: 500.0, area_m2: 944.3, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5292907VK3759A, buildable_m2: 673.5, area_m2: 1347.0, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5292912VK3759A, buildable_m2: 688.64, area_m2: 1377.3, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5292914VK3759A, buildable_m2: 600.0, area_m2: 1200.0, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5296913VK3759E, buildable_m2: 3287.0, area_m2: 2856.2, planning: APE.09.24/UE-4, use: SERVICIOS TERCIARIOS}
+- {rc14: 5296916VK3759E, buildable_m2: 2875.0, area_m2: 2498.9, planning: APE.09.24/UE-4, use: SERVICIOS TERCIARIOS}
+- {rc14: 5296924VK3759E, buildable_m2: 2190.0, area_m2: 5086.4, planning: APE.09.24/UE-4, use: SERVICIOS TERCIARIOS}
+- {rc14: 5389302VK4658G, buildable_m2: 4237.0, area_m2: 3535.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5389303VK4658G, buildable_m2: 1938.0, area_m2: 1619.8, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5391407VK3759C, buildable_m2: 522.0, area_m2: 1043.9, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5391408VK3759C, buildable_m2: 518.5, area_m2: 1037.2, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392502VK3759C, buildable_m2: 521.0, area_m2: 985.8, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392503VK3759C, buildable_m2: 529.62, area_m2: 1008.0, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392504VK3759C, buildable_m2: 532.5, area_m2: 1021.2, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392505VK3759C, buildable_m2: 538.45, area_m2: 1040.5, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392506VK3759C, buildable_m2: 665.49, area_m2: 1302.6, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392507VK3759C, buildable_m2: 719.81, area_m2: 1439.6, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392508VK3759C, buildable_m2: 550.94, area_m2: 1011.9, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392509VK3759C, buildable_m2: 510.81, area_m2: 1021.6, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392510VK3759C, buildable_m2: 503.5, area_m2: 1007.3, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392511VK3759C, buildable_m2: 499.0, area_m2: 998.2, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5392512VK3759C, buildable_m2: 539.08, area_m2: 1078.2, planning: API.09.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5399102VK4659G, buildable_m2: 1147.0, area_m2: 478.2, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5399104VK4659G, buildable_m2: 2174.0, area_m2: 906.4, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5490501VK4659A, buildable_m2: 4853.0, area_m2: 4051.6, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5490504VK4659A, buildable_m2: 6489.0, area_m2: 5419.4, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5490505VK4659A, buildable_m2: 1198.0, area_m2: 999.8, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5490802VK3759B, buildable_m2: 500.0, area_m2: 1000.2, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490804VK3759B, buildable_m2: 500.0, area_m2: 999.8, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490805VK3759B, buildable_m2: 500.0, area_m2: 1000.0, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490806VK3759B, buildable_m2: 500.0, area_m2: 1000.2, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490808VK3759B, buildable_m2: 500.0, area_m2: 1000.3, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490809VK3759B, buildable_m2: 500.0, area_m2: 1000.0, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490810VK3759B, buildable_m2: 500.0, area_m2: 1000.0, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490812VK3759B, buildable_m2: 500.0, area_m2: 990.5, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5490813VK3759B, buildable_m2: 500.0, area_m2: 923.3, planning: APE.09.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 5495307VK4659E, buildable_m2: 1469.0, area_m2: 612.1, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5497318VK4659G, buildable_m2: 9503.0, area_m2: 3959.6, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5497326VK4659G, buildable_m2: 8635.0, area_m2: 3598.4, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5588501VK4658H, buildable_m2: 5524.0, area_m2: 4611.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5588502VK4658H, buildable_m2: 1464.0, area_m2: 1222.4, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5588503VK4658H, buildable_m2: 4414.0, area_m2: 3684.8, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5588505VK4658H, buildable_m2: 1258.0, area_m2: 1050.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5592202VK4659B, buildable_m2: 2873.0, area_m2: 2902.5, planning: APE.18.06-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 5592203VK4659B, buildable_m2: 2732.98, area_m2: 2760.6, planning: APE.18.06-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 5592204VK4659B, buildable_m2: 4417.54, area_m2: 4462.2, planning: APE.18.06-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 5592205VK4659B, buildable_m2: 7382.26, area_m2: 7456.8, planning: APE.18.06-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 5592207VK4659B, buildable_m2: 2969.38, area_m2: 2999.4, planning: APE.18.06-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 5594902VK4659D, buildable_m2: 32479.0, area_m2: 13532.8, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5690501VK4659B, buildable_m2: 1395.0, area_m2: 1162.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690502VK4659B, buildable_m2: 1831.0, area_m2: 1528.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690503VK4659B, buildable_m2: 1620.0, area_m2: 1355.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690504VK4659B, buildable_m2: 1291.0, area_m2: 1079.9, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690506VK4659B, buildable_m2: 3305.65, area_m2: 2760.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690507VK4659B, buildable_m2: 1197.7, area_m2: 1000.4, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690508VK4659B, buildable_m2: 1198.0, area_m2: 1002.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690511VK4659B, buildable_m2: 1201.29, area_m2: 1002.8, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5690512VK4659B, buildable_m2: 2596.61, area_m2: 2168.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691401VK4659B, buildable_m2: 2341.0, area_m2: 1954.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691402VK4659B, buildable_m2: 3993.0, area_m2: 3333.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691403VK4659B, buildable_m2: 1672.0, area_m2: 1396.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691404VK4659B, buildable_m2: 1198.0, area_m2: 1000.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691405VK4659B, buildable_m2: 1417.0, area_m2: 1183.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691408VK4659B, buildable_m2: 2212.0, area_m2: 1846.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5691409VK4659B, buildable_m2: 1243.0, area_m2: 1038.4, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5737404VK4853H, buildable_m2: 3103.0, area_m2: 2182.0, planning: APE.16.11-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 5785301VK4658F, buildable_m2: 5092.0, area_m2: 4251.0, planning: APE.18.06-RP, use: INDUSTRIAL INDUSTRIA TRADICIONAL}
+- {rc14: 5895307VK4659F, buildable_m2: 7519.0, area_m2: 3133.1, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 5903809VK4750D, buildable_m2: 18871.0, area_m2: 5026.1, planning: APR.13.02, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 5993101VK4659D, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5993102VK4659D, buildable_m2: 1541.0, area_m2: 1287.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5993103VK4659D, buildable_m2: 1198.0, area_m2: 1000.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5993104VK4659D, buildable_m2: 1198.0, area_m2: 1000.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 5993105VK4659D, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092201VK4669C, buildable_m2: 1198.0, area_m2: 999.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092202VK4669C, buildable_m2: 1765.0, area_m2: 1473.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092203VK4669C, buildable_m2: 1198.0, area_m2: 999.9, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092204VK4669C, buildable_m2: 1225.0, area_m2: 1023.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092205VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092206VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092207VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092208VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092209VK4669C, buildable_m2: 1725.0, area_m2: 1440.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092210VK4669C, buildable_m2: 1198.0, area_m2: 1000.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092213VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092214VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092215VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092216VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6092217VK4669C, buildable_m2: 1198.0, area_m2: 1000.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6117720VK4861G, buildable_m2: 273.82, area_m2: 365.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6117721VK4861G, buildable_m2: 227.26, area_m2: 303.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6117722VK4861G, buildable_m2: 229.54, area_m2: 306.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6117723VK4861G, buildable_m2: 227.51, area_m2: 303.4, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6129901VK4861G, buildable_m2: 225.0, area_m2: 299.9, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6129902VK4861G, buildable_m2: 225.0, area_m2: 300.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6129903VK4861G, buildable_m2: 225.0, area_m2: 300.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6129904VK4861G, buildable_m2: 225.0, area_m2: 299.8, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6139613VK4861G, buildable_m2: 225.0, area_m2: 300.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6139614VK4861G, buildable_m2: 225.0, area_m2: 300.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6177902VK4767G, buildable_m2: 3285.0, area_m2: 916.0, planning: API.20.07, use: INDUSTRIAL}
+- {rc14: 6185403VK3668E, buildable_m2: 3884.47, area_m2: 1774.9, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 6185501VK4668E, buildable_m2: 1265.0, area_m2: 1056.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6186301VK4668E, buildable_m2: 4342.0, area_m2: 3625.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6186303VK4668E, buildable_m2: 2197.0, area_m2: 1834.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6186304VK4668E, buildable_m2: 4372.0, area_m2: 3650.4, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6186305VK4668E, buildable_m2: 4846.0, area_m2: 4045.9, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6186306VK4668E, buildable_m2: 5995.0, area_m2: 5005.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6186307VK4668E, buildable_m2: 4342.0, area_m2: 3625.3, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6187701VK3668E, buildable_m2: 2139.35, area_m2: 912.2, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 6191301VK4669A, buildable_m2: 2165.0, area_m2: 1806.7, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191302VK4669A, buildable_m2: 1435.0, area_m2: 1197.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191303VK4669A, buildable_m2: 1198.0, area_m2: 1000.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191304VK4669A, buildable_m2: 1198.0, area_m2: 1000.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191305VK4669A, buildable_m2: 1198.0, area_m2: 1000.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191306VK4669A, buildable_m2: 1198.0, area_m2: 1000.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191307VK4669A, buildable_m2: 1198.0, area_m2: 1000.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191308VK4669A, buildable_m2: 1198.0, area_m2: 1000.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191309VK4669A, buildable_m2: 1198.0, area_m2: 1000.2, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191310VK4669A, buildable_m2: 1422.0, area_m2: 1187.0, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191311VK4669A, buildable_m2: 2039.0, area_m2: 1702.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191312VK4669A, buildable_m2: 1609.0, area_m2: 1343.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191313VK4669A, buildable_m2: 2154.0, area_m2: 1798.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191315VK4669A, buildable_m2: 1270.0, area_m2: 1059.1, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6191316VK4669A, buildable_m2: 1800.0, area_m2: 1502.5, planning: APE.18.06-RP, use: INDUSTRIAL}
+- {rc14: 6217202VK4861G, buildable_m2: 227.0, area_m2: 302.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6218603VK4861G, buildable_m2: 222.0, area_m2: 296.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6218613VK4861G, buildable_m2: 219.0, area_m2: 292.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6219111VK4861G, buildable_m2: 225.0, area_m2: 300.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6219112VK4861G, buildable_m2: 225.0, area_m2: 300.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6219113VK4861G, buildable_m2: 225.0, area_m2: 300.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6219114VK4861G, buildable_m2: 225.0, area_m2: 300.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6219115VK4861G, buildable_m2: 225.0, area_m2: 299.9, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6219116VK4861G, buildable_m2: 225.0, area_m2: 300.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6285402VK3668E, buildable_m2: 984.94, area_m2: 450.0, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 6285403VK3668E, buildable_m2: 1950.26, area_m2: 891.0, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA}
+- {rc14: 6286502VK3668E, buildable_m2: 1056.04, area_m2: 497.8, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6295463VK3669E, buildable_m2: 820.83, area_m2: 297.4, planning: APE.11.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6295464VK3669E, buildable_m2: 1033.69, area_m2: 374.5, planning: APE.11.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6301945VK4760A, buildable_m2: 7658.0, area_m2: 3190.8, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 6301946VK4760A, buildable_m2: 1595.0, area_m2: 664.4, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 6301947VK4760A, buildable_m2: 40.0, area_m2: 16.6, planning: API.18.12, use: INDUSTRIAL}
+- {rc14: 6314501VK4861C, buildable_m2: 168.0, area_m2: 196.0, planning: APR.16.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6314503VK4861C, buildable_m2: 168.0, area_m2: 198.2, planning: APR.16.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6316604VK4861E, buildable_m2: 225.0, area_m2: 300.8, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6316614VK4861E, buildable_m2: 225.0, area_m2: 299.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6317304VK4861G, buildable_m2: 229.0, area_m2: 305.8, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6317329VK4861G, buildable_m2: 221.0, area_m2: 294.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6317330VK4861G, buildable_m2: 222.0, area_m2: 296.4, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6317331VK4861G, buildable_m2: 220.0, area_m2: 293.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6317824VK4861E, buildable_m2: 222.0, area_m2: 296.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6319502VK4861G, buildable_m2: 252.0, area_m2: 302.4, planning: APR.16.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6320610VK4862A, buildable_m2: 168.0, area_m2: 200.3, planning: APR.16.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6390537VK3669A, buildable_m2: 3250.0, area_m2: 1075.6, planning: APE.11.13, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6390602VK4669A, buildable_m2: 9284.0, area_m2: 251.5, planning: APE.18.06-RP, use: INDUSTRIAL PARQUE INDUSTRIAL.}
+- {rc14: 6390603VK4669A, buildable_m2: 3889.0, area_m2: 159.9, planning: APE.18.06-RP, use: INDUSTRIAL PARQUE INDUSTRIAL.}
+- {rc14: 6390604VK4669A, buildable_m2: 4068.0, area_m2: 160.4, planning: APE.18.06-RP, use: INDUSTRIAL PARQUE INDUSTRIAL.}
+- {rc14: 6390605VK4669A, buildable_m2: 5814.0, area_m2: 205.3, planning: APE.18.06-RP, use: INDUSTRIAL PARQUE INDUSTRIAL.}
+- {rc14: 6390607VK4669A, buildable_m2: 6151.0, area_m2: 199.7, planning: APE.18.06-RP, use: INDUSTRIAL PARQUE INDUSTRIAL.}
+- {rc14: 6390608VK4669A, buildable_m2: 10249.0, area_m2: 255.4, planning: APE.18.06-RP, use: INDUSTRIAL PARQUE INDUSTRIAL.}
+- {rc14: 6415613VK4861E, buildable_m2: 261.0, area_m2: 348.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6417535VK4861G, buildable_m2: 100.0, area_m2: 134.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6418902VK4861G, buildable_m2: 450.0, area_m2: 600.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6419013VK4861G, buildable_m2: 228.0, area_m2: 304.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6419016VK4861G, buildable_m2: 225.0, area_m2: 299.5, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6517110VK4861F, buildable_m2: 225.0, area_m2: 300.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6517111VK4861F, buildable_m2: 222.0, area_m2: 296.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6518401VK4861H, buildable_m2: 426.0, area_m2: 567.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6518404VK4861H, buildable_m2: 236.0, area_m2: 315.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6588605VK3668H, buildable_m2: 1881.0, area_m2: 627.1, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6588608VK3668H, buildable_m2: 18931.6, area_m2: 643.9, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6614308VK4861F, buildable_m2: 176.0, area_m2: 196.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6614309VK4861F, buildable_m2: 176.0, area_m2: 197.5, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6614311VK4861D, buildable_m2: 234.0, area_m2: 260.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6617313VK4861H, buildable_m2: 226.0, area_m2: 302.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 66173Z1VK4861H, buildable_m2: 1381.0, area_m2: 1842.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6619102VK4861H, buildable_m2: 6431.0, area_m2: 4975.2, planning: APE.16.11-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6690209VK3669B, buildable_m2: 1848.0, area_m2: 616.0, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6690213VK3669B, buildable_m2: 3954.7, area_m2: 1318.2, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6693811VK3669D, buildable_m2: 4023.0, area_m2: 1340.8, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6693813VK3669D, buildable_m2: 2286.0, area_m2: 762.2, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6712903VK4861B, buildable_m2: 191.0, area_m2: 212.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6717201VK4861H, buildable_m2: 191.0, area_m2: 741.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6717208VK4861F, buildable_m2: 330.0, area_m2: 440.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6717520VK4861E, buildable_m2: 199.0, area_m2: 264.8, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6790320VK3669B, buildable_m2: 3075.0, area_m2: 1027.3, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792101VK3669B, buildable_m2: 1975.56, area_m2: 658.5, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792102VK3669B, buildable_m2: 1743.4, area_m2: 581.1, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792103VK3669B, buildable_m2: 1757.0, area_m2: 585.7, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792105VK3669B, buildable_m2: 3502.2, area_m2: 1167.5, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792106VK3669B, buildable_m2: 1800.5, area_m2: 600.2, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792109VK3669B, buildable_m2: 2008.6, area_m2: 669.5, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792110VK3669B, buildable_m2: 2054.5, area_m2: 684.8, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792115VK3669B, buildable_m2: 2313.36, area_m2: 771.1, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792116VK3669B, buildable_m2: 2242.0, area_m2: 747.2, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792127VK3669B, buildable_m2: 2150.5, area_m2: 716.8, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792131VK3669B, buildable_m2: 1842.4, area_m2: 614.1, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792132VK3669B, buildable_m2: 1849.7, area_m2: 616.6, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792133VK3669B, buildable_m2: 1837.26, area_m2: 612.4, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6792134VK3669B, buildable_m2: 1993.2, area_m2: 664.4, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 6801425VK4760B, buildable_m2: 1824.0, area_m2: 651.6, planning: API.18.11, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6809406VK4861B, buildable_m2: 390.0, area_m2: 432.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6809407VK4861B, buildable_m2: 270.0, area_m2: 299.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6809502VK4860H, buildable_m2: 286.0, area_m2: 317.5, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6809503VK4860H, buildable_m2: 275.0, area_m2: 305.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6809711VK4860H, buildable_m2: 175.0, area_m2: 194.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6809716VK4860H, buildable_m2: 279.0, area_m2: 310.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6810205VK4861B, buildable_m2: 156.0, area_m2: 173.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6810213VK4860H, buildable_m2: 166.0, area_m2: 185.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6811703VK4861B, buildable_m2: 173.0, area_m2: 192.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6811711VK4861B, buildable_m2: 249.0, area_m2: 227.4, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6811721VK4861B, buildable_m2: 156.0, area_m2: 173.8, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6812114VK4861B, buildable_m2: 346.0, area_m2: 384.5, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6812115VK4861B, buildable_m2: 331.0, area_m2: 368.5, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6812116VK4861B, buildable_m2: 351.0, area_m2: 389.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6812117VK4861B, buildable_m2: 346.0, area_m2: 384.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6813723VK4861D, buildable_m2: 207.0, area_m2: 230.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6886103VK3668F, buildable_m2: 1026.31, area_m2: 469.1, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 6909109VK4860H, buildable_m2: 133.0, area_m2: 147.8, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6909114VK4860H, buildable_m2: 86.0, area_m2: 95.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6909115VK4860H, buildable_m2: 147.0, area_m2: 163.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6910304VK4861B, buildable_m2: 180.0, area_m2: 200.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6910315VK4861B, buildable_m2: 176.0, area_m2: 196.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6910316VK4861B, buildable_m2: 178.0, area_m2: 198.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6912123VK4861B, buildable_m2: 177.0, area_m2: 197.1, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6912124VK4861B, buildable_m2: 180.0, area_m2: 199.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6912125VK4861B, buildable_m2: 179.0, area_m2: 198.4, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6912701VK4861B, buildable_m2: 212.0, area_m2: 235.5, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6912705VK4861B, buildable_m2: 245.0, area_m2: 272.3, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6912706VK4861B, buildable_m2: 373.0, area_m2: 414.2, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6913933VK4861D, buildable_m2: 288.0, area_m2: 320.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6913934VK4861D, buildable_m2: 288.0, area_m2: 320.0, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6913955VK4861D, buildable_m2: 181.0, area_m2: 201.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6913956VK4861D, buildable_m2: 181.0, area_m2: 201.6, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 6991101VK3669B, buildable_m2: 3246.0, area_m2: 1082.1, planning: API.11.15, use: INDUSTRIAL}
+- {rc14: 7007211VK4870E, buildable_m2: 435.0, area_m2: 573.1, planning: UZI.0.05, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7011101VK4871A, buildable_m2: 140.0, area_m2: 200.0, planning: APR.16.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7011102VK4871A, buildable_m2: 143.0, area_m2: 211.2, planning: APR.16.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7011116VK4871A, buildable_m2: 250.0, area_m2: 357.2, planning: APR.16.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7126306VK4772E, buildable_m2: 14145.0, area_m2: 5625.2, planning: API.19.01, use: SERVICIOS TERCIARIOS}
+- {rc14: 7185404VK4778E, buildable_m2: 6697.0, area_m2: 3250.5, planning: API.16.22, use: SERVICIOS TERCIARIOS}
+- {rc14: 7211803VK4771A, buildable_m2: 5340.0, area_m2: 238.3, planning: APR.18.02/M, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7211805VK4771A, buildable_m2: 11441.0, area_m2: 272.3, planning: APR.18.02/M, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7279908VK4777G, buildable_m2: 11407.0, area_m2: 11120.9, planning: APE.20.20, use: SERVICIOS TERCIARIOS}
+- {rc14: 7286602VK3678E, buildable_m2: 3994.0, area_m2: 1586.0, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 7286603VK3678E, buildable_m2: 3994.0, area_m2: 1586.0, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 7286610VK3678E, buildable_m2: 3994.0, area_m2: 1586.0, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 7286611VK3678E, buildable_m2: 3994.0, area_m2: 1586.0, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 7293506VK3679C, buildable_m2: 1358.0, area_m2: 734.2, planning: UZI.0.10, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7311302VK4871A, buildable_m2: 12529.0, area_m2: 4394.6, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 7311303VK4871A, buildable_m2: 9071.0, area_m2: 3181.7, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 7311307VK4871A, buildable_m2: 8654.0, area_m2: 3035.1, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 7471705VK4777A, buildable_m2: 1175.0, area_m2: 1678.6, planning: API.20.11, use: INDUSTRIAL}
+- {rc14: 7486905VK4678E, buildable_m2: 5320.0, area_m2: 1391.6, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7488202VK4678G, buildable_m2: 6459.0, area_m2: 2780.8, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7587603VK4678F, buildable_m2: 3275.0, area_m2: 1389.6, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7610117VK3887H, buildable_m2: 155.49, area_m2: 137.1, planning: APR.08.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7610118VK3870H, buildable_m2: 169.76, area_m2: 159.5, planning: APR.08.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7610119VK3870H, buildable_m2: 190.37, area_m2: 177.4, planning: APR.08.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7685913VK4678F, buildable_m2: 177.0, area_m2: 255.9, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 7685916VK4678F, buildable_m2: 177.0, area_m2: 255.8, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 7685917VK4678F, buildable_m2: 177.0, area_m2: 363.5, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 7708402VK3870H, buildable_m2: 2500.0, area_m2: 1132.2, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7708801VK3870H, buildable_m2: 2200.0, area_m2: 685.7, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7708803VK3870H, buildable_m2: 1440.0, area_m2: 544.2, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7708805VK3870H, buildable_m2: 2206.0, area_m2: 605.3, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7708806VK3870H, buildable_m2: 2245.5, area_m2: 707.1, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7773113VK4777D, buildable_m2: 23143.0, area_m2: 7714.5, planning: API.20.11, use: INDUSTRIAL}
+- {rc14: 7773115VK4777D, buildable_m2: 183.0, area_m2: 61.4, planning: API.20.11, use: INDUSTRIAL}
+- {rc14: 7786241VK4678F, buildable_m2: 141.0, area_m2: 236.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 7802813VK4770B, buildable_m2: 123.0, area_m2: 89.9, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7802815VK4770B, buildable_m2: 123.0, area_m2: 72.7, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7802816VK4770B, buildable_m2: 123.0, area_m2: 83.7, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7808901VK3870H, buildable_m2: 2500.0, area_m2: 1130.6, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7808902VK3870H, buildable_m2: 2500.0, area_m2: 1133.2, planning: APR.08.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 7813301VK3871D, buildable_m2: 563.0, area_m2: 419.5, planning: API.08.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7813305VK3871D, buildable_m2: 420.0, area_m2: 359.9, planning: API.08.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7886601VK4748E, buildable_m2: 1846.33, area_m2: 2637.6, planning: API.16.06, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7913102VK3871D, buildable_m2: 406.0, area_m2: 235.4, planning: API.08.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7913103VK3871D, buildable_m2: 425.0, area_m2: 311.8, planning: API.08.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 7913106VK3871D, buildable_m2: 360.0, area_m2: 214.8, planning: API.08.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029302VK4782G, buildable_m2: 278.0, area_m2: 302.0, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029309VK4782G, buildable_m2: 225.0, area_m2: 251.0, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029310VK4782G, buildable_m2: 218.0, area_m2: 250.9, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029311VK4782G, buildable_m2: 226.0, area_m2: 250.1, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029312VK4782G, buildable_m2: 217.0, area_m2: 255.2, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029313VK4782G, buildable_m2: 225.0, area_m2: 250.0, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029316VK4782G, buildable_m2: 230.0, area_m2: 251.0, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029317VK4782G, buildable_m2: 229.0, area_m2: 250.2, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029320VK4782G, buildable_m2: 232.0, area_m2: 251.0, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029322VK4782G, buildable_m2: 230.0, area_m2: 251.0, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029323VK4782G, buildable_m2: 229.0, area_m2: 250.9, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029324VK4782G, buildable_m2: 240.0, area_m2: 256.3, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029325VK4782G, buildable_m2: 262.0, area_m2: 286.3, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8029326VK4782G, buildable_m2: 229.0, area_m2: 250.2, planning: APE.19.08, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8095701VK3689E, buildable_m2: 3053.0, area_m2: 1216.8, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8095703VK3689E, buildable_m2: 4237.0, area_m2: 1689.3, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8095704VK3689E, buildable_m2: 2949.0, area_m2: 1175.9, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8129235VK4782G, buildable_m2: 250.75, area_m2: 275.9, planning: APE.19.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8129236VK4782G, buildable_m2: 244.33, area_m2: 251.8, planning: APE.19.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8129237VK4782G, buildable_m2: 244.57, area_m2: 251.8, planning: APE.19.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8129238VK4782G, buildable_m2: 244.57, area_m2: 256.7, planning: APE.19.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8129247VK4782G, buildable_m2: 244.49, area_m2: 250.1, planning: APE.19.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8129248VK4782G, buildable_m2: 336.48, area_m2: 369.1, planning: APE.19.08, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8179701VK4787G, buildable_m2: 159.0, area_m2: 227.3, planning: API.20.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8198814VK4689G, buildable_m2: 197.0, area_m2: 346.9, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8198818VK4689G, buildable_m2: 423.0, area_m2: 743.9, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8214614VK3881C, buildable_m2: 366.0, area_m2: 255.3, planning: API.08.13, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8225202VK4882E, buildable_m2: 16729.0, area_m2: 4978.2, planning: APE.16.11-RP, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8295101VK3689E, buildable_m2: 9657.0, area_m2: 3839.1, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8295105VK3689E, buildable_m2: 2777.0, area_m2: 1132.7, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8295106VK3689E, buildable_m2: 2920.0, area_m2: 1160.8, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8295108VK3689E, buildable_m2: 5509.0, area_m2: 2190.4, planning: UZI.0.10, use: INDUSTRIAL}
+- {rc14: 8316314VK3881E, buildable_m2: 347.0, area_m2: 249.8, planning: API.08.11, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8316315VK3881E, buildable_m2: 373.0, area_m2: 268.5, planning: API.08.11, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8413307VK3881C, buildable_m2: 363.0, area_m2: 252.0, planning: API.08.13, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8421402VK4882A, buildable_m2: 20157.53, area_m2: 6836.5, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 8431401VK4883A, buildable_m2: 14640.0, planning: APE.16.11-RP, use: SERVICIOS TERCIARIO OFICINAS}
+- {rc14: 8431404VK4883A, buildable_m2: 20862.0, planning: APE.16.11-RP, use: SERVICIOS TERCIARIO OFICINAS}
+- {rc14: 8433401VK4883C, buildable_m2: 19394.0, area_m2: 4861.8, planning: APE.16.11-RP, use: SERVICIOS TERCIARIO OFICINAS}
+- {rc14: 8433402VK4883C, buildable_m2: 10338.0, area_m2: 2999.9, planning: APE.16.11-RP, use: SERVICIOS TERCIARIO OFICINAS}
+- {rc14: 8488104VK4688G, buildable_m2: 3474.0, area_m2: 750.1, planning: UZP.1.03, use: SERVICIOS TERCIARIOS}
+- {rc14: 8524904VK3782D, buildable_m2: 961.0, area_m2: 235.0, planning: API.11.01, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8524910VK3782D, buildable_m2: 498.0, area_m2: 124.7, planning: API.11.17, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8524918VK3782D, buildable_m2: 1000.0, area_m2: 250.3, planning: API.11.17, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8525629VK3882C, buildable_m2: 167.0, area_m2: 199.0, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8595905VK4689F, buildable_m2: 3433.0, area_m2: 1390.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8595906VK4689F, buildable_m2: 3200.0, area_m2: 1296.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8595907VK4689F, buildable_m2: 3433.0, area_m2: 1390.2, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8595914VK4689F, buildable_m2: 3375.0, area_m2: 1390.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8620002VK4882B, buildable_m2: 12394.0, area_m2: 3629.7, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 8621301VK4882B, buildable_m2: 13720.0, area_m2: 4597.1, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 8623753VK3882D, buildable_m2: 167.0, area_m2: 139.0, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8623754VK3882D, buildable_m2: 167.0, area_m2: 139.0, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8697612VK4689F, buildable_m2: 3375.0, area_m2: 1390.4, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8705216VK3880D, buildable_m2: 353.0, area_m2: 241.8, planning: API.09.17, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8721701VK4882B, buildable_m2: 21851.0, area_m2: 7223.3, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 8728603VK4882H, buildable_m2: 37997.0, area_m2: 14325.8, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS}
+- {rc14: 8734104VK4883D, buildable_m2: 10926.0, area_m2: 3000.0, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 8734107VK4883D, buildable_m2: 16858.0, area_m2: 4393.5, planning: APE.16.11-RP, use: SERVICIOS TERCIARIOS OFICINAS}
+- {rc14: 8794201VK3789D, buildable_m2: 896.0, area_m2: 697.0, planning: API.09.02, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8795701VK3789F, buildable_m2: 590.0, area_m2: 442.3, planning: API.09.02, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8796313VK3789F, buildable_m2: 701.0, area_m2: 534.2, planning: API.09.02, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8825701VK3882F, buildable_m2: 167.0, area_m2: 131.5, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8884208VK4688D, buildable_m2: 236.0, area_m2: 371.9, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8918902VK3781H, buildable_m2: 912.0, area_m2: 271.5, planning: API.11.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8918954VK3781H, buildable_m2: 2064.0, area_m2: 447.3, planning: API.11.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8920603VK3782B, buildable_m2: 960.0, area_m2: 556.3, planning: API.11.12, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 8922739VK3892A, buildable_m2: 100.0, area_m2: 111.1, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 8922740VK3892A, buildable_m2: 100.0, area_m2: 111.1, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 8922741VK3892A, buildable_m2: 100.0, area_m2: 111.1, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 8922742VK3892A, buildable_m2: 100.0, area_m2: 111.2, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 8922751VK3892A, buildable_m2: 200.0, area_m2: 222.1, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 8925610VK3882F, buildable_m2: 167.0, area_m2: 126.3, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8925615VK3882F, buildable_m2: 167.0, area_m2: 119.8, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 8951601VK3685B, buildable_m2: 779.0, area_m2: 664.1, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951602VK3685B, buildable_m2: 996.0, area_m2: 858.7, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951603VK3685B, buildable_m2: 1052.0, area_m2: 908.1, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951604VK3685B, buildable_m2: 723.0, area_m2: 624.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951605VK3685B, buildable_m2: 735.0, area_m2: 634.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951606VK3685B, buildable_m2: 912.0, area_m2: 787.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951609VK3685B, buildable_m2: 3650.0, area_m2: 3149.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951610VK3685B, buildable_m2: 894.0, area_m2: 771.2, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951611VK3685B, buildable_m2: 655.0, area_m2: 565.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951612VK3685B, buildable_m2: 742.0, area_m2: 640.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8951613VK3685B, buildable_m2: 4232.0, area_m2: 3650.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 8954001VK3685D, buildable_m2: 435.0, area_m2: 500.0, planning: UZP.1.06, use: SERVICIOS TERCIARIOS}
+- {rc14: 8954002VK3685D, buildable_m2: 489.0, area_m2: 561.2, planning: UZP.1.06, use: SERVICIOS TERCIARIOS}
+- {rc14: 8954003VK3685D, buildable_m2: 2792.0, area_m2: 3209.3, planning: UZP.1.06, use: SERVICIOS TERCIARIOS}
+- {rc14: 8954004VK3685D, buildable_m2: 5812.0, area_m2: 6677.6, planning: UZP.1.06, use: SERVICIOS TERCIARIOS}
+- {rc14: 8954005VK3685D, buildable_m2: 2181.0, area_m2: 2506.5, planning: UZP.1.06, use: SERVICIOS TERCIARIOS}
+- {rc14: 8954007VK3685D, buildable_m2: 6061.0, area_m2: 6965.0, planning: UZP.1.06, use: SERVICIOS TERCIARIOS}
+- {rc14: 9023453VK3892D, buildable_m2: 166.0, area_m2: 159.9, planning: API.08.04, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9095912VK3799E, buildable_m2: 361.0, area_m2: 251.1, planning: API.09.02, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9095913VK3799E, buildable_m2: 360.0, area_m2: 250.9, planning: API.09.02, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9095914VK3799E, buildable_m2: 392.0, area_m2: 276.8, planning: API.09.02, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9148502VK3694G, buildable_m2: 2023.0, area_m2: 1744.8, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148503VK3694G, buildable_m2: 1668.0, area_m2: 1439.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148504VK3694G, buildable_m2: 1539.0, area_m2: 1328.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148505VK3694G, buildable_m2: 1531.0, area_m2: 1321.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148506VK3694G, buildable_m2: 3637.0, area_m2: 3137.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148507VK3694G, buildable_m2: 619.0, area_m2: 534.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148508VK3694G, buildable_m2: 8951.0, area_m2: 7721.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148509VK3694G, buildable_m2: 3415.0, area_m2: 2946.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148510VK3694G, buildable_m2: 3976.0, area_m2: 2859.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9148511VK3694G, buildable_m2: 2465.0, area_m2: 1772.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151701VK3695A, buildable_m2: 1716.0, area_m2: 1233.8, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151702VK3695A, buildable_m2: 1116.0, area_m2: 802.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151703VK3695A, buildable_m2: 1690.0, area_m2: 1215.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151704VK3695A, buildable_m2: 1007.0, area_m2: 724.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151705VK3695A, buildable_m2: 947.0, area_m2: 681.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151709VK3695A, buildable_m2: 1265.0, area_m2: 910.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151710VK3695A, buildable_m2: 1077.0, area_m2: 775.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151711VK3695A, buildable_m2: 1077.0, area_m2: 775.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151712VK3695A, buildable_m2: 956.0, area_m2: 687.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151713VK3695A, buildable_m2: 956.0, area_m2: 687.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151714VK3695A, buildable_m2: 956.0, area_m2: 687.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151715VK3695A, buildable_m2: 956.0, area_m2: 687.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151716VK3695A, buildable_m2: 933.0, area_m2: 671.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151718VK3695A, buildable_m2: 1374.0, area_m2: 988.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151719VK3695A, buildable_m2: 5724.0, area_m2: 4115.2, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9151720VK3695A, buildable_m2: 1496.0, area_m2: 1712.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158402VK3695G, buildable_m2: 1283.0, area_m2: 922.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158403VK3695G, buildable_m2: 908.0, area_m2: 653.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158404VK3695G, buildable_m2: 2123.0, area_m2: 1528.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158406VK3695G, buildable_m2: 2935.0, area_m2: 2110.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158407VK3695G, buildable_m2: 1116.0, area_m2: 803.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158408VK3695G, buildable_m2: 695.0, area_m2: 500.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9158409VK3695G, buildable_m2: 1007.0, area_m2: 724.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9218301VK4791G, buildable_m2: 6212.0, area_m2: 6328.4, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9218305VK4791G, buildable_m2: 4907.0, area_m2: 5001.3, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9218306VK4791G, buildable_m2: 9752.0, area_m2: 9935.9, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9250501VK3695A, buildable_m2: 953.0, area_m2: 822.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250502VK3695A, buildable_m2: 802.0, area_m2: 692.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250503VK3695A, buildable_m2: 687.0, area_m2: 593.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250504VK3695A, buildable_m2: 659.0, area_m2: 568.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250505VK3695A, buildable_m2: 937.0, area_m2: 808.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250506VK3695A, buildable_m2: 624.0, area_m2: 538.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250507VK3695A, buildable_m2: 1122.0, area_m2: 968.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250508VK3695A, buildable_m2: 806.0, area_m2: 695.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250509VK3695A, buildable_m2: 904.0, area_m2: 780.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250510VK3695A, buildable_m2: 1167.0, area_m2: 1006.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250511VK3695A, buildable_m2: 868.0, area_m2: 749.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250512VK3695A, buildable_m2: 583.0, area_m2: 503.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250513VK3695A, buildable_m2: 719.0, area_m2: 620.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250514VK3695A, buildable_m2: 627.0, area_m2: 541.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9250516VK3695A, buildable_m2: 6313.0, area_m2: 5446.1, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9253601VK3695C, buildable_m2: 8283.0, area_m2: 5955.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9253602VK3695C, buildable_m2: 1393.0, area_m2: 1002.1, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258501VK3695G, buildable_m2: 10915.0, area_m2: 7848.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258502VK3695G, buildable_m2: 3617.0, area_m2: 2601.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258503VK3695G, buildable_m2: 3617.0, area_m2: 2599.6, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258504VK3695G, buildable_m2: 1093.0, area_m2: 786.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258505VK3695G, buildable_m2: 892.0, area_m2: 641.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258506VK3695G, buildable_m2: 12525.0, area_m2: 9018.4, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9258507VK3695G, buildable_m2: 4416.0, area_m2: 3175.0, planning: UZP.1.06, use: INDUSTRIAL}
+- {rc14: 9278607VK4697G, buildable_m2: 147.0, area_m2: 242.7, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9278608VK4697G, buildable_m2: 210.0, area_m2: 344.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9287502VK4698G, buildable_m2: 5462.5, area_m2: 1390.3, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 9287504VK4698G, buildable_m2: 5462.5, area_m2: 1390.4, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 9322806VK4792A, buildable_m2: 3647.0, area_m2: 3715.9, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9322810VK4792A, buildable_m2: 18172.0, area_m2: 17425.0, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9379902VK4697G, buildable_m2: 148.0, area_m2: 253.8, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9379903VK4697G, buildable_m2: 208.0, area_m2: 356.6, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9379911VK4697G, buildable_m2: 210.0, area_m2: 359.8, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9379913VK4697G, buildable_m2: 356.0, area_m2: 610.0, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9398502VK3799G, buildable_m2: 118.5, area_m2: 118.5, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9398510VK3799G, buildable_m2: 82.65, area_m2: 82.7, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9398511VK3799G, buildable_m2: 114.48, area_m2: 114.5, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9398514VK3799G, buildable_m2: 176.66, area_m2: 176.7, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9418703VK4719G, buildable_m2: 1854.0, planning: APE.19.11-RP, use: INDUSTRIA INDUSTRIA TRADICIONAL}
+- {rc14: 9418704VK4791G, buildable_m2: 1318.0, planning: APE.19.11-RP, use: INDUSTRIA INDUSTRIA TRADICIONAL}
+- {rc14: 9418709VK4791G, buildable_m2: 1031.0, planning: APE.19.11-RP, use: INDUSTRIA INDUSTRIA TRADICIONAL}
+- {rc14: 9418710VK4791G, buildable_m2: 1031.0, planning: APE.19.11-RP, use: INDUSTRIA INDUSTRIA TRADICIONAL}
+- {rc14: 9418711VK4791G, buildable_m2: 1111.0, planning: APE.19.11-RP, use: INDUSTRIA INDUSTRIA TRADICIONAL}
+- {rc14: 9423501VK4792C, buildable_m2: 15229.0, area_m2: 7614.3, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9451802VK3695A, buildable_m2: 4872.0, area_m2: 2436.0, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 9451811VK3695A, buildable_m2: 6306.0, area_m2: 3153.0, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 9451812VK3695A, buildable_m2: 5687.0, area_m2: 2843.6, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 9455303VK3695E, buildable_m2: 4056.0, area_m2: 2028.3, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 9455308VK3695E, buildable_m2: 3940.0, area_m2: 1970.6, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 9498610VK3799G, buildable_m2: 427.63, area_m2: 427.6, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9498620VK3799G, buildable_m2: 139.87, area_m2: 139.9, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504607VK4890D, buildable_m2: 170.34, area_m2: 250.5, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504608VK4890D, buildable_m2: 176.6, area_m2: 252.3, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504609VK4890D, buildable_m2: 175.31, area_m2: 250.4, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504610VK4890D, buildable_m2: 175.0, area_m2: 250.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504611VK4890D, buildable_m2: 175.0, area_m2: 250.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504612VK4890D, buildable_m2: 256.39, area_m2: 365.7, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504613VK4890D, buildable_m2: 247.54, area_m2: 353.6, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504614VK4890D, buildable_m2: 175.09, area_m2: 250.3, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504615VK4890D, buildable_m2: 177.79, area_m2: 254.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504616VK4890D, buildable_m2: 179.98, area_m2: 257.1, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504617VK4890D, buildable_m2: 181.38, area_m2: 259.1, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9504618VK4890D, buildable_m2: 182.58, area_m2: 260.8, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9520901VK4792B, buildable_m2: 9814.0, area_m2: 10000.1, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9598911VK3799H, buildable_m2: 275.31, area_m2: 275.3, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9598912VK3799H, buildable_m2: 218.4, area_m2: 218.4, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9600202VK3890B, buildable_m2: 1568.74, area_m2: 1536.0, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9601701VK3890B, buildable_m2: 71.84, area_m2: 64.8, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9601702VK3890B, buildable_m2: 521.84, area_m2: 450.6, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9609301VK4890H, buildable_m2: 1982.0, area_m2: 1982.6, planning: UZP.1.01, use: INDUSTRIAL}
+- {rc14: 9609304VK4890H, buildable_m2: 2528.0, area_m2: 2528.2, planning: UZP.1.01, use: INDUSTRIAL}
+- {rc14: 9623601VK4792D, buildable_m2: 19761.0, area_m2: 9880.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9623604VK4792D, buildable_m2: 2810.0, area_m2: 1405.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9623607VK4792D, buildable_m2: 10050.0, area_m2: 5024.7, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9623613VK4792D, buildable_m2: 96.0, area_m2: 48.4, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9623615VK4792D, buildable_m2: 4650.0, area_m2: 2324.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9623616VK4792D, buildable_m2: 4633.0, area_m2: 2316.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9656809VK3695F, buildable_m2: 3233.0, area_m2: 1616.6, planning: API.17.07, use: INDUSTRIAL}
+- {rc14: 9680606VK4698B, buildable_m2: 4264.0, area_m2: 1485.0, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 9680607VK4698B, buildable_m2: 7041.0, area_m2: 2452.5, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA COLECTIVA}
+- {rc14: 9682401VK4698D, buildable_m2: 2300.0, area_m2: 1877.9, planning: UZP.1.03, use: SERVICIOS TERCIARIOS}
+- {rc14: 9698307VK3799H, buildable_m2: 83.42, area_m2: 81.0, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9698312VK3799H, buildable_m2: 617.18, area_m2: 617.2, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9698314VK3799H, buildable_m2: 109.35, area_m2: 107.7, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9698316VK3799H, buildable_m2: 103.35, area_m2: 103.3, planning: API.09.12, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}
+- {rc14: 9717802VK4791H, buildable_m2: 8729.0, area_m2: 8893.8, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9717803VK4791H, buildable_m2: 9906.0, area_m2: 10092.9, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9717813VK4791H, buildable_m2: 4974.0, area_m2: 5067.9, planning: APE.19.11-RP, use: INDUSTRIAL}
+- {rc14: 9803515VK4890D, buildable_m2: 359.0, area_m2: 307.1, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803521VK4890D, buildable_m2: 120.0, area_m2: 150.5, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803523VK4890D, buildable_m2: 120.0, area_m2: 150.5, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803524VK4890D, buildable_m2: 120.0, area_m2: 150.4, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803526VK4890D, buildable_m2: 120.0, area_m2: 150.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803527VK4890D, buildable_m2: 120.0, area_m2: 150.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803528VK4890D, buildable_m2: 120.0, area_m2: 150.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803529VK4890D, buildable_m2: 120.0, area_m2: 150.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803530VK4890D, buildable_m2: 122.4, area_m2: 153.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803531VK4890D, buildable_m2: 122.4, area_m2: 155.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803535VK4890D, buildable_m2: 147.0, area_m2: 183.0, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9803543VK4890D, buildable_m2: 236.0, area_m2: 458.9, planning: UZP.1.01, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9824501VK4792D, buildable_m2: 8653.0, area_m2: 4326.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9824502VK4792D, buildable_m2: 6124.0, area_m2: 3061.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9883503VK4698D, buildable_m2: 6607.0, area_m2: 1215.1, planning: UZP.1.03, use: SERVICIOS TERCIARIOS}
+- {rc14: 9908603VK4890H, buildable_m2: 4815.0, area_m2: 2837.9, planning: UZP.1.01, use: SERVICIOS TERCIARIOS}
+- {rc14: 9922201VK4792D, buildable_m2: 10212.0, area_m2: 5105.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9922207VK4792D, buildable_m2: 6595.0, area_m2: 3297.6, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9922210VK4792D, buildable_m2: 15894.0, area_m2: 7946.8, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9928408VK4792H, buildable_m2: 2486.0, area_m2: 1242.9, planning: API.19.04, use: INDUSTRIAL}
+- {rc14: 9976704VK4697F, buildable_m2: 128.0, area_m2: 335.2, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9976713VK4697F, buildable_m2: 148.0, area_m2: 264.3, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9976719VK4697F, buildable_m2: 158.0, area_m2: 264.9, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9976720VK4697F, buildable_m2: 220.0, area_m2: 366.6, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9976721VK4697F, buildable_m2: 376.0, area_m2: 627.2, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: 9976722VK4697F, buildable_m2: 698.0, area_m2: 1163.1, planning: UZP.1.03, use: RESIDENCIAL VIVIENDA UNIFAMILIAR PROTEGIDA}
+- {rc14: RC205070000000, buildable_m2: 172.0, area_m2: 190.7, planning: APE.16.07, use: RESIDENCIAL VIVIENDA UNIFAMILIAR}

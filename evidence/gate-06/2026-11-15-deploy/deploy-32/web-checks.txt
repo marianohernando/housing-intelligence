@@ -1,0 +1,577 @@
+Checks on https://vidafacil-madrid.vercel.app (dpl_8tDBN…, 025a4a2, fit-0.9), 2026-11-15, Playwright Chromium, 1440x900 and 390x844
+(mobile, touch, es-ES). Two scripts, each at both widths; «errors» lists console errors and every HTTP >= 400 the page saw.
+  1: the example (list, «Empatan», the 2024 notice, the 1st card), the same to buy, a search with no place (and «Madrid capital»),
+     Casarrubuelos's card in «Pueblos» (a couple renting up to 1.500 €), a student-like search and «Cómo lo calculamos».
+  2: «Casi encajan (n)» unfolded and its 1st card, «¿Trabajas fuera de casa?» with «Colegios» marked, the student-like search.
+  The student-like search is what the web can do: «Solo/a», 500 € and «Trabajo en» Vicálvaro (Cercanías), a station; the golden
+  student's URJC Vicálvaro (a study place with its own coordinates) goes through the API only (golden-api.txt).
+
+===== BEFORE THE SYNC (15:43–15:49 UTC) =====
+--- script 1
+1440 {
+ "example": {
+  "api": "fit-0.9: 42 pass, undefined fail, 0 unknown of 199",
+  "top10": "Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien, Moratalaz 93 muy_bien, Tetuán 92 muy_bien, Ciudad Lineal 92 muy_bien, Villaverde 92 muy_bien, Carabanchel 90 muy_bien, Coslada 90 muy_bien, Leganés 90 muy_bien",
+  "near": "Chamartín 92 null [budget], Arganzuela 92 null [budget], Centro 91 null [budget], Chamberí 91 null [budget], Retiro 91 null [budget]",
+  "bands": {
+   "poco": 12,
+   "regular": 13,
+   "muy_bien": 12,
+   "bien": 5
+  },
+  "rc": "+5 min a pie hasta colegio con primaria +49; +150 €/mes +3",
+  "ui": {
+   "firstRow": "1 Puente de Vallecas Distrito de Madrid Encaja muy bien 94 % · 94 % de encaje, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "empatan": "Empatan al 94 % 1",
+   "notice": 1,
+   "sinLugar": 0,
+   "casi": "NO «Casi encajan» REGION"
+  },
+  "card": {
+   "pill": "Encaja muy bien 94 % Esta zona encaja muy bien con tu búsqueda: 94 %",
+   "empata": "Empata al 94 % con Latina.",
+   "notice": true,
+   "facts": [
+    "Colegio con primaria a unos 4 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Centro de salud a unos 8 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable"
+   ]
+  }
+ },
+ "buy": {
+  "sent": "buy 300000",
+  "api": "20 of 199, 1st Puente de Vallecas 94 muy_bien",
+  "noticeList": 0,
+  "noticeCard": false
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0",
+  "api": "175 of 199, 1st Usera 100",
+  "toda": "NOT SHOWN",
+  "empate": "Encajan 155 zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
+  "madrid": {
+   "sent": "madrid",
+   "shown": 0
+  }
+ },
+ "casarrubuelos": {
+  "api": "122 of 138; top5 Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100",
+  "rank": 1,
+  "layout": {
+   "nameLines": 1,
+   "nameWidth": 338,
+   "pillBelowName": true,
+   "pill": "Encaja muy bien 100 % Esta zona encaja muy bien con tu búsqueda: 100 %"
+  }
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Añadir un servicio…",
+   "Escuela infantil",
+   "Colegio",
+   "Centro de salud"
+  ],
+  "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('option').first()\n    - locator resolved to <option value=\"\" selected>Añadir un servicio…</option>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is n"
+ },
+ "metodo": {
+  "ejemplo": "ios, el transporte y la salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.",
+  "arriba": "Arriba empatan dos al 94 %: Puente de Vallecas y Latina.",
+  "latina": "Pierde unos 6 puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi todo por los minutos a pie.",
+  "casi": "Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto.",
+  "tabla": "Si el % es… Sale 90 % o más Encaja muy bien De 75 a 89 % Encaja bien De 60 a 74 % Encaja regular Menos del 60 % Encaja poco"
+ },
+ "errors": []
+}
+390 {
+ "example": {
+  "api": "fit-0.9: 42 pass, undefined fail, 0 unknown of 199",
+  "top10": "Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien, Moratalaz 93 muy_bien, Tetuán 92 muy_bien, Ciudad Lineal 92 muy_bien, Villaverde 92 muy_bien, Carabanchel 90 muy_bien, Coslada 90 muy_bien, Leganés 90 muy_bien",
+  "near": "Chamartín 92 null [budget], Arganzuela 92 null [budget], Centro 91 null [budget], Chamberí 91 null [budget], Retiro 91 null [budget]",
+  "bands": {
+   "poco": 12,
+   "regular": 13,
+   "muy_bien": 12,
+   "bien": 5
+  },
+  "rc": "+5 min a pie hasta colegio con primaria +49; +150 €/mes +3",
+  "ui": {
+   "firstRow": "1 Puente de Vallecas Distrito de Madrid Encaja muy bien 94 % · 94 % de encaje, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "empatan": "Empatan al 94 % 1",
+   "notice": 1,
+   "sinLugar": 0,
+   "casi": "NO «Casi encajan» REGION"
+  },
+  "card": {
+   "pill": "Encaja muy bien 94 % Esta zona encaja muy bien con tu búsqueda: 94 %",
+   "empata": "Empata al 94 % con Latina.",
+   "notice": true,
+   "facts": [
+    "Colegio con primaria a unos 4 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Centro de salud a unos 8 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable"
+   ]
+  }
+ },
+ "buy": {
+  "sent": "buy 300000",
+  "api": "20 of 199, 1st Puente de Vallecas 94 muy_bien",
+  "noticeList": 0,
+  "noticeCard": false
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0",
+  "api": "175 of 199, 1st Usera 100",
+  "toda": "NOT SHOWN",
+  "empate": "Encajan 155 zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
+  "madrid": {
+   "sent": "madrid",
+   "shown": 0
+  }
+ },
+ "casarrubuelos": {
+  "api": "122 of 138; top5 Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100",
+  "rank": 1,
+  "layout": {
+   "nameLines": 1,
+   "nameWidth": 303,
+   "pillBelowName": true,
+   "pill": "Encaja muy bien 100 % Esta zona encaja muy bien con tu búsqueda: 100 %"
+  }
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Añadir un servicio…",
+   "Escuela infantil",
+   "Colegio",
+   "Centro de salud"
+  ],
+  "error": "TimeoutError: locator.tap: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('option').first()\n    - locator resolved to <option value=\"\" selected>Añadir un servicio…</option>\n  - attempting tap action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not v"
+ },
+ "metodo": {
+  "ejemplo": "ios, el transporte y la salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.",
+  "arriba": "Arriba empatan dos al 94 %: Puente de Vallecas y Latina.",
+  "latina": "Pierde unos 6 puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi todo por los minutos a pie.",
+  "casi": "Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto.",
+  "tabla": "Si el % es… Sale 90 % o más Encaja muy bien De 75 a 89 % Encaja bien De 60 a 74 % Encaja regular Menos del 60 % Encaja poco"
+ },
+ "errors": []
+}
+--- script 2
+1440 {
+ "casi": {
+  "toggle": "Casi encajan (5)",
+  "rows": [
+   "Chamartín Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²",
+   "Arganzuela Se pasa ≈ 20 €/mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²",
+   "Centro Se pasa ≈ 190 €/mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²",
+   "Chamberí Se pasa ≈ 230 €/mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²",
+   "Retiro Se pasa ≈ 30 €/mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"
+  ],
+  "api": [
+   "Chamartín 92 null [\"budget\"]",
+   "Arganzuela 92 null [\"budget\"]",
+   "Centro 91 null [\"budget\"]",
+   "Chamberí 91 null [\"budget\"]",
+   "Retiro 91 null [\"budget\"]"
+  ],
+  "withPct": 0,
+  "sePasa": 5,
+  "card": {
+   "pill": 0,
+   "lacks": "Se pasa ≈ 90 €/mes de tu presupuesto"
+  }
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0, priorities [\"colegios\"]",
+  "api": "175 of 199, top3 Usera 98, Titulcia 98, Villaverde 97",
+  "shown": 1,
+  "line": "Zonas que encajan Con tu búsqueda tal cual salen 175 zonas. De 199 zonas de la Comunidad de Madrid. Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. ¿Trabajas fuera de casa? Dinos dónde o elige «Madrid capital» en «¿Dónde?» y afinamos el orden. Empatan al 98 % 1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m² 2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 395 €/mes por 68 m² Alquiler: unos 395 € al mes por 68 m² Dato poco seguro Empatan al 97 % (10 zonas) 3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m² 4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m² 5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m² Ver las 10 primeras Casi encajan (5)",
+  "buttons": [
+   "Dinos dónde",
+   "«¿Dónde?»",
+   "1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m²",
+   "2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 395 €/mes por 68 m² Alquiler: unos 395 € al mes por 68 m² Dato poco seguro",
+   "3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m²",
+   "4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m²",
+   "5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m²",
+   "Ver las 10 primeras",
+   "Casi encajan (5)"
+  ],
+  "tie": null
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Vicálvaro (Cercanías) Cercanías",
+   "Vicálvaro (Madrid) Distrito de Madrid",
+   "Vicalvaro (metro) Metro"
+  ],
+  "sent": "500 €, adults 1, anchor Vicálvaro (Cercanías) (work, undefined d)",
+  "api": "59 of 199; top10 Orusco de Tajuña 49, Carabaña 44, Valdilecha 40, Olmeda de las Fuentes 34, Valverde de Alcalá 33, Nuevo Baztán 31, Chapinería 28, Ambite 27, Titulcia 17, Lozoya 17",
+  "half": {
+   "zone": "9. Titulcia 17 poco",
+   "apiFact": "No llegas a Vicálvaro (Cercanías) a las 9:00 en transporte público: el encaje se queda en la mitad",
+   "cardFacts": [
+    "No llegas a Vicálvaro (Cercanías) a las 9:00 en transporte público: el encaje se queda en la mitad · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "Alquiler ≈ 354 €/mes por 61 m² (5,8 €/m², precio de casas unifamiliares, porque se alquilan pocos pisos; referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 260 y 500 € · Dato poco seguro Fiabilidad del dato: Dato poco seguro",
+    "Parada de autobús a unos 5 min andando · Dato fiable Fiabilidad del dato: Dato fiable"
+   ],
+   "pill": "Encaja poco 17 % Esta zona encaja poco con tu búsqueda: 17 %"
+  }
+ },
+ "errors": []
+}
+390 {
+ "casi": {
+  "toggle": "Casi encajan (5)",
+  "rows": [
+   "Chamartín Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²",
+   "Arganzuela Se pasa ≈ 20 €/mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²",
+   "Centro Se pasa ≈ 190 €/mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²",
+   "Chamberí Se pasa ≈ 230 €/mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²",
+   "Retiro Se pasa ≈ 30 €/mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"
+  ],
+  "api": [
+   "Chamartín 92 null [\"budget\"]",
+   "Arganzuela 92 null [\"budget\"]",
+   "Centro 91 null [\"budget\"]",
+   "Chamberí 91 null [\"budget\"]",
+   "Retiro 91 null [\"budget\"]"
+  ],
+  "withPct": 0,
+  "sePasa": 5,
+  "card": {
+   "pill": 0,
+   "lacks": "Se pasa ≈ 90 €/mes de tu presupuesto"
+  }
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0, priorities [\"colegios\"]",
+  "api": "175 of 199, top3 Usera 98, Titulcia 98, Villaverde 97",
+  "shown": 1,
+  "line": "Zonas que encajan Con tu búsqueda tal cual salen 175 zonas. De 199 zonas de la Comunidad de Madrid. Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. ¿Trabajas fuera de casa? Dinos dónde o elige «Madrid capital» en «¿Dónde?» y afinamos el orden. Empatan al 98 % 1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m² 2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 395 €/mes por 68 m² Alquiler: unos 395 € al mes por 68 m² Dato poco seguro Empatan al 97 % (10 zonas) 3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m² 4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m² 5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m² Ver las 10 primeras Casi encajan (5)",
+  "buttons": [
+   "Dinos dónde",
+   "«¿Dónde?»",
+   "1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m²",
+   "2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 395 €/mes por 68 m² Alquiler: unos 395 € al mes por 68 m² Dato poco seguro",
+   "3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m²",
+   "4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m²",
+   "5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 9 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m²",
+   "Ver las 10 primeras",
+   "Casi encajan (5)"
+  ],
+  "tie": null
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Vicálvaro (Cercanías) Cercanías",
+   "Vicálvaro (Madrid) Distrito de Madrid",
+   "Vicalvaro (metro) Metro"
+  ],
+  "sent": "500 €, adults 1, anchor Vicálvaro (Cercanías) (work, undefined d)",
+  "api": "59 of 199; top10 Orusco de Tajuña 49, Carabaña 44, Valdilecha 40, Olmeda de las Fuentes 34, Valverde de Alcalá 33, Nuevo Baztán 31, Chapinería 28, Ambite 27, Titulcia 17, Lozoya 17",
+  "half": {
+   "zone": "9. Titulcia 17 poco",
+   "apiFact": "No llegas a Vicálvaro (Cercanías) a las 9:00 en transporte público: el encaje se queda en la mitad",
+   "cardFacts": [
+    "No llegas a Vicálvaro (Cercanías) a las 9:00 en transporte público: el encaje se queda en la mitad · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "Alquiler ≈ 354 €/mes por 61 m² (5,8 €/m², precio de casas unifamiliares, porque se alquilan pocos pisos; referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 260 y 500 € · Dato poco seguro Fiabilidad del dato: Dato poco seguro",
+    "Parada de autobús a unos 5 min andando · Dato fiable Fiabilidad del dato: Dato fiable"
+   ],
+   "pill": "Encaja poco 17 % Esta zona encaja poco con tu búsqueda: 17 %"
+  }
+ },
+ "errors": []
+}
+
+===== AFTER THE SYNC (15:53–15:57 UTC) =====
+--- script 1
+1440 {
+ "example": {
+  "api": "fit-0.9: 42 pass, undefined fail, 0 unknown of 199",
+  "top10": "Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien, Moratalaz 93 muy_bien, Tetuán 92 muy_bien, Ciudad Lineal 92 muy_bien, Villaverde 92 muy_bien, Carabanchel 90 muy_bien, Coslada 90 muy_bien, Leganés 90 muy_bien",
+  "near": "Chamartín 92 null [budget], Arganzuela 92 null [budget], Centro 91 null [budget], Chamberí 91 null [budget], Retiro 91 null [budget]",
+  "bands": {
+   "poco": 12,
+   "regular": 13,
+   "muy_bien": 12,
+   "bien": 5
+  },
+  "rc": "+5 min a pie hasta colegio con primaria +49; +150 €/mes +3",
+  "ui": {
+   "firstRow": "1 Puente de Vallecas Distrito de Madrid Encaja muy bien 94 % · 94 % de encaje, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "empatan": "Empatan al 94 % 1",
+   "notice": 1,
+   "sinLugar": 0,
+   "casi": "NO «Casi encajan» REGION"
+  },
+  "card": {
+   "pill": "Encaja muy bien 94 % Esta zona encaja muy bien con tu búsqueda: 94 %",
+   "empata": "Empata al 94 % con Latina.",
+   "notice": true,
+   "facts": [
+    "Colegio con primaria a unos 4 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Centro de salud a unos 8 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable"
+   ]
+  }
+ },
+ "buy": {
+  "sent": "buy 300000",
+  "api": "20 of 199, 1st Puente de Vallecas 94 muy_bien",
+  "noticeList": 0,
+  "noticeCard": false
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0",
+  "api": "175 of 199, 1st Usera 100",
+  "toda": "NOT SHOWN",
+  "empate": "Encajan 155 zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
+  "madrid": {
+   "sent": "madrid",
+   "shown": 0
+  }
+ },
+ "casarrubuelos": {
+  "api": "122 of 138; top5 Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100",
+  "rank": 1,
+  "layout": {
+   "nameLines": 1,
+   "nameWidth": 338,
+   "pillBelowName": true,
+   "pill": "Encaja muy bien 100 % Esta zona encaja muy bien con tu búsqueda: 100 %"
+  },
+  "card": {
+   "rent": "Alquiler ≈ 546 €/mes",
+   "range": "La mitad de los contratos, entre 470 y 750 €/mes",
+   "source": "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024",
+   "approx": true,
+   "notice": true,
+   "rentFact": "Alquiler ≈ 546 €/mes por 68 m² (8,0 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 470 y 750 € · Dato aproximado Fiabilidad del dato: Dato aproximado"
+  }
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Añadir un servicio…",
+   "Escuela infantil",
+   "Colegio",
+   "Centro de salud"
+  ],
+  "error": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('option').first()\n    - locator resolved to <option value=\"\" selected>Añadir un servicio…</option>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is n"
+ },
+ "metodo": {
+  "ejemplo": "ios, el transporte y la salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.",
+  "arriba": "Arriba empatan dos al 94 %: Puente de Vallecas y Latina.",
+  "latina": "Pierde unos 6 puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi todo por los minutos a pie.",
+  "casi": "Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto.",
+  "tabla": "Si el % es… Sale 90 % o más Encaja muy bien De 75 a 89 % Encaja bien De 60 a 74 % Encaja regular Menos del 60 % Encaja poco"
+ },
+ "errors": []
+}
+390 {
+ "example": {
+  "api": "fit-0.9: 42 pass, undefined fail, 0 unknown of 199",
+  "top10": "Puente de Vallecas 94 muy_bien, Latina 94 muy_bien, Usera 93 muy_bien, Moratalaz 93 muy_bien, Tetuán 92 muy_bien, Ciudad Lineal 92 muy_bien, Villaverde 92 muy_bien, Carabanchel 90 muy_bien, Coslada 90 muy_bien, Leganés 90 muy_bien",
+  "near": "Chamartín 92 null [budget], Arganzuela 92 null [budget], Centro 91 null [budget], Chamberí 91 null [budget], Retiro 91 null [budget]",
+  "bands": {
+   "poco": 12,
+   "regular": 13,
+   "muy_bien": 12,
+   "bien": 5
+  },
+  "rc": "+5 min a pie hasta colegio con primaria +49; +150 €/mes +3",
+  "ui": {
+   "firstRow": "1 Puente de Vallecas Distrito de Madrid Encaja muy bien 94 % · 94 % de encaje, empata con Latina ≈ 1.129 €/mes por 77 m² Alquiler: unos 1.129 € al mes por 77 m²",
+   "empatan": "Empatan al 94 % 1",
+   "notice": 1,
+   "sinLugar": 0,
+   "casi": "NO «Casi encajan» REGION"
+  },
+  "card": {
+   "pill": "Encaja muy bien 94 % Esta zona encaja muy bien con tu búsqueda: 94 %",
+   "empata": "Empata al 94 % con Latina.",
+   "notice": true,
+   "facts": [
+    "Colegio con primaria a unos 4 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 10 min · Dato fiable Fiabilidad del dato: Dato fiable",
+    "Centro de salud a unos 8 min andando · Dato fiable Fiabilidad del dato: Dato fiable",
+    "41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00 · Dato aproximado Fiabilidad del dato: Dato aproximado",
+    "Alquiler ≈ 1.129 €/mes por 77 m² (14,7 €/m², contratos firmados en 2024) · Dato fiable Fiabilidad del dato: Dato fiable"
+   ]
+  }
+ },
+ "buy": {
+  "sent": "buy 300000",
+  "api": "20 of 199, 1st Puente de Vallecas 94 muy_bien",
+  "noticeList": 0,
+  "noticeCard": false
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0",
+  "api": "175 of 199, 1st Usera 100",
+  "toda": "NOT SHOWN",
+  "empate": "Encajan 155 zonas igual de bien: marca qué te importa o dónde trabajas para afinar el orden.",
+  "madrid": {
+   "sent": "madrid",
+   "shown": 0
+  }
+ },
+ "casarrubuelos": {
+  "api": "122 of 138; top5 Casarrubuelos 100, Navalagamella 100, Tielmes 100, El Álamo 100, Daganzo de Arriba 100",
+  "rank": 1,
+  "layout": {
+   "nameLines": 1,
+   "nameWidth": 303,
+   "pillBelowName": true,
+   "pill": "Encaja muy bien 100 % Esta zona encaja muy bien con tu búsqueda: 100 %"
+  },
+  "card": {
+   "rent": "Alquiler ≈ 546 €/mes",
+   "range": "La mitad de los contratos, entre 470 y 750 €/mes",
+   "source": "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024",
+   "approx": true,
+   "notice": true,
+   "rentFact": "Alquiler ≈ 546 €/mes por 68 m² (8,0 €/m², referencia del Ministerio de Vivienda llevada a contratos firmados en 2024); la mitad de los contratos, entre 470 y 750 € · Dato aproximado Fiabilidad del dato: Dato aproximado"
+  }
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Añadir un servicio…",
+   "Escuela infantil",
+   "Colegio",
+   "Centro de salud"
+  ],
+  "error": "TimeoutError: locator.tap: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('option').first()\n    - locator resolved to <option value=\"\" selected>Añadir un servicio…</option>\n  - attempting tap action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not v"
+ },
+ "metodo": {
+  "ejemplo": "ios, el transporte y la salud. Encajan 42 de las 199 zonas: 12 encajan muy bien, 5 bien, 13 regular y 12 poco.",
+  "arriba": "Arriba empatan dos al 94 %: Puente de Vallecas y Latina.",
+  "latina": "Pierde unos 6 puntos: 3 por esos 39 minutos de trayecto, y 1,1 por el colegio, 1,1 por la parada y 0,9 por el centro de salud, casi todo por los minutos a pie.",
+  "casi": "Casi encajan Chamartín, Arganzuela, Centro, Chamberí y Retiro: las cinco se pasan del presupuesto.",
+  "tabla": "Si el % es… Sale 90 % o más Encaja muy bien De 75 a 89 % Encaja bien De 60 a 74 % Encaja regular Menos del 60 % Encaja poco"
+ },
+ "errors": []
+}
+--- script 2
+1440 {
+ "casi": {
+  "toggle": "Casi encajan (5)",
+  "rows": [
+   "Chamartín Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²",
+   "Arganzuela Se pasa ≈ 20 €/mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²",
+   "Centro Se pasa ≈ 190 €/mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²",
+   "Chamberí Se pasa ≈ 230 €/mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²",
+   "Retiro Se pasa ≈ 30 €/mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"
+  ],
+  "api": [
+   "Chamartín 92 null [\"budget\"]",
+   "Arganzuela 92 null [\"budget\"]",
+   "Centro 91 null [\"budget\"]",
+   "Chamberí 91 null [\"budget\"]",
+   "Retiro 91 null [\"budget\"]"
+  ],
+  "withPct": 0,
+  "sePasa": 5,
+  "card": {
+   "pill": 0,
+   "lacks": "Se pasa ≈ 90 €/mes de tu presupuesto"
+  }
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0, priorities [\"colegios\"]",
+  "api": "175 of 199, top3 Usera 98, Titulcia 98, Villaverde 97",
+  "shown": 1,
+  "line": "Zonas que encajan Con tu búsqueda tal cual salen 175 zonas. De 199 zonas de la Comunidad de Madrid. Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. ¿Trabajas fuera de casa? Dinos dónde o elige «Madrid capital» en «¿Dónde?» y afinamos el orden. Empatan al 98 % 1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m² 2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 377 €/mes por 68 m² Alquiler: unos 377 € al mes por 68 m² Dato poco seguro Empatan al 97 % (11 zonas) 3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m² 4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m² 5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m² Ver las 10 primeras Casi encajan (5)",
+  "buttons": [
+   "Dinos dónde",
+   "«¿Dónde?»",
+   "1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m²",
+   "2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 377 €/mes por 68 m² Alquiler: unos 377 € al mes por 68 m² Dato poco seguro",
+   "3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m²",
+   "4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m²",
+   "5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m²",
+   "Ver las 10 primeras",
+   "Casi encajan (5)"
+  ],
+  "tie": null
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Vicálvaro (Cercanías) Cercanías",
+   "Vicálvaro (Madrid) Distrito de Madrid",
+   "Vicalvaro (metro) Metro"
+  ],
+  "sent": "500 €, adults 1, anchor Vicálvaro (Cercanías) (work, undefined d)",
+  "api": "68 of 199; top10 Orusco de Tajuña 51, Perales de Tajuña 48, Morata de Tajuña 46, Carabaña 46, Valdilecha 43, Olmeda de las Fuentes 36, Valverde de Alcalá 35, Nuevo Baztán 33, Chapinería 30, Ambite 29",
+  "half": "none of the top 10 has «se queda en la mitad»"
+ },
+ "errors": []
+}
+390 {
+ "casi": {
+  "toggle": "Casi encajan (5)",
+  "rows": [
+   "Chamartín Se pasa ≈ 90 €/mes de tu presupuesto Se pasa unos 90 € al mes de tu presupuesto ≈ 1.590 €/mes por 77 m² Alquiler: unos 1.590 € al mes por 77 m²",
+   "Arganzuela Se pasa ≈ 20 €/mes de tu presupuesto Se pasa unos 20 € al mes de tu presupuesto ≈ 1.518 €/mes por 77 m² Alquiler: unos 1.518 € al mes por 77 m²",
+   "Centro Se pasa ≈ 190 €/mes de tu presupuesto Se pasa unos 190 € al mes de tu presupuesto ≈ 1.692 €/mes por 77 m² Alquiler: unos 1.692 € al mes por 77 m²",
+   "Chamberí Se pasa ≈ 230 €/mes de tu presupuesto Se pasa unos 230 € al mes de tu presupuesto ≈ 1.733 €/mes por 77 m² Alquiler: unos 1.733 € al mes por 77 m²",
+   "Retiro Se pasa ≈ 30 €/mes de tu presupuesto Se pasa unos 30 € al mes de tu presupuesto ≈ 1.525 €/mes por 77 m² Alquiler: unos 1.525 € al mes por 77 m²"
+  ],
+  "api": [
+   "Chamartín 92 null [\"budget\"]",
+   "Arganzuela 92 null [\"budget\"]",
+   "Centro 91 null [\"budget\"]",
+   "Chamberí 91 null [\"budget\"]",
+   "Retiro 91 null [\"budget\"]"
+  ],
+  "withPct": 0,
+  "sePasa": 5,
+  "card": {
+   "pill": 0,
+   "lacks": "Se pasa ≈ 90 €/mes de tu presupuesto"
+  }
+ },
+ "sinLugar": {
+  "sent": "scope (none), anchors 0, priorities [\"colegios\"]",
+  "api": "175 of 199, top3 Usera 98, Titulcia 98, Villaverde 97",
+  "shown": 1,
+  "line": "Zonas que encajan Con tu búsqueda tal cual salen 175 zonas. De 199 zonas de la Comunidad de Madrid. Precio de contratos firmados en 2024. Los anuncios de hoy suelen pedir más. ¿Trabajas fuera de casa? Dinos dónde o elige «Madrid capital» en «¿Dónde?» y afinamos el orden. Empatan al 98 % 1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m² 2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 377 €/mes por 68 m² Alquiler: unos 377 € al mes por 68 m² Dato poco seguro Empatan al 97 % (11 zonas) 3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m² 4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m² 5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m² Ver las 10 primeras Casi encajan (5)",
+  "buttons": [
+   "Dinos dónde",
+   "«¿Dónde?»",
+   "1 Usera Distrito de Madrid Encaja muy bien 98 % · 98 % de encaje, empata con Titulcia ≈ 900 €/mes por 68 m² Alquiler: unos 900 € al mes por 68 m²",
+   "2 Titulcia Municipio Encaja muy bien 98 % · 98 % de encaje, empata con Usera ≈ 377 €/mes por 68 m² Alquiler: unos 377 € al mes por 68 m² Dato poco seguro",
+   "3 Villaverde Distrito de Madrid Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 889 €/mes por 68 m² Alquiler: unos 889 € al mes por 68 m²",
+   "4 Coslada Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 819 €/mes por 68 m² Alquiler: unos 819 € al mes por 68 m²",
+   "5 Parla Municipio Encaja muy bien 97 % · 97 % de encaje, empata con 10 zonas más ≈ 688 €/mes por 68 m² Alquiler: unos 688 € al mes por 68 m²",
+   "Ver las 10 primeras",
+   "Casi encajan (5)"
+  ],
+  "tie": null
+ },
+ "student": {
+  "budget": "500",
+  "options": [
+   "Vicálvaro (Cercanías) Cercanías",
+   "Vicálvaro (Madrid) Distrito de Madrid",
+   "Vicalvaro (metro) Metro"
+  ],
+  "sent": "500 €, adults 1, anchor Vicálvaro (Cercanías) (work, undefined d)",
+  "api": "68 of 199; top10 Orusco de Tajuña 51, Perales de Tajuña 48, Morata de Tajuña 46, Carabaña 46, Valdilecha 43, Olmeda de las Fuentes 36, Valverde de Alcalá 35, Nuevo Baztán 33, Chapinería 30, Ambite 29",
+  "half": "none of the top 10 has «se queda en la mitad»"
+ },
+ "errors": []
+}

@@ -1,0 +1,216 @@
+{
+ "base": "http://localhost:3092",
+ "label": "portal-suelo",
+ "checked_at": "2026-11-18T21:44:09.145Z",
+ "sizes": [
+  {
+   "width": 390,
+   "screens": {
+    "portada": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "formulario": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_abierto": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_ejemplo": {
+     "texts": [],
+     "targets": []
+    },
+    "lista": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta": {
+     "texts": [],
+     "targets": []
+    },
+    "tarjeta_ver_mas": {
+     "texts": [],
+     "targets": []
+    },
+    "distrito": {
+     "texts": [],
+     "targets": []
+    },
+    "pantalla_zona": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "pantalla_zona_abierta": {
+     "texts": [
+      {
+       "px": 12,
+       "tag": "p",
+       "text": "·",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "© OpenStreetMap",
+       "where": "mapa"
+      },
+      {
+       "px": 12,
+       "tag": "a",
+       "text": "Powered by CRTM",
+       "where": "mapa"
+      }
+     ],
+     "targets": [
+      {
+       "w": 24,
+       "h": 24,
+       "tag": "summary",
+       "name": "Fuentes y licencias de los datos",
+       "where": "mapa",
+       "inline": false
+      },
+      {
+       "w": 98,
+       "h": 14,
+       "tag": "a",
+       "name": "© OpenStreetMap (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      },
+      {
+       "w": 101,
+       "h": 14,
+       "tag": "a",
+       "name": "Powered by CRTM (se abre en una pestaña nueva)",
+       "where": "mapa",
+       "inline": true
+      }
+     ]
+    },
+    "no_comparable": {
+     "texts": [],
+     "targets": []
+    },
+    "formulario_mayores": {
+     "texts": [],
+     "targets": []
+    }
+   },
+   "axe": {
+    "portada": [],
+    "formulario_abierto": [],
+    "lista": [],
+    "tarjeta": [],
+    "tarjeta_ver_mas": [],
+    "distrito": [],
+    "pantalla_zona_abierta": [],
+    "no_comparable": [],
+    "formulario_mayores": []
+   },
+   "console_errors": []
+  },
+  {
+   "width": 1440,
+   "screens": {},
+   "axe": {
+    "lista": [],
+    "tarjeta_ver_mas": [],
+    "pantalla_zona_abierta": []
+   },
+   "console_errors": []
+  }
+ ],
+ "counts": [],
+ "shots": []
+}

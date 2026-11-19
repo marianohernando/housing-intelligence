@@ -1,0 +1,24 @@
+source_id: ayuntamiento_madrid_geoportal
+name: Geoportal del Ayuntamiento de Madrid
+provider: Ayuntamiento de Madrid
+source_type: open_data_portal
+api_type: download
+base_url: https://geoportal.madrid.es
+license_name: Creative Commons Attribution 4.0 International (CC BY 4.0)
+license_url: https://creativecommons.org/licenses/by/4.0/deed.es
+license_status: CLEAR
+attribution_text: "Fuente: Ayuntamiento de Madrid — Geoportal (geoportal.madrid.es), Mapa Estratégico de Ruido 2021 (CC BY 4.0). El porcentaje de calles por encima de cada nivel lo calcula Vida Fácil sobre ese mapa."
+commercial_use: true
+redistribution_allowed: true
+trust_tier: A_OFFICIAL
+default_confidence: 1.0
+update_frequency: per_dataset
+geographic_scope: Municipio de Madrid
+terms_reviewed_at: 2026-11-14T00:00:00Z
+robots_status: download
+active: true
+notes: >-
+  D-237. La ficha de cada conjunto del Geoportal declara sus «Condiciones de acceso y uso»;
+  la del Mapa Estratégico del Ruido 2021 enlaza CC BY 4.0
+  (https://creativecommons.org/licenses/by/4.0/deed.es), leída el 2026-11-14. Datos
+  complementarios, no CM (D-205): solo cubren Madrid capital.

@@ -3,12 +3,13 @@
 import { Footprints, X } from "lucide-react";
 import { useId, useRef } from "react";
 
-import type { NeedKey } from "@/contracts/scenario_state";
 import {
   addNearby,
+  nearbyServices,
   NEED_KEYS,
   removeNearby,
   setNearbyMinutes,
+  type ServiceKey,
   setNearbyRequired,
   walkMinutesOptions,
 } from "@/lib/scenario";
@@ -16,10 +17,11 @@ import {
 import styles from "./SearchCard.module.css";
 import { useScenario } from "./ScenarioProvider";
 
-// Copy from pitch/textos_web.md (cerca.*, 8c49e33).
+// Copy from pitch/textos_web.md (cerca.*). «Solo zonas que lo tengan» says what «Imprescindible» did
+// in a tooltip a phone never showed (UX mobile audit, A5)
 const TEXT = {
   title: "Lo quiero a un paseo",
-  required: "Imprescindible",
+  required: "Solo zonas que lo tengan",
   requiredHelp: "Si lo marcas, solo verás zonas que lo cumplen.",
   add: "Añadir un servicio a un paseo",
   addPlaceholder: "Añadir un servicio…",
@@ -30,20 +32,21 @@ const TEXT = {
   minutesAria: (name: string) => `Minutos andando hasta ${name.toLowerCase()}`,
 };
 
-export const NEED_NAME: Record<NeedKey, string> = {
+export const NEED_NAME: Record<ServiceKey, string> = {
   escuela_infantil: "Escuela infantil",
   colegio: "Colegio",
   centro_salud: "Centro de salud",
   farmacia: "Farmacia",
   mayores: "Centro de mayores",
-  transporte: "Parada de transporte público",
+  transporte: "Parada de autobús o metro",
 };
 
 /** «Lo quiero a un paseo»: each service with its walking minutes and whether it is a must. */
 export default function NearbyField() {
   const { scenario, update } = useScenario();
   const id = useId();
-  const nearby = scenario.nearby ?? [];
+  // The groups of «Ocio» are also in `nearby`, but they are set in their own boxes under «Me importa»
+  const nearby = nearbyServices(scenario);
   const left = NEED_KEYS.filter((key) => !nearby.some((n) => n.need === key));
   // After «Quitar», the focus goes to «Añadir un servicio» instead of being lost with the row
   const addRef = useRef<HTMLSelectElement>(null);
@@ -80,7 +83,7 @@ export default function NearbyField() {
                     {TEXT.after}
                   </span>
                 </span>
-                <label className={styles.check} title={TEXT.requiredHelp}>
+                <label className={styles.check}>
                   <input
                     type="checkbox"
                     checked={n.required ?? true}

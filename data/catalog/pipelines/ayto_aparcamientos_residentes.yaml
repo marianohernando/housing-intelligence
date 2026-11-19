@@ -1,0 +1,17 @@
+# Municipal car parks for residents of Madrid (PAR) and the mixed ones (D-237): context only.
+kind: points_csv
+dataset_id: ayto_aparcamientos_residentes
+category: other
+id_column: PK
+name_column: NOMBRE
+subcategory_prefixes:
+  column: NOMBRE
+  prefixes:
+    "Aparcamiento mixto": Aparcamiento mixto
+    "Aparcamiento público": Aparcamiento público
+    "Aparcamiento para residentes": Aparcamiento para residentes
+exclude_patterns:
+  NOMBRE: ['\(cerrado\)']
+x_column: COORDENADA-X
+y_column: COORDENADA-Y
+attribute_columns: [DISTRITO, BARRIO]

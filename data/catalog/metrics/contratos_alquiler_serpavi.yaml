@@ -1,0 +1,15 @@
+metric_id: contratos_alquiler_serpavi
+human_name: Viviendas alquiladas como vivienda habitual (contratos que cuenta el SERPAVI)
+description: >-
+  Número de inmuebles con ingresos por arrendamiento de vivienda habitual declarados en el IRPF
+  y con datos en el Catastro, en vivienda colectiva o unifamiliar (tipologia). Es el número de
+  contratos detrás de la mediana y los cuartiles de alquiler_m2_mensual_serpavi. Ministerio de
+  Vivienda y Agenda Urbana (SERPAVI).
+domain: housing
+unit: contratos
+direction: neutral
+aggregation_method: count
+geo_resolution_min: seccion_censal
+temporal_resolution: annual
+dataset_id: mivau_serpavi_alquiler
+dimensions: [tipologia]

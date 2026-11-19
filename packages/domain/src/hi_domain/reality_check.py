@@ -3,6 +3,10 @@ and the others stay. Each option carries the relaxed scenario, so the web can ap
 
 Relaxing never removes a zone (a property test checks it): more budget, a few more minutes
 on foot, a wish instead of a must, or no time limit for a trip that is not computed yet.
+
+D-234: a condition limits the search where it FAILS. Where it is UNKNOWN the data is missing and
+no change of the person fixes it: those zones are counted apart (`unknown_by_constraint`), never
+blamed on the condition, and an option that no zone needs and that adds none is not offered.
 """
 
 import math
@@ -16,7 +20,7 @@ from hi_contracts.public import (
     Relaxation,
     ScenarioState,
 )
-from hi_contracts.public.scenario import BUY_RANGE_EUR, RENT_RANGE_EUR
+from hi_contracts.public.scenario import BUY_RANGE_EUR, LEISURE_NEEDS, RENT_RANGE_EUR
 from hi_domain.affordability import euros
 from hi_domain.fit import NEED_TEXT, ZoneData, ZoneFit, statuses
 
@@ -35,7 +39,10 @@ def relaxed(scenario: ScenarioState, constraint_id: str) -> tuple[str, ScenarioS
     if constraint_id == "budget" and scenario.budget is not None:
         return _relax_budget(scenario)
     if constraint_id.startswith("near:"):
-        return _relax_near(scenario, NeedKey(constraint_id.removeprefix("near:")))
+        need = NeedKey(constraint_id.removeprefix("near:"))
+        if need in LEISURE_NEEDS:
+            return _relax_leisure(scenario)
+        return _relax_near(scenario, need)
     if constraint_id.startswith("commute:"):
         return _relax_commute(scenario, int(constraint_id.removeprefix("commute:")))
     return None
@@ -74,6 +81,29 @@ def _relax_near(scenario: ScenarioState, need: NeedKey) -> tuple[str, ScenarioSt
     return text, scenario.model_copy(update={"nearby": nearby})
 
 
+def _relax_leisure(scenario: ScenarioState) -> tuple[str, ScenarioState]:
+    """«Ocio» (D-236): its groups share their minutes and «Imprescindible» in the web, so they are
+    relaxed together, whichever binds: a few more minutes for all, then all as a wish."""
+    required = [n for n in scenario.nearby if n.need in LEISURE_NEEDS and n.required]
+    if any(n.max_walk_minutes < WALK_MAX_MINUTES for n in required):
+        step = {
+            n.need: min(n.max_walk_minutes + WALK_STEP_MINUTES, WALK_MAX_MINUTES) for n in required
+        }
+        added = max(step[n.need] - n.max_walk_minutes for n in required)
+        text = f"+{added} min a pie hasta el ocio"
+        nearby = [
+            n.model_copy(update={"max_walk_minutes": step[n.need]}) if n.need in step else n
+            for n in scenario.nearby
+        ]
+    else:
+        text = "Ocio cerca como preferencia, no como requisito"
+        nearby = [
+            n.model_copy(update={"required": False}) if n.need in LEISURE_NEEDS else n
+            for n in scenario.nearby
+        ]
+    return text, scenario.model_copy(update={"nearby": nearby})
+
+
 def _relax_commute(scenario: ScenarioState, index: int) -> tuple[str, ScenarioState]:
     anchors = list(scenario.anchors)
     anchor = anchors[index]
@@ -86,18 +116,32 @@ def passing(scenario: ScenarioState, zones: Sequence[ZoneData]) -> int:
     return sum(all(s is ConstraintStatus.PASS for s in statuses(scenario, z)) for z in zones)
 
 
-def binding_constraint(fits: Sequence[ZoneFit]) -> str | None:
-    """The condition that leaves out the most zones: those where it is not PASS, whatever the
-    other conditions say (a first-in-order condition wins a tie)."""
-    excluded: dict[str, int] = {}
+def count_by_constraint(fits: Sequence[ZoneFit], status: ConstraintStatus) -> dict[str, int]:
+    """How many zones have each condition in `status`, in the order of the conditions."""
+    counts: dict[str, int] = {}
     for fit in fits:
         for check in fit.constraints:
-            excluded.setdefault(check.constraint_id, 0)
-            if check.status is not ConstraintStatus.PASS:
-                excluded[check.constraint_id] += 1
-    if not excluded or max(excluded.values()) == 0:
+            counts.setdefault(check.constraint_id, 0)
+            counts[check.constraint_id] += check.status is status
+    return counts
+
+
+def binding_constraint(fits: Sequence[ZoneFit]) -> str | None:
+    """The condition that leaves out the most zones: those that FAIL it, whatever the other
+    conditions say (a first-in-order condition wins a tie). A zone where it is UNKNOWN is not
+    left out by the condition but by the missing data (D-234); None when nothing fails."""
+    failing = count_by_constraint(fits, ConstraintStatus.FAIL)
+    if not failing or max(failing.values()) == 0:
         return None
-    return max(excluded, key=lambda key: excluded[key])  # first in order wins a tie
+    return max(failing, key=lambda key: failing[key])  # first in order wins a tie
+
+
+def unknown_by_constraint(fits: Sequence[ZoneFit]) -> dict[str, int]:
+    """Among the zones that fail nothing but cannot be checked in full (`zones_unknown`), how
+    many have each condition UNKNOWN; conditions that are never UNKNOWN there are left out."""
+    undecided = [f for f in fits if not f.failed and not f.passes_all]
+    counts = count_by_constraint(undecided, ConstraintStatus.UNKNOWN)
+    return {key: n for key, n in counts.items() if n > 0}
 
 
 def reality_check(
@@ -108,13 +152,17 @@ def reality_check(
         not f.failed and not f.passes_all for f in fits
     )  # no FAIL but some UNKNOWN: never passing
     options: list[Relaxation] = []
-    ids = [c.constraint_id for c in fits[0].constraints] if fits else []
-    for constraint_id in ids:
+    failing = count_by_constraint(fits, ConstraintStatus.FAIL)
+    for constraint_id in failing:
         option = relaxed(scenario, constraint_id)
         if option is None:
             continue
         label, relaxed_scenario = option
+        if any(o.relaxed_scenario == relaxed_scenario for o in options):
+            continue  # the leisure groups relax together: one option for all of them (D-236)
         count = passing(relaxed_scenario, zones)
+        if failing[constraint_id] == 0 and count == passing_now:
+            continue  # nothing fails it and relaxing adds nothing: only missing data blocks
         options.append(
             Relaxation(
                 constraint_id=constraint_id,
@@ -129,5 +177,6 @@ def reality_check(
         zones_passing=passing_now,
         zones_unknown=unknown,
         binding_constraint=binding_constraint(fits),
+        unknown_by_constraint=unknown_by_constraint(fits),
         relaxations=sorted(options, key=lambda o: -o.added_zones),
     )

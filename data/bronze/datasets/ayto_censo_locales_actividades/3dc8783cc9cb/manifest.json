@@ -1,0 +1,13 @@
+{
+  "files": [
+    {
+      "dataset_id": "ayto_censo_locales_actividades",
+      "role": "primary",
+      "path": "data/bronze/datasets/ayto_censo_locales_actividades/3dc8783cc9cb/actividades.csv",
+      "sha256": "3dc8783cc9cbf84085b4980667cd76a884c4a8bb206273e818ae10966252e6fd",
+      "bytes": 125145928,
+      "url": "https://datos.madrid.es/dataset/200085-0-censo-locales/resource/200085-5-censo-locales/download/actividades.csv",
+      "retrieved_at": "2026-11-19T00:17:33.179548+00:00"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+metric_id: edificabilidad_remanente_residencial_ambito_m2
+human_name: Edificabilidad residencial remanente de un ámbito del PGOUM (m²)
+description: >-
+  Un ámbito de ordenación del Plan General de Madrid con edificabilidad disponible para vivienda,
+  en su distrito y en su barrio (D-247): los m² edificables residenciales que le quedan
+  (colectiva más unifamiliar) según el registro VEDA del Ayuntamiento, con su código, su nombre,
+  su situación (fase de edificación, de gestión o urbanización, o pendiente de planeamiento) y el
+  tipo de vivienda. No son viviendas.
+domain: urbanism
+unit: m2
+aggregation_method: sum
+geo_resolution_min: barrio
+temporal_resolution: semestral
+dataset_id: ayto_edificabilidad_remanente_ambitos
+dimensions: [item, name, stage, use, note]

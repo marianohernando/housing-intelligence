@@ -3,6 +3,7 @@
 Fixtures here are synthetic (FIXTURE): made-up zones and values, never shown in the demo.
 """
 
+from dataclasses import replace
 from itertools import pairwise
 from random import Random
 
@@ -13,6 +14,7 @@ from hypothesis import strategies as st
 from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.public import (
     Anchor,
+    AnchorKind,
     Budget,
     BudgetKind,
     ConstraintCheck,
@@ -27,16 +29,26 @@ from hi_contracts.public import (
     ScenarioState,
     ZoneRef,
 )
-from hi_domain.affordability import FloorArea
+from hi_contracts.public.scenario import LEISURE_NEEDS
+from hi_domain.affordability import FloorArea, assumed_floor_area
 from hi_domain.fit import (
+    EVERYDAY_NEEDS,
+    FEW_DAYS_WEIGHT,
+    MAX_FACTS,
     Commute,
     ZoneData,
     about_minutes,
     as_pct,
+    commute_text,
     cost_fact,
     criteria,
     evaluate,
+    everyday_walk,
+    ignored_leisure,
+    lead_trip,
+    near_miss_key,
     rank_weights,
+    ranking_key,
     walk_utility,
 )
 from hi_domain.reality_check import budget_step, relaxed
@@ -112,14 +124,28 @@ def test_rank_weights_follow_the_order_and_add_up_to_one() -> None:
 
 
 @given(st.floats(min_value=0, max_value=500), st.integers(min_value=1, max_value=60))
-def test_walk_utility_saturates_and_never_grows_with_minutes(minutes: float, target: int) -> None:
+def test_walk_utility_counts_every_minute_and_never_grows_with_minutes(
+    minutes: float, target: int
+) -> None:
+    """D-243: 1 at the door, 0,9 at the edge of the window, 0 from three times it."""
     u = walk_utility(minutes, target)
     assert 0.0 <= u <= 1.0
     assert walk_utility(minutes + 1, target) <= u
+    if minutes + 1 < 3 * target:
+        assert walk_utility(minutes + 1, target) < u  # every minute counts, inside or out
     if minutes <= target:
-        assert u == 1.0
+        assert u == pytest.approx(1 - 0.1 * minutes / target)
     if minutes >= 3 * target:
         assert u == 0.0
+
+
+@pytest.mark.parametrize(
+    ("minutes", "utility"), [(0.0, 1.0), (5.0, 0.95), (10.0, 0.9), (20.0, 0.45), (30.0, 0.0)]
+)
+def test_walk_utility_at_the_door_the_edge_and_three_times_the_window(
+    minutes: float, utility: float
+) -> None:
+    assert walk_utility(minutes, 10) == pytest.approx(utility)
 
 
 def test_criteria_order_priorities_then_work_then_budget() -> None:
@@ -147,13 +173,14 @@ def test_failing_one_condition_is_a_near_miss_with_its_reason() -> None:
 
 def test_match_is_the_weighted_mean_of_the_criteria_with_data() -> None:
     scenario = ScenarioState(priorities=[PriorityKey.COLEGIOS, PriorityKey.TRANSPORTE])
-    fit = evaluate(scenario, zone("1", colegio=5.0, transporte=15.0))  # utilities 1 and 0
+    fit = evaluate(scenario, zone("1", colegio=0.0, transporte=15.0))  # utilities 1 and 0
     assert fit.match_pct == 67  # weights 2/3 and 1/3
+    assert evaluate(scenario, zone("1", colegio=5.0, transporte=15.0)).match_pct == 63  # 0,95
 
 
 def test_a_criterion_without_data_lowers_confidence_not_the_match() -> None:
     scenario = ScenarioState(priorities=[PriorityKey.ZONAS_VERDES, PriorityKey.COLEGIOS])
-    fit = evaluate(scenario, zone("1", colegio=5.0))
+    fit = evaluate(scenario, zone("1", colegio=0.0))
     assert fit.match_pct == 100
     assert fit.confidence == pytest.approx(1 / 3, abs=1e-3)  # rounded to 3 decimals
     assert fit.facts[-1].kind is FactKind.UNKNOWN
@@ -286,6 +313,48 @@ def test_highlights_follow_the_household() -> None:
     assert highlight_rows(carer) == [GapRowKey.MAYORES, GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA]
 
 
+def test_somos_mayores_brings_the_centres_for_older_people_forward() -> None:
+    """D-244: «Somos mayores» highlights the centres for older people, the health centre and the
+    pharmacy, never nurseries or schools unless there are children at home."""
+    retired = family(household=Household(adults=2, seniors=True))
+    assert highlight_rows(retired) == [
+        GapRowKey.MAYORES,
+        GapRowKey.CENTRO_SALUD,
+        GapRowKey.FARMACIA,
+    ]
+    alone = family(household=Household(adults=1, seniors=True))
+    assert highlight_rows(alone) == highlight_rows(retired)
+    with_grandchild = family(household=Household(adults=2, minors=1, minor_ages=[8], seniors=True))
+    assert highlight_rows(with_grandchild) == [
+        GapRowKey.COLEGIO,
+        GapRowKey.MAYORES,
+        GapRowKey.CENTRO_SALUD,
+    ]
+
+
+def test_somos_mayores_adds_no_one_and_leaves_the_fit_as_it_was() -> None:
+    """D-244: the flag only changes which rows are highlighted. The household, its m², the
+    conditions and the % are those of the same household without it."""
+    couple = family(household=Household(adults=2))
+    retired = family(household=Household(adults=2, seniors=True))
+    assert retired.household.people == couple.household.people == 2
+    assert assumed_floor_area(retired) == assumed_floor_area(couple)
+    zones = [zone("1"), zone("2", rent=20.0), zone("3", colegio=14.0), zone("4", transporte=None)]
+    plain, older = run_search(couple, zones), run_search(retired, zones)
+    assert plain.results == older.results
+    assert plain.near_misses == older.near_misses
+    # Each option echoes its own scenario (`relaxed_scenario`): compare what it adds
+    same = [
+        (r.constraint_id, r.label, r.zones_if_relaxed, r.added_zones)
+        for r in plain.reality_check.relaxations
+    ]
+    assert same == [
+        (r.constraint_id, r.label, r.zones_if_relaxed, r.added_zones)
+        for r in older.reality_check.relaxations
+    ]
+    assert plain.reality_check.zones_passing == older.reality_check.zones_passing
+
+
 scenario_strategy = st.builds(
     lambda budget, buy, minutes, required, limit: family(
         budget=Budget(kind=BudgetKind.BUY, amount_eur=300_000) if buy else budget,
@@ -331,6 +400,62 @@ def test_facts_never_exceed_five_with_many_criteria() -> None:
     fit = evaluate(scenario, zone("1"))
     assert len(fit.facts) == 5
     assert fit.facts[0].text.startswith("Parada")  # transporte is the first priority
+
+
+def _with_transit(base: ZoneData, bus: float | None = None, metro: float | None = None) -> ZoneData:
+    transit = {
+        mode: _value(f"min_a_pie_{mode}", minutes)
+        for mode, minutes in (("bus", bus), ("metro", metro))
+        if minutes is not None
+    }
+    return replace(base, transit=transit)
+
+
+def _transport_text(zone_data: ZoneData) -> str:
+    fit = evaluate(family(), zone_data)
+    return next(f.text for f in fit.facts if f.topic is FactTopic.TRANSPORTE)
+
+
+def test_transport_fact_says_the_bus_and_the_metro_apart() -> None:
+    """D-233: both features, two parts; one of them, only that one; none, the text of always."""
+    base = zone("1", transporte=2.0)
+    assert _transport_text(_with_transit(base, bus=2.2, metro=8.4)) == (
+        "Parada de autobús a unos 2 min andando · Metro o Cercanías a unos 8 min"
+    )
+    assert _transport_text(_with_transit(base, bus=2.2)) == "Parada de autobús a unos 2 min andando"
+    assert _transport_text(_with_transit(base, metro=8.4)) == (
+        "Metro o Cercanías a unos 8 min andando"
+    )
+    assert _transport_text(base) == "Parada de transporte público a unos 2 min andando"
+
+
+def test_transport_fact_leaves_out_a_metro_that_is_not_a_walk() -> None:
+    """A village's nearest Metro is in another town: beyond what is shown it is not a walk."""
+    base = zone("1", transporte=5.7)
+    assert _transport_text(_with_transit(base, bus=5.7, metro=93.4)) == (
+        "Parada de autobús a unos 6 min andando"
+    )
+    unknown = replace(base, transit={"bus": _value("min_a_pie_bus", None)})
+    assert _transport_text(unknown) == "Parada de transporte público a unos 6 min andando"
+
+
+def test_transport_fact_keeps_the_walking_indicator_the_web_looks_for() -> None:
+    fit = evaluate(family(), _with_transit(zone("1"), bus=2.0, metro=8.0))
+    fact = next(f for f in fit.facts if f.topic is FactTopic.TRANSPORTE)
+    assert fact.indicator is not None
+    assert fact.indicator.feature_id == "min_a_pie_transporte"
+
+
+def test_the_transit_by_mode_never_moves_the_score() -> None:
+    """D-233: the transport need scores with min_a_pie_transporte; the modes only word the fact."""
+    plain = zone("1", transporte=11.0)
+    modes = _with_transit(plain, bus=30.0, metro=1.0)
+    before, after = evaluate(family(), plain), evaluate(family(), modes)
+    assert after.utility == before.utility
+    assert after.match_pct == before.match_pct
+    assert after.confidence == before.confidence
+    assert after.constraints == before.constraints
+    assert [f.kind for f in after.facts] == [f.kind for f in before.facts]
 
 
 def test_match_rounds_half_up() -> None:
@@ -403,6 +528,124 @@ def test_ties_go_to_fewer_minutes_then_to_the_zone_id() -> None:
     assert [r.zone.code for r in tied.results][:2] == ["2807901", "2807916"]
 
 
+WALKS = {
+    NeedKey.ESCUELA_INFANTIL: 6.0,
+    NeedKey.COLEGIO: 5.0,
+    NeedKey.CENTRO_SALUD: 9.0,
+    NeedKey.FARMACIA: 4.0,
+    NeedKey.MAYORES: 8.0,
+    NeedKey.TRANSPORTE: 3.0,
+}
+# D-239, the case of the user test: so much budget that every zone scores 100 %, nothing marked.
+PLENTY = ScenarioState(
+    budget=Budget(kind=BudgetKind.RENT, amount_eur=10_000), household=Household(adults=2)
+)
+
+
+def served(code: str, **minutes: float | None) -> ZoneData:
+    """A zone with every everyday service inside its window, except what `minutes` says."""
+    base = zone(code)
+    walks = WALKS | {NeedKey(need): value for need, value in minutes.items()}
+    walk = {n: _value(f"min_a_pie_{n.value}", m) for n, m in walks.items() if m is not None}
+    return ZoneData(zone=base.zone, rent=base.rent, walk=walk)
+
+
+def _codes(scenario: ScenarioState, zones: list[ZoneData]) -> list[str]:
+    return [r.zone.code for r in run_search(scenario, zones).results]
+
+
+def test_an_exact_tie_goes_to_the_zone_with_more_everyday_services_at_a_walk() -> None:
+    """Nobody marked the pharmacy or the day centre, and they still tell the zones apart: the
+    order of a tie is no longer the INE code (alphabetical), D-239."""
+    village = served("28001", farmacia=28.0, mayores=45.0)
+    town = served("28002", mayores=20.0)
+    city = served("28003")
+    fits = [evaluate(PLENTY, z) for z in (village, town, city)]
+    assert {f.utility for f in fits} == {1.0}  # an exact tie, before any rounding
+    assert _codes(PLENTY, [village, town, city]) == ["28003", "28002", "28001"]
+
+
+def test_zones_equally_served_go_by_fewer_walking_minutes_then_as_before() -> None:
+    """The pharmacy beyond the walking range (0) in all four: as served, fewer minutes first."""
+    close = served("28003", farmacia=35.0)
+    closer = served("28004", farmacia=31.0)
+    assert everyday_walk(close) == (pytest.approx(4.69 / 6), pytest.approx(11.0))
+    assert everyday_walk(closer)[0] == everyday_walk(close)[0]  # type: ignore[index]
+    far = {"farmacia": 40.0}
+    assert _codes(PLENTY, [served("28002", **far), close, closer, served("28001", **far)]) == [
+        "28004",
+        "28003",
+        "28001",  # same services at the same minutes: the fixed id, as before D-239
+        "28002",
+    ]
+
+
+def test_a_zone_without_walking_data_goes_after_the_ties_that_have_it() -> None:
+    unknown = ZoneData(zone=zone("28001").zone, rent=zone("28001").rent)
+    assert everyday_walk(unknown) is None
+    assert _codes(PLENTY, [unknown, served("28002", farmacia=40.0)]) == ["28002", "28001"]
+
+
+def test_leisure_minutes_never_break_a_tie() -> None:
+    """D-236 on D-239: two tied zones that only differ in leisure keep the order they have
+    without it. Leisure counts only when the person marks «Ocio», never in the tie-break."""
+    plain = [served("28001"), served("28002")]
+    bars_in_the_second = [plain[0], replace(plain[1], walk={**plain[1].walk, **_bars(1.0)})]
+    bars_in_the_first = [replace(plain[0], walk={**plain[0].walk, **_bars(90.0)}), plain[1]]
+    expected = _codes(PLENTY, plain)
+    assert _codes(PLENTY, bars_in_the_second) == expected
+    assert _codes(PLENTY, bars_in_the_first) == expected
+    assert set(EVERYDAY_NEEDS).isdisjoint(LEISURE_NEEDS)
+    assert set(EVERYDAY_NEEDS) | set(LEISURE_NEEDS) == set(NeedKey)  # every need is classed
+
+
+def _bars(minutes: float) -> dict[NeedKey, IndicatorValue]:
+    return {
+        need: _value(f"min_a_pie_{need.value}", minutes)
+        for need in (NeedKey.BARES, NeedKey.RESTAURANTES, NeedKey.GIMNASIOS, NeedKey.CULTURA)
+    }
+
+
+def test_zones_read_at_the_same_pct_go_by_the_services_at_a_walk() -> None:
+    """D-243: two zones read at the same % are a tie for the person, so the one with more
+    everyday services at a walk goes first, even with a hair less of unrounded fit (94,8 % and
+    94,7 % both read 95 %); a higher % always goes first."""
+    scenario = PLENTY.model_copy(update={"priorities": [PriorityKey.TRANSPORTE]})
+    worse_served = served("28001", farmacia=30.0, mayores=30.0, transporte=3.9)
+    better_served = served("28002", transporte=4.0)
+    first, second = (evaluate(scenario, z) for z in (worse_served, better_served))
+    assert first.match_pct == second.match_pct == 95
+    assert (first.utility or 0) > (second.utility or 0)
+    assert _codes(scenario, [worse_served, better_served]) == ["28002", "28001"]
+    at_the_door = served("28001", farmacia=30.0, mayores=30.0, transporte=0.0)  # 100 %
+    assert _codes(scenario, [better_served, at_the_door]) == ["28001", "28002"]
+
+
+def test_near_misses_keep_breaking_ties_by_confidence_not_by_walks() -> None:
+    """«Casi encajan» (D-239): every near miss fails something, so an exact tie there still
+    goes to the surer figure, as before; the services at a walk only order «Zonas que encajan».
+    The demo's near misses (five at 93 %) keep the order the pitch reads."""
+    poor = PLENTY.model_copy(update={"budget": Budget(kind=BudgetKind.RENT, amount_eur=300)})
+    unsure_rent = _value("alquiler_m2_mensual", 12.0, confidence=0.8)
+    better_served = replace(served("28001"), rent=unsure_rent)
+    surer = served("28002", farmacia=28.0, mayores=45.0)
+    fits = [evaluate(poor, z) for z in (better_served, surer)]
+    assert all(f.failed == ["budget"] for f in fits)
+    assert fits[0].utility == fits[1].utility and fits[0].confidence < fits[1].confidence
+    outcome = run_search(poor, [better_served, surer])
+    assert [r.zone.code for r in outcome.near_misses] == ["28002", "28001"]
+    assert sorted(fits, key=ranking_key)[0].data.zone.code == "28001"  # «Zonas que encajan»
+
+
+@settings(max_examples=60)
+@given(st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code))
+def test_the_order_follows_the_pct_shown(zones: list[ZoneData]) -> None:
+    """D-243: a lower % never goes before a higher one, whatever the walks say."""
+    fits = [f for z in zones if (f := evaluate(family(), z)).utility is not None]
+    ordered = sorted(fits, key=ranking_key)
+    assert all(a.match_pct >= b.match_pct for a, b in pairwise(ordered))  # type: ignore[operator]
+
+
 @settings(max_examples=40)
 @given(
     st.lists(zone_strategy, min_size=2, max_size=10, unique_by=lambda z: z.zone.code), st.randoms()
@@ -427,13 +670,13 @@ GREEN = ScenarioState(priorities=[PriorityKey.ZONAS_VERDES])
 
 
 def test_green_areas_score_the_walk_to_an_urban_park() -> None:
-    """D-222: utility 1 up to 10 minutes to the edge of a park of 1 ha, 0 at 30."""
+    """D-222: to the edge of a park of 1 ha, 0,9 at 10 minutes (D-243: 1 at the door), 0 at 30."""
     near = evaluate(GREEN, _park_zone(4.0))
-    assert near.match_pct == 100
+    assert near.match_pct == 96
     assert near.facts[0].kind is FactKind.STRENGTH
     assert near.facts[0].text == "Parque urbano a unos 4 min andando"
     middle = evaluate(GREEN, _park_zone(20.0))
-    assert middle.match_pct == 50
+    assert middle.match_pct == 45
     assert middle.facts[0].kind is FactKind.WEAKNESS
 
 
@@ -494,15 +737,15 @@ STEP_FREE = ScenarioState(priorities=[PriorityKey.SIN_ESCALERAS])
 
 def test_step_free_scores_the_walk_to_an_accessible_station() -> None:
     """D-223: «sin escaleras» (opt-in) reads the minutes to a metro, Metro Ligero or Cercanías
-    station that the CRTM grades as fully accessible: 1 up to 10 minutes, 0 at 30."""
+    station that the CRTM grades as fully accessible: 0,9 at 10 minutes, 0 at 30 (D-243)."""
     near = evaluate(STEP_FREE, _step_free_zone(6.0))
-    assert near.match_pct == 100
+    assert near.match_pct == 94
     assert near.facts[0].kind is FactKind.STRENGTH
     assert near.facts[0].topic is FactTopic.ACCESIBILIDAD
     assert near.facts[0].text == (
         "Estación de metro o tren accesible (sin escaleras) a unos 6 min andando"
     )
-    assert evaluate(STEP_FREE, _step_free_zone(20.0)).match_pct == 50
+    assert evaluate(STEP_FREE, _step_free_zone(20.0)).match_pct == 45
 
 
 def test_without_an_accessible_station_at_a_walk_step_free_says_buses_are_not_measured() -> None:
@@ -604,3 +847,639 @@ def test_an_unknown_rent_gives_the_reason_the_data_has_for_it() -> None:
     plain = evaluate(family(), zone("m", rent=None))
     generic = next(c for c in plain.constraints if c.constraint_id == "budget")
     assert generic.explanation.startswith("Sin datos de alquiler para esta zona")
+
+
+def _estimated(code: str, price: float | None, level: TerritoryLevel) -> ZoneData:
+    base = zone(code)
+    return replace(
+        base,
+        zone=base.zone.model_copy(update={"level": level, "municipio_name": "Madrid"}),
+        price=_value("precio_compra_estimado_m2", price, 0.5),
+        price_estimated=price is not None,
+    )
+
+
+@pytest.mark.parametrize(
+    ("level", "words"),
+    [(TerritoryLevel.DISTRITO, "del distrito"), (TerritoryLevel.BARRIO, "del barrio")],
+)
+def test_an_estimated_price_says_it_is_an_estimate_in_the_fact_and_the_condition(
+    level: TerritoryLevel, words: str
+) -> None:
+    """D-234: a district or barrio of Madrid buys with an estimate; every text says so."""
+    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=500_000), anchors=[])
+    fit = evaluate(scenario, _estimated("2807906", 6051.0, level))
+    said = f"precio estimado: valor tasado de Madrid repartido según el valor catastral {words}"
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.PASS and budget.confidence == 0.5
+    assert said in budget.explanation
+    cost = next(f for f in fit.facts if f.topic is FactTopic.COSTE)
+    assert said in cost.text and cost.confidence == 0.5
+    assert "Ministerio de Vivienda y Catastro vía Ayuntamiento" in cost.text
+    assert cost.indicator is not None
+    assert cost.indicator.feature_id == "precio_compra_estimado_m2"
+    assert fit.cost_eur == 466_000  # 6.051 €/m² × 77 m², to thousands
+
+
+def test_a_published_price_never_reads_as_an_estimate() -> None:
+    scenario = family(budget=BUY_300K, anchors=[])
+    cost = next(
+        f for f in evaluate(scenario, zone("1", price=3000.0)).facts if f.topic is FactTopic.COSTE
+    )
+    assert "valor tasado medio de la vivienda libre" in cost.text
+    assert "estimado" not in cost.text
+
+
+def test_a_district_without_cadastral_value_stays_unknown() -> None:
+    scenario = family(budget=BUY_300K, anchors=[])
+    fit = evaluate(scenario, _estimated("2807906", None, TerritoryLevel.DISTRITO))
+    budget = next(c for c in fit.constraints if c.constraint_id == "budget")
+    assert budget.status is ConstraintStatus.UNKNOWN and not fit.passes_all
+
+
+def test_reality_check_never_offers_to_relax_a_condition_that_is_only_unknown() -> None:
+    """D-234: every zone left out by the budget has no price (UNKNOWN), none FAILS it: more
+    budget adds nothing, so it is not offered and the budget is not what limits the search."""
+    scenario = family(budget=BUY_300K, anchors=[], nearby=[])
+    zones = [zone("1", price=3000.0), zone("2", price=None), zone("3", price=None)]
+    check = run_search(scenario, zones).reality_check
+    assert check.zones_passing == 1 and check.zones_unknown == 2
+    assert check.binding_constraint is None
+    assert [r.constraint_id for r in check.relaxations] == []
+    assert check.unknown_by_constraint == {"budget": 2}
+
+
+def test_reality_check_blames_the_condition_that_fails_not_the_one_without_data() -> None:
+    """Two zones without price (UNKNOWN), two whose school is too far and one over budget
+    (FAIL): the school limits, and more budget is offered because a zone fails it."""
+    scenario = family(budget=BUY_300K, anchors=[])
+    zones = [
+        zone("1", price=3000.0, colegio=14.0),
+        zone("2", price=None),
+        zone("3", price=None),
+        zone("4", price=4200.0),
+        zone("5", price=3000.0, colegio=14.0),
+    ]
+    check = run_search(scenario, zones).reality_check
+    assert check.binding_constraint == "near:colegio"
+    assert check.unknown_by_constraint == {"budget": 2}
+    by_id = {r.constraint_id: r for r in check.relaxations}
+    assert by_id["near:colegio"].added_zones == 2
+    assert by_id["budget"].label == "+30.000 €" and by_id["budget"].added_zones == 1
+
+
+def test_an_unknown_trip_limit_is_still_offered_because_dropping_it_adds_zones() -> None:
+    """Removing a time limit takes the condition away, so it does add the zones without a trip."""
+    office = CASTELLANA.model_copy(update={"max_minutes": 30})
+    check = run_search(family(anchors=[office]), [zone("1"), zone("2")]).reality_check
+    assert check.binding_constraint is None
+    assert check.unknown_by_constraint == {"commute:0": 2}
+    assert [(r.constraint_id, r.added_zones) for r in check.relaxations] == [("commute:0", 2)]
+
+
+def test_zones_over_a_purchase_budget_come_closest_to_it_first() -> None:
+    """D-234: every zone over the budget scores 0 % on it; the near misses then go from the
+    cheapest up, not by zone code."""
+    scenario = ScenarioState(budget=BUY_300K, household=Household(adults=2))
+    zones = [zone("1", price=7700.0), zone("2", price=4500.0), zone("3", price=6000.0)]
+    outcome = run_search(scenario, zones)
+    assert [r.zone.code for r in outcome.near_misses] == ["2", "3", "1"]
+
+
+def test_every_zone_carries_its_cost_and_how_sure_it_is() -> None:
+    """D-234: the price of each zone in the ranking rows and the zone card. It comes with the
+    confidence of its price or rent, for every evaluated zone (also one that fails two
+    conditions); none without a price, never 0."""
+    estimated = zone("2", colegio=40.0)
+    estimated = replace(
+        estimated, price=_value("precio_compra_estimado_m2", 5000.0, 0.5), price_estimated=True
+    )
+    zones = [zone("1", price=3000.0), estimated, zone("3", price=None)]
+    outcome = run_search(family(budget=BUY_300K, anchors=[]), zones)
+    by_code = {z.zone.code: z for z in outcome.all_zones}
+    assert (by_code["1"].estimated_cost_eur, by_code["1"].estimated_cost_confidence) == (
+        231_000,
+        0.8,
+    )
+    assert (by_code["2"].estimated_cost_eur, by_code["2"].estimated_cost_confidence) == (
+        385_000,
+        0.5,
+    )
+    assert by_code["2"].failed_constraints == ["budget", "near:colegio"]  # not ranked, not near
+    unpriced = by_code["3"]
+    assert unpriced.estimated_cost_eur is None and unpriced.estimated_cost_confidence is None
+    assert outcome.results[0].estimated_cost_confidence == 0.8
+    rent = run_search(family(anchors=[]), [zone("1")]).results[0]
+    assert (rent.estimated_cost_eur, rent.estimated_cost_confidence) == (924, 1.0)
+
+
+def test_the_cost_never_orders_the_zones_that_fit() -> None:
+    """D-234 after D-239: in «Zonas que encajan» the cheaper zone does not go first (with plenty
+    of budget that would put the cheap towns back on top); an exact tie goes on as D-239 says."""
+    scenario = family(budget=Budget(kind=BudgetKind.BUY, amount_eur=1_000_000), anchors=[])
+    zones = [zone("1", price=4500.0), zone("2", price=3000.0)]
+    outcome = run_search(scenario, zones)
+    assert [r.match_pct for r in outcome.results] == [95, 95]
+    assert [r.zone.code for r in outcome.results] == ["1", "2"]
+
+
+def test_a_district_without_a_price_says_why_without_blaming_the_city_size() -> None:
+    """D-234: with the code deployed before the estimate is synced a district of Madrid has no
+    price; its UNKNOWN says the appraised value is published for the whole city, never that only
+    municipios of more than 25.000 inhabitants have one (Madrid has)."""
+    tetuan = replace(
+        zone("2807906", price=None),
+        zone=ZoneRef(
+            level=TerritoryLevel.DISTRITO,
+            code="2807906",
+            name="Tetuán",
+            municipio_name="Madrid",
+            center_lon=-3.70,
+            center_lat=40.46,
+        ),
+    )
+    scenario = family(budget=BUY_300K, anchors=[])
+    district = next(
+        c for c in evaluate(scenario, tetuan).constraints if c.constraint_id == "budget"
+    )
+    assert district.status is ConstraintStatus.UNKNOWN
+    assert "se publica para Madrid entero, no por distrito ni por barrio" in district.explanation
+    assert "25.000" not in district.explanation
+    municipio = evaluate(scenario, zone("28001", price=None)).constraints
+    assert (
+        "25.000 habitantes" in next(c for c in municipio if c.constraint_id == "budget").explanation
+    )
+
+
+# D-240 (fit-0.8): how many days the person goes to work weighs the trip, and a second place
+# (family or friends) is one more trip with its own limit.
+FAMILY = Anchor(kind=AnchorKind.FAMILY, label="Getafe Central (Cercanías)", lon=-3.73, lat=40.31)
+
+
+def going(days: int, max_minutes: int | None = None) -> Anchor:
+    return CASTELLANA.model_copy(update={"days_per_week": days, "max_minutes": max_minutes})
+
+
+def with_trips(data: ZoneData, *minutes: float | None) -> ZoneData:
+    """One trip per place, in the order of `anchors`."""
+    trips = {i: Commute(minutes=m, confidence=0.7) for i, m in enumerate(minutes)}
+    return replace(data, commute=trips)
+
+
+@pytest.mark.parametrize("days", [3, 4, 5, 6, 7])
+def test_from_three_days_a_week_the_trip_weighs_as_always(days: int) -> None:
+    """The pitch example goes 4 days: its weights, % and facts are those of before D-240."""
+    scenario = family(anchors=[going(days)])
+    weighted = criteria(scenario)
+    assert [c.weight for c in weighted] == rank_weights(len(weighted))  # exactly, not approx
+    data = with_commute(zone("1", transporte=12.0), 52.0)
+    fit, as_always = evaluate(scenario, data), evaluate(family(), data)
+    assert (fit.utility, fit.confidence) == (as_always.utility, as_always.confidence)
+    assert fit.facts == as_always.facts
+
+
+@pytest.mark.parametrize("days", [1, 2])
+def test_one_or_two_days_a_week_halve_the_weight_of_the_trip(days: int) -> None:
+    scenario = family(anchors=[going(days)])
+    usual = {c.key: c.weight for c in criteria(family())}
+    weights = {c.key: c.weight for c in criteria(scenario)}
+    assert weights["work:0"] == FEW_DAYS_WEIGHT * usual["work:0"]
+    assert {k: w for k, w in weights.items() if k != "work:0"} == {
+        k: w for k, w in usual.items() if k != "work:0"
+    }
+    # a school at the door (1) and a trip of 90 min (0): 2/3 and 1/6 give 80 %; 2/3 and 1/3, 67 %,
+    # which a trip of 3 days or more that scores 0 halves (D-243)
+    school_and_work = ScenarioState(priorities=[PriorityKey.COLEGIOS], anchors=[going(days)])
+    far = with_commute(zone("1", colegio=0.0), 90.0)
+    assert evaluate(school_and_work, far).match_pct == 80
+    every_day = school_and_work.model_copy(update={"anchors": [CASTELLANA]})
+    assert evaluate(every_day, far).match_pct == 33
+
+
+def test_a_far_zone_loses_less_when_the_trip_is_made_few_days() -> None:
+    near_far_school = with_commute(zone("near", colegio=14.0), 25.0)
+    far_near_school = with_commute(zone("far", colegio=5.0), 85.0)
+    scenario = ScenarioState(priorities=[PriorityKey.COLEGIOS], anchors=[going(5)])
+    few_days = scenario.model_copy(update={"anchors": [going(1)]})
+
+    def gap(s: ScenarioState) -> float:
+        near, far = (evaluate(s, z).utility or 0.0 for z in (near_far_school, far_near_school))
+        return far - near
+
+    assert gap(few_days) > gap(scenario)
+
+
+@pytest.mark.parametrize("days", [0, 1, 2, 5])
+def test_the_trip_limit_applies_the_same_whatever_the_days(days: int) -> None:
+    """Full telework (0 days) included: a limit the person sets is still a condition."""
+    scenario = family(anchors=[going(days, max_minutes=40)])
+    statuses = {
+        minutes: next(
+            c.status
+            for c in evaluate(scenario, with_commute(zone("1"), minutes)).constraints
+            if c.constraint_id == "commute:0"
+        )
+        for minutes in (35.0, 52.0, None)
+    }
+    assert statuses == {
+        35.0: ConstraintStatus.PASS,
+        52.0: ConstraintStatus.FAIL,
+        None: ConstraintStatus.UNKNOWN,
+    }
+
+
+def test_a_place_never_gone_to_is_not_scored_but_keeps_its_limit() -> None:
+    """Full telework (0 days): scored as a search without that place; its limit still applies,
+    and then the card says how far it is, as context without weight."""
+    without = family(anchors=[])
+    for limit in (None, 30):
+        telework = family(anchors=[going(0, max_minutes=limit)])
+        assert [c.key for c in criteria(telework)] == [c.key for c in criteria(without)]
+        for minutes in (20.0, 95.0):
+            data = with_commute(zone("1"), minutes)
+            fit, alone = evaluate(telework, data), evaluate(without, data)
+            assert (fit.utility, fit.confidence) == (alone.utility, alone.confidence)
+            trips = [f for f in fit.facts if f.topic is FactTopic.TRAYECTO]
+            assert [f for f in fit.facts if f.topic is not FactTopic.TRAYECTO] == alone.facts
+            assert len(trips) == (0 if limit is None else 1)
+    far = evaluate(family(anchors=[going(0, max_minutes=30)]), with_commute(zone("1"), 95.0))
+    assert [c.constraint_id for c in far.constraints] == ["budget", "near:colegio", "commute:0"]
+    assert far.failed == ["commute:0"]
+    trip = next(f for f in far.facts if f.topic is FactTopic.TRAYECTO)
+    assert trip.kind is FactKind.WEAKNESS
+    assert trip.text.startswith("95 min en transporte público hasta Paseo de la Castellana")
+    # without minutes there is no trip to tell: the condition says why
+    unknown = evaluate(family(anchors=[going(0, max_minutes=30)]), zone("1"))
+    assert not any(f.topic is FactTopic.TRAYECTO for f in unknown.facts)
+    # the next place keeps its position in `anchors`: its criterion and condition are still 1
+    both = family(anchors=[going(0), FAMILY.model_copy(update={"max_minutes": 45})])
+    assert [c.key for c in criteria(both)][-2] == "work:1"
+    checks = evaluate(both, with_trips(zone("1"), 20.0, 50.0)).constraints
+    assert [c.constraint_id for c in checks][-1] == "commute:1"
+    assert checks[-1].status is ConstraintStatus.FAIL
+
+
+def test_two_places_are_two_trips_each_scored_with_its_own_minutes() -> None:
+    scenario = family(anchors=[CASTELLANA, FAMILY])
+    keys = [c.key for c in criteria(scenario)]
+    assert keys[:3] == ["need:colegio", "need:transporte", "need:centro_salud"]
+    assert keys[3:] == ["work:0", "work:1", "budget"]
+    weights = {c.key: c.weight for c in criteria(scenario)}
+    assert weights["work:0"] > weights["work:1"]  # the place of work comes first
+    fit = evaluate(scenario, with_trips(zone("1"), 25.0, 48.0))
+    trips = [f.text for f in fit.facts if f.topic is FactTopic.TRAYECTO]
+    # The family is not a place to reach by 9:00: its trip does not say so (D-245), the work does
+    assert trips == [
+        "25 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00",
+        "48 min en transporte público hasta Getafe Central (Cercanías)",
+    ]
+    near_family = evaluate(scenario, with_trips(zone("2"), 25.0, 20.0))
+    assert (near_family.utility or 0) > (fit.utility or 0)  # only the second trip changed
+    near_work = evaluate(scenario, with_trips(zone("3"), 15.0, 48.0))
+    assert (near_work.utility or 0) > (fit.utility or 0)  # D-243: every minute counts
+
+
+def test_only_work_and_study_trips_say_they_arrive_by_nine() -> None:
+    """D-245: «llegando a las 9:00» means something for work or study, not for the family or
+    «donde vivimos ahora». Their minutes are measured the same way, with the same timetables."""
+    home = FAMILY.model_copy(update={"kind": AnchorKind.OTHER, "label": "donde vivimos ahora"})
+    study = CASTELLANA.model_copy(update={"kind": AnchorKind.STUDY})
+    texts = {a.kind: commute_text(27.0, a) for a in (CASTELLANA, study, FAMILY, home)}
+    assert texts[AnchorKind.WORK].endswith(
+        "hasta Paseo de la Castellana (Azca), llegando a las 9:00"
+    )
+    assert texts[AnchorKind.STUDY].endswith(", llegando a las 9:00")
+    assert (
+        texts[AnchorKind.FAMILY] == "27 min en transporte público hasta Getafe Central (Cercanías)"
+    )
+    assert texts[AnchorKind.OTHER] == "27 min en transporte público hasta donde vivimos ahora"
+    # Without a trip by the timetables, the family is not said to be missed «a las 9:00» either
+    unreachable = evaluate(family(anchors=[FAMILY]), with_trips(zone("1"), None))
+    said = " ".join(f.text for f in unreachable.facts if f.topic is FactTopic.TRAYECTO)
+    assert "9:00" not in said and "Getafe Central (Cercanías)" in said
+    at_work = evaluate(family(anchors=[CASTELLANA]), with_trips(zone("1"), None))
+    assert "a las 9:00" in " ".join(f.text for f in at_work.facts if f.topic is FactTopic.TRAYECTO)
+    # The same trip scores the same, whatever its words
+    as_work = evaluate(
+        family(anchors=[FAMILY.model_copy(update={"kind": AnchorKind.WORK})]),
+        with_trips(zone("1"), 27.0),
+    )
+    as_family = evaluate(family(anchors=[FAMILY]), with_trips(zone("1"), 27.0))
+    assert as_work.utility == as_family.utility
+
+
+def test_each_place_has_its_own_limit() -> None:
+    scenario = family(
+        anchors=[
+            CASTELLANA.model_copy(update={"max_minutes": 40}),
+            FAMILY.model_copy(update={"max_minutes": 30}),
+        ]
+    )
+    zones = [
+        with_trips(zone("both"), 35.0, 25.0),
+        with_trips(zone("far_from_family"), 35.0, 48.0),
+        with_trips(zone("far_from_work"), 52.0, 25.0),
+        with_trips(zone("family_unknown"), 35.0),  # no trip computed to the second place
+    ]
+    outcome = run_search(scenario, zones)
+    assert [r.zone.code for r in outcome.results] == ["both"]
+    failed = {z.zone.code: z.failed_constraints for z in outcome.near_misses}
+    assert failed == {"far_from_family": ["commute:1"], "far_from_work": ["commute:0"]}
+    family_check = evaluate(scenario, zones[3]).constraints[-1]
+    assert family_check.constraint_id == "commute:1"
+    assert family_check.status is ConstraintStatus.UNKNOWN  # never a pass
+    assert family_check.label == "Trayecto a Getafe Central (Cercanías) de 30 min como mucho"
+    label, without_limit = relaxed(scenario, "commute:1") or ("", scenario)
+    assert label == "Sin límite de tiempo hasta Getafe Central (Cercanías)"
+    assert [a.max_minutes for a in without_limit.anchors] == [40, None]
+
+
+def test_with_a_budget_the_cost_stays_and_the_least_important_fact_goes() -> None:
+    """Three priorities, work and family make six facts with the cost: it no longer falls."""
+    walk = {NeedKey.CENTRO_SALUD: _value("min_a_pie_centro_salud", 8.0)}
+    base = with_trips(zone("1"), 25.0, 48.0)
+    data = replace(base, walk={**base.walk, **walk})
+    both = family(anchors=[CASTELLANA, FAMILY])
+    topics = [f.topic for f in evaluate(both, data).facts]
+    assert topics == [
+        FactTopic.COLEGIOS,
+        FactTopic.TRANSPORTE,
+        FactTopic.SALUD,
+        FactTopic.TRAYECTO,  # the trip to work; the one to the family is the least important
+        FactTopic.COSTE,
+    ]
+    no_budget = evaluate(both.model_copy(update={"budget": None}), data)
+    assert [f.topic for f in no_budget.facts][-2:] == [FactTopic.TRAYECTO, FactTopic.TRAYECTO]
+    # five facts or fewer: as before, in order of importance
+    alone = evaluate(family(), with_commute(data, 25.0))
+    assert [f.topic for f in alone.facts] == [
+        FactTopic.COLEGIOS,
+        FactTopic.TRANSPORTE,
+        FactTopic.SALUD,
+        FactTopic.TRAYECTO,
+        FactTopic.COSTE,
+    ]
+
+
+@settings(max_examples=80, deadline=None)
+@given(
+    priorities=st.lists(st.sampled_from(list(PriorityKey)), unique=True, max_size=6),
+    days=st.lists(st.integers(min_value=0, max_value=7), max_size=3),
+    limit=st.sampled_from([None, 30, 45]),
+    rent=st.sampled_from([None, 12.0]),
+)
+def test_with_a_budget_the_cost_is_always_among_the_facts(
+    priorities: list[PriorityKey], days: list[int], limit: int | None, rent: float | None
+) -> None:
+    anchors = [going(d, max_minutes=limit) for d in days]
+    scenario = family(anchors=anchors, priorities=priorities)
+    fit = evaluate(scenario, with_trips(zone("1", rent=rent), *[50.0] * len(anchors)))
+    assert len(fit.facts) <= MAX_FACTS
+    assert [f.topic for f in fit.facts].count(FactTopic.COSTE) == 1
+
+
+def test_ties_go_to_the_minutes_of_the_first_place_the_person_goes_to() -> None:
+    """With full telework the tie-break (D-220) reads the next place, not the office."""
+    telework_family = family(anchors=[going(0), FAMILY])
+    assert lead_trip(family()) == 0
+    assert lead_trip(telework_family) == 1
+    assert lead_trip(family(anchors=[going(0, max_minutes=45)])) == 0
+    assert lead_trip(family(anchors=[going(0)])) is None
+    # both beyond the 90 min that score 0 to the family: tied fit; the office does not decide
+    a = with_trips(zone("a"), 10.0, 100.0)
+    b = with_trips(zone("b"), 80.0, 95.0)
+    fits = [evaluate(telework_family, z) for z in (a, b)]
+    assert (fits[0].utility, fits[0].confidence) == (fits[1].utility, fits[1].confidence)
+    assert [f.data.zone.code for f in sorted(fits, key=near_miss_key)] == ["b", "a"]
+    assert [f.data.zone.code for f in sorted(fits, key=ranking_key)] == ["b", "a"]
+
+
+def test_buying_with_the_estimate_the_estimated_price_takes_the_cost_slot() -> None:
+    """D-234 with D-240: three priorities, work and family when buying in a district of Madrid;
+    the estimated price is the cost fact that always stays, said as an estimate."""
+    walk = {NeedKey.CENTRO_SALUD: _value("min_a_pie_centro_salud", 8.0)}
+    base = with_trips(_estimated("2807906", 6051.0, TerritoryLevel.DISTRITO), 25.0, 48.0)
+    data = replace(base, walk={**base.walk, **walk})
+    scenario = family(
+        budget=Budget(kind=BudgetKind.BUY, amount_eur=600_000), anchors=[CASTELLANA, FAMILY]
+    )
+    facts = evaluate(scenario, data).facts
+    assert len(facts) == MAX_FACTS and facts[-1].topic is FactTopic.COSTE
+    assert "precio estimado: valor tasado de Madrid" in facts[-1].text
+    assert facts[-1].confidence == 0.5
+
+
+# --- «Ocio» (D-236): leisure groups, scored only when the person ticks them ---
+
+
+def _leisure_zone(code: str = "1", **minutes: float | None) -> ZoneData:
+    base = zone(code)
+    walk = dict(base.walk)
+    for need, value in minutes.items():
+        walk[NeedKey(need)] = _value(f"min_a_pie_{need}", value)
+    return replace(base, walk=walk)
+
+
+def _ocio(*needs: str, minutes: int = 10, required: bool = False) -> ScenarioState:
+    return ScenarioState(
+        nearby=[
+            NearbyNeed(need=NeedKey(n), max_walk_minutes=minutes, required=required) for n in needs
+        ],
+        priorities=[PriorityKey.OCIO],
+    )
+
+
+def test_a_required_leisure_group_is_a_walking_condition_like_any_other() -> None:
+    scenario = _ocio("bares", "cultura", required=True)
+    evaluation = evaluate(scenario, _leisure_zone(bares=3.2, cultura=14.0))
+    checks = {c.constraint_id: c for c in evaluation.constraints}
+    bar, culture = checks["near:bares"], checks["near:cultura"]
+    assert bar.status is ConstraintStatus.PASS
+    assert bar.label == "Bares y cafeterías a 10 min andando como mucho"
+    assert bar.explanation == (
+        "A unos 3 min andando de un bar o una cafetería (lo que tarda la mitad de la zona)"
+    )
+    assert culture.status is ConstraintStatus.FAIL
+    assert culture.label == "Cultura a 10 min andando como mucho"
+    assert culture.explanation.startswith("A unos 14 min andando de un museo, una biblioteca")
+    missing = evaluate(scenario, _leisure_zone(bares=3.2))
+    unknown = next(c for c in missing.constraints if c.constraint_id == "near:cultura")
+    assert unknown.status is ConstraintStatus.UNKNOWN  # no data is never a PASS
+    assert not missing.passes_all
+
+
+def test_leisure_is_one_fact_and_one_criterion_whatever_the_boxes() -> None:
+    scenario = _ocio("gimnasios", "bares", "restaurantes").model_copy(
+        update={"priorities": [PriorityKey.TRANSPORTE, PriorityKey.OCIO]}
+    )
+    assert [c.key for c in criteria(scenario)] == ["need:transporte", "priority:ocio"]
+    data = _leisure_zone(bares=2.0, restaurantes=4.4, gimnasios=20.0)
+    evaluation = evaluate(scenario, data)
+    leisure = [f for f in evaluation.facts if f.topic is FactTopic.OCIO]
+    assert [f.text for f in leisure] == [
+        "Ocio a pie: bares y cafeterías a unos 2 min, restaurantes a unos 4 min, "
+        "gimnasios y deporte a unos 20 min"
+    ]
+    assert leisure[0].kind is FactKind.WEAKNESS  # the gym is beyond the 10 minutes
+    assert leisure[0].indicator is not None
+    assert leisure[0].indicator.feature_id == "min_a_pie_gimnasios"  # the farthest group
+    # transporte (3 min, window 5) = 0,94; ocio = mean(0,98, 0,956, 0,45); weights 2/3 and 1/3
+    assert evaluation.utility == pytest.approx((2 * 0.94 + (0.98 + 0.956 + 0.45) / 3) / 3)
+
+
+def test_each_leisure_group_scores_against_its_own_minutes() -> None:
+    near = evaluate(_ocio("bares", minutes=5), _leisure_zone(bares=10.0))
+    far = evaluate(_ocio("bares", minutes=15), _leisure_zone(bares=10.0))
+    assert near.utility == pytest.approx(0.45)  # 10 min against 5: 0,9 x 5/10
+    assert far.utility == pytest.approx(1 - 0.1 * 10 / 15)  # 10 min against 15
+
+
+def test_leisure_without_data_is_unknown_and_never_zero() -> None:
+    scenario = _ocio("bares", "restaurantes")
+    nothing = evaluate(scenario, _leisure_zone())
+    assert nothing.utility is None
+    fact = next(f for f in nothing.facts if f.topic is FactTopic.OCIO)
+    assert fact.kind is FactKind.UNKNOWN
+    assert fact.text == "Ocio: sin datos de distancia a pie en esta zona"
+    half = evaluate(scenario, _leisure_zone(bares=4.0))
+    assert half.utility == pytest.approx(0.96)  # 4 of 10 min; the group without data is no 0
+    assert half.confidence == pytest.approx(0.5)  # but the zone is half as sure
+    fact = next(f for f in half.facts if f.topic is FactTopic.OCIO)
+    assert fact.text == "Ocio a pie: bares y cafeterías a unos 4 min, restaurantes: sin datos"
+    assert (
+        fact.kind is FactKind.STRENGTH
+    )  # what has data is near: a group without data is no weakness
+
+
+def test_a_leisure_place_beyond_a_walk_scores_zero_with_low_confidence() -> None:
+    """In a village OpenStreetMap may simply not have the bar: 0, but not a sure 0 (D-236)."""
+    far = evaluate(_ocio("bares"), _leisure_zone(bares=75.0))
+    assert far.utility == 0.0
+    assert far.confidence == pytest.approx(0.5)
+    fact = next(f for f in far.facts if f.topic is FactTopic.OCIO)
+    assert fact.text == "Ocio a pie: bares y cafeterías a más de 60 min"
+
+
+def test_ocio_without_any_group_measures_nothing() -> None:
+    plain = ScenarioState(priorities=[PriorityKey.TRANSPORTE])
+    ticked = ScenarioState(priorities=[PriorityKey.TRANSPORTE, PriorityKey.OCIO])
+    data = _leisure_zone(bares=2.0)
+    assert [c.key for c in criteria(ticked)] == [c.key for c in criteria(plain)]
+    assert evaluate(ticked, data).utility == evaluate(plain, data).utility
+
+
+def test_a_scenario_without_leisure_ignores_the_leisure_data() -> None:
+    """D-236: leisure only scores when the person asks for it. The same zones with and without
+    leisure minutes give the same conditions, % and facts."""
+    without = [zone("1"), zone("2", colegio=14.0), zone("3", rent=30.0)]
+    with_leisure = [
+        replace(z, walk={**z.walk, NeedKey.BARES: _value("min_a_pie_bar", 50.0 * i)})
+        for i, z in enumerate(without)
+    ]
+    assert run_search(family(), with_leisure) == run_search(family(), without)
+
+
+def test_the_leisure_conditions_relax_together() -> None:
+    """The groups share their minutes and «Imprescindible» in the web (D-236): whichever binds,
+    all of them get the same few more minutes, then all become a wish."""
+    scenario = _ocio("bares", "restaurantes", required=True).model_copy(
+        update={"nearby": [*_ocio("bares", "restaurantes", required=True).nearby, _school()]}
+    )
+    for binding in ("near:bares", "near:restaurantes"):
+        option = relaxed(scenario, binding)
+        assert option is not None
+        label, changed = option
+        assert label == "+5 min a pie hasta el ocio"
+        assert [(n.need.value, n.max_walk_minutes) for n in changed.nearby] == [
+            ("bares", 15),
+            ("restaurantes", 15),
+            ("colegio", 10),  # not leisure: left as it was
+        ]
+    at_most = scenario.model_copy(
+        update={"nearby": [n.model_copy(update={"max_walk_minutes": 60}) for n in scenario.nearby]}
+    )
+    option = relaxed(at_most, "near:bares")
+    assert option is not None
+    assert option[0] == "Ocio cerca como preferencia, no como requisito"
+    assert [n.required for n in option[1].nearby] == [False, False, True]
+    zones = [_leisure_zone("1", bares=12.0, restaurantes=12.0)]
+    check = run_search(scenario, zones).reality_check
+    leisure_options = [r for r in check.relaxations if r.label.endswith("el ocio")]
+    assert len(leisure_options) == 1  # one option for both groups, not one per box
+
+
+def _school() -> NearbyNeed:
+    return NearbyNeed(need=NeedKey.COLEGIO, max_walk_minutes=10, required=True)
+
+
+def test_leisure_in_nearby_without_ocio_is_ignored() -> None:
+    """D-236: the API or the MCP may send a leisure group without the priority «ocio». With
+    `required` True by default it would filter; it is ignored, neither criterion nor condition."""
+    leisure = [
+        NearbyNeed(need=NeedKey.BARES, max_walk_minutes=5),  # required by default
+        NearbyNeed(need=NeedKey.CULTURA, max_walk_minutes=5, required=False),
+    ]
+    plain = ScenarioState(priorities=[PriorityKey.TRANSPORTE], nearby=[_school()])
+    with_leisure = plain.model_copy(update={"nearby": [_school(), *leisure]})
+    assert ignored_leisure(with_leisure) == [NeedKey.BARES, NeedKey.CULTURA]
+    assert ignored_leisure(plain) == []
+    assert [c.key for c in criteria(with_leisure)] == [c.key for c in criteria(plain)]
+    data = _leisure_zone(bares=40.0, cultura=40.0)
+    ignored, kept = evaluate(with_leisure, data), evaluate(plain, data)
+    assert [c.constraint_id for c in ignored.constraints] == ["near:colegio"]
+    assert (ignored.utility, ignored.facts) == (kept.utility, kept.facts)
+    marked = with_leisure.model_copy(update={"priorities": [*plain.priorities, PriorityKey.OCIO]})
+    assert ignored_leisure(marked) == []
+    assert "near:bares" in [c.constraint_id for c in evaluate(marked, data).constraints]
+
+
+@given(a=st.floats(0, 120), b=st.floats(0, 120), other=st.floats(0, 120))
+@settings(max_examples=60, deadline=None)
+def test_a_farther_bar_never_raises_the_match(a: float, b: float, other: float) -> None:
+    scenario = _ocio("bares", "restaurantes")
+    near, far = sorted([a, b])
+    closer = evaluate(scenario, _leisure_zone(bares=near, restaurantes=other))
+    farther = evaluate(scenario, _leisure_zone(bares=far, restaurantes=other))
+    assert (closer.utility or 0.0) >= (farther.utility or 0.0)
+
+
+def _filled(code: str, rent: float = 9.0, spread: tuple[float, float] = (7.3, 10.6)) -> ZoneData:
+    """D-242: a zone whose rent is the Ministry's reference, with its quartiles per m²."""
+    return replace(
+        zone(code, rent=rent),
+        rent=_value("alquiler_m2_mensual_referencia", rent, 0.7),
+        rent_note="referencia del Ministerio de Vivienda para contratos firmados en 2024",
+        rent_range=spread,
+        rent_source="Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024",
+    )
+
+
+def test_a_reference_rent_carries_where_half_the_leases_fall() -> None:
+    fit = evaluate(family(anchors=[]), _filled("1"))
+    assert fit.cost_eur == 693  # 9 €/m² × 77 m²
+    assert fit.cost_range == (560.0, 820.0)
+    assert (
+        fit.cost_source == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
+    )
+    cost = next(f for f in fit.facts if f.topic is FactTopic.COSTE)
+    assert cost.text.endswith("la mitad de los contratos, entre 560 y 820 €")
+
+
+def test_the_range_is_only_for_renting_and_only_with_quartiles() -> None:
+    buying = family(budget=BUY_300K, anchors=[])
+    assert evaluate(buying, replace(_filled("1"), price=_value("p", 3000.0))).cost_range is None
+    assert evaluate(family(anchors=[]), zone("2")).cost_range is None  # the CM rent: no spread
+    result = run_search(family(anchors=[]), [_filled("1"), zone("2")])
+    ranges = {z.zone.code: z.estimated_cost_range for z in result.all_zones}
+    assert ranges["2"] is None
+    assert ranges["1"] is not None and (ranges["1"].low_eur, ranges["1"].high_eur) == (560, 820)
+    assert (
+        ranges["1"].source
+        == "Elaboración propia a partir del Ministerio de Vivienda (SERPAVI), 2024"
+    )
+
+
+def test_the_quartiles_never_move_the_fit() -> None:
+    """The range is shown, never scored: the same rent with or without it fits the same."""
+    plain = replace(_filled("1"), rent_range=None, rent_source=None)
+    assert evaluate(family(), _filled("1")).utility == evaluate(family(), plain).utility

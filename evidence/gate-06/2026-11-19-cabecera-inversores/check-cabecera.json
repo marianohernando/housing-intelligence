@@ -1,0 +1,651 @@
+{
+  "base": "local",
+  "minContrast": 4.5,
+  "report": [
+    {
+      "width": 360,
+      "page": "mapa",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Mapa",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 6.59,
+          "letters": 1114
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.52,
+          "letters": 1498
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.48,
+          "letters": 3016
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.48,
+          "letters": 1634
+        }
+      ],
+      "minContrast": 5.48,
+      "axe": []
+    },
+    {
+      "width": 360,
+      "page": "que-falta",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Qué falta",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1108
+        },
+        {
+          "label": "Qué falta",
+          "worst": 6.59,
+          "letters": 1508
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 3023
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.67,
+          "letters": 1637
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 360,
+      "page": "como",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Cómo lo calculamos",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1108
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 1501
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 6.59,
+          "letters": 3051
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.67,
+          "letters": 1637
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 360,
+      "page": "inversores",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Inversores",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1108
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 1501
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 3023
+        },
+        {
+          "label": "Inversores",
+          "worst": 6.59,
+          "letters": 1646
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 360,
+      "page": "parcela",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Inversores",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1108
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 1501
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 3023
+        },
+        {
+          "label": "Inversores",
+          "worst": 6.59,
+          "letters": 1646
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 390,
+      "page": "mapa",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Mapa",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 6.59,
+          "letters": 1048
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.52,
+          "letters": 1505
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.48,
+          "letters": 3008
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.62,
+          "letters": 1588
+        }
+      ],
+      "minContrast": 5.48,
+      "axe": []
+    },
+    {
+      "width": 390,
+      "page": "que-falta",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Qué falta",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1043
+        },
+        {
+          "label": "Qué falta",
+          "worst": 6.59,
+          "letters": 1515
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 3011
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.67,
+          "letters": 1594
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 390,
+      "page": "como",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Cómo lo calculamos",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1043
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 1508
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 6.59,
+          "letters": 3026
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.67,
+          "letters": 1594
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 390,
+      "page": "inversores",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Inversores",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1043
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 1508
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 3011
+        },
+        {
+          "label": "Inversores",
+          "worst": 6.59,
+          "letters": 1600
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 390,
+      "page": "parcela",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Inversores",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 1043
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 1508
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 3011
+        },
+        {
+          "label": "Inversores",
+          "worst": 6.59,
+          "letters": 1600
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 1440,
+      "page": "mapa",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Mapa",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 6.59,
+          "letters": 335
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.51,
+          "letters": 442
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.56,
+          "letters": 872
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.57,
+          "letters": 491
+        }
+      ],
+      "minContrast": 5.51,
+      "axe": []
+    },
+    {
+      "width": 1440,
+      "page": "que-falta",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Qué falta",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.62,
+          "letters": 333
+        },
+        {
+          "label": "Qué falta",
+          "worst": 6.59,
+          "letters": 446
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.62,
+          "letters": 874
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.62,
+          "letters": 491
+        }
+      ],
+      "minContrast": 5.62,
+      "axe": []
+    },
+    {
+      "width": 1440,
+      "page": "como",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Cómo lo calculamos",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 333
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 442
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 6.59,
+          "letters": 884
+        },
+        {
+          "label": "Inversores",
+          "worst": 5.67,
+          "letters": 491
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 1440,
+      "page": "inversores",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Inversores",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 333
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 442
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 874
+        },
+        {
+          "label": "Inversores",
+          "worst": 6.59,
+          "letters": 494
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    },
+    {
+      "width": 1440,
+      "page": "parcela",
+      "ok": true,
+      "labels": [
+        "Mapa",
+        "Qué falta",
+        "Cómo lo calculamos",
+        "Inversores"
+      ],
+      "active": "Inversores",
+      "activeRing": true,
+      "activeTint": true,
+      "oneRow": true,
+      "inside": true,
+      "overflow": false,
+      "smallText": [],
+      "smallTargets": [],
+      "contrast": [
+        {
+          "label": "Mapa",
+          "worst": 5.67,
+          "letters": 333
+        },
+        {
+          "label": "Qué falta",
+          "worst": 5.67,
+          "letters": 442
+        },
+        {
+          "label": "Cómo lo calculamos",
+          "worst": 5.67,
+          "letters": 874
+        },
+        {
+          "label": "Inversores",
+          "worst": 6.59,
+          "letters": 494
+        }
+      ],
+      "minContrast": 5.67,
+      "axe": []
+    }
+  ]
+}

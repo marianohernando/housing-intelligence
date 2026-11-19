@@ -1,0 +1,29 @@
+feature_id: plan_vive_viviendas
+version: 1
+human_name: Viviendas del Plan Vive de alquiler a precio asequible
+domain: housing
+type: aggregate
+unit: viviendas
+direction: neutral
+geo_level: municipio
+time_semantics: snapshot
+sources:
+  - {dataset_id: cm_plan_vive_promociones, role: primary}
+formula:
+  method: metric_items
+  metric: plan_vive_viviendas
+  value: sum
+  confidence: 0.9  # typed by hand from the page, each entry checked against its quote
+  levels:
+    # Madrid's two places, in their districts (the page does not split the homes between them)
+    distrito: {scope: "28079"}
+null_policy: {no_coverage: unknown, confirmed_zero: 0}
+confidence: {inputs: [manual_transcription]}
+public_use: true
+pro_use: true
+models: []
+tests: [non_negative, context_only]
+limitations:
+  - "Son las promociones que publica la página del Plan Vive de la Comunidad de Madrid el día de la consulta, con su número de viviendas, su fase y su ubicación tal como las escribe; no hay fichero de datos abiertos."
+  - "Un municipio que la página no nombra tiene 0 promociones del Plan Vive, no «sin datos». La página da Madrid como un solo dato para Valdebebas y Los Ahijones: Hortaleza y Vicálvaro muestran las mismas viviendas, sin repartir."
+  - "Dato de contexto: no puntúa en el buscador, no ordena zonas y no entra en «Qué falta» (D-241)."

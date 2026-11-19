@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "dataset_id": "crtm_aparcamientos_disuasion",
+      "role": "primary",
+      "path": "data/bronze/datasets/crtm_aparcamientos_disuasion/de513ea3e91e/aparcamientos_disuasion.csv",
+      "sha256": "de513ea3e91e22268dac20c10d255ce062600ceca416f2e51822c7918c7eaa41",
+      "bytes": 8000,
+      "url": "https://opendata.arcgis.com/api/v3/datasets/2a2b8fcbd4fc4115a57519ef1587b011_0/downloads/data?format=csv&spatialRefId=4326",
+      "retrieved_at": "2026-11-14T22:47:24.092383+00:00"
+    }
+  ],
+  "checksum": "dd011ca20087d17ca58872406b5ac24625cd3943759daef539a48ece26387a3a",
+  "parser_version": "places-1.8.1"
+}

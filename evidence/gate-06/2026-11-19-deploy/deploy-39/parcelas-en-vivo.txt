@@ -1,0 +1,96 @@
+Live lookups against production (dpl_7ySG3suaT3tXBGJHRZ6Ar3eu9YEN, 79020a1, PARCEL_UPSTREAMS on), 2026-11-19, times in UTC.
+Only the four demo parcels, two public addresses of them and two public points. The time is curl's total, from Madrid.
+
+1. 15:31:42 GET /api/v1/investors/parcels?rc=2122202VK4722A
+   → 200 · 11.00 s · 69402 B · Cache-Control «public, max-age=3600» · x-vercel-cache MISS
+    parcel: 2122202VK4722A · Calle Mendez Alvaro 47, 28045 Madrid · 2843 m² · input rc
+    fallback: none · degraded: none (live and complete)
+    barrio: Atocha (Arganzuela), in the pilot: True
+    planning: APR.02.06: MÉNDEZ ÁLVARO NORTE I · Ficha del expediente MPR.02.391
+      https://servpub.madrid.es/VSURB_WBVISOR/seguimiento/expPlaneamiento.iam?figura=MPR.02.391
+    buildability: oficial · 13121 m² · VEDA Madrid (Ayuntamiento de Madrid), julio de 2026: edificabilidad de la parcela
+    Catastro: Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el 19/11/2026.
+    Ayuntamiento: Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.
+    warnings: none
+
+2. 15:32:13 GET /api/v1/investors/parcels?rc=3959601VK4735H
+   → 200 · 11.51 s · 69425 B · Cache-Control «public, max-age=3600» · x-vercel-cache MISS
+    parcel: 3959601VK4735H · Calle Almeria 1, 28028 Madrid · 20502 m² · input rc
+    fallback: none · degraded: none (live and complete)
+    barrio: Fuente del Berro (Salamanca), in the pilot: True
+    planning: APR.04.09: COCHERAS METRO PTE. DE VENTAS · no official sheet in the answer: the link is the Geoportal viewer
+      https://geoportal.madrid.es/IDEAM_WBGEOPORTAL/visor_ide.iam?ArcGIS=https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer&center=-3.662733,40.430669&level=18&marker=-3.662733,40.430669
+    buildability: oficial · 32697 m² · Portal del Suelo 4.0 (Comunidad de Madrid): superficie edificable publicada de la parcela
+    Catastro: Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el 19/11/2026.
+    Ayuntamiento: Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.
+    warnings: none
+
+3. 15:32:24 GET /api/v1/investors/parcels?rc=0390314VK4709A
+   → 200 · 10.81 s · 69462 B · Cache-Control «public, max-age=3600» · x-vercel-cache MISS
+    parcel: 0390314VK4709A · Calle Luis Misson 2, 28039 Madrid · 601 m² · input rc
+    fallback: none · degraded: none (live and complete)
+    barrio: Berruguete (Tetuán), in the pilot: True
+    planning: Norma zonal 4 (Edificación en manzana cerrada) · Artículo 8.4.9 de las Normas Urbanísticas
+      https://transparencia.madrid.es/UnidadesDescentralizadas/UrbanismoyVivienda/Urbanismo/Transparencia/Planeamiento%20urban%C3%ADstico/PUInformacionPublica/Planeamiento/Ficheros/3.%20Refundido%20de%20las%20normas%20urban%C3%ADsticas.pdf#page=349
+    buildability: sin_dato · Sin dato · La norma zonal 4 no fija un coeficiente: sale del número de plantas según el ancho de la calle y del fondo edificable.
+    Catastro: Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el 19/11/2026.
+    Ayuntamiento: Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.
+    warnings: none
+
+4. 15:32:35 GET /api/v1/investors/parcels?rc=9943003VK3794D
+   → 200 · 1.61 s · 69498 B · Cache-Control «public, max-age=3600» · x-vercel-cache MISS
+    parcel: 9943003VK3794D · Calle Mayor 61, 28013 Madrid · 68 m² · horizontal division of 6 units · input rc
+    fallback: none · degraded: none (live and complete)
+    barrio: Palacio (Centro), in the pilot: True
+    planning: Norma zonal 1, grado 2º (Protección del Patrimonio Histórico) · Artículo 8.1.10 de las Normas Urbanísticas
+      https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150
+    buildability: supuesto · 224.4 m² · 68 m² de parcela × Z 5 × C 0,66 · Supuesto aproximado: norma zonal 1 grado 2º, art. 8.1.10 de las Normas Urbanísticas del PGOUM 1997 (refundido de la Dirección General de Planeamiento; BOCM 27-11-2023)
+    Catastro: Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el 19/11/2026.
+    Ayuntamiento: Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.
+    warnings: none
+
+5. 15:33:11 GET /api/v1/investors/parcels/candidates?q=Calle Mayor 61
+   → 200 · 0.48 s · 888 B · Cache-Control «private, max-age=600» · x-vercel-cache MISS
+    2 candidates, none picked · needs_number False · source ['ign_cartociudad']
+      Calle Mayor 61, Madrid · 28013 · 9943003VK3794D
+      Calle Mayo 61, Madrid · 28022 · 2374303VK5727C
+
+6. 15:33:11 GET /api/v1/investors/parcels?address=Calle Mayor 61
+   → 422 · 1.17 s · 350 B · Cache-Control «public, max-age=0, must-revalidate» · x-vercel-cache MISS
+    AMBIGUOUS_INPUT: The address matches several portals: pick one
+      candidate: Calle Mayor 61, Madrid · 28013 · 9943003VK3794D
+      candidate: Calle Mayo 61, Madrid · 28022 · 2374303VK5727C
+
+7. 15:33:38 /desarrolladores #12, verbatim: GET /api/v1/investors/parcels?rc=2122202VK4722A
+   → 200 · 0.28 s · 69402 B · (run verbatim from the page: headers not saved)
+    parcel 2122202VK4722A · input rc · fallback none · degraded none · barrio Atocha
+
+8. 15:33:39 /desarrolladores #13, verbatim: GET /api/v1/investors/parcels/candidates?q=mendez%20alvaro%2047
+   → 200 · 0.78 s · 783 B · (run verbatim from the page: headers not saved)
+    1 candidate, none picked · needs_number False · source ['ign_cartociudad']
+      Calle Mendez Alvaro 47, Madrid · 28045 · 2122202VK4722A
+
+9. 15:33:50 GET /api/v1/investors/parcels?address=mendez alvaro 47
+   → 200 · 0.28 s · 69818 B · Cache-Control «private, no-store» · x-vercel-cache MISS
+    parcel 2122202VK4722A · input address · fallback none · degraded none · barrio Atocha
+
+10. 15:33:50 GET /api/v1/investors/parcels?lat=40.41667&lon=-3.70361 (Puerta del Sol)
+   → 404 · 0.61 s · 207 B · Cache-Control «public, max-age=0, must-revalidate» · x-vercel-cache MISS
+    NOT_FOUND: No parcel at that point: it falls on the street
+      nearest: PZ PUERTA DEL SOL 7 MADRID (MADRID) · 0444101VK4704C · 9.93 m
+
+11. 15:34:01 GET /api/v1/investors/parcels?lat=40.415579&lon=-3.709864 (Mayor 61's portal)
+   → 200 · 0.64 s · 69501 B · Cache-Control «public, max-age=3600» · x-vercel-cache MISS
+    parcel: 9943003VK3794D · Calle Mayor 61, 28013 Madrid · 68 m² · horizontal division of 6 units · input point
+    fallback: none · degraded: none (live and complete)
+    barrio: Palacio (Centro), in the pilot: True
+    planning: Norma zonal 1, grado 2º (Protección del Patrimonio Histórico) · Artículo 8.1.10 de las Normas Urbanísticas
+      https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150
+    buildability: supuesto · 224.4 m² · 68 m² de parcela × Z 5 × C 0,66 · Supuesto aproximado: norma zonal 1 grado 2º, art. 8.1.10 de las Normas Urbanísticas del PGOUM 1997 (refundido de la Dirección General de Planeamiento; BOCM 27-11-2023)
+    Catastro: Elaborado por Vida Fácil a partir de datos de la Dirección General del Catastro (Sede Electrónica del Catastro), consultados el 19/11/2026.
+    Ayuntamiento: Origen de los datos: Ayuntamiento de Madrid (Área de Urbanismo; Geoportal y datos.madrid.es), CC BY 4.0. Consultado el 19/11/2026. Información urbanística sin valor jurídico.
+    warnings: none
+
+12. ~15:34:02 GET /api/v1/investors/parcels?rc=9943003VK3794D (again)
+   → 200 · 0.26 s · 69498 B · Cache-Control «public, max-age=3600» · x-vercel-cache HIT · age 85 s
+

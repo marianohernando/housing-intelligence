@@ -5,7 +5,7 @@
  * says that row counts (`gap_rows`), so the figures agree; hospitals and parks have no row.
  */
 import type { DatasetRef } from "@/contracts/dataset_list_response";
-import type { GapRowKey } from "@/contracts/places_response";
+import type { AccessFee, GapRowKey } from "@/contracts/places_response";
 import type { PlaceCategory } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { updatedInWords } from "@/lib/provenance";
@@ -13,7 +13,8 @@ import { titleCase } from "@/lib/names";
 
 import type { PlaceFeature } from "./places";
 
-export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque";
+export type LeisureFacilityKey = "bares" | "restaurantes" | "gimnasios" | "cultura";
+export type FacilityKey = "colegio" | "escuela_infantil" | "centro_salud" | "hospital" | "farmacia" | "mayores" | "parque" | LeisureFacilityKey | "aparcamiento";
 
 export interface FacilityType {
   key: FacilityKey;
@@ -30,6 +31,10 @@ export interface FacilityType {
   classes: { subcategory: string; label: string }[];
   /** The list leads with the place's own name, which already says what it is («Parque del Retiro») */
   nameFirst?: boolean;
+  /** Leisure from OpenStreetMap (D-236): a map made by volunteers, said under its count */
+  leisure?: boolean;
+  /** Context of the zone (D-237): offered once its datasets are published, never turned on by «Todos» */
+  context?: boolean;
 }
 
 const PUBLIC_SCHOOL = "Colegio público";
@@ -132,6 +137,80 @@ export const FACILITY_TYPES: readonly FacilityType[] = [
     classes: [{ subcategory: "Parque", label: "Parque" }],
     nameFirst: true,
   },
+  // D-236: leisure from OSM, the four groups of «Ocio» in the search. Fast food is not a restaurant here.
+  {
+    key: "bares",
+    category: "commerce",
+    chip: "Bares y cafeterías",
+    one: "bar o cafetería",
+    many: "bares y cafeterías",
+    none: "OpenStreetMap no tiene ningún bar ni cafetería",
+    classes: [
+      { subcategory: "Bar", label: "Bar" },
+      { subcategory: "Pub", label: "Pub" },
+      { subcategory: "Cafetería", label: "Cafetería" },
+    ],
+    leisure: true,
+  },
+  {
+    key: "restaurantes",
+    category: "commerce",
+    chip: "Restaurantes",
+    one: "restaurante",
+    many: "restaurantes",
+    none: "OpenStreetMap no tiene ningún restaurante",
+    classes: [{ subcategory: "Restaurante", label: "Restaurante" }],
+    leisure: true,
+  },
+  {
+    key: "gimnasios",
+    category: "sport",
+    chip: "Gimnasios y deporte",
+    one: "gimnasio o centro deportivo",
+    many: "gimnasios y centros deportivos",
+    none: "OpenStreetMap no tiene ningún gimnasio ni centro deportivo",
+    classes: [
+      { subcategory: "Gimnasio", label: "Gimnasio" },
+      { subcategory: "Centro deportivo", label: "Centro deportivo" },
+    ],
+    leisure: true,
+  },
+  // «Cultura»: museums and libraries joined cinemas and theatres after test users asked for them
+  {
+    key: "cultura",
+    category: "culture",
+    chip: "Cultura",
+    one: "espacio cultural",
+    many: "espacios culturales",
+    none: "OpenStreetMap no tiene ningún espacio cultural",
+    classes: [
+      { subcategory: "Museo", label: "Museo" },
+      { subcategory: "Biblioteca", label: "Biblioteca" },
+      { subcategory: "Teatro", label: "Teatro" },
+      { subcategory: "Cine", label: "Cine" },
+      { subcategory: "Centro cultural", label: "Centro cultural" },
+    ],
+    leisure: true,
+  },
+  {
+    // D-237: context only (it never scores). The CRTM's park-and-ride car parks next to stations
+    // (with their spaces and whether they are free) and the Ayuntamiento de Madrid's public, mixed
+    // and residents' ones. Their names already say what they are («Aparcamiento público. Usera»).
+    key: "aparcamiento",
+    category: "other",
+    chip: "Aparcamientos",
+    one: "aparcamiento",
+    many: "aparcamientos",
+    none: "Ningún aparcamiento de los publicados en abierto",
+    classes: [
+      { subcategory: "Aparcamiento disuasorio", label: "Aparcamiento disuasorio" },
+      { subcategory: "Aparcamiento público", label: "Aparcamiento público" },
+      { subcategory: "Aparcamiento mixto", label: "Aparcamiento mixto" },
+      { subcategory: "Aparcamiento para residentes", label: "Aparcamiento para residentes" },
+    ],
+    nameFirst: true,
+    context: true,
+  },
 ];
 
 const BY_KEY = new Map(FACILITY_TYPES.map((t) => [t.key, t]));
@@ -147,10 +226,13 @@ export interface FacilityQuery {
   subcategories: string[];
 }
 
-/** What to ask /api/v1/places for a zone: one query per category with the subcategories that count. */
+/**
+ * What to ask /api/v1/places for a zone: one query per category with the subcategories that count.
+ * Leisure is left out (D-236): it goes apart, only when one of its types is pressed (leisureQuery).
+ */
 export function facilityQueries(): FacilityQuery[] {
   const byCategory = new Map<PlaceCategory, FacilityQuery>();
-  for (const type of FACILITY_TYPES) {
+  for (const type of FACILITY_TYPES.filter((t) => !t.leisure)) {
     const query = byCategory.get(type.category) ?? { category: type.category, subcategories: [] };
     query.subcategories.push(...type.classes.map((c) => c.subcategory));
     byCategory.set(type.category, query);
@@ -171,6 +253,17 @@ export interface Facility {
   detail: string | null;
   /** Dataset of the capacity when it is not the register's (hospital beds, D-218), named from /datasets. */
   source: string | null;
+  /** Hospitals: public (network of the Servicio Madrileño de Salud) or private (D-239); null when the API does not say. */
+  dependency: Dependency | null;
+  /** Hospitals: a public one a company runs («gestión privada», D-239); never true for a private one */
+  managedPrivately: boolean;
+  /** What the register says it holds («651 camas instaladas»), also inside `detail`; null when it does not say */
+  capacity: { value: number; unit: string } | null;
+  /** Placed by its address (D-216): «ubicación aproximada», also inside `detail` */
+  approximate: boolean;
+  /** Car parks (D-237): whether parking is free and how many spaces, when the CRTM publishes them */
+  fee?: AccessFee;
+  spaces?: number | null;
   lon: number;
   lat: number;
 }
@@ -236,11 +329,13 @@ function pharmacyAddress(name: string): string {
 /** «SANITAS RESIDENCIAL EL VISO, RESIDENCIA DE PERSONAS MAYORES»: the tail repeats the type. */
 const TYPE_TAIL = /^(RESIDENCIA|CENTRO DE D[IÍ]A|HOGAR|CLUB)/;
 
-function placeName(place: PlaceFeature, type: FacilityKey): string | null {
+function placeName(place: PlaceFeature, type: FacilityType): string | null {
   const { name, subcategory } = place.properties;
   // «Hospital general (Madrid)», «Centro de salud (Pinto)»: the source has no proper name for it
   if (!name || (subcategory && name.startsWith(`${subcategory} (`))) return null;
-  if (type === "farmacia") return pharmacyAddress(name);
+  // Leisure (D-236): the name as OpenStreetMap writes it («VIPS»); «Bar sin nombre» when it has none
+  if (type.leisure) return name === `${subcategory} sin nombre` ? null : name;
+  if (type.key === "farmacia") return pharmacyAddress(name);
   const comma = name.lastIndexOf(", ");
   const own = comma > 0 && TYPE_TAIL.test(name.slice(comma + 2)) ? name.slice(0, comma) : name;
   return titleCase(own);
@@ -252,18 +347,75 @@ const SCHOOL_BY_OWNERSHIP = { publica: PUBLIC_SCHOOL, concertada: "Colegio conce
 /** Coordinates the register lacked or had wrong, found again from the address (D-216). */
 const GEOCODED = "ubicación aproximada";
 
-/**
- * Who runs a hospital, from the CM register (D-218). «Privada» in the register includes hospitals
- * that also serve the public network, so it reads «gestión privada», never «privado».
- */
-const DEPENDENCY = { publica: "gestión pública", privada: "gestión privada" } as const;
+export type Dependency = "publica" | "privada";
 
-/** «966 camas instaladas · gestión pública · ubicación aproximada»: only what the register and the API say. */
+/**
+ * Public (the network of the Servicio Madrileño de Salud) or private (D-218, D-239): on the place
+ * itself, or with its beds from an API older than D-239. A user asked to tell public from private,
+ * so it goes as a pill before the hospital's name (hospitalLine).
+ */
+function dependencyOf(place: PlaceFeature): Dependency | null {
+  return place.properties.dependency ?? place.properties.capacity?.dependency ?? null;
+}
+
+/**
+ * centros.hospital.pastilla: the pill before a hospital's name, «Público» filled and «Privado»
+ * outlined. A word, never only a colour or a symbol (WCAG 1.4.1).
+ */
+export const DEPENDENCY_PILL: Record<Dependency, string> = { publica: "Público", privada: "Privado" };
+
+/** centros.hospital.gestion_privada: under the name of a hospital of the public network a private company runs. */
+const PRIVATE_MANAGEMENT = "gestión privada";
+
+/** A hospital as the list and its map label show it (centros.hospital.fila). */
+export interface HospitalLine {
+  /** The pill before the name; null when the API does not say */
+  dependency: Dependency | null;
+  /** Its own name, or its type when the source gives none («Hospital especializado») */
+  name: string;
+  /** Small, under the name: its type when the name does not say it, «gestión privada», «ubicación aproximada» */
+  notes: string[];
+  /** Beside a bed icon: «651», read aloud as «651 camas instaladas» */
+  beds: { short: string; full: string } | null;
+}
+
+/**
+ * The name first, the pill before it, and the beds as a figure beside a bed icon (Mariano, 15 nov:
+ * «si tengo que leer todo eso me da algo»). «gestión privada» goes under the name, never next to
+ * «Privado» (it only goes with a public one, D-239). A general hospital's type is left out: its
+ * name already says it is a hospital.
+ */
+export function hospitalLine(f: Facility): HospitalLine {
+  const kind = f.name && f.label !== "Hospital" ? f.label : null;
+  const notes = [kind, f.dependency === "publica" && f.managedPrivately ? PRIVATE_MANAGEMENT : null, f.approximate ? GEOCODED : null];
+  const beds = f.capacity ? { short: formatNumber(f.capacity.value, 0), full: `${formatNumber(f.capacity.value, 0)} ${f.capacity.unit}` } : null;
+  return { dependency: f.dependency, name: f.name ?? f.label, notes: notes.filter((n): n is string => n !== null), beds };
+}
+
+/** centros.hospital.dependencia: what «público», «gestión privada» and «privado» mean, folded behind «¿Qué significa público y privado?». */
+export const HOSPITAL_DEPENDENCY_NOTE =
+  "Público: de la red del Servicio Madrileño de Salud, aunque lo gestione una empresa («gestión privada»). Privado: el resto. Según el registro de centros sanitarios y la red de hospitales públicos de la Comunidad de Madrid.";
+
+/** centros.hospital.reparto: «2 públicos y 3 privados», «1 público», «2 privados»; null when the API does not say for any. */
+export function hospitalSplitText(items: readonly Pick<Facility, "dependency">[]): string | null {
+  const count = (d: Dependency) => items.filter((f) => f.dependency === d).length;
+  const parts = [
+    [count("publica"), "público", "públicos"],
+    [count("privada"), "privado", "privados"],
+  ] as const;
+  const said = parts.filter(([n]) => n > 0).map(([n, one, many]) => `${formatNumber(n, 0)} ${n === 1 ? one : many}`);
+  return said.length ? said.join(" y ") : null;
+}
+
+/** Whether a car park is free (D-237), as the CRTM publishes it. */
+const ACCESS_FEE_TEXT = { free: "gratuito", paid: "de pago", mixed: "gratuito y de pago" } as const;
+
+/** «966 camas instaladas · ubicación aproximada», «210 plazas · gratuito»: only what the register and the API say. */
 function detailText(place: PlaceFeature): string | null {
-  const { capacity, coordinates } = place.properties;
+  const { capacity, coordinates, access_fee: fee } = place.properties;
   const parts = [
     capacity ? `${formatNumber(capacity.value, 0)} ${capacity.unit}` : null,
-    capacity?.dependency ? DEPENDENCY[capacity.dependency] : null,
+    fee ? ACCESS_FEE_TEXT[fee] : null,
     coordinates === "geocoded" ? GEOCODED : null,
   ];
   return parts.filter(Boolean).join(" · ") || null;
@@ -280,11 +432,38 @@ function facility(place: PlaceFeature, type: FacilityType): Facility | null {
   if (!cls || !counts(place, type)) return null;
   const [lon = 0, lat = 0] = place.geometry.coordinates;
   const { ownership } = place.properties;
+  const dependency = type.key === "hospital" ? dependencyOf(place) : null;
+  const managedPrivately = dependency === "publica" && place.properties.management === "privada";
   const label = type.key === "colegio" && ownership ? SCHOOL_BY_OWNERSHIP[ownership] : cls.label;
   // Only a capacity from another catalogue is cited apart (hospital beds): the places of mayores
   // carry their own register's «plazas autorizadas», which are not beds
-  const source = CAPACITY_SOURCE[type.key] ? (place.properties.capacity?.dataset_id ?? null) : null;
-  return { id: String(place.id), type: type.key, label, name: placeName(place, type.key), detail: detailText(place), source, lon, lat };
+  const { capacity, coordinates } = place.properties;
+  const source = CAPACITY_SOURCE[type.key] ? (capacity?.dataset_id ?? null) : null;
+  // Car parks (D-237): whether parking is free and how many spaces, when the CRTM publishes them
+  const parking = type.key === "aparcamiento" ? { fee: place.properties.access_fee ?? null, spaces: capacity?.value ?? null } : {};
+  return {
+    id: String(place.id),
+    type: type.key,
+    label,
+    name: placeName(place, type),
+    detail: detailText(place),
+    source,
+    dependency,
+    managedPrivately,
+    capacity: capacity ? { value: capacity.value, unit: capacity.unit } : null,
+    approximate: coordinates === "geocoded",
+    lon,
+    lat,
+    ...parking,
+  };
+}
+
+const DEPENDENCY_ORDER = { publica: 0, privada: 1 } as const;
+
+/** Public hospitals first, then private, then those the API does not class; other types all tie. */
+function byDependency(a: Facility, b: Facility): number {
+  const order = (f: Facility) => (f.dependency ? DEPENDENCY_ORDER[f.dependency] : 2);
+  return order(a) - order(b);
 }
 
 function byName(a: Facility, b: Facility): number {
@@ -292,7 +471,10 @@ function byName(a: Facility, b: Facility): number {
   return Number(a.name === null) - Number(b.name === null);
 }
 
-/** The zone's places by type, named places first in alphabetical order; the rest are left out. */
+/**
+ * The zone's places by type, named places first in alphabetical order (hospitals: the public ones
+ * first, D-239); the rest are left out.
+ */
 export function groupFacilities(places: readonly PlaceFeature[]): Record<FacilityKey, Facility[]> {
   const groups = Object.fromEntries(FACILITY_TYPES.map((t) => [t.key, [] as Facility[]])) as Record<FacilityKey, Facility[]>;
   for (const place of places) {
@@ -302,7 +484,7 @@ export function groupFacilities(places: readonly PlaceFeature[]): Record<Facilit
       if (item) groups[type.key].push(item);
     }
   }
-  for (const list of Object.values(groups)) list.sort(byName);
+  for (const list of Object.values(groups)) list.sort((a, b) => byDependency(a, b) || byName(a, b));
   return groups;
 }
 
@@ -366,4 +548,64 @@ export const FACILITY_COLOR_TOKEN: Record<FacilityKey, string> = {
   farmacia: "fac-farmacia",
   mayores: "fac-mayores",
   parque: "park",
+  // One colour for the four leisure groups (D-236): their icons tell them apart, the map stays calm
+  bares: "fac-ocio",
+  restaurantes: "fac-ocio",
+  gimnasios: "fac-ocio",
+  cultura: "fac-ocio",
+  aparcamiento: "fac-aparcamiento",
 };
+
+/** The types of «Ocio» (D-236), in the order of their buttons. */
+export const LEISURE_FACILITY_KEYS: readonly LeisureFacilityKey[] = ["bares", "restaurantes", "gimnasios", "cultura"];
+
+export function isLeisureFacility(key: FacilityKey): key is LeisureFacilityKey {
+  return (LEISURE_FACILITY_KEYS as readonly FacilityKey[]).includes(key);
+}
+
+/**
+ * The services «Todos» turns on: every type but leisure and context. A bar is not a service of the
+ * zone, and in Centro the four leisure types alone are 2.683 places (review of PR #62, R-07); car
+ * parks are context, shown when asked for (review of PR #65, R-06).
+ */
+export const SERVICE_FACILITY_KEYS: readonly FacilityKey[] = FACILITY_TYPES.filter((t) => !t.leisure && !t.context).map((t) => t.key);
+
+/**
+ * «Todos» on: every service, keeping the leisure and context types already pressed. It turns
+ * neither on, nor off (review of PR #65, R-01: car parks stay as the person left them).
+ */
+export function allServicesOn(current: readonly FacilityKey[]): FacilityKey[] {
+  return [...SERVICE_FACILITY_KEYS, ...current.filter((key) => isLeisureFacility(key) || facilityType(key).context)];
+}
+
+/** What to ask /api/v1/places for one leisure type of a zone, apart and only when its button is pressed. */
+export function leisureQuery(key: LeisureFacilityKey): FacilityQuery {
+  const type = facilityType(key);
+  return { category: type.category, subcategories: type.classes.map((c) => c.subcategory) };
+}
+
+/**
+ * The types «Todos los centros» offers: the services always; leisure once its dataset is published
+ * (GET /datasets, D-236). Its count comes when its button is pressed, and with no place the count
+ * says that OpenStreetMap has none, never that the zone has none.
+ */
+export function offeredTypes(leisure: boolean, parking = false): FacilityType[] {
+  return FACILITY_TYPES.filter((t) => (!t.leisure || leisure) && (!t.context || parking));
+}
+
+/**
+ * «Aparcamientos» is offered once one of its datasets is published (GET /datasets, D-237): before
+ * the data are synced its button would say a false 0 (review of PR #65, R-05).
+ */
+export const PARKING_DATASETS = ["crtm_aparcamientos_disuasion", "ayto_aparcamientos_publicos", "ayto_aparcamientos_residentes"] as const;
+
+export function parkingAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => (PARKING_DATASETS as readonly string[]).includes(d.dataset_id)) ?? false;
+}
+
+/** «Ocio» is offered in the search once its dataset is published (GET /datasets), never before (D-236). */
+export const LEISURE_DATASET = "osm_ocio";
+
+export function leisureAvailable(datasets: readonly { dataset_id: string }[] | null | undefined): boolean {
+  return datasets?.some((d) => d.dataset_id === LEISURE_DATASET) ?? false;
+}

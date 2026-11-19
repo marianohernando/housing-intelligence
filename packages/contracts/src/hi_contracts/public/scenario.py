@@ -2,8 +2,9 @@
 
 Budget to rent (€/month) or to buy (€), the household, where they work, what matters to them
 and services wanted within walking distance. The search ranks the region by municipio with
-Madrid capital split into its 21 districts. Sensitive needs are not part of this version;
-«sin escaleras» is a functional preference, never a disability label (CLAUDE.md §13).
+Madrid capital split into its 21 districts, or only one part of it (`scope`, D-238). Sensitive
+needs are not part of this version; «sin escaleras» is a functional preference, never a
+disability label (CLAUDE.md §13).
 """
 
 from enum import StrEnum
@@ -21,7 +22,12 @@ class BudgetKind(StrEnum):
 
 
 class NeedKey(StrEnum):
-    """Everyday services the search and the per-zone list both talk about."""
+    """Everyday services the search and the per-zone list both talk about, and the leisure
+    groups of «Ocio» (D-236), which only the search knows: they are never rows of the list.
+
+    A leisure group only counts with the priority «ocio». Sent in `nearby` without it, as the
+    API or the MCP may, it is ignored with a warning: `required` is True by default, so it would
+    otherwise filter zones by places OpenStreetMap may not have."""
 
     ESCUELA_INFANTIL = "escuela_infantil"
     COLEGIO = "colegio"
@@ -29,10 +35,24 @@ class NeedKey(StrEnum):
     FARMACIA = "farmacia"
     MAYORES = "mayores"
     TRANSPORTE = "transporte"
+    BARES = "bares"
+    RESTAURANTES = "restaurantes"
+    GIMNASIOS = "gimnasios"
+    CULTURA = "cultura"
+
+
+# «Ocio» (D-236): the groups its configurator offers, in its order.
+LEISURE_NEEDS: tuple[NeedKey, ...] = (
+    NeedKey.BARES,
+    NeedKey.RESTAURANTES,
+    NeedKey.GIMNASIOS,
+    NeedKey.CULTURA,
+)
 
 
 class PriorityKey(StrEnum):
-    """«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional."""
+    """«Me importa» chips. Seguridad only counts when chosen; sin escaleras is optional. Ocio
+    (D-236) scores the leisure groups of `nearby` (LEISURE_NEEDS); without any, nothing."""
 
     TRANSPORTE = "transporte"
     SALUD = "salud"
@@ -40,6 +60,17 @@ class PriorityKey(StrEnum):
     ZONAS_VERDES = "zonas_verdes"
     SEGURIDAD = "seguridad"
     SIN_ESCALERAS = "sin_escaleras"
+    OCIO = "ocio"
+
+
+class SearchScope(StrEnum):
+    """«Dónde buscar» (D-238): the whole region, or one of its three parts by the statistical
+    zoning of the Comunidad de Madrid (data/catalog/zoning/search_scope.yaml)."""
+
+    ALL = "all"  # every municipio, with Madrid capital by its 21 districts (D-200)
+    MADRID = "madrid"  # Madrid capital, by its 131 barrios
+    ALREDEDORES = "alrededores"  # the municipios of the four metropolitan zones
+    PUEBLOS = "pueblos"  # every other municipio
 
 
 class AnchorKind(StrEnum):
@@ -67,7 +98,10 @@ class Budget(BaseModel):
 
 
 class Household(BaseModel):
-    """«Tu hogar»: adults, children and older people they look after (all live together)."""
+    """«Tu hogar»: adults, children and older people they look after (all live together).
+
+    `seniors` (D-244) says the adults themselves are 65 or older («Somos mayores»): it adds no
+    one to the household, unlike `seniors_in_care`."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -75,6 +109,7 @@ class Household(BaseModel):
     minors: int = Field(default=0, ge=0, le=8)
     minor_ages: list[int] = Field(default_factory=list[int], description="0-17, optional")
     seniors_in_care: int = Field(default=0, ge=0, le=4, description="People aged 65+ cared for")
+    seniors: bool = Field(default=False, description="Every adult is 65+ («Somos mayores»)")
 
     @model_validator(mode="after")
     def _coherent(self) -> Self:
@@ -92,7 +127,7 @@ class Household(BaseModel):
 
 
 class Anchor(BaseModel):
-    """A place the household travels to often («Trabajo en»)."""
+    """A place the household travels to often: where they work, or family and friends."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -100,7 +135,13 @@ class Anchor(BaseModel):
     label: str = Field(min_length=1, max_length=80, examples=["Paseo de la Castellana (Azca)"])
     lon: float = Field(ge=-4.58, le=-3.05)
     lat: float = Field(ge=39.88, le=41.17)
-    days_per_week: int = Field(default=5, ge=1, le=7)
+    days_per_week: int = Field(
+        default=5,
+        ge=0,
+        le=7,
+        description="Days they go there in a week: 1-2 halve the weight of the trip; 0 = never "
+        "(full telework), the trip is not scored but its max_minutes still applies (D-240)",
+    )
     max_minutes: int | None = Field(
         default=None, ge=5, le=120, description="Hard limit for the trip; None = preference only"
     )
@@ -126,9 +167,15 @@ class ScenarioState(BaseModel):
     )
     household: Household = Field(default_factory=Household)
     anchors: list[Anchor] = Field(default_factory=list[Anchor], max_length=3)
-    nearby: list[NearbyNeed] = Field(default_factory=list[NearbyNeed], max_length=6)
+    nearby: list[NearbyNeed] = Field(default_factory=list[NearbyNeed], max_length=len(NeedKey))
     priorities: list[PriorityKey] = Field(
-        default_factory=list[PriorityKey], max_length=6, description="Most important first"
+        default_factory=list[PriorityKey],
+        max_length=len(PriorityKey),
+        description="Most important first",
+    )
+    scope: SearchScope = Field(
+        default=SearchScope.ALL,
+        description="Where to search; Madrid capital is ranked by barrio instead of by district",
     )
 
     @model_validator(mode="after")

@@ -4,6 +4,7 @@
  * (incident EMAXCONNSESSION, 12 nov: each request can hold a database connection).
  */
 import { createApi, type PlaceCategory } from "@/lib/api";
+import { type LeisureFacilityKey, leisureQuery } from "@/lib/map/facilities";
 import type { PlaceFeature } from "@/lib/map/places";
 import { askedFor, zonePlaceQueries } from "@/lib/map/zonePlaces";
 import { type AdminFeature, buildZoneCollection, MUNICIPIOS_BY_DISTRITO, type ZoneCollection } from "@/lib/map/zones";
@@ -22,6 +23,7 @@ const TIMEOUT_MS = { outlines: 20_000, small: 15_000 } as const;
 const zones = new Map<string, Promise<ZoneCollection>>();
 const barrios = new Map<string, Promise<AdminFeature[]>>();
 const places = new Map<string, Promise<PlaceFeature[]>>();
+const leisure = new Map<string, Promise<PlaceFeature[]>>();
 
 /** The zones of the map (D-200): every municipio, with Madrid capital by its districts. */
 export function fetchZones(): Promise<ZoneCollection> {
@@ -47,6 +49,17 @@ export function fetchBarrios(districtId: string): Promise<AdminFeature[]> {
 }
 
 /**
+ * Every barrio of Madrid capital (about 90 KB), for a search over the capital (D-238): the overview
+ * paints them instead of its districts. Seen from as far as the districts, so simplified as much.
+ */
+export function fetchCapitalBarrios(): Promise<AdminFeature[]> {
+  return once(barrios, "capital", async () => {
+    const body = await createApi().adminUnits("barrio", SIMPLIFY_M.distrito, undefined, { timeoutMs: TIMEOUT_MS.outlines });
+    return body.data.features;
+  });
+}
+
+/**
  * A zone's places of some categories, for «Todos los centros» and the key points: one request per
  * zone with every category and subcategory both need (/places takes several categories since
  * 12 nov), shared by both. Only the pairs of category and subcategory asked for are kept (askedFor),
@@ -63,4 +76,17 @@ export async function fetchZonePlaces(adminUnitId: string, categories: readonly 
     return found.filter((place) => askedFor(queries, place));
   });
   return all.filter((place) => categories.includes(place.properties.category));
+}
+
+/**
+ * One leisure type of a zone (D-236), asked apart and only when its button is pressed: in the shared
+ * request the four leisure types took Centro from about 400 places to almost 3.000 for everyone
+ * (review of PR #62, R-07). Kept per zone and type for the visit, like the shared request.
+ */
+export function fetchLeisurePlaces(adminUnitId: string, key: LeisureFacilityKey): Promise<PlaceFeature[]> {
+  const { category, subcategories } = leisureQuery(key);
+  return once(leisure, `${adminUnitId}:${key}`, async () => {
+    const found = await createApi().places({ category, adminUnitId, subcategories }, { timeoutMs: TIMEOUT_MS.small });
+    return found.filter((place) => place.properties.category === category && subcategories.includes(place.properties.subcategory));
+  });
 }
