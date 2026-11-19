@@ -2363,7 +2363,20 @@
           "$ref": "#/$defs/SourcedValue"
         },
         "pem_m2": {
-          "$ref": "#/$defs/SourcedValue"
+          "$ref": "#/$defs/SourcedValue",
+          "description": "D-252: the calculator's PEM, an assumption (midpoint of the CRG of the Comunidad de Madrid, bloque abierto, área 1)"
+        },
+        "pem_permits_m2": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourcedValue"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252: the PEM the building permits declare (CM dataset cm_visados_presupuesto_obra, from the Feature Store): the low reference"
         },
         "rent_m2_month": {
           "$ref": "#/$defs/SourcedValue"

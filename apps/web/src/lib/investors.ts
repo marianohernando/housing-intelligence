@@ -450,7 +450,8 @@ export const CALCULATOR_TEXT = {
   costCaution:
     "El coste de construcción es el dato que más cambia la cuenta. Partimos de una referencia pública (supuesto) y la puedes cambiar: el PEM se multiplica solo por la superficie edificable sobre rasante.",
   costReferencesTitle: "De dónde sale el coste y cuánto varía",
-  costReferences: costReferenceLines(),
+  /** With the sheet's figure of the permits (the CM dataset, from the API) when there is one */
+  costReferences: (permits?: SourcedValue | null) => costReferenceLines(permits),
   revenue: "Ingresos por ventas",
   construction: "Construcción (PEM × coeficiente)",
   salesCosts: "Comercialización y otros",
@@ -518,15 +519,24 @@ function thresholdsText(): string {
   return `Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el ${floor} y el objetivo; «No sale» por debajo del ${floor}. La tasación hipotecaria pide al menos un ${pctText(M.appraisalMinMarginPct)} en vivienda de primera residencia, sin financiación ni Impuesto sobre Sociedades (Orden ECO/805/2003, disposición adicional sexta).${scenarios}`;
 }
 
-/** D-252 (D4): the three public references of the construction cost, from the versioned tables. */
-function costReferenceLines(): { text: string; href: string; link: string }[] {
+/**
+ * D-252 (D4): the three public references of the construction cost. The permits' PEM is the
+ * CM dataset's figure as the API reads it from the Feature Store, with its source; without it,
+ * the same versioned figure. The others come from the versioned tables.
+ */
+function costReferenceLines(permits?: SourcedValue | null): { text: string; href: string; link: string; mark?: SourcedValue["mark"] }[] {
   const { crg, st } = M.costReferences;
   const types = crg.types.map((t) => `${t.label.charAt(0).toLowerCase()}${t.label.slice(1)}, ${plain(t.low)}–${plain(t.high)} €/m²`);
+  const known = permits?.value !== null && permits?.value !== undefined;
+  const value = known ? Math.round(permits?.value ?? 0) : M.pem.eurM2;
+  const year = (known && permits?.source.period) || String(M.pem.year);
+  const source = known && permits ? ` Fuente: ${permits.source.text}.` : "";
   return [
     {
-      text: `PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (${M.pem.year}): ${plain(M.pem.eurM2)} €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja.`,
+      text: `PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (${year}): ${plain(value)} €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja.${source.replace(/\.\.$/, ".")}`,
       href: M.pem.url,
       link: "Ver los visados",
+      mark: "dato",
     },
     {
       text: `Costes de Referencia General de la Comunidad de Madrid (actualizados al año ${crg.year}), en Madrid (área ${crg.area}): ${types.join("; ")}. Son PEM, sin gastos generales ni beneficio industrial, y los costes han subido desde entonces. La calculadora parte del punto medio del bloque abierto: ${plain(crg.defaultPem)} €/m² (supuesto).`,

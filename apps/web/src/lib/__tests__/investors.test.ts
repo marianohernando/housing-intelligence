@@ -294,7 +294,7 @@ describe("the cost and its break-even (D-252)", () => {
   });
 
   it("says where the cost comes from and how much it varies, without «mínimo oficial» (D-252, D4)", () => {
-    const [permits, crg, st] = CALCULATOR_TEXT.costReferences;
+    const [permits, crg, st] = CALCULATOR_TEXT.costReferences();
     expect(permits?.text).toContain(`${M.pem.eurM2} €/m²`);
     expect(crg?.text).toContain("bloque abierto, 871–1.064 €/m²");
     expect(crg?.text).toContain(`punto medio del bloque abierto: ${M.costReferences.crg.defaultPem} €/m² (supuesto)`);
@@ -302,5 +302,10 @@ describe("the cost and its break-even (D-252)", () => {
     expect(st?.text).toContain("según la prensa");
     expect(st?.text).toContain("No sabemos si incluye gastos generales y beneficio"); // R-03
     expect(JSON.stringify(CALCULATOR_TEXT)).not.toContain("Mínimo oficial");
+    // The permits' PEM as the API reads it from the CM dataset, with its source
+    const [fromApi] = CALCULATOR_TEXT.costReferences(value(644, "€/m²"));
+    expect(fromApi?.text).toContain("(2025): 644 €/m²");
+    expect(fromApi?.text).toContain("Fuente: Fuente de prueba.");
+    expect(fromApi?.mark).toBe("dato");
   });
 });

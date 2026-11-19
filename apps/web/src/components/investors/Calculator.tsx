@@ -116,14 +116,14 @@ function PartsList({ title, parts }: { title: string; parts: AssumptionPart[] })
 export const COST_SCOPE_ID = "que-incluye-el-coste";
 
 /** D-252 (D4): the three public references of the construction cost and what each one is. */
-function CostReferences() {
+function CostReferences({ permits }: { permits?: SourcedValue | null }) {
   return (
     <details className={styles.parts}>
       <summary>{TEXT.costReferencesTitle}</summary>
       <ul>
-        {TEXT.costReferences.map((ref) => (
+        {TEXT.costReferences(permits).map((ref) => (
           <li key={ref.href}>
-            {ref.text}{" "}
+            {ref.mark && <MarkTag mark={ref.mark} />} {ref.text}{" "}
             <a href={ref.href} target="_blank" rel="noopener noreferrer">
               {ref.link}
               <span className="visually-hidden"> (se abre en una pestaña nueva)</span>
@@ -411,7 +411,7 @@ export default function Calculator({ defaults, parcels, remaining, parcel, metho
             <Info size={18} aria-hidden="true" />
             <span>{TEXT.costCaution}</span>
           </p>
-          <CostReferences />
+          <CostReferences permits={defaults.pem_permits_m2} />
           <CostScope parts={defaults.cost_parts} />
           <NumberField name="cost_coefficient" label={TEXT.coefficient} unit="×" source={defaults.cost_coefficient} {...common} {...err("cost_coefficient")} />
           <PartsList title={TEXT.coefficientParts} parts={defaults.cost_parts} />

@@ -247,7 +247,15 @@ class ViabilityDefaults(BaseModel):
     sale_price_m2: SourcedValue
     new_build_premium_pct: SourcedValue
     rent_m2_month: SourcedValue
-    pem_m2: SourcedValue
+    pem_m2: SourcedValue = Field(
+        description="D-252: the calculator's PEM, an assumption (midpoint of the CRG of the "
+        "Comunidad de Madrid, bloque abierto, área 1)"
+    )
+    pem_permits_m2: SourcedValue | None = Field(
+        default=None,
+        description="D-252: the PEM the building permits declare (CM dataset "
+        "cm_visados_presupuesto_obra, from the Feature Store): the low reference",
+    )
     cost_coefficient: SourcedValue
     cost_parts: list[AssumptionPart]
     sales_costs_pct: SourcedValue

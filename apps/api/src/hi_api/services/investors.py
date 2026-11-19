@@ -647,6 +647,7 @@ def defaults_block(
         new_build_premium_pct=prices.new_build_premium_pct,
         rent_m2_month=prices.rent_m2_month,
         pem_m2=reference_pem(pem),
+        pem_permits_m2=pem,
         cost_coefficient=assumption(
             v.COST_COEFFICIENT,
             "×",

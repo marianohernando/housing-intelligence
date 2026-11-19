@@ -209,7 +209,7 @@ export default function InvestorMethod() {
         <strong>{CALCULATOR_TEXT.costReferencesTitle}.</strong> El coste de construcción es el dato que más cambia la cuenta:
       </p>
       <ul className={styles.text}>
-        {CALCULATOR_TEXT.costReferences.map((ref) => (
+        {CALCULATOR_TEXT.costReferences().map((ref) => (
           <li key={ref.href}>
             {ref.text} <External href={ref.href}>{ref.link}</External>
           </li>

@@ -537,7 +537,11 @@ export interface ViabilityDefaults {
   loan_years: SourcedValue;
   ltv_pct: SourcedValue;
   new_build_premium_pct: SourcedValue;
-  pem_m2: SourcedValue;
+  pem_m2: SourcedValue1;
+  /**
+   * D-252: the PEM the building permits declare (CM dataset cm_visados_presupuesto_obra, from the Feature Store): the low reference
+   */
+  pem_permits_m2?: SourcedValue | null;
   rent_m2_month: SourcedValue;
   sale_price_m2: SourcedValue;
   sales_cost_parts: SalesCostParts;
@@ -582,6 +586,23 @@ export interface AssumptionPart {
   label: Label;
   pct: Pct;
   source: Source2;
+}
+/**
+ * A figure with its unit, mark and source; `low` and `high` when the source gives a range.
+ */
+export interface SourcedValue1 {
+  confidence?: Confidence;
+  feature_id?: FeatureId;
+  high?: High;
+  low?: Low;
+  mark: ValueMark;
+  /**
+   * Why value is missing; never 0 for unknown
+   */
+  null_reason?: NullReason | null;
+  source: FieldSource;
+  unit: Unit;
+  value: Value;
 }
 /**
  * Who lives there. Each figure at the finest level published (its `source.level`).
