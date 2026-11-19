@@ -47,7 +47,8 @@ def test_viability_land_per_m2_and_demand_in_percent() -> None:
     base = data.scenarios[0]
     assert base.land == pytest.approx(2_200_000)
     assert base.margin_pct == pytest.approx(12.5)
-    assert base.verdict is not None and base.verdict.value == "ajustar"
+    # D-252: under the 15 % floor (the appraisal asks 18 % for first homes)
+    assert base.verdict is not None and base.verdict.value == "no_sale"
     assert data.demand is not None
     assert data.demand.threshold_pct == pytest.approx(30)
     assert data.demand.monthly_rent == pytest.approx(80 * 15)

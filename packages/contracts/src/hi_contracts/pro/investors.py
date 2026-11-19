@@ -17,6 +17,8 @@ from hi_contracts.public.common import DatasetRef, ZoneRef
 from hi_contracts.public.gaps import GapRow
 
 __all__ = [
+    "AmbitPhase",
+    "AmbitStatus",
     "AssumptionPart",
     "BreakEven",
     "Buildability",
@@ -38,11 +40,14 @@ __all__ = [
     "ParcelBlock",
     "ParcelCandidate",
     "ParcelCandidates",
+    "ParcelCaution",
+    "ParcelCautionKey",
     "ParcelContext",
     "ParcelInput",
     "ParcelSheet",
     "ParcelSource",
     "ParcelUnits",
+    "PlanUseFigure",
     "PlanningBlock",
     "PlanningInstrument",
     "PlanningKind",
@@ -298,7 +303,7 @@ class ViabilityRequest(BaseModel):
     new_build_premium_pct: float = Field(default=0, ge=-20, le=50)
     rent_m2_month: float | None = Field(default=None, ge=1, le=100)
     pem_m2: float = Field(ge=200, le=5_000)
-    cost_coefficient: float = Field(default=1.36, ge=1, le=3)
+    cost_coefficient: float = Field(default=1.3575, ge=1, le=3)
     land_eur: float | None = Field(default=None, ge=0, le=1_000_000_000)
     land_eur_m2: float | None = Field(
         default=None, ge=0, le=30_000, description="€ per m² buildable"
@@ -306,7 +311,7 @@ class ViabilityRequest(BaseModel):
     sales_costs_pct: float = Field(default=8, ge=0, le=30)
     target_margin_pct: float = Field(default=20, ge=1, le=50)
     adjust_floor_pct: float = Field(
-        default=10, ge=0, le=50, description="Lowered to the target margin when above it"
+        default=15, ge=0, le=50, description="Lowered to the target margin when above it"
     )
     demand: DemandRequest | None = None
 
@@ -531,6 +536,53 @@ class UseFigure(BaseModel):
     residential: bool = Field(description="Whether the calculator can use it (housing only)")
 
 
+class PlanUseFigure(BaseModel):
+    """D-252: what the plan allows of one use on the urban parcel (USOS_SUELO, table 4 for the
+    principal use and table 5 for the others). The total the plan allows, not what is left; the
+    urban parcel may not be the cadastral one."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    use: str = Field(examples=["RESIDENCIAL VIVIENDA COLECTIVA"])
+    use_class: UseClass
+    use_ownership: UseOwnership | None = None
+    principal: bool = Field(description="Table 4, «uso cualificado principal»; else table 5")
+    value_m2: float | None = Field(
+        default=None, description="m²; with a coefficient, coefficient × urban parcel area"
+    )
+    coefficient: float | None = Field(default=None, description="m²/m² when the plan gives it so")
+    assumed: bool = Field(default=False, description="value_m2 computed from the coefficient")
+
+
+class AmbitPhase(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    label: str = Field(examples=["Obras de urbanización"])
+    state: str = Field(examples=["Sin Iniciar", "Finalizado", "No Necesita", "PGOUM-85"])
+
+
+class AmbitStatus(BaseModel):
+    """D-252: the state of the planning area, as the Ayuntamiento publishes it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    code: str = Field(description="The code in the Ayuntamiento's list")
+    tracked: bool = Field(description="False: the Ayuntamiento does not publish its state")
+    pending: bool = Field(description="Planning, management or urbanization not finished")
+    phases: list[AmbitPhase] = Field(default_factory=list[AmbitPhase])
+    veda_stage: (
+        Literal[
+            "pendiente_sectorizacion",
+            "pendiente_planeamiento",
+            "gestion_urbanizacion",
+            "edificacion",
+        ]
+        | None
+    ) = None
+    as_of: date
+    url: HttpUrl
+
+
 class PlanningBlock(BaseModel):
     """«Planeamiento»: the Ayuntamiento's planning at the parcel's reference point."""
 
@@ -546,6 +598,17 @@ class PlanningBlock(BaseModel):
         default=None, description="D-252: dotacional público or privado, when the plan says it"
     )
     urban_parcel: str | None = Field(examples=["MANZANA B"])
+    urban_parcel_area_m2: float | None = Field(
+        default=None, description="D-252: the area of the urban parcel's polygon in the plan"
+    )
+    plan_uses: list[PlanUseFigure] | None = Field(
+        default=None,
+        description="D-252: what the plan allows by use on the urban parcel; [] when it publishes "
+        "nothing, null when it could not be read",
+    )
+    ambit: AmbitStatus | None = Field(
+        default=None, description="D-252: the state of the planning area; null for a norma zonal"
+    )
     instrument: PlanningInstrument | None
     sheet_url: HttpUrl | None = Field(
         description="The official record: the instrument's, or the article of the Normas "
@@ -617,7 +680,23 @@ class ParcelContext(BaseModel):
 
 # planning: the Ayuntamiento or its layer of instruments did not answer; buildability: the Z of
 # norma zonal 1 could not be read; context: the barrio (the database)
-DegradedPart = Literal["catastro", "planning", "buildability", "context"]
+DegradedPart = Literal["catastro", "planning", "buildability", "context", "plan_uses"]
+
+
+class ParcelCautionKey(StrEnum):
+    """D-252: what keeps the sheet's figures from passing for free housing ready to build."""
+
+    OTRO_USO = "otro_uso"
+    AMBITO_PENDIENTE = "ambito_pendiente"
+    VIVIENDA_PROTEGIDA = "vivienda_protegida"
+    UNIFAMILIAR = "unifamiliar"
+
+
+class ParcelCaution(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    key: ParcelCautionKey
+    text: str
 
 
 class ParcelSheet(BaseModel):
@@ -637,6 +716,14 @@ class ParcelSheet(BaseModel):
     notices: list[str]
     degraded: list[DegradedPart] = Field(
         default_factory=list[DegradedPart], description="The parts that could not be read now"
+    )
+    cautions: list[ParcelCaution] = Field(
+        default_factory=list[ParcelCaution], description="D-252: shown before the figures"
+    )
+    public_land: LandItem | None = Field(
+        default=None,
+        description="D-252: the parcel as public land of the Portal del Suelo in its barrio "
+        "(owner, regime, urbanization), when the barrio's sheet lists it",
     )
     fallback: Literal["demo_snapshot"] | None = Field(
         default=None, description="Served from the saved demo sheet because a source failed"

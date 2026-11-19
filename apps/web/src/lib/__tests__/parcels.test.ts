@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ParcelBlock, PlanningBlock, UseFigure } from "@/contracts/parcel_sheet_response";
 import { ApiError, createApi, parcelPath } from "@/lib/api";
 import {
+  ambitText,
   areaText,
   buildabilityMark,
   buildableText,
@@ -12,9 +13,11 @@ import {
   degradedLines,
   divisionText,
   instrumentText,
-  otherPlanningUse,
   parcelHref,
   parcelRc,
+  planUseSource,
+  planUseText,
+  publicLandText,
   qualificationText,
   SEARCH_TEXT,
   SHEET_TEXT,
@@ -98,7 +101,9 @@ describe("«Busca tu parcela» (D-250)", () => {
   it("says the parcel in words, never 0 for unknown and never a unit by its floor", () => {
     expect(areaText(2843)).toBe("2.843 m²");
     expect(areaText(null)).toBe("Sin dato");
-    expect(vacantText({ ...PARCEL, is_vacant: true })).toBe("Sí, sin edificar");
+    // D-252 (audit B3): «solar» is a legal condition with services; this is only «sin edificar»
+    expect(SHEET_TEXT.vacant).toBe("¿Está sin edificar? (según su uso en el Catastro)");
+    expect(vacantText({ ...PARCEL, is_vacant: true })).toBe("Sí");
     expect(vacantText({ ...PARCEL, is_vacant: null })).toBe("Sin dato");
     expect(divisionText(PARCEL)).toBe("Sí: 6 inmuebles (5 residencial, 314 m²; 1 comercial, 62 m²)");
     expect(divisionText({ ...PARCEL, horizontal_division: false, units: null })).toBe("No");
@@ -179,12 +184,31 @@ describe("Edificabilidad por uso (D-252)", () => {
     expect(landUseNote(planning({}))).toBeNull();
   });
 
-  it("warns on a norm's assumption only when the plan gives another use than housing", () => {
-    expect(otherPlanningUse(planning({ use_class: "industrial" }))).toBe("industrial");
-    expect(otherPlanningUse(planning({ use_class: "residencial" }))).toBeNull();
-    expect(otherPlanningUse(planning({ use_class: "sin_uso" }))).toBeNull();
-    expect(otherPlanningUse(null)).toBeNull();
-    expect(SHEET_TEXT.assumedOtherUse("industrial")).toContain("uso industrial, no de vivienda");
+  it("gives the plan's m² by use on the urban parcel, a coefficient times its area as an assumption", () => {
+    const housing = { use: "RESIDENCIAL VIVIENDA COLECTIVA", use_class: "residencial" as const, principal: true, value_m2: 60230.88 };
+    expect(planUseText(housing, 16600.2)).toBe("Residencial: 60.231 m²");
+    expect(planUseSource(housing)).toBe("Uso principal: residencial vivienda colectiva");
+    const offices = { use: "SERVICIOS TERCIARIOS", use_class: "terciario" as const, principal: false, value_m2: 1200, coefficient: 1.2, assumed: true };
+    expect(planUseText(offices, 1000)).toBe("Terciario: 1.200 m² (1,2 m²/m² × 1.000 m² de la parcela urbanística: supuesto)");
+    expect(planUseSource(offices)).toBe("Otro uso: servicios terciarios");
+    expect(SHEET_TEXT.planUsesTitle("MANZANA B")).toBe("Según el plan, la parcela urbanística MANZANA B tiene:");
+    expect(SHEET_TEXT.planUsesCaveats).toContain("no lo que queda por construir");
+    expect(SHEET_TEXT.planUsesCaveats).toContain("art. 7.2.8");
+  });
+
+  it("says the state of the planning area, or that the Ayuntamiento does not publish it", () => {
+    const base = { code: "APR.04.09", tracked: true, pending: true, as_of: "2026-07-01", url: "https://datos.madrid.es/" };
+    const phases = ["Planeamiento", "Gestión", "Proyecto de urbanización", "Obras de urbanización"].map((label) => ({ label, state: "Sin Iniciar" }));
+    expect(ambitText({ ...base, phases, veda_stage: "pendiente_planeamiento" })).toBe(
+      "Planeamiento: sin iniciar · Gestión: sin iniciar · Proyecto de urbanización: sin iniciar · Obras de urbanización: sin iniciar · VEDA: pendiente de planeamiento de desarrollo",
+    );
+    expect(ambitText({ ...base, tracked: false, pending: false, phases: [] })).toBe("El Ayuntamiento no publica su estado.");
+  });
+
+  it("says who offers public land and how, with the cautions of D-248", () => {
+    const land = { kind: "parcela" as const, code: "00000002M", name: "Depósito 2", buildable_m2: 32697, regime: "venta", manager: "Metro de Madrid", stage: "sin_urbanizar" };
+    expect(publicLandText(land)).toBe("Parcela del Portal del Suelo de la Comunidad de Madrid: En venta, la ofrece Metro de Madrid, sin urbanizar.");
+    expect(publicLandText({ ...land, regime: "concesion", manager: null, stage: null })).toMatch(/^Parcela del Portal del Suelo de la Comunidad de Madrid: En concesión, derecho de superficie o alquiler\. Se ofrece en concesión/);
   });
 
   it("gives each source's figure with its own use and source, never split", () => {

@@ -7,6 +7,7 @@ import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/inve
 
 import {
   breakEvenFreeText,
+  roughMoney,
   breakEvenText,
   breakEvenValue,
   CALCULATOR_TEXT,
@@ -35,6 +36,7 @@ import {
   viabilityRequest,
   withoutMark,
 } from "../investors";
+import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
 // Test fixture: figures shaped as GET /api/v1/investors/zones/{id} gives them (Pinar del Rey, 19 nov)
 function value(v: number | null, unit: string, mark: SourcedValue["mark"] = "dato"): SourcedValue {
@@ -114,7 +116,11 @@ describe("the list of barrios", () => {
 
   it("says a planning area's situation and type of home in words", () => {
     const area = { kind: "ambito", code: "APR.16.04", name: "UVA de Hortaleza", buildable_m2: 26322, stage: "edificacion", use: "colectiva" };
-    expect(areaFacts(area)).toEqual(["En fase de edificación: se puede construir ya", "vivienda colectiva"]);
+    // D-252 (audit B10): never «se puede construir ya»
+    expect(areaFacts(area)).toEqual([
+      "En fase de edificación, según el Ayuntamiento: no quiere decir que se pueda construir ya (hace falta licencia)",
+      "vivienda colectiva",
+    ]);
     expect(areaFacts({ ...area, stage: "otra", use: null })).toEqual([]);
     expect(areaFacts(parcel("x", 1))).toEqual([]);
   });
@@ -266,8 +272,30 @@ describe("the cost and its break-even (D-252)", () => {
     for (const left of ["El suelo", "La urbanización", "El derribo", "Los sótanos", "La financiación", "El IVA", "imprevistos"]) {
       expect(CALCULATOR_TEXT.costExcludes.some((line) => line.includes(left))).toBe(true);
     }
-    expect(CALCULATOR_TEXT.pemAssumed("Visados de obra nueva (2025).")).toBe(
-      "Visados de obra nueva (2025). Es un dato oficial; usarlo como el coste de tu obra es un supuesto: el de tu obra puede ser otro.",
-    );
+  });
+
+  it("says the residual with three figures, never cents on assumptions (D-252, D7)", () => {
+    expect(roughMoney(66_958_000)).toBe("unos 67 millones de €");
+    expect(roughMoney(140_490_000)).toBe("unos 140 millones de €");
+    expect(roughMoney(1_234_567)).toBe("unos 1,23 millones de €");
+    expect(roughMoney(900_091)).toBe("unos 900.000 €");
+    expect(roughMoney(4297.4)).toBe("unos 4.300 €");
+  });
+
+  it("gives the semaphore and the scenarios from the code's figures (D-252, D8)", () => {
+    expect(CALCULATOR_TEXT.thresholds).toContain(`«Ajustar» entre el ${M.adjustFloorPct} % y el objetivo`);
+    expect(CALCULATOR_TEXT.thresholds).toContain("pesimista: −10 % y +15 %");
+    expect(CALCULATOR_TEXT.thresholds).toContain("Orden ECO/805/2003, disposición adicional sexta");
+    expect(CALCULATOR_TEXT.thresholds).toContain(`al menos un ${M.appraisalMinMarginPct} %`);
+  });
+
+  it("says where the cost comes from and how much it varies, without «mínimo oficial» (D-252, D4)", () => {
+    const [permits, crg, st] = CALCULATOR_TEXT.costReferences;
+    expect(permits?.text).toContain(`${M.pem.eurM2} €/m²`);
+    expect(crg?.text).toContain("bloque abierto, 871–1.064 €/m²");
+    expect(crg?.text).toContain(`punto medio del bloque abierto: ${M.costReferences.crg.defaultPem} €/m² (supuesto)`);
+    expect(st?.text).toContain("1.360 €/m²");
+    expect(st?.text).toContain("según la prensa");
+    expect(JSON.stringify(CALCULATOR_TEXT)).not.toContain("Mínimo oficial");
   });
 });

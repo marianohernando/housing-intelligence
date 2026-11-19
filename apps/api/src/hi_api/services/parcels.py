@@ -48,7 +48,11 @@ CATASTRO = "https://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero"
 CALLEJERO = f"{CATASTRO}/COVCCallejero.svc/json"
 COORDENADAS = f"{CATASTRO}/COVCCoordenadas.svc/json"
 SIGMA = "https://sigma.madrid.es/hosted/rest/services"
-USOS_SUELO = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/3/query"
+USOS_SUELO_SERVICE = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer"
+USOS_SUELO = f"{USOS_SUELO_SERVICE}/3/query"
+# D-252: the plan's buildable m² of the urban parcel, by its UBOV_ID (= CODIGO): table 4 for
+# the principal use («Uso cualificado principal»), table 5 for the others
+PLAN_USES = (f"{USOS_SUELO_SERVICE}/4/query", f"{USOS_SUELO_SERVICE}/5/query")
 PLANEAMIENTO = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/PLANEAMIENTO_URBANISTICO/MapServer/3/query"
 CONDICIONES = f"{SIGMA}/PGOUM97/PG_CONDICIONES_EDIFICACION/MapServer/6/query"
 CARTOCIUDAD = "https://www.cartociudad.es/geocoder/api/geocoder/candidates"
@@ -442,6 +446,14 @@ async def parcels_at_number(client: httpx.AsyncClient, address: TypedAddress) ->
 
 
 @dataclass(frozen=True)
+class PlanRow:
+    use: str | None
+    value: float | None
+    unit: str | None
+    principal: bool
+
+
+@dataclass(frozen=True)
 class PlanningRecord:
     """Our fields of the planning at a point, and which secondary layer did not answer."""
 
@@ -458,10 +470,14 @@ class PlanningRecord:
     observed_at: date
     instrument_failed: bool = False  # PLANEAMIENTO_URBANISTICO did not answer
     z_failed: bool = False  # the 1997 plan of building conditions did not answer (NZ 1 only)
+    urban_parcel_area_m2: float | None = None
+    # D-252: (use, figure, unit, principal) of tables 4 and 5; None when they did not answer
+    plan_rows: tuple[PlanRow, ...] | None = ()
+    uses_failed: bool = False
 
     @property
     def complete(self) -> bool:
-        return not (self.instrument_failed or self.z_failed)
+        return not (self.instrument_failed or self.z_failed or self.uses_failed)
 
 
 def clean(value: Any) -> str | None:
@@ -493,6 +509,40 @@ async def arcgis_point(
         return attributes
 
 
+async def arcgis_rows(
+    client: httpx.AsyncClient, url: str, where: str, fields: str
+) -> list[dict[str, Any]]:
+    """The attributes of every row of a table that match `where`."""
+    params = {"where": where, "outFields": fields, "returnGeometry": "false", "f": "json"}
+    payload = await get_json(client, "planning", url, params, SIGMA_TIMEOUT)
+    if not isinstance(payload, dict) or "error" in payload:
+        raise UpstreamError("planning", "ArcGIS error")
+    with parsing("planning"):
+        rows = [(f or {}).get("attributes") for f in payload.get("features") or []]
+        if any(not isinstance(r, dict) for r in rows):
+            raise TypeError("attributes")
+        return [r for r in rows if isinstance(r, dict)]
+
+
+async def plan_rows(client: httpx.AsyncClient, urban_parcel_id: int) -> tuple[PlanRow, ...]:
+    """D-252: tables 4 and 5 of the urban parcel, in parallel."""
+    where = f"CODIGO={int(urban_parcel_id)}"
+    principal, others = await asyncio.gather(
+        *(arcgis_rows(client, url, where, "USO,EDIFICABIL,UNIDAD") for url in PLAN_USES)
+    )
+    with parsing("planning"):
+        return tuple(
+            PlanRow(
+                clean(r.get("USO")),
+                catastro_number(r.get("EDIFICABIL")),
+                clean(r.get("UNIDAD")),
+                main,
+            )
+            for rows, main in ((principal, True), (others, False))
+            for r in rows
+        )
+
+
 FAILED = object()
 
 
@@ -516,14 +566,21 @@ def instrument_url(value: Any) -> str | None:
 async def fetch_planning(client: httpx.AsyncClient, x: float, y: float) -> PlanningRecord | None:
     """The planning at the parcel's reference point, its three layers in parallel; None when no
     layer covers it. The Z of norma zonal 1 is asked always (one cheap call) and read only there."""
-    uses, instrument, conditions = await asyncio.gather(
-        arcgis_point(
+
+    async def uses_and_rows() -> tuple[dict[str, Any] | None, Any]:
+        uses = await arcgis_point(
             client,
             USOS_SUELO,
             x,
             y,
-            "AMB_TX_ETIQ,AMB_TX_DENOM,ZURV_TX_NOMBRE,UBOV_TX_ETIQ,USP_TX_DENOM",
-        ),
+            "AMB_TX_ETIQ,AMB_TX_DENOM,ZURV_TX_NOMBRE,UBOV_TX_ETIQ,USP_TX_DENOM,UBOV_ID,SHAPE.STArea()",
+        )
+        ubov = catastro_number((uses or {}).get("UBOV_ID"))
+        rows = () if ubov is None else await optional(plan_rows(client, int(ubov)))
+        return uses, rows
+
+    (uses, rows), instrument, conditions = await asyncio.gather(
+        uses_and_rows(),
         optional(
             arcgis_point(
                 client, PLANEAMIENTO, x, y, "EXP_TX_NUMERO,EXP_TX_DENOM,FIG_TX_ETIQ,ENLACE"
@@ -552,6 +609,9 @@ async def fetch_planning(client: httpx.AsyncClient, x: float, y: float) -> Plann
             observed_at=today(),
             instrument_failed=instrument is FAILED,
             z_failed=z_layer and conditions is FAILED,
+            urban_parcel_area_m2=catastro_number(uses.get("SHAPE.STArea()")),
+            plan_rows=None if rows is FAILED else rows,
+            uses_failed=rows is FAILED,
         )
 
 

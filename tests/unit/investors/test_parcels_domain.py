@@ -12,6 +12,7 @@ from hi_domain.parcels import (
     OfficialFigure,
     Unit,
     ZoneCode,
+    ambit_state,
     catastro_number,
     classify_planning,
     classify_use,
@@ -19,7 +20,9 @@ from hi_domain.parcels import (
     initial_buildability,
     is_vacant,
     normalize_rc,
+    parcel_cautions,
     parse_address,
+    plan_use,
     same_street,
     street_address,
     summarize_units,
@@ -377,3 +380,107 @@ def test_every_official_figure_goes_by_use_and_none_is_split() -> None:
     assert only_industrial.value_m2 is None and len(only_industrial.by_use) == 1
     assumed = initial_buildability(area_m2=502, planning_code="8.3.a", use=None, rustic=False)
     assert assumed.by_use == ()
+
+
+# --- D-252 (audit): the plan by use, the state of the area and the cautions ---
+
+
+def test_the_plan_gives_m2_or_m2_per_m2_by_use() -> None:
+    housing = plan_use("RESIDENCIAL VIVIENDA COLECTIVA  ", 60230.88, "m²", True, 16600.2)
+    assert housing is not None
+    assert (housing.use, housing.use_class, housing.value_m2) == (
+        "RESIDENCIAL VIVIENDA COLECTIVA",
+        UseClass.RESIDENCIAL,
+        60230.88,
+    )
+    assert housing.principal and not housing.assumed and housing.coefficient is None
+    offices = plan_use("SERVICIOS TERCIARIOS", 1.2, "m²/m²", False, 1000.0)
+    assert offices is not None and offices.assumed and offices.coefficient == 1.2
+    assert offices.value_m2 == pytest.approx(1200.0)
+    assert plan_use("SERVICIOS TERCIARIOS", 1.2, "m²/m²", False, None).value_m2 is None  # type: ignore[union-attr]
+    assert plan_use("RESIDENCIAL", None, "m²", True, 100.0) is None  # the plan publishes none
+    assert plan_use(None, 10.0, "m²", True, 100.0) is None
+
+
+@pytest.mark.parametrize(
+    ("code", "found", "pending"),
+    [
+        ("APR.04.09", "APR.04.09", True),  # all four phases «Sin Iniciar»
+        ("APR.02.06", "APR.02.06", False),  # all «Finalizado»
+        ("UZPP.02.04-RP", "UZPp.02.04-RP", True),  # other case; works «En Ejecución»
+        ("APE.01.03", "APE.01.03/M", False),  # without its suffix, a single match
+    ],
+)
+def test_the_state_of_an_area_is_found_by_its_code(code: str, found: str, pending: bool) -> None:
+    state = ambit_state(code)
+    assert state is not None and state.code == found and state.tracked
+    assert state.pending is pending
+
+
+def test_a_norma_zonal_has_no_area_and_an_untracked_area_says_so() -> None:
+    assert ambit_state("8.3.a") is None
+    assert ambit_state(None) is None
+    centre = ambit_state("APE.00.01")  # the historic centre: the Ayuntamiento does not follow it
+    assert centre is not None and not centre.tracked and not centre.pending
+
+
+def test_an_official_figure_in_an_area_not_finished_is_a_reference() -> None:
+    """Almería 1 (APR.04.09): 32.697 m² of the Portal del Suelo, but nothing started."""
+    portal = OfficialFigure(
+        32697.0, "Portal del Suelo 4.0", "cm_parcelas_portal_suelo", "Residencial"
+    )
+    result = initial_buildability(
+        area_m2=20059,
+        planning_code="APR.04.09",
+        use="SIN USO PORMENORIZADO",
+        rustic=False,
+        official=[portal],
+        ambit=ambit_state("APR.04.09"),
+    )
+    assert result.value_m2 is None and result.kind is BuildabilityKind.SIN_DATO
+    assert "32.697 m² edificables de vivienda" in result.source
+    assert "APR.04.09 no está terminado" in result.source
+    assert len(result.by_use) == 1
+    done = initial_buildability(
+        area_m2=5000,
+        planning_code="APR.02.06",
+        use="RESIDENCIAL VIVIENDA COLECTIVA",
+        rustic=False,
+        official=[VEDA],
+        ambit=ambit_state("APR.02.06"),
+    )
+    assert done.kind is BuildabilityKind.OFICIAL and done.value_m2 == 13121.0
+
+
+def test_a_norm_assumption_for_another_use_is_never_housing() -> None:
+    """NZ 9 with an industrial use: the coefficient gives m² of that use, not of housing."""
+    result = initial_buildability(
+        area_m2=63244, planning_code="9.4.a", use="INDUSTRIAL", rustic=False
+    )
+    assert result.value_m2 is None and result.kind is BuildabilityKind.SIN_DATO
+    assert result.assumed_m2 is not None and result.assumed_m2 > 0
+    assert "de uso industrial, no de vivienda" in result.source
+    housing = initial_buildability(
+        area_m2=502, planning_code="8.3.a", use="RESIDENCIAL VIVIENDA UNIFAMILIAR", rustic=False
+    )
+    assert housing.kind is BuildabilityKind.SUPUESTO
+
+
+def test_the_cautions_say_what_the_figures_are_not() -> None:
+    keys = [k for k, _ in parcel_cautions("INDUSTRIAL", [], None)]
+    assert keys == ["otro_uso"]
+    pending = dict(parcel_cautions("SIN USO PORMENORIZADO", [], ambit_state("APR.04.09")))
+    text = pending["ambito_pendiente"]
+    assert text.startswith("El ámbito APR.04.09 no está terminado según el Ayuntamiento")
+    assert "obras de urbanización sin iniciar" in text and "arts. 18.2.c, 18.2.d y 21.1" in text
+    protected = OfficialFigure(9692.0, "VEDA", "x", "RESIDENCIAL VIVIENDA COLECTIVA PROTEGIDA")
+    keys = [k for k, _ in parcel_cautions("RESIDENCIAL VIVIENDA COLECTIVA", [protected], None)]
+    assert keys == ["vivienda_protegida"]
+    assert (
+        "Decreto 74/2009"
+        in dict(parcel_cautions("RESIDENCIAL PROTECCIÓN OFICIAL", [], None))["vivienda_protegida"]
+    )
+    assert [k for k, _ in parcel_cautions("RESIDENCIAL VIVIENDA UNIFAMILIAR", [], None)] == [
+        "unifamiliar"
+    ]
+    assert parcel_cautions("RESIDENCIAL VIVIENDA COLECTIVA", [], ambit_state("APR.02.06")) == []

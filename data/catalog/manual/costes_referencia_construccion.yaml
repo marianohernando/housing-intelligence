@@ -1,0 +1,36 @@
+# D-252: referencias públicas del coste de construcción para la versión para inversores. La
+# calculadora parte del punto medio del CRG de la Comunidad de Madrid (bloque abierto, área 1);
+# el PEM de los visados (pem_visados_cm.yaml) queda como referencia baja. Cifras copiadas a mano
+# de las fuentes, el día `consulted`; scripts/export_investor_data.py las pasa a
+# hi_domain.viability_data y a apps/web/src/lib/investorMethod.ts. No se calcula nada aquí.
+consulted: '2026-11-19'
+crg:
+  title: Método para la determinación de los costes de referencia de la edificación (Costes de Referencia
+    General, CRG)
+  publisher: Comunidad de Madrid (Dirección General de Vivienda y Rehabilitación)
+  url: https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf
+  license: No indicada; documento público de referencia de la Comunidad de Madrid
+  updated_year: 2022  # «(Actualizado al año 2022)», portada y anexo 1
+  area: 1  # Madrid capital: área geográfica 1, coeficiente de situación 1,00 (p. 3 y anexo 4)
+  area_coefficient: 1.0
+  nature: Presupuesto de ejecución material por m² construido; «no comprenden beneficio industrial ni
+    gastos generales» (apartado 1)
+  range_method: Intervalos que desechan el 10 % de valores más altos y el 10 % más bajos (apartado 4); la
+    calidad se aplica aparte, con un coeficiente
+  default: bloque_abierto
+  types:  # anexo 1, p. 6, «Coste de ejecución material (€/m² construido)», residencial colectiva
+    bloque_abierto: {label: Bloque abierto, low: 871, high: 1064}
+    manzana_cerrada: {label: Manzana cerrada, low: 856, high: 1046}
+    garaje_bajo_rasante: {label: Garaje o trastero bajo rasante, low: 482, high: 590}
+st:
+  title: Tendencias del Sector Inmobiliario (Sociedad de Tasación), diciembre de 2025, según la prensa
+  publisher: Sociedad de Tasación (nota recogida por Europa Press)
+  url: https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza
+  press_date: '2025-12-29'
+  period: diciembre de 2025
+  territory: España (media nacional)
+  eur_m2: 1360  # «El coste de construcción de obra nueva ha alcanzado los 1.360 euros por metro cuadrado»
+  above_ground_eur_m2: 1273
+  below_ground_eur_m2: 489
+  nature: Presupuesto de contrata (con gastos generales y beneficio industrial) entre los m² sobre rasante,
+    según notas anteriores de la misma serie; el informe original no lo hemos podido leer

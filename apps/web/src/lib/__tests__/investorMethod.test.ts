@@ -34,7 +34,14 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     const html = renderToStaticMarkup(createElement(InvestorMethod));
     expect(html).toContain('id="inversores"');
     const t = text();
-    expect(t).toContain(`${n(M.pem.eurM2)} €/m², ${M.pem.year}`);
+    // D-252: the PEM of reference (CRG midpoint), with the permits as the low reference
+    expect(t).toContain(`de ${n(M.costReferences.crg.defaultPem)} €/m², el punto medio del bloque abierto en Madrid`);
+    expect(t).toContain(`Comunidad de Madrid (${M.pem.year}): ${n(M.pem.eurM2)} €/m²`);
+    expect(n(M.costCoefficient)).toBe("1,3575");
+    expect(t).toContain(`el ICIO de Madrid es del ${n(M.icioPct)} % desde 2024`);
+    expect(t).toContain(`margen mínimo del ${n(M.appraisalMinMarginPct)} % en vivienda de primera residencia`);
+    expect(t).not.toContain("pero no una cifra de m²");
+    expect(t).not.toMatch(/\bsolar\b/);
     expect(t).toContain(`coeficiente de ${n(M.costCoefficient)}`);
     expect(t).toContain(`un ${n(M.salesCostsPct)} % de las ventas`);
     expect(t).toContain(`un ${n(M.targetMarginPct)} % de las ventas`);
@@ -51,8 +58,9 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
       expect(html).toContain(`href="${rule.url.replace(/&/g, "&amp;")}"`);
     }
     for (const f of M.nz1.factors) expect(t).toContain(`grado ${f.grado}º, ${n(f.value)}`);
-    const [, optimistic] = M.scenarios;
+    const [, optimistic, pessimistic] = M.scenarios;
     expect(t).toContain(`un ${n(optimistic?.pricePct ?? 0)} % más de precio de venta y de alquiler`);
+    expect(t).toContain(`un ${n(pessimistic?.costPct ?? 0)} % más de coste`);
     expect(t).toContain(`las normas zonales ${listed(M.withoutCoefficient)}, que no fijan una cifra`);
     const split = M.zonalNorms.find((r) => r.nz === M.split.nz)?.coefficients.find((c) => c.grado === M.split.grado);
     expect(t).toContain(`En el grado ${M.split.grado}º, ${n(split?.value ?? 0)} hasta ${n(M.split.limitM2)} m²`);

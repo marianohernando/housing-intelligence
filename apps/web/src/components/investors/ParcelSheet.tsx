@@ -11,6 +11,7 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { INVESTOR_TEXT, isoInWords, SHEET_TEXT as BARRIO_TEXT, today, uniqueDatasets } from "@/lib/investors";
 import {
+  ambitText,
   areaText,
   buildabilityMark,
   buildableText,
@@ -20,7 +21,9 @@ import {
   divisionText,
   instrumentText,
   LOOKUP_ERROR,
-  otherPlanningUse,
+  planUseSource,
+  planUseText,
+  publicLandText,
   qualificationText,
   sentence,
   SHEET_TEXT as TEXT,
@@ -117,6 +120,11 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
         </Fact>
         {planning.urban_parcel && <Fact label={TEXT.urbanParcel}>{planning.urban_parcel}</Fact>}
         {instrument && <Fact label={TEXT.instrument}>{instrument}</Fact>}
+        {planning.ambit && (
+          <Fact label={TEXT.ambit} note={planning.ambit.tracked ? TEXT.ambitAsOf(planning.ambit.code, isoInWords(planning.ambit.as_of)) : null}>
+            {ambitText(planning.ambit)}
+          </Fact>
+        )}
       </dl>
       <p className={own.links}>
         {planning.sheet_url && (
@@ -135,12 +143,40 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
   );
 }
 
+/** D-252 (audit D3): what the plan allows by use on the urban parcel (tables 4 and 5 of USOS_SUELO). */
+function PlanUses({ planning }: { planning: Sheet["planning"] }) {
+  if (!planning || planning.plan_uses === null || planning.plan_uses === undefined) return null;
+  const uses = planning.plan_uses;
+  return (
+    <>
+      <h3 className={styles.subhead}>{TEXT.byUseTitle}</h3>
+      {uses.length === 0 ? (
+        <p className={styles.note}>{TEXT.planUsesNone}</p>
+      ) : (
+        <>
+          <p>{TEXT.planUsesTitle(planning.urban_parcel)}</p>
+          <ul className={styles.landList}>
+            {uses.map((u) => (
+              <li key={`${u.principal}-${u.use}`}>
+                <strong>{planUseText(u, planning.urban_parcel_area_m2)}</strong>
+                <span className={styles.note}>{planUseSource(u)}</span>
+              </li>
+            ))}
+          </ul>
+          <p className={styles.note}>{TEXT.planUsesCaveats}</p>
+          <p className={styles.source}>{TEXT.planUsesSource}</p>
+        </>
+      )}
+    </>
+  );
+}
+
 /** Each source's figure with the use it gives (D-252): never split, never added up. */
 function ByUse({ figures }: { figures: Sheet["buildability"]["by_use"] }) {
   if (!figures || figures.length === 0) return <p className={styles.note}>{TEXT.byUseNone}</p>;
   return (
     <>
-      <h3 className={styles.subhead}>{TEXT.byUseTitle}</h3>
+      <h3 className={styles.subhead}>{TEXT.officialTitle}</h3>
       <ul className={styles.landList}>
         {figures.map((f) => (
           <li key={`${f.dataset_id}-${f.use}`}>
@@ -158,7 +194,6 @@ function ByUse({ figures }: { figures: Sheet["buildability"]["by_use"] }) {
 function BuildabilitySection({ sheet }: { sheet: Sheet }) {
   const b = sheet.buildability;
   const built = sheet.parcel.built_m2;
-  const otherUse = b.kind === "supuesto" ? otherPlanningUse(sheet.planning) : null;
   return (
     <Section id="edificabilidad" title={TEXT.sections.buildability}>
       <dl className={styles.figures}>
@@ -179,13 +214,14 @@ function BuildabilitySection({ sheet }: { sheet: Sheet }) {
         )}
       </dl>
       {b.article && b.article_url && <External href={b.article_url}>{TEXT.article(b.article)}</External>}
-      {otherUse && (
+      <PlanUses planning={sheet.planning} />
+      <ByUse figures={b.by_use} />
+      {sheet.public_land && (
         <p className={styles.caution}>
           <Info size={18} aria-hidden="true" />
-          <span>{TEXT.assumedOtherUse(otherUse)}</span>
+          <span>{publicLandText(sheet.public_land)}</span>
         </p>
       )}
-      <ByUse figures={b.by_use} />
       <p className={styles.note}>
         {TEXT.housingOnly} {TEXT.buildableEditable}
       </p>
@@ -287,13 +323,18 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
   const result = useParcel(rc14);
   const slow = useSlow(result.loading);
   const data = result.data?.data ?? null;
-  const start = useMemo<ParcelStart | undefined>(
-    () =>
-      data
-        ? { m2: data.buildability.value_m2 ?? null, mark: buildabilityMark(data.buildability.kind), help: TEXT.calculatorFrom(data.buildability.kind) }
-        : undefined,
-    [data],
-  );
+  const start = useMemo<ParcelStart | undefined>(() => {
+    if (!data) return undefined;
+    const cautions = (data.cautions ?? []).filter((c) => c.key === "vivienda_protegida" || c.key === "unifamiliar").map((c) => c.text);
+    if (data.public_land) cautions.push(publicLandText(data.public_land));
+    return {
+      m2: data.buildability.value_m2 ?? null,
+      mark: buildabilityMark(data.buildability.kind),
+      help: TEXT.calculatorFrom(data.buildability.kind),
+      cautions,
+      protectedHousing: (data.cautions ?? []).some((c) => c.key === "vivienda_protegida"),
+    };
+  }, [data]);
 
   useEffect(() => {
     const unfold = () => document.querySelectorAll("[data-print-page] details").forEach((d) => d.setAttribute("open", ""));
@@ -353,6 +394,12 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
           <p key={line} className={styles.caution} role="status">
             <Info size={18} aria-hidden="true" />
             <span>{line}</span>
+          </p>
+        ))}
+        {(sheet.cautions ?? []).map((c) => (
+          <p key={c.key} className={styles.caution} data-caution={c.key}>
+            <Info size={18} aria-hidden="true" />
+            <span>{c.text}</span>
           </p>
         ))}
       </header>

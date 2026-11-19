@@ -112,7 +112,7 @@ async function run() {
     await page.getByRole("heading", { level: 1 }).waitFor({ timeout: WAIT });
     await page.getByRole("heading", { name: "Resultado: tres escenarios" }).waitFor({ timeout: WAIT });
     // Without a land price there is no verdict: the residual land value of each scenario
-    await page.getByText(/^Lo máximo que se puede pagar por el suelo:/).first().waitFor({ timeout: WAIT });
+    await page.getByText(/^Lo máximo que se puede pagar por el suelo, antes de/).first().waitFor({ timeout: WAIT });
     if ((await page.getByText(/^(Sale|Ajustar|No sale)$/).count()) > 0) throw new Error("a verdict without a land price");
     await check(page, `${width}-ficha`, report, true);
     if (opts.shots) {

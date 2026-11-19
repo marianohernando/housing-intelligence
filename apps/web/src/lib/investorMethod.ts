@@ -25,7 +25,45 @@ export const INVESTOR_METHOD = {
     "year": 2025,
     "url": "https://datos.comunidad.madrid/dataset/1006022"
   },
-  "costCoefficient": 1.36,
+  "costReferences": {
+    "crg": {
+      "year": 2022,
+      "url": "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf",
+      "area": 1,
+      "defaultPem": 968,
+      "types": [
+        {
+          "key": "bloque_abierto",
+          "label": "Bloque abierto",
+          "low": 871,
+          "high": 1064
+        },
+        {
+          "key": "manzana_cerrada",
+          "label": "Manzana cerrada",
+          "low": 856,
+          "high": 1046
+        },
+        {
+          "key": "garaje_bajo_rasante",
+          "label": "Garaje o trastero bajo rasante",
+          "low": 482,
+          "high": 590
+        }
+      ]
+    },
+    "st": {
+      "eurM2": 1360,
+      "aboveGround": 1273,
+      "belowGround": 489,
+      "period": "diciembre de 2025",
+      "territory": "España (media nacional)",
+      "url": "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"
+    }
+  },
+  "costCoefficient": 1.3575,
+  "icioPct": 3.75,
+  "appraisalMinMarginPct": 18.0,
   "costParts": [
     {
       "label": "Gastos generales y beneficio industrial del constructor (de PEM a PEC)",
@@ -37,7 +75,7 @@ export const INVESTOR_METHOD = {
     },
     {
       "label": "Licencia, ICIO y tasas",
-      "pct": 5.0
+      "pct": 4.75
     },
     {
       "label": "Otros: seguro decenal, organismo de control, ensayos y acometidas",
@@ -60,7 +98,7 @@ export const INVESTOR_METHOD = {
     }
   ],
   "targetMarginPct": 20.0,
-  "adjustFloorPct": 10.0,
+  "adjustFloorPct": 15.0,
   "scenarios": [
     {
       "key": "base",
@@ -76,9 +114,9 @@ export const INVESTOR_METHOD = {
     },
     {
       "key": "pesimista",
-      "label": "Pesimista (−10 % precio, +5 % coste)",
+      "label": "Pesimista (−10 % precio, +15 % coste)",
       "pricePct": -10.0,
-      "costPct": 5.0
+      "costPct": 15.0
     }
   ],
   "homeM2": 80.0,

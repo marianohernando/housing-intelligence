@@ -46,7 +46,16 @@ from hi_domain import viability as v
 from hi_domain.gaps import es_number
 from hi_domain.geo.names import display_name
 from hi_domain.investors_pilot import PILOT_BARRIOS
-from hi_domain.viability_data import PEM_DATASET_URL, PEM_EUR_M2, PEM_YEAR
+from hi_domain.viability_data import (
+    CRG_BLOQUE_ABIERTO_HIGH,
+    CRG_BLOQUE_ABIERTO_LOW,
+    CRG_URL,
+    CRG_YEAR,
+    PEM_DATASET_URL,
+    PEM_EUR_M2,
+    PEM_YEAR,
+    REFERENCE_PEM_EUR_M2,
+)
 
 PILOT_TEXT = "Madrid capital dentro de la M-40"
 CITY = "28079"
@@ -605,6 +614,30 @@ def pem_value(values: Values, sources: Sources) -> SourcedValue:
     )
 
 
+def reference_pem(permits: SourcedValue) -> SourcedValue:
+    """D-252: the calculator's PEM, an assumption: the midpoint of the CRG of the Comunidad de
+    Madrid (bloque abierto, area 1); the PEM the permits declare is the low reference."""
+    low = ""
+    if permits.value is not None:
+        year = permits.source.period or str(PEM_YEAR)
+        low = (
+            f" El PEM medio que declaran los visados de obra nueva de viviendas en bloque "
+            f"({year}), {es_number(permits.value, 0)} €/m², es la referencia baja."
+        )
+    return SourcedValue(
+        value=float(REFERENCE_PEM_EUR_M2),
+        unit="€/m²",
+        mark=ValueMark.SUPUESTO,
+        source=FieldSource(
+            text=f"Supuesto: referencia de la Comunidad de Madrid de {CRG_YEAR}; los costes han "
+            f"subido desde entonces (Costes de Referencia General, bloque abierto en Madrid: "
+            f"{CRG_BLOQUE_ABIERTO_LOW}–{es_number(CRG_BLOQUE_ABIERTO_HIGH, 0)} €/m², punto "
+            f"medio).{low}",
+            url=HttpUrl(CRG_URL),
+        ),
+    )
+
+
 def defaults_block(
     prices: PricesBlock, income: SourcedValue, pem: SourcedValue
 ) -> ViabilityDefaults:
@@ -613,11 +646,11 @@ def defaults_block(
         sale_price_m2=prices.sale_m2,
         new_build_premium_pct=prices.new_build_premium_pct,
         rent_m2_month=prices.rent_m2_month,
-        pem_m2=pem,
+        pem_m2=reference_pem(pem),
         cost_coefficient=assumption(
             v.COST_COEFFICIENT,
             "×",
-            f"Supuesto: el PEM más un {round(coefficient * 100)} % (gastos generales y "
+            f"Supuesto: el PEM más un {es_number(coefficient * 100, 2)} % (gastos generales y "
             "beneficio, honorarios, licencia e ICIO, y otros; desglose debajo)",
         ),
         cost_parts=parts(v.COST_PARTS),

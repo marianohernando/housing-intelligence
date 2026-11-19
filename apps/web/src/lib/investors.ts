@@ -8,6 +8,7 @@ import type { DatasetRef, LandItem, SourcedValue, ViabilityDefaults } from "@/co
 import type { ViabilityRequest } from "@/contracts/viability_request";
 import type { BreakEven, Verdict } from "@/contracts/viability_response";
 import { formatEuros, formatNumber } from "@/lib/format";
+import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
 export const INVESTOR_TEXT = {
   plan: "Plan Inversor (acceso libre durante el concurso)",
@@ -147,7 +148,8 @@ export function landCaution(item: LandItem | null): string | null {
 
 /** The situation of a planning area of line A (D-247, VEDA), in words. */
 export const AREA_STAGE_TEXT: Record<string, string> = {
-  edificacion: "En fase de edificación: se puede construir ya",
+  // D-252 (B10): not «se puede construir ya»; it still takes a licence
+  edificacion: "En fase de edificación, según el Ayuntamiento: no quiere decir que se pueda construir ya (hace falta licencia)",
   gestion_urbanizacion: "En gestión o urbanización",
   pendiente_planeamiento: "Pendiente de planeamiento de desarrollo",
   pendiente_sectorizacion: "Pendiente de plan de sectorización",
@@ -206,7 +208,7 @@ export function initialFields(defaults: ViabilityDefaults, land: LandItem | null
     new_build_premium_pct: text(defaults.new_build_premium_pct.value, 1),
     rent_m2_month: text(defaults.rent_m2_month.value, 2),
     pem_m2: text(defaults.pem_m2.value, 0),
-    cost_coefficient: text(defaults.cost_coefficient.value, 2),
+    cost_coefficient: text(defaults.cost_coefficient.value, 4),
     land: "",
     land_unit: "total",
     sales_costs_pct: text(defaults.sales_costs_pct.value, 1),
@@ -422,10 +424,10 @@ export const CALCULATOR_TEXT = {
   withLand: "Con el precio del suelo que has puesto: margen sobre ventas, antes de financiación e impuestos.",
   withoutLand:
     "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale. La rentabilidad del alquiler cuenta el suelo a ese valor máximo, así que sale igual en los tres escenarios: compara el alquiler con el precio de venta.",
-  thresholds:
-    "Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %.",
-  pemAssumed: (source: string) =>
-    `${source.replace(/\.$/, "")}. Es un dato oficial; usarlo como el coste de tu obra es un supuesto: el de tu obra puede ser otro.`,
+  thresholds: thresholdsText(),
+  priceProtected:
+    "Precio libre del barrio: no vale para vivienda con protección pública, que tiene un precio máximo legal. Pon el de su régimen.",
+  excludedLink: "Qué no incluye esta cuenta",
   costReset: "Volver a nuestros supuestos de coste",
   costScopeTitle: "Qué incluye el coste y qué no",
   costIncludes: (parts: string[]) =>
@@ -446,7 +448,9 @@ export const CALCULATOR_TEXT = {
   breakEvenNone: "Ni gratis",
   costNow: "Coste de construcción que usamos ahora",
   costCaution:
-    "Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente. Además, el PEM del visado se reparte entre toda la superficie a construir (probablemente con sótanos y garajes) y aquí se multiplica solo por la edificable sobre rasante.",
+    "El coste de construcción es el dato que más cambia la cuenta. Partimos de una referencia pública (supuesto) y la puedes cambiar: el PEM se multiplica solo por la superficie edificable sobre rasante.",
+  costReferencesTitle: "De dónde sale el coste y cuánto varía",
+  costReferences: costReferenceLines(),
   revenue: "Ingresos por ventas",
   construction: "Construcción (PEM × coeficiente)",
   salesCosts: "Comercialización y otros",
@@ -486,6 +490,66 @@ export function breakEvenFreeText(be: BreakEven): string {
 /** «876 €/m² construido (PEM × coeficiente)»: what the scenarios count now. */
 export function costNowValue(be: BreakEven): string {
   return `${eurM2(be.current_construction_m2)} construido (PEM × coeficiente)`;
+}
+
+/** «1.064», «1,3575»: Spanish, no trailing zeros. Declarations: CALCULATOR_TEXT, above, uses them. */
+function plain(value: number): string {
+  return formatNumber(value, Number.isInteger(value) ? 0 : 4).replace(/(,\d*?)0+$/, "$1").replace(/,$/, "");
+}
+function pctText(value: number): string {
+  return `${plain(value)} %`;
+}
+function signed(value: number): string {
+  return `${value > 0 ? "+" : "−"}${pctText(Math.abs(value))}`;
+}
+
+/** The semaphore and the scenarios in words, from the code's figures (D-252, D8). */
+function thresholdsText(): string {
+  const floor = pctText(M.adjustFloorPct);
+  const best = M.scenarios.find((s) => s.key === "optimista");
+  const worst = M.scenarios.find((s) => s.key === "pesimista");
+  const scenarios =
+    best && worst
+      ? ` Optimista: ${signed(best.pricePct)} de precio y ${signed(best.costPct)} de coste; pesimista: ${signed(worst.pricePct)} y ${signed(worst.costPct)}.`
+      : "";
+  return `Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el ${floor} y el objetivo; «No sale» por debajo del ${floor}. La tasación hipotecaria pide al menos un ${pctText(M.appraisalMinMarginPct)} en vivienda de primera residencia, sin financiación ni Impuesto sobre Sociedades (Orden ECO/805/2003, disposición adicional sexta).${scenarios}`;
+}
+
+/** D-252 (D4): the three public references of the construction cost, from the versioned tables. */
+function costReferenceLines(): { text: string; href: string; link: string }[] {
+  const { crg, st } = M.costReferences;
+  const types = crg.types.map((t) => `${t.label.charAt(0).toLowerCase()}${t.label.slice(1)}, ${plain(t.low)}–${plain(t.high)} €/m²`);
+  return [
+    {
+      text: `PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (${M.pem.year}): ${plain(M.pem.eurM2)} €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja.`,
+      href: M.pem.url,
+      link: "Ver los visados",
+    },
+    {
+      text: `Costes de Referencia General de la Comunidad de Madrid (actualizados al año ${crg.year}), en Madrid (área ${crg.area}): ${types.join("; ")}. Son PEM, sin gastos generales ni beneficio industrial, y los costes han subido desde entonces. La calculadora parte del punto medio del bloque abierto: ${plain(crg.defaultPem)} €/m² (supuesto).`,
+      href: crg.url,
+      link: "Ver los costes de referencia",
+    },
+    {
+      text: `Sociedad de Tasación, ${st.period}, media de España: ${plain(st.eurM2)} €/m² de coste de construcción de obra nueva (${plain(st.aboveGround)} sobre rasante y ${plain(st.belowGround)} bajo rasante), según la prensa. No es un PEM: según la misma serie, es el presupuesto de contrata, con gastos generales y beneficio del constructor.`,
+      href: st.url,
+      link: "Ver la noticia",
+    },
+  ];
+}
+
+/** «unos 67 millones de €», «unos 900.000 €»: an estimate on assumptions never says its cents (D-252, D7). */
+export function roughMoney(amount: number): string {
+  if (amount === 0) return "0 €";
+  const digits = Math.abs(amount) >= 1 ? Math.floor(Math.log10(Math.abs(amount))) + 1 : 1;
+  const factor = 10 ** (digits - 3);
+  const rounded = Math.round(amount / factor) * factor;
+  if (Math.abs(rounded) >= MILLION) {
+    const millions = rounded / MILLION;
+    const decimals = Math.abs(millions) >= 100 ? 0 : Math.abs(millions) >= 10 ? 1 : 2;
+    return `unos ${formatNumber(millions, decimals).replace(/(,\d*?)0+$/, "$1").replace(/,$/, "")} millones de €`;
+  }
+  return `unos ${formatEuros(rounded)}`;
 }
 
 /** inversores.ficha.* of pitch/textos_web.md */

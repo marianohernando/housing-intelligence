@@ -26,6 +26,7 @@ from hi_api.services.parcels import (
     CARTOCIUDAD,
     CONDICIONES,
     COORDENADAS,
+    PLAN_USES,
     PLANEAMIENTO,
     USER_AGENT,
     USOS_SUELO,
@@ -729,7 +730,7 @@ def test_the_demo_sheets_are_our_fields_for_the_four_parcels() -> None:
         "9943003VK3794D",
     ]
     kinds = [d.buildability.kind.value for d in snapshot.parcels]
-    assert kinds == ["oficial", "oficial", "sin_dato", "supuesto"]
+    assert kinds == ["oficial", "sin_dato", "sin_dato", "supuesto"]  # D-252: APR.04.09 not started
     raw = parcel_sheet.DEMO_PATH.read_text(encoding="utf-8")
     for key in RAW_KEYS:
         assert f'"{key}"' not in raw
@@ -942,3 +943,90 @@ def test_the_ayuntamiento_out_of_the_time_budget_degrades_the_sheet(
     respx.get(url__startswith=CONDICIONES).mock(return_value=httpx.Response(200, json=arcgis(None)))
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
     assert sheet.planning is None and sheet.degraded == ["planning"]
+
+
+# --- D-252 (audit): the plan by use, the state of the area and the cautions ---
+
+USES_AREA = {
+    "AMB_TX_ETIQ": "APR.02.06",
+    "AMB_TX_DENOM": "MÉNDEZ ÁLVARO NORTE I",
+    "ZURV_TX_NOMBRE": "",
+    "UBOV_TX_ETIQ": "MANZANA B",
+    "USP_TX_DENOM": "RESIDENCIAL VIVIENDA COLECTIVA  ",
+    "UBOV_ID": 68695,
+    "SHAPE.STArea()": 16600.206998,
+}
+
+
+def table(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    return {"features": [{"attributes": r} for r in rows]}
+
+
+@respx.mock
+def test_the_plan_gives_the_urban_parcel_its_m2_by_use() -> None:
+    """MANZANA B: 60.230,88 m² residential (table 4) and 21.299,91 m² terciario (table 5)."""
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA)
+    principal = respx.get(url__startswith=PLAN_USES[0]).mock(
+        return_value=httpx.Response(
+            200,
+            json=table(
+                [
+                    {
+                        "USO": "RESIDENCIAL VIVIENDA COLECTIVA  ",
+                        "EDIFICABIL": 60230.88,
+                        "UNIDAD": "m²",
+                    }
+                ]
+            ),
+        )
+    )
+    respx.get(url__startswith=PLAN_USES[1]).mock(
+        return_value=httpx.Response(
+            200,
+            json=table(
+                [{"USO": "SERVICIOS TERCIARIOS    ", "EDIFICABIL": 21299.91, "UNIDAD": "m²"}]
+            ),
+        )
+    )
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    planning = sheet.planning
+    assert planning is not None and planning.urban_parcel_area_m2 == pytest.approx(16600.2, 0.01)
+    assert planning.plan_uses is not None
+    assert [(u.use_class.value, u.value_m2, u.principal) for u in planning.plan_uses] == [
+        ("residencial", 60230.88, True),
+        ("terciario", 21299.91, False),
+    ]
+    assert "CODIGO=68695" in str(principal.calls.last.request.url).replace("%3D", "=")
+    assert planning.ambit is not None and planning.ambit.code == "APR.02.06"
+    assert not planning.ambit.pending and len(planning.ambit.phases) == 4
+    assert "plan_uses" not in sheet.degraded
+
+
+@respx.mock
+def test_the_tables_failing_degrade_only_their_part_and_are_not_cached() -> None:
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA)
+    for url in PLAN_USES:
+        respx.get(url__startswith=url).mock(side_effect=httpx.ConnectError("down"))
+    response = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(response).data
+    assert sheet.planning is not None and sheet.planning.plan_uses is None
+    assert sheet.degraded == ["plan_uses", "context"]  # no database in the unit tests
+    assert response.headers["cache-control"] == "no-store"
+
+
+@respx.mock
+def test_an_industrial_norma_zonal_9_is_never_housing_and_says_so() -> None:
+    """The audit's B1: NZ 9 with an industrial use gave 151.786 m² «residential»."""
+    mock_catastro(respx.mock)
+    nz9 = USES_NZ8 | {
+        "AMB_TX_ETIQ": "9.4.a",
+        "AMB_TX_DENOM": "ZONA 9",
+        "USP_TX_DENOM": "INDUSTRIAL",
+    }
+    mock_sigma(respx.mock, nz9)
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert sheet.buildability.kind.value == "sin_dato" and sheet.buildability.value_m2 is None
+    assert "no de vivienda" in sheet.buildability.source
+    assert [c.key.value for c in sheet.cautions] == ["otro_uso"]

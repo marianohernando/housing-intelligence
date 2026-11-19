@@ -60,7 +60,7 @@
   "description": "POST /api/v1/investors/viability. Per built m² and in euros; percentages as 20 = 20 %.\nLand as a total or per m² buildable, not both; without it, the result is the residual land\nvalue (the most the land can cost).",
   "properties": {
     "adjust_floor_pct": {
-      "default": 10,
+      "default": 15,
       "description": "Lowered to the target margin when above it",
       "maximum": 50,
       "minimum": 0,
@@ -75,7 +75,7 @@
       "type": "number"
     },
     "cost_coefficient": {
-      "default": 1.36,
+      "default": 1.3575,
       "maximum": 3,
       "minimum": 1,
       "title": "Cost Coefficient",

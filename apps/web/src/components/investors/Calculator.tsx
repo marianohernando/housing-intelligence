@@ -8,7 +8,6 @@ import type { ScenarioOutcome, ViabilityResponse } from "@/contracts/viability_r
 import Button from "@/components/ui/Button";
 import { ApiError, createApi } from "@/lib/api";
 import { errorMessage } from "@/lib/errors";
-import { formatNumber } from "@/lib/format";
 import {
   breakEvenFreeText,
   breakEvenText,
@@ -27,6 +26,7 @@ import {
   money,
   parseNumber,
   percent,
+  roughMoney,
   viabilityRequest,
   withoutMark,
 } from "@/lib/investors";
@@ -52,7 +52,7 @@ interface FieldProps {
   mark?: SourcedValue["mark"] | "sin_dato";
   /** What is wrong with the value (out of range, not a whole number): said under the field */
   error?: string;
-  /** A data default used as an assumption (the PEM of the permits for the person's own works) */
+  /** A default that is not this case's figure: marked «supuesto» until edited (the free price of a protected home) */
   assumed?: boolean;
 }
 
@@ -102,7 +102,7 @@ function PartsList({ title, parts }: { title: string; parts: AssumptionPart[] })
         {parts.map((part) => (
           <li key={part.key}>
             <strong>
-              {percent(part.pct, 0)} · {part.label}.
+              {percent(part.pct, Number.isInteger(part.pct) ? 0 : 2)} · {part.label}.
             </strong>{" "}
             {part.source}
           </li>
@@ -113,9 +113,31 @@ function PartsList({ title, parts }: { title: string; parts: AssumptionPart[] })
 }
 
 /** What the construction cost counts and what it leaves out (D-252), from what viability.py models. */
-function CostScope({ parts }: { parts: AssumptionPart[] }) {
+export const COST_SCOPE_ID = "que-incluye-el-coste";
+
+/** D-252 (D4): the three public references of the construction cost and what each one is. */
+function CostReferences() {
   return (
     <details className={styles.parts}>
+      <summary>{TEXT.costReferencesTitle}</summary>
+      <ul>
+        {TEXT.costReferences.map((ref) => (
+          <li key={ref.href}>
+            {ref.text}{" "}
+            <a href={ref.href} target="_blank" rel="noopener noreferrer">
+              {ref.link}
+              <span className="visually-hidden"> (se abre en una pestaña nueva)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
+function CostScope({ parts }: { parts: AssumptionPart[] }) {
+  return (
+    <details className={styles.parts} id={COST_SCOPE_ID}>
       <summary>{TEXT.costScopeTitle}</summary>
       <p>{TEXT.costIncludes(parts.map((p) => `${p.label.charAt(0).toLowerCase()}${p.label.slice(1)}`))}</p>
       <p>{TEXT.costExcludesTitle}</p>
@@ -174,10 +196,8 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
   if (scenario.margin_pct !== null && scenario.margin_pct !== undefined) {
     rows.push([TEXT.profit, money(scenario.profit ?? 0)], [TEXT.margin, percent(scenario.margin_pct)]);
   }
-  rows.push([
-    TEXT.residual,
-    `${money(scenario.residual_land_value)} (${formatNumber(Math.round(scenario.residual_land_value_m2), 0)} €/m² edificable)`,
-  ]);
+  // D-252 (D7): three significant figures, never cents on assumptions
+  rows.push([TEXT.residual, `${roughMoney(scenario.residual_land_value)} (${roughMoney(scenario.residual_land_value_m2)} por m² edificable)`]);
   // Never without land: with the price given, or without one at the residual land value
   if (scenario.break_even) rows.push([TEXT.breakEvenRow, breakEvenValue(scenario.break_even)]);
   if (scenario.break_even_free_land) rows.push([TEXT.breakEvenFreeRow, breakEvenValue(scenario.break_even_free_land)]);
@@ -236,6 +256,17 @@ function Results({ result, costMark }: { result: ViabilityResponse["data"]; cost
           <ScenarioCard key={scenario.key} scenario={scenario} />
         ))}
       </div>
+      <p className={styles.note}>
+        <a
+          href={`#${COST_SCOPE_ID}`}
+          onClick={() => {
+            const scope = document.getElementById(COST_SCOPE_ID);
+            if (scope instanceof HTMLDetailsElement) scope.open = true;
+          }}
+        >
+          {TEXT.excludedLink}
+        </a>
+      </p>
       {base && <BreakEvenBlock scenario={base} costMark={costMark} />}
       <p className={styles.thresholds}>{TEXT.thresholds}</p>
       {result.demand && (
@@ -257,6 +288,10 @@ export interface ParcelStart {
   m2: number | null;
   mark: SourcedValue["mark"] | "sin_dato";
   help: string;
+  /** D-252: what keeps this parcel's figures from passing for free housing, said above the fields */
+  cautions?: string[];
+  /** D-252: protected housing: the free price of the barrio is not its price */
+  protectedHousing?: boolean;
 }
 
 interface Props {
@@ -325,12 +360,17 @@ export default function Calculator({ defaults, parcels, remaining, parcel, metho
   const costsEdited = costEdited || fields.sales_costs_pct !== initial.sales_costs_pct;
   const resetCosts = () =>
     setFields((f) => ({ ...f, pem_m2: initial.pem_m2, cost_coefficient: initial.cost_coefficient, sales_costs_pct: initial.sales_costs_pct }));
-  const pemKnown = defaults.pem_m2.value !== null && defaults.pem_m2.value !== undefined;
   const err = (name: keyof CalculatorFields) => ({ error: errors[name] });
 
   return (
     <div className={styles.calculator}>
       <p className={styles.lead}>{TEXT.intro}</p>
+      {parcel?.cautions?.map((line) => (
+        <p key={line} className={styles.caution}>
+          <Info size={18} aria-hidden="true" />
+          <span>{line}</span>
+        </p>
+      ))}
       {land.length > 0 && <LandPicker items={land} chosen={chosen} onChoose={choose} />}
       {caution && (
         <p className={styles.caution}>
@@ -350,26 +390,27 @@ export default function Calculator({ defaults, parcels, remaining, parcel, metho
             mark={buildableMark}
             help={buildableHelp}
           />
-          <NumberField name="sale_price_m2" label={TEXT.price} unit="€/m²" source={defaults.sale_price_m2} {...common} {...err("sale_price_m2")} />
+          <NumberField
+            name="sale_price_m2"
+            label={TEXT.price}
+            unit="€/m²"
+            source={defaults.sale_price_m2}
+            {...common}
+            {...err("sale_price_m2")}
+            assumed={parcel?.protectedHousing}
+            help={parcel?.protectedHousing ? TEXT.priceProtected : undefined}
+          />
           <NumberField name="new_build_premium_pct" label={TEXT.premium} unit="%" source={defaults.new_build_premium_pct} {...common} {...err("new_build_premium_pct")} />
           <NumberField name="rent_m2_month" label={TEXT.rent} unit="€/m² al mes" source={defaults.rent_m2_month} {...common} {...err("rent_m2_month")} />
         </fieldset>
         <fieldset className={styles.group}>
           <legend>{TEXT.groupCosts}</legend>
-          <NumberField
-            name="pem_m2"
-            label={TEXT.pem}
-            unit="€/m²"
-            source={defaults.pem_m2}
-            {...common}
-            {...err("pem_m2")}
-            assumed={pemKnown}
-            help={pemKnown ? TEXT.pemAssumed(withoutMark(defaults.pem_m2.source.text)) : undefined}
-          />
+          <NumberField name="pem_m2" label={TEXT.pem} unit="€/m²" source={defaults.pem_m2} {...common} {...err("pem_m2")} />
           <p className={styles.caution}>
             <Info size={18} aria-hidden="true" />
             <span>{TEXT.costCaution}</span>
           </p>
+          <CostReferences />
           <CostScope parts={defaults.cost_parts} />
           <NumberField name="cost_coefficient" label={TEXT.coefficient} unit="×" source={defaults.cost_coefficient} {...common} {...err("cost_coefficient")} />
           <PartsList title={TEXT.coefficientParts} parts={defaults.cost_parts} />

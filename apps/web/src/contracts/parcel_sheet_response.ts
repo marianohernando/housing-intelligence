@@ -77,6 +77,16 @@ export type Note = string | null;
  */
 export type Source1 = string;
 export type ValueM21 = number | null;
+/**
+ * D-252: what keeps the sheet's figures from passing for free housing ready to build.
+ */
+export type ParcelCautionKey =
+  "otro_uso" | "ambito_pendiente" | "vivienda_protegida" | "unifamiliar";
+export type Text = string;
+/**
+ * D-252: shown before the figures
+ */
+export type Cautions = ParcelCaution[];
 export type InPilot = boolean;
 export type Note1 = string | null;
 /**
@@ -127,7 +137,7 @@ export type Period = string | null;
 /**
  * In words, with its date
  */
-export type Text = string;
+export type Text1 = string;
 /**
  * Where to open the source
  */
@@ -252,7 +262,7 @@ export type Notices = string[];
 /**
  * The parts that could not be read now
  */
-export type Degraded = ("catastro" | "planning" | "buildability" | "context")[];
+export type Degraded = ("catastro" | "planning" | "buildability" | "context" | "plan_uses")[];
 /**
  * Served from the saved demo sheet because a source failed
  */
@@ -299,11 +309,31 @@ export type Use2 = string;
 export type ByUse1 = UnitUse[];
 export type Total = number;
 export type YearBuilt = number | null;
+export type AsOf = string;
+/**
+ * The code in the Ayuntamiento's list
+ */
 export type Code2 = string;
+/**
+ * Planning, management or urbanization not finished
+ */
+export type Pending = boolean;
+export type Label4 = string;
+export type State = string;
+export type Phases = AmbitPhase[];
+/**
+ * False: the Ayuntamiento does not publish its state
+ */
+export type Tracked = boolean;
+export type Url3 = string;
+export type VedaStage =
+  | ("pendiente_sectorizacion" | "pendiente_planeamiento" | "gestion_urbanizacion" | "edificacion")
+  | null;
+export type Code3 = string;
 export type Figure = string | null;
 export type FileNumber = string | null;
 export type Name3 = string | null;
-export type Url3 = string | null;
+export type Url4 = string | null;
 /**
  * What the planning code is: a norma zonal or a planning area (ámbito) of the PGOUM.
  */
@@ -319,14 +349,39 @@ export type Nivel = string | null;
 export type Nz = number;
 export type Notice = string;
 export type ObservedAt1 = string;
+/**
+ * D-252: what the plan allows by use on the urban parcel; [] when it publishes nothing, null when it could not be read
+ */
+export type PlanUses = PlanUseFigure[] | null;
+/**
+ * value_m2 computed from the coefficient
+ */
+export type Assumed = boolean;
+/**
+ * m²/m² when the plan gives it so
+ */
+export type Coefficient1 = number | null;
+/**
+ * Table 4, «uso cualificado principal»; else table 5
+ */
+export type Principal = boolean;
+export type Use3 = string;
+export type UseOwnership = "publico" | "privado";
+/**
+ * m²; with a coefficient, coefficient × urban parcel area
+ */
+export type ValueM22 = number | null;
 export type SheetLabel = string | null;
 /**
  * The official record: the instrument's, or the article of the Normas Urbanísticas for a norma zonal
  */
 export type SheetUrl = string | null;
 export type UrbanParcel = string | null;
-export type Use3 = string | null;
-export type UseOwnership = "publico" | "privado";
+/**
+ * D-252: the area of the urban parcel's polygon in the plan
+ */
+export type UrbanParcelAreaM2 = number | null;
+export type Use4 = string | null;
 /**
  * The Geoportal viewer, centred on the parcel
  */
@@ -338,7 +393,7 @@ export type LicenseUrl = string | null;
 export type Name6 = string;
 export type Publisher1 = string;
 export type SourceId = string;
-export type Url4 = string | null;
+export type Url5 = string | null;
 export type Sources = ParcelSource[];
 export type ApiVersion = string;
 export type DataVersion = string | null;
@@ -361,6 +416,7 @@ export interface ParcelSheetResponse {
 export interface ParcelSheet {
   barrio: ZoneRef | null;
   buildability: Buildability;
+  cautions?: Cautions;
   /**
    * null when the barrio is unknown
    */
@@ -376,6 +432,10 @@ export interface ParcelSheet {
    * null when the Ayuntamiento fails
    */
   planning: PlanningBlock | null;
+  /**
+   * D-252: the parcel as public land of the Portal del Suelo in its barrio (owner, regime, urbanization), when the barrio's sheet lists it
+   */
+  public_land?: LandItem | null;
   sources: Sources;
 }
 /**
@@ -420,6 +480,10 @@ export interface UseFigure {
   use: Use;
   use_class: UseClass;
   value_m2: ValueM2;
+}
+export interface ParcelCaution {
+  key: ParcelCautionKey;
+  text: Text;
 }
 /**
  * The barrio around the parcel: the whole investor sheet in a pilot barrio (D-248); outside
@@ -507,7 +571,7 @@ export interface FieldSource {
    */
   level?: TerritoryLevel | null;
   period?: Period;
-  text: Text;
+  text: Text1;
   url?: Url1;
 }
 /**
@@ -672,17 +736,23 @@ export interface UnitUse {
  * «Planeamiento»: the Ayuntamiento's planning at the parcel's reference point.
  */
 export interface PlanningBlock {
-  code: Code2;
+  /**
+   * D-252: the state of the planning area; null for a norma zonal
+   */
+  ambit?: AmbitStatus | null;
+  code: Code3;
   instrument: PlanningInstrument | null;
   kind: PlanningKind;
   name: Name4;
   norma_zonal: NormaZonal | null;
   notice: Notice;
   observed_at: ObservedAt1;
+  plan_uses?: PlanUses;
   sheet_label: SheetLabel;
   sheet_url: SheetUrl;
   urban_parcel: UrbanParcel;
-  use: Use3;
+  urban_parcel_area_m2?: UrbanParcelAreaM2;
+  use: Use4;
   /**
    * D-252: the use, classified
    */
@@ -694,19 +764,49 @@ export interface PlanningBlock {
   viewer_url: ViewerUrl;
 }
 /**
+ * D-252: the state of the planning area, as the Ayuntamiento publishes it.
+ */
+export interface AmbitStatus {
+  as_of: AsOf;
+  code: Code2;
+  pending: Pending;
+  phases?: Phases;
+  tracked: Tracked;
+  url: Url3;
+  veda_stage?: VedaStage;
+}
+export interface AmbitPhase {
+  label: Label4;
+  state: State;
+}
+/**
  * The planning instrument in force at the point, with its official record.
  */
 export interface PlanningInstrument {
   figure: Figure;
   file_number: FileNumber;
   name: Name3;
-  url: Url3;
+  url: Url4;
 }
 export interface NormaZonal {
   grado?: Grado;
   name?: Name5;
   nivel?: Nivel;
   nz: Nz;
+}
+/**
+ * D-252: what the plan allows of one use on the urban parcel (USOS_SUELO, table 4 for the
+ * principal use and table 5 for the others). The total the plan allows, not what is left; the
+ * urban parcel may not be the cadastral one.
+ */
+export interface PlanUseFigure {
+  assumed?: Assumed;
+  coefficient?: Coefficient1;
+  principal: Principal;
+  use: Use3;
+  use_class: UseClass;
+  use_ownership?: UseOwnership | null;
+  value_m2?: ValueM22;
 }
 /**
  * Who the sheet's data comes from, its licence and how it asks to be cited.
@@ -719,7 +819,7 @@ export interface ParcelSource {
   name: Name6;
   publisher: Publisher1;
   source_id: SourceId;
-  url?: Url4;
+  url?: Url5;
 }
 export interface Meta {
   api_version?: ApiVersion;

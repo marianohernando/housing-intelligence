@@ -16,7 +16,8 @@ appraised value shared out by the cadastral value per built m², D-234) and the 
                     no yield when V ≤ 0)
 
 `fp` and `fc` are the scenario's price and cost factors: base (1, 1), optimistic (1,10, 0,95),
-pessimistic (0,90, 1,05), as Nestra's sensitivity. The verdict compares the margin with the
+pessimistic (0,90, 1,15): costs of construction differ by 15 % or more between public references
+(D-252), so the pessimistic one carries that. The verdict compares the margin with the
 target margin m* and the floor below which the operation does not work, and only exists with a
 land price: without it there is no verdict, and the headline is the residual land value (what
 the land can cost at most). Financing (interest, fees) is out of v0.
@@ -30,7 +31,7 @@ from enum import StrEnum
 
 from hi_domain.gaps import es_number
 
-VIABILITY_VERSION = "viability-0.1"
+VIABILITY_VERSION = "viability-0.2"  # D-252: ICIO 3,75 %, PEM of reference, −10/+15, 15 %
 
 
 class Mark(StrEnum):
@@ -62,6 +63,11 @@ class Part:
     source: str
 
 
+# ICIO of Madrid since 1 January 2024 (Ordenanza fiscal 7/2023, art. 25; 4 % before), on the
+# PEM; the licence fee and other taxes, about 1 % («supuesto»).
+ICIO_RATE = 0.0375
+LICENCE_FEES_SHARE = 0.01
+
 # PEM → total construction cost: k = 1 + the parts, all on the PEM. «Supuesto»: no open data
 # gives them by zone; the person edits k.
 COST_PARTS: tuple[Part, ...] = (
@@ -82,9 +88,10 @@ COST_PARTS: tuple[Part, ...] = (
     Part(
         "licencias_icio",
         "Licencia, ICIO y tasas",
-        0.05,
-        "ICIO de Madrid, 4 % del presupuesto (Ordenanza fiscal del impuesto), y la tasa de la "
-        "licencia y otros tributos, alrededor de un 1 % (supuesto)",
+        ICIO_RATE + LICENCE_FEES_SHARE,
+        f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto desde 2024 "
+        "(Ordenanza fiscal 7/2023, art. 25), y la tasa de la licencia y otros tributos, "
+        f"alrededor de un {es_number(LICENCE_FEES_SHARE * 100, 0)} % (supuesto)",
     ),
     Part(
         "otros",
@@ -109,12 +116,21 @@ SALES_COST_PARTS: tuple[Part, ...] = (
 SALES_COSTS_SHARE = round(sum(p.share for p in SALES_COST_PARTS), 4)
 
 # Margin on sales before financing. «Supuesto»: promoters usually ask 15-20 % or more; with
-# financing out of v0, the target sits at the top. Below the floor the operation does not work.
+# financing out of v0, the target sits at the top. Below the floor the operation does not work:
+# the mortgage appraisal rule asks at least 18 % for first homes, without financing nor
+# corporate tax (Orden ECO/805/2003, DA 6.ª), so a margin under 15 % is not «ajustar» (D-252).
 TARGET_MARGIN = 0.20
-ADJUST_FLOOR = 0.10
+ADJUST_FLOOR = 0.15
+APPRAISAL_MIN_MARGIN = 0.18
+APPRAISAL_SOURCE = (
+    "Orden ECO/805/2003, disposición adicional sexta: margen mínimo del promotor del 18 % para "
+    "viviendas de primera residencia, sin financiación ni Impuesto sobre Sociedades"
+)
 MARGIN_SOURCE = (
     "supuesto: un promotor suele pedir entre el 15 % y el 20 % sobre ventas, o más; como la "
-    "financiación no entra, se toma el 20 %. Por debajo del 10 %, no sale"
+    "financiación no entra, se toma el 20 %. La tasación hipotecaria pide al menos un 18 % en "
+    "vivienda de primera residencia, sin financiación ni Impuesto sobre Sociedades (Orden "
+    "ECO/805/2003, disposición adicional sexta). Por debajo del 15 %, no sale"
 )
 
 
@@ -129,7 +145,7 @@ class Scenario:
 SCENARIOS: tuple[Scenario, ...] = (
     Scenario("base", "Base", 1.0, 1.0),
     Scenario("optimista", "Optimista (+10 % precio, −5 % coste)", 1.10, 0.95),
-    Scenario("pesimista", "Pesimista (−10 % precio, +5 % coste)", 0.90, 1.05),
+    Scenario("pesimista", "Pesimista (−10 % precio, +15 % coste)", 0.90, 1.15),
 )
 
 # Demand check. «Supuesto» except the threshold, which is the one the housing law uses.
@@ -162,8 +178,8 @@ NOTICES: tuple[str, ...] = (
     "Sin dato no es 0: lo que no sabemos se dice, nunca se rellena.",
     "La financiación (intereses y comisiones del préstamo) no entra en esta versión: el margen "
     "es antes de financiación e impuestos.",
-    "El PEM de los visados suele declararse a la baja: el coste real de la obra puede ser mayor. "
-    "Ajusta el coeficiente si tienes un presupuesto.",
+    "El coste de construcción es un supuesto: el PEM de referencia de la Comunidad de Madrid "
+    "(2022) por un coeficiente. Cámbialo si tienes un presupuesto.",
 )
 
 
@@ -240,6 +256,28 @@ def money(amount: float) -> str:
     return f"{es_number(round(amount), 0)} €"
 
 
+def three_figures(amount: float) -> float:
+    """Rounded to three significant figures: 66.958.000 → 67.000.000; 4.297 → 4.300 (D-252: an
+    estimate on assumptions never says its cents)."""
+    if amount == 0:
+        return 0.0
+    digits = len(str(int(abs(amount)))) if abs(amount) >= 1 else 1
+    return float(round(amount, 3 - digits))
+
+
+def rough_money(amount: float) -> str:
+    """«unos 67 millones de €», «unos 1,23 millones de €», «unos 900.000 €»."""
+    rounded = three_figures(amount)
+    if abs(rounded) >= 1_000_000:
+        millions = rounded / 1_000_000
+        decimals = 0 if millions >= 100 else 1 if millions >= 10 else 2
+        text = es_number(millions, decimals)
+        if "," in text:
+            text = text.rstrip("0").rstrip(",")
+        return f"unos {text} millones de €"
+    return f"unos {es_number(rounded, 0)} €"
+
+
 def pct(share: float, decimals: int = 0) -> str:
     return f"{es_number(share * 100, decimals)} %"
 
@@ -288,6 +326,13 @@ def margin_verdict(margin: float, target: float, floor: float) -> tuple[Verdict,
     return Verdict.NO_SALE, f"No sale: margen del {shown}, por debajo del {pct(floor)}."
 
 
+# D-252 (B7): what the residual leaves out, in the headline itself
+RESIDUAL_LEAD = (
+    "Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del "
+    "suelo, urbanización y derribo"
+)
+
+
 def residual_headline(
     revenue: float, construction: float, sales: float, inputs: ViabilityInputs
 ) -> str:
@@ -295,10 +340,10 @@ def residual_headline(
     margin, or, if not even free land reaches it, the margin free land would leave."""
     at_target = residual_land_value(revenue, construction, sales, inputs.target_margin)
     if at_target > 0:
-        per_m2 = at_target / inputs.buildable_m2
+        per_m2 = three_figures(at_target / inputs.buildable_m2)
         return (
-            f"Lo máximo que se puede pagar por el suelo: {money(at_target)} "
-            f"({es_number(round(per_m2), 0)} € por m² edificable), para un margen del "
+            f"{RESIDUAL_LEAD}: {rough_money(at_target)} "
+            f"(unos {es_number(per_m2, 0)} € por m² edificable), para un margen del "
             f"{pct(inputs.target_margin)}."
         )
     free_land_margin = (revenue - construction - sales) / revenue
