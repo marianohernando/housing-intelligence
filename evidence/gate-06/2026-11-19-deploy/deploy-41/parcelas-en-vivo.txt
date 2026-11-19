@@ -1,0 +1,44 @@
+The four demo parcels after the deploy of f806850 (dpl_8v14MKyk8tejVqL1YR7LouEhv2s1). Only the demo references, asked by reference
+with curl; no address, point or candidate lookup.
+
+Lookups of this run that reached the API's parcel code (CDN «MISS»): 8 of the ~10 allowed
+  4 to warm the CDN right after the deploy (22:44 UTC)
+  the same 4 again (22:45 UTC), because none of the first 4 had been complete, so none had stayed in the CDN
+  every other sheet came from the CDN («HIT»): check-cabecera (3) and the D-252 probe (13), Méndez Álvaro and Luis Misson only
+  Almería 1 and Mayor 61 were not asked again: datamad-10 asked for no more lookups of them until the D-252b fix
+
+Each lookup, from the CDN's record of the request to uvicorn's access line of the answer (two clocks: about ±0.1 s),
+with what the API answered (`degraded`) and the Cache-Control it sent
+parcel | reference | pass | request → answer (UTC) | seconds | buildability | degraded | Cache-Control
+Méndez Álvaro 47 | 2122202VK4722A | 1 | 22:44:22.1 → 22:44:31.7 | 9.6 | oficial, 13,121 m² | plan_uses | no-store
+Almería 1 | 3959601VK4735H | 1 | 22:44:31.9 → 22:44:40.5 | 8.6 | sin dato | plan_uses | no-store
+Luis Misson 2 | 0390314VK4709A | 1 | 22:44:40.7 → 22:44:52.3 | 11.7 | sin dato | plan_uses | no-store
+Mayor 61 | 9943003VK3794D | 1 | 22:44:52.5 → 22:45:03.9 | 11.4 | sin dato (should be supuesto) | planning | no-store
+Méndez Álvaro 47 | 2122202VK4722A | 2 | 22:45:04.1 → 22:45:04.9 | 0.9 | oficial, 13,121 m² | none | public, max-age=3600
+Almería 1 | 3959601VK4735H | 2 | 22:45:05.1 → 22:45:16.5 | 11.4 | sin dato | plan_uses | no-store
+Luis Misson 2 | 0390314VK4709A | 2 | 22:45:16.7 → 22:45:17.2 | 0.5 | sin dato | none | public, max-age=3600
+Mayor 61 | 9943003VK3794D | 2 | 22:45:17.3 → 22:45:25.8 | 8.5 | supuesto, 224.4 m² | plan_uses | no-store
+
+Every answer: 200, `fallback` none, warning `SOURCE_DEGRADED: <part>` when a part was degraded.
+A degraded sheet goes out with `no-store` (D-250: only a complete sheet is cached), so the CDN never keeps it.
+At the end, Méndez Álvaro and Luis Misson are in the CDN (6 of 6 browser reads «HIT» in the D-252 probe); Almería 1 and Mayor 61 are not.
+
+What the degraded answers already show at the API level (D-252):
+  Almería 1: buildability «sin dato» (APR.04.09, its four phases «Sin Iniciar», ambit pending), the Portal del Suelo's 32,697 m²
+    residential as a reference in `by_use` (cm_parcelas_portal_suelo), caution `ambito_pendiente`
+  Mayor 61 (2nd pass): buildability «supuesto» 224.4 m² (norma zonal 1 grado 2º); its `plan_uses` degraded
+  Méndez Álvaro (2nd pass, complete): `plan_uses` of the urban parcel MANZANA B, 60,230.88 m² residential and 21,299.91 m² tertiary
+  Luis Misson (2nd pass, complete): «sin dato», `plan_uses` empty (the plan publishes none for it)
+
+Diagnosis without our API (not lookups of the demo: the API's own functions, run on a laptop in Madrid, against the
+Ayuntamiento's open ArcGIS service only; no Catastro call), 22:47–22:48 UTC
+  layer 3 then tables 4 and 5, timed (3 requests per parcel):
+    Almería 1: layer 3 0.20 s · table 4 0.08 s, 1 row · table 5 0.17 s, 0 rows
+    Mayor 61:  layer 3 0.14 s · table 4 0.27 s, 1 row · table 5 0.12 s, 0 rows
+  the whole planning as the API asks it (`fetch_planning`, no deadline; 5 requests per parcel):
+    Almería 1: 0.30 s, complete
+    Mayor 61:  9.00 s, complete (another layer was slow; the tables had answered in 0.3 s a minute before)
+  16 requests to the Ayuntamiento in all. Neither parcel fails there: the tables answer in under 0.3 s.
+  From Dublin, the API's runtime log has no timing or cause line (deploy-39, finding 1), so which step took the time is not known.
+  datamad-10's reading: the times fit `bounded_plan_rows`' fixed 4 s (`PLAN_USES_TIMEOUT_S`) after a cold Catastro and layer 3:
+  Almería's 2nd pass 11.4 ≈ 7.4 + 4 and Mayor 61's 8.5 ≈ 4.5 + 4, with the sheet's 15 s budget not used up.
