@@ -12,5 +12,6 @@ census_metric_id: poblacion_censada
 # D-247: the total of each barrio (district and barrio number, «205»), for the investor context
 # per 1,000 residents. A row without a barrio counts in its district only.
 barrio_column: COD_DIST_BARRIO
+barrio_name_column: DESC_BARRIO
 barrio_metric_id: poblacion_padron_barrio
 expected_barrios: 131

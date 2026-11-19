@@ -7,7 +7,7 @@ from typing import Any
 
 import pandas as pd
 import yaml
-from sqlalchemy import Engine
+from sqlalchemy import Engine, text
 from sqlalchemy.orm import Session
 
 from hi_contracts.catalog.enums import TerritoryLevel
@@ -92,13 +92,44 @@ def pilot_rows(table: PilotZonesTable, metric_id: str) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=OBS_COLUMNS)
 
 
+_INSIDE_RING = text(
+    """
+    SELECT code_official FROM geo_admin_unit
+     WHERE level = 'barrio' AND code_official LIKE :prefix
+       AND ST_Within(ST_Centroid(geom_25830), ST_GeomFromText(:ring, 25830))
+    """
+)
+
+
+def ring_wkt(table: PilotZonesTable) -> str:
+    """The versioned ring as a polygon (its vertices are already checked by their sha256)."""
+    vertices = ", ".join(f"{x} {y}" for x, y in table.ring.coordinates)
+    return f"POLYGON(({vertices}))"
+
+
+def barrios_inside_ring(engine: Engine, table: PilotZonesTable) -> set[str]:
+    """The barrios of the geography whose centroid is within the versioned ring, without
+    network: the same rule as scripts/m40_barrios.py, on the current geography."""
+    params = {"prefix": f"{table.municipio_ine}%", "ring": ring_wkt(table)}
+    with engine.connect() as conn:
+        return {str(code) for (code,) in conn.execute(_INSIDE_RING, params)}
+
+
 def pilot_quality(
-    obs: Observations, table: PilotZonesTable, known: set[str], catalog: Catalog, metric_id: str
+    obs: Observations,
+    table: PilotZonesTable,
+    known: set[str],
+    inside: set[str],
+    catalog: Catalog,
+    metric_id: str,
 ) -> QualityReport:
-    """Blocking: every pilot barrio is in the geography, and the table accounts for all of the
-    municipio's barrios (a reform of the barrios is read again, never half applied)."""
+    """Blocking: every pilot barrio is in the geography, the table accounts for all of the
+    municipio's barrios (a reform of the barrios is read again, never half applied) and its
+    list is the barrios whose centroid is within its own ring in the current geography (a hand
+    edit of the list, or a change of the barrio polygons, is caught)."""
     base = run_quality(obs, {metric_id: catalog.metrics[metric_id]}, set())
     listed = len(table.barrios) + len(table.reviewed_outside) + table.outside
+    pilot = set(table.codes())
     return QualityReport(
         [
             *base.checks,
@@ -108,6 +139,15 @@ def pilot_quality(
                 True,
                 listed == len(known),
                 {"in_table": listed, "in_geography": len(known)},
+            ),
+            CheckResult(
+                "pilot_is_the_ring",
+                True,
+                pilot == inside,
+                {
+                    "only_in_table": sorted(pilot - inside),
+                    "only_in_ring": sorted(inside - pilot),
+                },
             ),
         ]
     )
@@ -133,7 +173,12 @@ def pilot_steps(
         ),
         quarantine=lambda obs: obs.quarantine,
         quality=lambda obs: pilot_quality(
-            obs, table, known_barrios(engine, table.municipio_ine), catalog, spec.metric_id
+            obs,
+            table,
+            known_barrios(engine, table.municipio_ine),
+            barrios_inside_ring(engine, table),
+            catalog,
+            spec.metric_id,
         ).to_dict(),
         counts=lambda obs: (
             row_counts(obs.frame) | {"reviewed_edge": sum(1 for b in table.barrios if b.review)}

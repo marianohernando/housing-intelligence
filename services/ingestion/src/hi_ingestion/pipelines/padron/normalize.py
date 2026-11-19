@@ -128,6 +128,7 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
     people: Counter[tuple[str, date, str]] = Counter()
     barrios: Counter[tuple[str, date]] = Counter()
     names: dict[str, str] = {}
+    barrio_names: dict[str, str] = {}
     bad: list[dict[str, Any]] = []
     records: list[dict[str, str]] = frame.to_dict("records")  # pyright: ignore[reportAssignmentType]
     for index, row in enumerate(records):
@@ -144,6 +145,8 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
         people[(code, period, TOTAL_AGE)] += count
         if barrio:
             barrios[(barrio, period)] += count
+            if spec.barrio_name_column:
+                barrio_names.setdefault(barrio, " ".join(row[spec.barrio_name_column].split()))
         if spec.district_name_column:
             names.setdefault(code, row[spec.district_name_column])
     districts = sorted({(code, period) for code, period, _ in people})
@@ -152,7 +155,9 @@ def normalize(frame: pd.DataFrame, spec: MadridPadronPipeline) -> Observations:
         for code, period in districts
         for band in [*five_year_age_bands(), TOTAL_AGE]
     ] + [
-        _observation(spec, code, None, period, TOTAL_AGE, value, TerritoryLevel.BARRIO)
+        _observation(
+            spec, code, barrio_names.get(code), period, TOTAL_AGE, value, TerritoryLevel.BARRIO
+        )
         for (code, period), value in sorted(barrios.items())
     ]
     return Observations(

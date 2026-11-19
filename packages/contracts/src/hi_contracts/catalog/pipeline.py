@@ -286,6 +286,7 @@ class MadridPadronPipeline(BaseModel):
     # Its municipio total (every dimension 'total') is compared with the padrón total; warning only.
     census_metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
     barrio_column: str | None = None
+    barrio_name_column: str | None = None
     barrio_metric_id: str | None = Field(default=None, pattern=METRIC_ID_PATTERN)
     expected_barrios: int | None = Field(default=None, gt=0)
 
@@ -1044,9 +1045,9 @@ class MadridPremisesCensusPipeline(BaseModel):
     of activities, one row per premise and epígrafe (a premise without activity comes once,
     with an empty epígrafe), with its district, barrio, access type and situation.
 
-    A premise counts when its access type is in `access` with `counted: true` and its situation
-    is one of `counted_states`; the others of `access` and `states` are known and counted apart,
-    never quarantined. A code whose literal is not the declared one, an undeclared code or an
+    A premise counts when the slug of its access type is in `counted_access` and that of its
+    situation in `counted_states`; the other codes of `access` and `states` are known and counted
+    apart, never quarantined. A code whose literal is not the declared one, an undeclared code or an
     epígrafe that does not read as one (6 or 8 digits starting with its division) goes to
     quarantine and blocks the run: a new code is read by a person before it is counted. The
     epígrafes the file itself marks as not coded yet (`pending_epigrafes`, with their literal:

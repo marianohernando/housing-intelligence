@@ -1529,6 +1529,18 @@
           "default": null,
           "title": "Barrio Metric Id"
         },
+        "barrio_name_column": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Barrio Name Column"
+        },
         "census_metric_id": {
           "anyOf": [
             {
@@ -1633,7 +1645,7 @@
     },
     "MadridPremisesCensusPipeline": {
       "additionalProperties": false,
-      "description": "Ayuntamiento de Madrid, «Censo de locales, sus actividades y terrazas» (D-247): the file\nof activities, one row per premise and epígrafe (a premise without activity comes once,\nwith an empty epígrafe), with its district, barrio, access type and situation.\n\nA premise counts when its access type is in `access` with `counted: true` and its situation\nis one of `counted_states`; the others of `access` and `states` are known and counted apart,\nnever quarantined. A code whose literal is not the declared one, an undeclared code or an\nepígrafe that does not read as one (6 or 8 digits starting with its division) goes to\nquarantine and blocks the run: a new code is read by a person before it is counted. The\nepígrafes the file itself marks as not coded yet (`pending_epigrafes`, with their literal:\n«PTE. CODIFICAR», «SIN ASIGNAR») are listed in quarantine without blocking: their premise\ncounts by its situation, but its activity is unknown, never a proximity shop nor a 0. A\ncounted premise without a district or barrio is quarantined too; up to `max_unplaced` of\nthem do not block (they are listed, never counted as 0 anywhere).\n\nEach zone (district and barrio of `municipio_ine`) gets `premises_metric_id`, the counted\npremises by situation (0 included: the census is exhaustive), and `proximity_metric_id`, the\nopen premises with at least one epígrafe of each group of `proximity` (`grupo`) and of any\nof them (`grupo: proximidad`; not their sum: a shop may be in two groups), plus the open\npremises whose activity cannot be read (`grupo: sin_actividad`). Every epígrafe of\n`proximity` is declared with the file's own description: one that changes blocks the run.",
+      "description": "Ayuntamiento de Madrid, «Censo de locales, sus actividades y terrazas» (D-247): the file\nof activities, one row per premise and epígrafe (a premise without activity comes once,\nwith an empty epígrafe), with its district, barrio, access type and situation.\n\nA premise counts when the slug of its access type is in `counted_access` and that of its\nsituation in `counted_states`; the other codes of `access` and `states` are known and counted\napart, never quarantined. A code whose literal is not the declared one, an undeclared code or an\nepígrafe that does not read as one (6 or 8 digits starting with its division) goes to\nquarantine and blocks the run: a new code is read by a person before it is counted. The\nepígrafes the file itself marks as not coded yet (`pending_epigrafes`, with their literal:\n«PTE. CODIFICAR», «SIN ASIGNAR») are listed in quarantine without blocking: their premise\ncounts by its situation, but its activity is unknown, never a proximity shop nor a 0. A\ncounted premise without a district or barrio is quarantined too; up to `max_unplaced` of\nthem do not block (they are listed, never counted as 0 anywhere).\n\nEach zone (district and barrio of `municipio_ine`) gets `premises_metric_id`, the counted\npremises by situation (0 included: the census is exhaustive), and `proximity_metric_id`, the\nopen premises with at least one epígrafe of each group of `proximity` (`grupo`) and of any\nof them (`grupo: proximidad`; not their sum: a shop may be in two groups), plus the open\npremises whose activity cannot be read (`grupo: sin_actividad`). Every epígrafe of\n`proximity` is declared with the file's own description: one that changes blocks the run.",
       "properties": {
         "access": {
           "additionalProperties": {

@@ -21,7 +21,7 @@ from hi_ingestion.catalog.loader import Catalog, load_catalog
 from hi_ingestion.pipelines.buildable.normalize import PlacedArea, normalize_buildable_areas
 from hi_ingestion.pipelines.common import read_csv
 from hi_ingestion.pipelines.district_concept.run import normalize_district_concept
-from hi_ingestion.pipelines.pilot.run import EDGE, load_pilot, pilot_rows
+from hi_ingestion.pipelines.pilot.run import EDGE, load_pilot, pilot_quality, pilot_rows, ring_wkt
 from hi_ingestion.pipelines.premises.normalize import (
     ANY_GROUP,
     UNREAD_ACTIVITY,
@@ -29,6 +29,7 @@ from hi_ingestion.pipelines.premises.normalize import (
     normalize_premises,
 )
 from hi_ingestion.pipelines.premises.run import proximity_labels_check
+from hi_ingestion.pipelines.stat_tables.normalize import Observations
 from hi_ingestion.pipelines.zone_context.parcels import Placement
 
 GOLDEN = Path(__file__).resolve().parents[3] / "data" / "fixtures" / "golden" / "investor_sample"
@@ -465,3 +466,28 @@ def test_every_pilot_barrio_is_one_observation_with_its_edge_review(catalog: Cat
     assert set(frame["value"]) == {1.0}
     edge = [d for d in frame["dims"] if d["stage"] == EDGE]
     assert edge and all(d.get("note") for d in edge)
+
+
+def test_the_pilot_list_must_be_the_barrios_within_its_ring(catalog: Catalog) -> None:
+    """A hand edit of the list (or a change of the barrio polygons) is caught at load: the list
+    must be the barrios whose centroid is within the versioned ring (review of #95)."""
+    spec = catalog.pipelines["osm_m40"]
+    assert isinstance(spec, PilotZonesPipeline)
+    table = load_pilot(spec)
+    quarantine = pd.DataFrame(columns=["source_row", "reason", "raw"])
+    obs = Observations(pilot_rows(table, spec.metric_id), quarantine, len(table.barrios))
+    known = {*table.codes(), *(b.code for b in table.reviewed_outside)}
+    known |= {f"28079{i:03d}" for i in range(900, 900 + table.outside)}
+    inside = set(table.codes())
+
+    def ring_check(found: set[str]) -> bool:
+        report = pilot_quality(obs, table, known, found, catalog, spec.metric_id)
+        return next(c for c in report.checks if c.name == "pilot_is_the_ring").passed
+
+    assert ring_check(inside)
+    assert not ring_check(inside - {table.codes()[0]})
+    assert not ring_check(inside | {table.reviewed_outside[0].code})
+    assert (
+        ring_wkt(table).startswith("POLYGON((")
+        and ring_wkt(table).count(",") == len(table.ring.coordinates) - 1
+    )

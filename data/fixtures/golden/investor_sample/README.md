@@ -12,7 +12,7 @@
   julio de 2026). El original es .xls; aquí va en .xlsx, que el mismo lector abre.
 - `veda_remanente_puntos.yaml`: los puntos de esos 7 ámbitos, puestos en secciones de Tetuán de la
   muestra, no donde están de verdad (uno con el 70 % de su superficie en su barrio, para la nota).
-- `inversores_barrios_m40.yaml`: un anillo de muestra alrededor de esas secciones, no la M-40:
+- `inversores_barrios_m40.yaml`: un anillo de muestra con los centroides de esas secciones, no la M-40:
   Castillejos dentro y Almenara en el borde, con su nota; los otros 4 barrios de la muestra, fuera.
 
 La tabla CM de unidades urbanas por uso está en `stat_sample/cm_catastro_unidades_urbanas_uso.csv`

@@ -106,6 +106,15 @@
         "in_table": 131,
         "in_geography": 131
       }
+    },
+    {
+      "name": "pilot_is_the_ring",
+      "critical": true,
+      "passed": true,
+      "details": {
+        "only_in_table": [],
+        "only_in_ring": []
+      }
     }
   ]
 }

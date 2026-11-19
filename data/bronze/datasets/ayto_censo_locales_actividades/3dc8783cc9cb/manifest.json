@@ -2,7 +2,7 @@
   "files": [
     {
       "dataset_id": "ayto_censo_locales_actividades",
-      "role": "activities",
+      "role": "primary",
       "path": "data/bronze/datasets/ayto_censo_locales_actividades/3dc8783cc9cb/actividades.csv",
       "sha256": "3dc8783cc9cbf84085b4980667cd76a884c4a8bb206273e818ae10966252e6fd",
       "bytes": 125145928,

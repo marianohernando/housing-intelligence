@@ -6,25 +6,26 @@ query: '[out:json];way[ref=M-40];out geom; (muestra)'
 osm_timestamp: '2026-11-19T00:12:49Z'
 consulted: '2026-11-19'
 crs: EPSG:25830
-method: Anillo de muestra alrededor de las secciones de Tetuán de la muestra, no la M-40.
+method: Anillo de muestra que deja dentro los centroides de Castillejos y Almenara de la muestra (y fuera
+  los de Nueva España y Castilla), no la M-40.
 municipio_ine: '28079'
 edge_m: 500
 crossing_pct: 5
 ring:
   ways: 1
-  area_km2: 9.0
-  sha256: 61781d6437a106fafce1673e22f9165fe4fccefeed7db22b7667dfabf34f8d5e
+  area_km2: 0.32
+  sha256: 8de6931d6c12a99a59dafcc51bfa6dd022997cfbe9b9b01e4a705ef852863da8
   coordinates:
-  - - 440000
-    - 4478000
-  - - 443000
-    - 4478000
-  - - 443000
-    - 4481000
-  - - 440000
-    - 4481000
-  - - 440000
-    - 4478000
+  - - 441200
+    - 4479300
+  - - 441600
+    - 4479300
+  - - 441600
+    - 4480100
+  - - 441200
+    - 4480100
+  - - 441200
+    - 4479300
 barrios:
 - code: '28079063'
   name: Castillejos
