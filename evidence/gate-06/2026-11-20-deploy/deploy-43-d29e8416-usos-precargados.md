@@ -83,7 +83,7 @@
       - **0 4xx and 0 5xx:** 200 × 1,671 and 304 × 95.
       - **WAF:** all `allow`.
     - **No visitor:** no browser other than this run's, and no Web Analytics page view.
-    - **Another session's requests:** at 00:23:25–34 UTC, a curl that is not this run's read 2 sheets from the CDN and made 3 `POST /viability`, right after the Mayor 61 figures went to the coordinating session.
+    - **Another session's requests:** at 00:23:25–34 UTC, a curl that is not this run's read 2 sheets from the CDN and made 3 `POST /viability`: «D, lectura de cifras para el pitch (#113)», reading Mayor 61's and Méndez Álvaro's figures in the API.
 
 ## Screenshots in production
 - [1440 px: Mayor 61's «Edificabilidad», «Supuesto» 224 m², and the plan's principal use without a figure](deploy-43/1440-mayor-edificabilidad.jpg)

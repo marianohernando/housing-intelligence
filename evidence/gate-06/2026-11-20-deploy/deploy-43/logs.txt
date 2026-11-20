@@ -21,7 +21,7 @@ the parcel routes (path as the CDN records it, status, cache, client):
      4 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/sheets-d29e
      4 GET /api/v1/investors/parcels 200 MISS · vida-facil-smoke/warm-d29e
      3 GET /api/v1/investors/parcels/candidates 200 MISS · vida-facil-smoke/check-parcela-d29e
-     2 GET /api/v1/investors/parcels 200 HIT · curl, not this run (another session, 00:23:25–34 UTC)
+     2 GET /api/v1/investors/parcels 200 HIT · curl, 00:23:25–34 UTC: «D, lectura de cifras para el pitch (#113)»
 by status: 200 × 1671 · 304 × 95
 API by path and status:
     55 GET /api/v1/datasets 200
@@ -102,4 +102,4 @@ The parcel timing lines (`hi_api.services.parcel_sheet`, INFO), every one of thi
 Lines with «lat=» or «lon=»: 0.
 Lines with «address=» or «q=»: 3, all as «q=[redactado]» (check-parcela's address boxes); lines with the typed text («prueba»): 0.
 Visitors: none. No browser other than this run's, and no Web Analytics page view (0).
-The curl at 00:23:25–34 UTC (2 sheets from the CDN and 3 POST /viability) is not this run's: it came right after the Mayor 61 figures were sent to the coordinating session.
+The curl at 00:23:25–34 UTC (2 sheets from the CDN and 3 POST /viability) is not this run's: «D, lectura de cifras para el pitch (#113)», reading Mayor 61's and Méndez Álvaro's figures in the API.
