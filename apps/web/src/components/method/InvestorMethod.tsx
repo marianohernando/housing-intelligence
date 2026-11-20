@@ -188,7 +188,7 @@ export default function InvestorMethod() {
           <External href={crg.url}>Costes de Referencia General de la Comunidad de Madrid</External>, actualizados al año {crg.year}{" "}
           (supuesto: los costes han subido desde entonces). Por un coeficiente de {n(M.costCoefficient)}: el PEM más, sobre el PEM,{" "}
           {M.costParts.map((p) => `un ${pct(p.pct)} de ${lower(p.label)}`).join("; ")} (supuesto; el ICIO de Madrid es del{" "}
-          {pct(M.icioPct)}: Ordenanza fiscal 7/2023, art. 25, tipo aprobado para 2024 y vigente en 2025).
+          {pct(M.icioPct)}: ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025).
         </li>
         <li>
           <strong>Comercialización y otros gastos:</strong> un {pct(M.salesCostsPct)} de las ventas (supuesto:{" "}

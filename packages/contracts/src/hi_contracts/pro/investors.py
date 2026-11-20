@@ -601,7 +601,7 @@ class ProtectedBuilding(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    number: str | None = Field(examples=["02933"])
+    number: str | None = Field(title="CatalogNumber", examples=["02933"])
     name: str | None
     protection: str | None = Field(examples=["Parcial", "Integral"])
     level: int | None = Field(default=None, ge=1, le=3, description="NNUU art. 4.3.4")

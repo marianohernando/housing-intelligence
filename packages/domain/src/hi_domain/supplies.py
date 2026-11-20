@@ -76,7 +76,8 @@ def power_estimate(buildable_m2: float | None) -> PowerEstimate | None:
     """The least power the homes of a building of that size need; None without m²."""
     if buildable_m2 is None or buildable_m2 <= 0:
         return None
-    homes = max(1, round(buildable_m2 / HOME_M2))
+    exact_homes = Decimal(str(buildable_m2)) / Decimal(str(HOME_M2))
+    homes = max(1, int(exact_homes.quantize(Decimal(1), rounding=ROUND_HALF_UP)))
     coefficient = simultaneity(homes)
     exact = Decimal(str(BASIC_KW)) * Decimal(str(coefficient))  # 5,75 × 3,8 = 21,85 → 21,9
     kw = float(exact.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))

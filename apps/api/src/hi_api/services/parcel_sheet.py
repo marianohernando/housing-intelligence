@@ -203,6 +203,18 @@ AMBITS_SOURCE = ParcelSource(
 )
 
 
+CATALOG_SOURCE = ParcelSource(
+    source_id="ayto_edificios_protegidos",
+    name="Catálogo de edificios protegidos",
+    publisher="Ayuntamiento de Madrid (Dirección General de Planeamiento)",
+    license=CC_BY,
+    license_url=CC_BY_URL,
+    attribution="Origen de los datos: Ayuntamiento de Madrid (datos.madrid.es), CC BY 4.0. "
+    "Catálogo de edificios protegidos, en el punto de la parcela.",
+    url=HttpUrl("https://datos.madrid.es/dataset/300158-0-edificios-protegidos"),
+)
+
+
 GEOCODER_SOURCE = ParcelSource(
     source_id="ign_cartociudad",
     name="CartoCiudad (geocodificación de direcciones)",
@@ -855,6 +867,8 @@ def sources_of(kind: ParcelInput, parts: Parts) -> list[ParcelSource]:
         sources.append(planning_source(parts.planning.observed_at))
         if parts.planning.ambit is not None and parts.planning.ambit.tracked:
             sources.append(AMBITS_SOURCE)
+        if "catalog" not in parts.degraded:  # review of #110, R-06: CC BY, cited when read
+            sources.append(CATALOG_SOURCE)
     sources.extend(
         OFFICIAL_SOURCES[d] for d in parts.buildability.dataset_ids if d in OFFICIAL_SOURCES
     )

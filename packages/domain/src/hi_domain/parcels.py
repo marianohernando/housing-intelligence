@@ -690,10 +690,21 @@ class ExistingBuilding:
     units: int | None = None
 
 
+# Statuses the layer also gives besides the levels (its renderer, read on 20 Nov): not protected
+UNPROTECTED_STATUSES = frozenset({"descatalogado", "demolicion total"})
+
+
 def catalog_text(entry: CatalogEntry) -> str:
     """What a catalogued building means for a new-build account (NNUU arts. 4.3.4 and 4.3.7)."""
-    protection = f", protección {entry.protection.lower()}" if entry.protection else ""
     number = f" (nº {entry.number})" if entry.number else ""
+    status = fold(entry.protection or "").strip()
+    if status in UNPROTECTED_STATUSES:  # review of #110: never «protegido» for these
+        return (
+            f"El catálogo de edificios protegidos del Plan General lo da como "
+            f"«{(entry.protection or '').lower()}»{number}. Comprueba su situación en su ficha del "
+            "catálogo antes de hacer números."
+        )
+    protection = f", protección {entry.protection.lower()}" if entry.protection else ""
     head = f"Edificio catalogado por el Plan General{protection}{number}"
     if entry.level in (1, 2):
         return (

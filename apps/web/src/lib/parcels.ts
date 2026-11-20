@@ -139,12 +139,14 @@ export const SHEET_TEXT = {
   ambitAsOf: (code: string, day: string) => `${code}, según el Ayuntamiento a ${day}`,
   publicLand: "Suelo público",
   catalog: "Catálogo de edificios protegidos",
-  catalogNone: "Sin edificio catalogado en el punto de la parcela",
+  // Review of #110, R-02: the layer is read at the parcel's reference point only
+  catalogNone: "No aparece en el catálogo en el punto de referencia de la parcela",
+  catalogUnread: "No lo hemos podido leer ahora",
   catalogDown: "No hemos podido leer ahora el catálogo de edificios protegidos; el resto de la ficha sí. Vuelve a intentarlo en un rato.",
   // D-253 (audit D6): what this sheet is, and what it is not
   firstFilter:
     "Esto es un primer filtro de minutos, gratis y con fuentes. No sustituye al estudio de viabilidad que hace una consultora o un arquitecto.",
-  takeIt: "Llévate esta ficha (PDF) a tu consultora: ahorra la parte de recopilar datos.",
+  takeIt: "Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
   studyItems: [
     "La nota simple del Registro, con sus cargas.",
     "El informe urbanístico del Ayuntamiento.",
@@ -380,15 +382,22 @@ export function dayMonthYear(iso: string | null | undefined): string | null {
 }
 
 /** «Protección parcial, nº 02933 (nivel 3 de 3)», from the Plan General's catalogue (D-253). */
-export function catalogText(building: ProtectedBuilding | null | undefined): string {
+export function catalogText(building: ProtectedBuilding | null | undefined, unread = false): string {
+  if (unread) return SHEET_TEXT.catalogUnread;
   if (!building) return SHEET_TEXT.catalogNone;
+  const status = (building.protection ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (status === "descatalogado" || status === "demolicion total") {
+    // The layer also gives these: never said as a protection
+    return `${sentence(building.protection) ?? ""}${building.number ? `, nº ${building.number}` : ""}`;
+  }
   const protection = building.protection ? `Protección ${building.protection.toLowerCase()}` : "Catalogado";
   const number = building.number ? `, nº ${building.number}` : "";
   const level = building.level ? ` (nivel ${building.level} de 3)` : "";
   return `${protection}${number}${level}`;
 }
 
-const DONE_WORKS = new Set(["finalizado", "no necesita", "pgoum-85", "pgoum-97"]);
+// The finished states of an area's works: the domain's (hi_domain.parcels.DONE_PHASES), generated
+const DONE_WORKS = new Set<string>(INVESTOR_METHOD.doneWorks);
 
 /** D-253 (audit D1): services and supplies. Legal texts read at their source (BOE, BOCM, CNMC, Comunidad de Madrid). */
 export const SERVICES_TEXT = {
@@ -400,16 +409,20 @@ export const SERVICES_TEXT = {
   worksPending:
     "Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1).",
   untracked: "El Ayuntamiento no publica el estado de este ámbito: no sabemos si su urbanización está terminada.",
-  portal: (stage: string) =>
-    stage === "sin_urbanizar" ? "El Portal del Suelo dice que esta parcela está sin urbanizar." : "El Portal del Suelo dice que esta parcela está urbanizada.",
+  portal: (stage: string): string | null =>
+    stage === "urbanizado"
+      ? "El Portal del Suelo dice que esta parcela está urbanizada."
+      : stage === "sin_urbanizar"
+        ? "El Portal del Suelo dice que esta parcela está sin urbanizar."
+        : null,
   electricity: "Electricidad",
   power: (p: PowerEstimate) =>
     `Con unas ${formatNumber(p.homes, 0)} viviendas (los m² edificables de partida entre ${formatNumber(HOME_M2, 0)} m², la vivienda tipo), la previsión de potencia es de al menos ${formatNumber(p.kw, 1)} kW: ${formatNumber(p.kw_per_home, 2)} kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (${formatNumber(p.simultaneity, 1)} para ${formatNumber(p.homes, 0)} viviendas). Sin servicios comunes ni garaje, que se suman aparte.`,
   powerNone: "Sin m² edificables de partida no estimamos la potencia.",
   transformer:
-    "Por encima de 100 kW, el edificio tiene que reservar un local para un centro de transformación de la distribuidora (RD 1048/2013, art. 26.1). Y la extensión de red la paga quien pide el suministro: la distribuidora solo la hace a su cargo hasta 100 kW en baja tensión, en suelo urbanizado (art. 25).",
+    "Por encima de 100 kW, el edificio tiene que reservar un local para un centro de transformación de la distribuidora (RD 1048/2013, art. 26.1). Y la extensión de red la paga quien pide el suministro (art. 25.2): solo hasta 100 kW en baja tensión, en suelo urbanizado, la hace la distribuidora y cobra los derechos de extensión (art. 25.1).",
   belowTransformer:
-    "Hasta 100 kW en baja tensión, en suelo urbanizado, la extensión de red la hace la distribuidora y cobra sus derechos (RD 1048/2013, art. 25.1).",
+    "Hasta 100 kW en baja tensión, en suelo urbanizado, la extensión de red la hace la distribuidora y cobra los derechos de extensión (RD 1048/2013, art. 25.1).",
   capacity:
     "Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar.",
   cnmc: "La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar.",
@@ -441,7 +454,7 @@ export const SERVICES_TEXT = {
     },
     {
       term: "Plazos de la norma",
-      text: "La distribuidora contesta a una solicitud de acceso en 15 días hábiles en baja tensión (5 hasta 15 kW si no hay que extender la red) y en 30 entre 1 y 36 kV (RD 1183/2020, art. 13). Con centro de transformación, el presupuesto en 20 días hábiles y la obra en 60 desde que se pagan los derechos, sin contar los permisos (RD 1955/2000, art. 103).",
+      text: "La distribuidora contesta a una solicitud de acceso en 15 días hábiles en baja tensión (5 hasta 15 kW si no hay que extender la red) y en 30 entre 1 y 36 kV (RD 1183/2020, art. 13). Con centro de transformación, el presupuesto en 20 días hábiles; y, si la obra la hace la distribuidora, 60 días hábiles desde que se pagan los derechos, que no empiezan a contar hasta que se firma la cesión del local, y sin contar los permisos (RD 1955/2000, art. 103).",
     },
   ],
 } as const;

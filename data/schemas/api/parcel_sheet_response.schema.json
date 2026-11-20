@@ -2232,7 +2232,7 @@
           "examples": [
             "02933"
           ],
-          "title": "Number"
+          "title": "CatalogNumber"
         },
         "protection": {
           "anyOf": [

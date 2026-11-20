@@ -57,3 +57,12 @@ def test_what_is_built_is_said_with_its_figures_never_a_rule() -> None:
         "la compra a los propietarios de sus inmuebles."
     )
     assert existing_text(ExistingBuilding(6573)).endswith("no cuenta el derribo ni el desalojo.")
+
+
+@pytest.mark.parametrize("status", ["Descatalogado", "Demolición total"])
+def test_a_building_out_of_the_catalogue_is_never_said_protected(status: str) -> None:
+    """Review of #110: the layer also gives «Descatalogado» and «Demolición total»."""
+    text = catalog_text(CatalogEntry("01234", None, status, None))
+    assert "protegido" not in text.split("catálogo de edificios protegidos")[1]
+    assert text.startswith("El catálogo de edificios protegidos del Plan General lo da como «")
+    assert CatalogEntry("01234", None, status, None).level is None

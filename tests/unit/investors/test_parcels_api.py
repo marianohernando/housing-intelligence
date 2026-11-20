@@ -197,11 +197,11 @@ def mock_sigma(
 
 def mock_catalog(router: respx.MockRouter, catalog: Any = None) -> None:
     """D-253: the catalogue of protected buildings at the point (no building by default)."""
-    if isinstance(catalog, Exception) or callable(catalog):
-        router.get(url__startswith=CATALOGO).mock(side_effect=catalog)
-    else:
+    if catalog is None or isinstance(catalog, dict):
         found = httpx.Response(200, json=arcgis(catalog))
         router.get(url__startswith=CATALOGO).mock(return_value=found)
+    else:  # an error to raise or a callable answer
+        router.get(url__startswith=CATALOGO).mock(side_effect=catalog)
 
 
 def sheet_of(response: Any) -> ParcelSheetResponse:  # the test client's response
@@ -1252,3 +1252,26 @@ def test_the_power_comes_from_the_starting_m2() -> None:
     assert sheet.power is not None
     assert (sheet.power.homes, sheet.power.simultaneity, sheet.power.kw) == (4, 3.8, 21.9)
     assert not sheet.power.over_transformer_threshold
+
+
+@respx.mock
+def test_a_slow_catalogue_degrades_only_its_part(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Review of #110, R-01: the catalogue gets the time left, like the instrument and Z."""
+    monkeypatch.setattr(parcel_sheet, "BUDGET_S", 1.5)
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA, catalog=late(3))
+    response = client.get("/api/v1/investors/parcels", params={"rc": RC})
+    sheet = sheet_of(response).data
+    assert sheet.planning is not None and sheet.planning.code == "APR.02.06"
+    assert sheet.degraded == ["catalog", "context"]
+    assert "ayto_edificios_protegidos" not in [s.source_id for s in sheet.sources]
+    assert response.headers["cache-control"] == "no-store"
+
+
+@respx.mock
+def test_the_catalogue_read_is_cited() -> None:
+    """Review of #110, R-06: its CC BY attribution goes with the sheet's sources."""
+    mock_catastro(respx.mock)
+    mock_sigma(respx.mock, USES_AREA)
+    sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
+    assert "ayto_edificios_protegidos" in [s.source_id for s in sheet.sources]

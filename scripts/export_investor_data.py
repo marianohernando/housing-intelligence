@@ -35,7 +35,7 @@ import yaml
 
 from hi_contracts.pro.investors import UseClass
 from hi_domain import viability as v
-from hi_domain.parcels import LOOKUP_BUDGET_S, classify_use
+from hi_domain.parcels import DONE_PHASES, LOOKUP_BUDGET_S, classify_use
 from hi_domain.supplies import BASIC_KW, SIMULTANEITY, STEP, TRANSFORMER_KW
 from hi_domain.zonal_norms import (
     NNUU_CITATION,
@@ -412,6 +412,8 @@ def method_figures(
             "factors": [{"grado": g, "value": c} for g, c in sorted(NZ1_FACTORS.items())],
         },
         "lookupBudgetS": LOOKUP_BUDGET_S,
+        # The finished states of an area's works, as the domain reads them (review of #110, R-09)
+        "doneWorks": sorted(DONE_PHASES),
         # D-253: the power estimate (ITC-BT-10) and the transformer threshold (RD 1048/2013)
         "supplies": {
             "kwPerHome": BASIC_KW,

@@ -246,8 +246,12 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     ]);
     const done = { ...ambit, pending: false, phases: phases.map((p) => ({ ...p, state: "Finalizado" })) };
     expect(servicesSignal(planning({ ...area, ambit: done }))).toEqual(["Obras de urbanización del APR.04.09: finalizado, según el Ayuntamiento."]);
+    const unneeded = { ...done, phases: phases.map((p) => ({ ...p, state: "No necesita" })) };
+    expect(servicesSignal(planning({ ...area, ambit: unneeded }))).toHaveLength(1);
     expect(servicesSignal(planning({ ...area, ambit: { ...ambit, tracked: false, phases: [] } }))).toEqual([SERVICES_TEXT.untracked]);
     expect(servicesSignal(null)).toEqual([]);
+    expect(SERVICES_TEXT.portal("urbanizado")).toBe("El Portal del Suelo dice que esta parcela está urbanizada.");
+    expect(SERVICES_TEXT.portal("en_gestion")).toBeNull();
   });
 
   it("says the power as an assumption from the rule, and only links the CNMC's map", () => {
@@ -260,7 +264,9 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
 
   it("names the catalogued building with its protection, number and level", () => {
     expect(catalogText({ number: "02933", name: null, protection: "Parcial", level: 3 })).toBe("Protección parcial, nº 02933 (nivel 3 de 3)");
-    expect(catalogText(null)).toBe("Sin edificio catalogado en el punto de la parcela");
+    expect(catalogText(null)).toBe("No aparece en el catálogo en el punto de referencia de la parcela");
+    expect(catalogText(null, true)).toBe("No lo hemos podido leer ahora");
+    expect(catalogText({ number: "01234", name: null, protection: "Descatalogado", level: null })).toBe("Descatalogado, nº 01234");
     expect(SHEET_TEXT.firstFilter).toMatch(/^Esto es un primer filtro/);
     expect(SHEET_TEXT.studyItems).toHaveLength(8);
   });

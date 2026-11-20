@@ -392,7 +392,7 @@ export type PlanUsesAsOf = string | null;
  */
 export type Level = number | null;
 export type Name6 = string | null;
-export type Number = string | null;
+export type CatalogNumber = string | null;
 export type Protection = string | null;
 export type Url5 = string | null;
 export type SheetLabel = string | null;
@@ -877,7 +877,7 @@ export interface PlanUseFigure {
 export interface ProtectedBuilding {
   level?: Level;
   name: Name6;
-  number: Number;
+  number: CatalogNumber;
   protection: Protection;
   url?: Url5;
 }

@@ -125,7 +125,7 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
         {planning.urban_parcel && <Fact label={TEXT.urbanParcel}>{planning.urban_parcel}</Fact>}
         {instrument && <Fact label={TEXT.instrument}>{instrument}</Fact>}
         <Fact label={TEXT.catalog} note={planning.protected_building?.name ?? null}>
-          {catalogText(planning.protected_building)}
+          {catalogText(planning.protected_building, sheet.degraded?.includes("catalog"))}
         </Fact>
         {planning.ambit && (
           <Fact label={TEXT.ambit} note={planning.ambit.tracked ? TEXT.ambitAsOf(planning.ambit.code, isoInWords(planning.ambit.as_of)) : null}>
@@ -256,7 +256,7 @@ function Services({ sheet }: { sheet: Sheet }) {
           {line}
         </p>
       ))}
-      {stage && <p className={styles.note}>{SERVICES_TEXT.portal(stage)}</p>}
+      {stage && SERVICES_TEXT.portal(stage) && <p className={styles.note}>{SERVICES_TEXT.portal(stage)}</p>}
       <h3 className={styles.subhead}>{SERVICES_TEXT.electricity}</h3>
       {power ? (
         <p>
@@ -265,7 +265,7 @@ function Services({ sheet }: { sheet: Sheet }) {
       ) : (
         <p className={styles.note}>{SERVICES_TEXT.powerNone}</p>
       )}
-      <p>{power?.over_transformer_threshold ? SERVICES_TEXT.transformer : SERVICES_TEXT.belowTransformer}</p>
+      {power && <p>{power.over_transformer_threshold ? SERVICES_TEXT.transformer : SERVICES_TEXT.belowTransformer}</p>}
       <p className={styles.caution}>
         <Info size={18} aria-hidden="true" />
         <span>{SERVICES_TEXT.capacity}</span>
