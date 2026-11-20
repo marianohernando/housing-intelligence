@@ -1114,19 +1114,24 @@ def test_the_plan_uses_come_from_the_snapshot_never_from_sigma() -> None:
         ("residencial", 60230.88, True),
         ("terciario", 21299.91, False),
     ]
-    assert planning.plan_uses_as_of is not None and not planning.plan_principal_without_figure
+    assert planning.plan_uses_as_of is not None and planning.plan_use_without_figure is None
     assert "plan_uses" not in sheet.degraded
     assert sigma_tables_asked() == []
 
 
 @respx.mock
-def test_an_urban_parcel_with_its_use_but_no_figure_says_so() -> None:
-    """Almería 1 (UBOV_ID 50282): table 4 has «SIN USO PORMENORIZADO» without a figure."""
+def test_an_urban_parcel_without_a_figure_carries_its_principal_use() -> None:
+    """Almería 1 (UBOV_ID 50282): table 4 says «SIN USO PORMENORIZADO» without a figure; Luis
+    Misson 2 (27263): residential without a figure."""
     mock_catastro(respx.mock)
     mock_sigma(respx.mock, USES_AREA | {"UBOV_ID": 50282, "AMB_TX_ETIQ": "APR.04.09"})
     planning = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data.planning
     assert planning is not None and planning.plan_uses == []
-    assert planning.plan_principal_without_figure
+    assert planning.plan_use_without_figure == "SIN USO PORMENORIZADO"
+    parcel_sheet.CACHE.clear()
+    mock_sigma(respx.mock, USES_AREA | {"UBOV_ID": 27263})
+    other = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data.planning
+    assert other is not None and other.plan_use_without_figure == "RESIDENCIAL VIVIENDA COLECTIVA"
 
 
 @respx.mock
@@ -1135,7 +1140,7 @@ def test_an_urban_parcel_not_in_the_snapshot_publishes_nothing() -> None:
     mock_sigma(respx.mock, USES_AREA | {"UBOV_ID": 9_999_999})
     sheet = sheet_of(client.get("/api/v1/investors/parcels", params={"rc": RC})).data
     assert sheet.planning is not None and sheet.planning.plan_uses == []
-    assert not sheet.planning.plan_principal_without_figure
+    assert sheet.planning.plan_use_without_figure is None
     assert "plan_uses" not in sheet.degraded
 
 

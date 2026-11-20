@@ -154,7 +154,9 @@ function PlanUses({ planning }: { planning: Sheet["planning"] }) {
       <h3 className={styles.subhead}>{TEXT.byUseTitle}</h3>
       {uses.length === 0 ? (
         <>
-          <p className={styles.note}>{planning.plan_principal_without_figure ? TEXT.planUsesWithoutFigure : TEXT.planUsesNone}</p>
+          <p className={styles.note}>
+            {planning.plan_use_without_figure ? TEXT.planUsesWithoutFigure(planning.plan_use_without_figure) : TEXT.planUsesNone}
+          </p>
           <p className={styles.source}>{source}</p>
         </>
       ) : (

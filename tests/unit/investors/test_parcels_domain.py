@@ -26,6 +26,7 @@ from hi_domain.parcels import (
     parse_address,
     plan_rows,
     plan_use,
+    principal_use,
     same_street,
     street_address,
     summarize_units,
@@ -513,6 +514,9 @@ def test_the_snapshot_gives_the_plan_by_use_of_an_urban_parcel() -> None:
 def test_a_parcel_with_its_principal_use_and_no_figure_is_in_table_4_only() -> None:
     """Almería 1 (CODIGO 50282): table 4 says «SIN USO PORMENORIZADO» without a figure."""
     assert plan_rows(50282) == () and in_table_4(50282)
+    assert principal_use(50282) == "SIN USO PORMENORIZADO"
+    assert principal_use(27263) == "RESIDENCIAL VIVIENDA COLECTIVA"  # Luis Misson 2, no figure
+    assert principal_use(9_999_999) is None
     assert plan_rows(9_999_999) == () and not in_table_4(9_999_999)
     assert not in_table_4(0)
     assert PLAN_USES_AS_OF == "2026-11-20"

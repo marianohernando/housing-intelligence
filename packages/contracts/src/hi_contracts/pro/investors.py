@@ -620,9 +620,11 @@ class PlanningBlock(BaseModel):
     plan_uses_as_of: date | None = Field(
         default=None, description="D-252c: the date of the snapshot of tables 4 and 5"
     )
-    plan_principal_without_figure: bool = Field(
-        default=False,
-        description="D-252c: the plan sets the urban parcel's principal use without a figure",
+    plan_use_without_figure: str | None = Field(
+        default=None,
+        description="D-252c: table 4's principal use of the urban parcel when the plan gives it "
+        "no figure (it can be «SIN USO PORMENORIZADO»)",
+        examples=["RESIDENCIAL VIVIENDA COLECTIVA", "SIN USO PORMENORIZADO"],
     )
     ambit: AmbitStatus | None = Field(
         default=None, description="D-252: the state of the planning area; null for a norma zonal"

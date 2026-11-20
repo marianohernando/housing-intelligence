@@ -356,7 +356,21 @@ class UseFigureResult:
 
 # D-252c: the snapshot of tables 4 and 5 of USOS_SUELO, by CODIGO (= UBOV_ID)
 PLAN_USES_AS_OF = plan_data.AS_OF
-_TABLE_4_STARTS = [low for low, _ in plan_data.TABLE_4]
+
+
+def _table_4_runs() -> tuple[list[int], list[int], list[int]]:
+    """The runs of table 4 decoded once: first CODIGO, last CODIGO and principal use index."""
+    starts, ends, uses, last = [], [], [], -1
+    for gap, span, use in plan_data.TABLE_4:
+        low = last + gap + 1
+        last = low + span
+        starts.append(low)
+        ends.append(last)
+        uses.append(use)
+    return starts, ends, uses
+
+
+_TABLE_4_STARTS, _TABLE_4_ENDS, _TABLE_4_USES = _table_4_runs()
 
 
 def plan_rows(urban_parcel_id: int) -> tuple[tuple[str, float, str, bool], ...]:
@@ -367,10 +381,17 @@ def plan_rows(urban_parcel_id: int) -> tuple[tuple[str, float, str, bool], ...]:
     )
 
 
+def principal_use(urban_parcel_id: int) -> str | None:
+    """Table 4's principal use of the urban parcel (with a figure or not); None if absent."""
+    at = bisect_right(_TABLE_4_STARTS, urban_parcel_id) - 1
+    if at < 0 or _TABLE_4_ENDS[at] < urban_parcel_id:
+        return None
+    return plan_data.USES[_TABLE_4_USES[at]]
+
+
 def in_table_4(urban_parcel_id: int) -> bool:
     """Whether table 4 has the urban parcel (every one there has a principal use row)."""
-    at = bisect_right(_TABLE_4_STARTS, urban_parcel_id) - 1
-    return at >= 0 and plan_data.TABLE_4[at][1] >= urban_parcel_id
+    return principal_use(urban_parcel_id) is not None
 
 
 @dataclass(frozen=True)

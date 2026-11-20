@@ -196,7 +196,13 @@ describe("Edificabilidad por uso (D-252)", () => {
     // D-252c: the snapshot's date, and a use without a figure said as such
     expect(dayMonthYear("2026-11-20")).toBe("20/11/2026");
     expect(SHEET_TEXT.planUsesSource("20/11/2026")).toContain(", del plan a fecha 20/11/2026.");
-    expect(SHEET_TEXT.planUsesWithoutFigure).toBe("El plan fija el uso principal de esta parcela urbanística, pero sin cifra de edificabilidad.");
+    expect(SHEET_TEXT.planUsesWithoutFigure("SIN USO PORMENORIZADO")).toBe(
+      "El plan no fija uso pormenorizado ni cifra de edificabilidad para esta parcela urbanística.",
+    );
+    expect(SHEET_TEXT.planUsesWithoutFigure("RESIDENCIAL VIVIENDA COLECTIVA")).toBe(
+      "El plan fija su uso principal (residencial vivienda colectiva), pero sin cifra de edificabilidad.",
+    );
+    expect(SHEET_TEXT.planUsesWithoutFigure("DOTACIONAL VÍA PÚBLICA PRINCIPAL")).toContain("(dotacional vía pública principal)");
     expect(SHEET_TEXT.planUsesCaveats).toContain("no lo que queda por construir");
     expect(SHEET_TEXT.planUsesCaveats).toContain("art. 7.2.8");
   });

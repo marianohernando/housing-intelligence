@@ -42,6 +42,7 @@ BRONZE = ROOT / "data" / "bronze" / "datasets" / DATASET
 MANUAL = ROOT / "data" / "catalog" / "manual"
 FIGURES = MANUAL / "usos_suelo_edificabilidad.csv"
 PARCELS = MANUAL / "usos_suelo_parcelas.csv"
+USES = MANUAL / "usos_suelo_usos.csv"
 USER_AGENT = "VidaFacil/0.1 (+https://vidafacil-madrid.vercel.app/desarrolladores)"
 
 
@@ -143,21 +144,37 @@ def build() -> None:
         "# Información urbanística sin valor jurídico. No editar a mano.\n" + out.getvalue(),
         encoding="utf-8",
     )
-    codes = sorted(int(r["CODIGO"]) for r in raw[4] if r.get("CODIGO") is not None)
-    runs: list[list[int]] = []
-    for code in codes:
-        if runs and code == runs[-1][1] + 1:
-            runs[-1][1] = code
-        else:
-            runs.append([code, code])
+    # Every use of both tables, by index: the parcels' file says each principal use by it
+    uses = sorted({text(r["USO"]) for rows in raw.values() for r in rows if text(r.get("USO"))})
     out = io.StringIO()
     writer = csv.writer(out, lineterminator="\n")
-    writer.writerow(["desde", "hasta"])
+    writer.writerow(["indice", "uso"])
+    writer.writerows(enumerate(uses))
+    USES.write_text(
+        "# D-252c: los usos de las tablas 4 y 5 de USOS_SUELO, por índice (el de\n"
+        f"# usos_suelo_parcelas.csv). Leída el {day}. No editar a mano.\n" + out.getvalue(),
+        encoding="utf-8",
+    )
+    principal = sorted(
+        (int(r["CODIGO"]), uses.index(text(r["USO"])))
+        for r in raw[4]
+        if r.get("CODIGO") is not None and text(r.get("USO"))
+    )
+    runs: list[list[int]] = []  # consecutive CODIGO with the same principal use
+    for code, use in principal:
+        if runs and code == runs[-1][1] + 1 and use == runs[-1][2]:
+            runs[-1][1] = code
+        else:
+            runs.append([code, code, use])
+    codes = principal
+    out = io.StringIO()
+    writer = csv.writer(out, lineterminator="\n")
+    writer.writerow(["desde", "hasta", "uso"])
     writer.writerows(runs)
     PARCELS.write_text(
-        "# D-252c: los CODIGO de la tabla 4 de USOS_SUELO (una fila por parcela urbanística,\n"
-        f"# con su uso principal, casi siempre sin cifra), en tramos. Leída el {day}.\n"
-        "# No editar a mano.\n" + out.getvalue(),
+        "# D-252c: los CODIGO de la tabla 4 de USOS_SUELO (una fila por parcela urbanística, con\n"
+        "# su uso principal, casi siempre sin cifra), en tramos del mismo uso (su índice en\n"
+        f"# usos_suelo_usos.csv). Leída el {day}. No editar a mano.\n" + out.getvalue(),
         encoding="utf-8",
     )
     print(f"{len(kept)} rows -> {FIGURES.name} ({FIGURES.stat().st_size} B)")

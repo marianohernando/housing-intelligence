@@ -40,10 +40,10 @@ from hi_domain.parcels import (
     UnitsSummary,
     catastro_number,
     classify_planning,
-    in_table_4,
     is_vacant,
     normalize_rc,
     plan_rows,
+    principal_use,
     street_address,
     summarize_units,
 )
@@ -483,8 +483,8 @@ class PlanningRecord:
     # without the urban parcel's UBOV_ID
     plan_rows: tuple[PlanRow, ...] | None = ()
     uses_failed: bool = False
-    # D-252c: table 4 has the urban parcel with its principal use but no figure
-    principal_without_figure: bool = False
+    # D-252c: table 4's principal use of the urban parcel when it gives it no figure
+    use_without_figure: str | None = None
     # D-252c: (stage, ms) of each layer asked now, for the sheet's log line
     timings: tuple[tuple[str, int], ...] = ()
     # D-252b: (stage, error class, ms) of each part that failed, for the logs
@@ -672,11 +672,9 @@ async def fetch_planning(
             if isinstance(conditions, Failure) or conditions is None or not z_layer
             else conditions
         )
-        no_figure = (
-            ubov is not None
-            and in_table_4(ubov)
-            and not any(r.principal for r in rows if isinstance(r, PlanRow))
-        )
+        principal = None if ubov is None else principal_use(ubov)
+        has_figure = isinstance(rows, tuple) and any(r.principal for r in rows)
+        no_figure = None if has_figure else principal
         return PlanningRecord(
             code=code,
             name=clean(uses.get("AMB_TX_DENOM")),
@@ -692,7 +690,7 @@ async def fetch_planning(
             urban_parcel_id=ubov,
             plan_rows=None if isinstance(rows, Failure) else rows,
             uses_failed=isinstance(rows, Failure),
-            principal_without_figure=no_figure,
+            use_without_figure=no_figure,
             failures=failures_of(
                 instrument=instrument,
                 z=conditions if z_layer else None,

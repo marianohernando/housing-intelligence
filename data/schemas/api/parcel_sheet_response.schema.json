@@ -1852,11 +1852,22 @@
           "title": "Observed At",
           "type": "string"
         },
-        "plan_principal_without_figure": {
-          "default": false,
-          "description": "D-252c: the plan sets the urban parcel's principal use without a figure",
-          "title": "Plan Principal Without Figure",
-          "type": "boolean"
+        "plan_use_without_figure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252c: table 4's principal use of the urban parcel when the plan gives it no figure (it can be «SIN USO PORMENORIZADO»)",
+          "examples": [
+            "RESIDENCIAL VIVIENDA COLECTIVA",
+            "SIN USO PORMENORIZADO"
+          ],
+          "title": "Plan Use Without Figure"
         },
         "plan_uses": {
           "anyOf": [

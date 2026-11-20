@@ -116,8 +116,11 @@ export const SHEET_TEXT = {
   planUsesTitle: (urbanParcel: string | null | undefined) =>
     urbanParcel ? `Según el plan, la parcela urbanística ${urbanParcel} tiene:` : "Según el plan, la parcela urbanística tiene:",
   planUsesNone: "El plan no publica la edificabilidad por uso de esta parcela.",
-  // D-252c: table 4 has the urban parcel with its principal use but no figure (Almería 1)
-  planUsesWithoutFigure: "El plan fija el uso principal de esta parcela urbanística, pero sin cifra de edificabilidad.",
+  /** D-252c: table 4 has the urban parcel with its principal use but no figure */
+  planUsesWithoutFigure: (use: string) =>
+    use.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() === "sin uso pormenorizado"
+      ? "El plan no fija uso pormenorizado ni cifra de edificabilidad para esta parcela urbanística."
+      : `El plan fija su uso principal (${use.toLocaleLowerCase("es-ES")}), pero sin cifra de edificabilidad.`,
   planUsesCaveats:
     "La parcela urbanística del plan puede no coincidir con la catastral, y es lo que el plan permite en total, no lo que queda por construir. Salvo excepciones, los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art. 7.2.8).",
   /** D-252c: from the snapshot of tables 4 and 5, with its date (DD/MM/AAAA) */

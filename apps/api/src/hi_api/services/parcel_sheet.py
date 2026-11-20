@@ -605,7 +605,7 @@ def planning_block(record: PlanningRecord, lat: float, lon: float) -> PlanningBl
         urban_parcel_area_m2=record.urban_parcel_area_m2,
         plan_uses=plan_uses(record),
         plan_uses_as_of=date.fromisoformat(PLAN_USES_AS_OF),
-        plan_principal_without_figure=record.principal_without_figure,
+        plan_use_without_figure=record.use_without_figure,
         ambit=ambit_block(ambit_state(record.code)),
         instrument=PlanningInstrument(
             figure=record.figure,

@@ -2256,12 +2256,12 @@ Hotfix de producción tras D-252b. Ya con los logs de D-252b en producción, Mé
    
    El fichero bruto va a bronze, con su manifiesto, la URL y la licencia (CC BY 4.0 del Ayuntamiento, conjunto 300744; comprobada en su CKAN el 19 nov; el portal no respondió el 20). Luego se escriben dos tablas versionadas:
    - `usos_suelo_edificabilidad.csv`: las 10.545 filas con cifra, por CODIGO;
-   - `usos_suelo_parcelas.csv`: los CODIGO de la tabla 4 en 7.651 tramos.
-3. **Módulo generado** `hi_domain.plan_uses_data` (506 KB, con `--check` en `make lint` y test en `tests/data`):
+   - `usos_suelo_parcelas.csv`: los CODIGO de la tabla 4 en 20.487 tramos de CODIGO seguidos con el mismo uso principal, con su índice en `usos_suelo_usos.csv`, que tiene los usos de las dos tablas.
+3. **Módulo generado** `hi_domain.plan_uses_data` (627 KB, con `--check` en `make lint` y test en `tests/data`). Los tramos de la tabla 4 van codificados como diferencias (hueco, largo, uso) y se descodifican una vez al importar (comprobado contra las 40.021 filas del bronze al generarlo: ningún desajuste):
    - Es un `.py` y no un `.json.gz` porque la imagen de la API instala los paquetes como wheels de hatchling (que incluyen todo `src/hi_domain`) con `UV_COMPILE_BYTECODE=1`: el bytecode se compila al construir.
    - Importarlo en frío sin compilar tarda 78 ms.
 4. **La API ya no pide las tablas.** `plan_uses` sale del snapshot por el UBOV_ID de la capa 3, con la fecha «del plan a fecha 20/11/2026», y ya no se degrada por las tablas: solo si la capa 3 no da UBOV_ID (R-07 de #109).
-   - **Uso sin cifra.** Cada parcela urbanística tiene en la tabla 4 una fila con su uso principal, casi siempre sin cifra (30.759 de 40.021). Si la parcela está en la tabla 4 sin cifra, la ficha dice «El plan fija el uso principal de esta parcela urbanística, pero sin cifra de edificabilidad». Es el caso de Almería 1 (CODIGO 50282, «SIN USO PORMENORIZADO»). Si no está en la tabla, dice «El plan no publica la edificabilidad por uso».
+   - **Uso sin cifra.** Cada parcela urbanística tiene en la tabla 4 una fila con su uso principal, casi siempre sin cifra (30.759 de 40.021). Si la parcela está en la tabla 4 sin cifra, la ficha dice su uso: «El plan fija su uso principal (residencial vivienda colectiva), pero sin cifra de edificabilidad». Si ese uso es «SIN USO PORMENORIZADO» (146 filas, 144 sin cifra; Almería 1, CODIGO 50282, es una), dice «El plan no fija uso pormenorizado ni cifra de edificabilidad para esta parcela urbanística». Si no está en la tabla, dice «El plan no publica la edificabilidad por uso».
    - **Código retirado.** Se quita el de las tablas en vivo: consulta, reintento, presupuesto propio y caché de filas por UBOV_ID.
    - **Caché por partes.** La de D-252b se queda para el plan en vigor y la Z.
 5. **El plan en vigor y la Z, acotados** (deuda señalada en la revisión del #110): se piden con el tiempo que queda hasta el plazo de la ficha. Si se pasan, solo se degrada su parte. La capa 3 es la única cuyo fallo tumba el planeamiento.

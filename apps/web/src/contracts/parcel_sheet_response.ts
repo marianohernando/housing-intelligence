@@ -350,9 +350,9 @@ export type Nz = number;
 export type Notice = string;
 export type ObservedAt1 = string;
 /**
- * D-252c: the plan sets the urban parcel's principal use without a figure
+ * D-252c: table 4's principal use of the urban parcel when the plan gives it no figure (it can be «SIN USO PORMENORIZADO»)
  */
-export type PlanPrincipalWithoutFigure = boolean;
+export type PlanUseWithoutFigure = string | null;
 /**
  * D-252: what the plan allows by use on the urban parcel; [] when it publishes nothing, null when it could not be read
  */
@@ -776,7 +776,7 @@ export interface PlanningBlock {
   norma_zonal: NormaZonal | null;
   notice: Notice;
   observed_at: ObservedAt1;
-  plan_principal_without_figure?: PlanPrincipalWithoutFigure;
+  plan_use_without_figure?: PlanUseWithoutFigure;
   plan_uses?: PlanUses;
   plan_uses_as_of?: PlanUsesAsOf;
   sheet_label: SheetLabel;
