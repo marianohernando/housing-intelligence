@@ -71,6 +71,19 @@ Un inversor con experiencia en promoción probó el 19 nov solo la versión para
 
 **Conjuntos de datos (pendiente del sync del sábado 21):** D-253 añade al catálogo `ayto_edificios_protegidos` (300158, Ayuntamiento) y `cm_costes_referencia_edificacion` (el documento de la Comunidad de los costes de referencia, que no es del portal de datos abiertos). `GET /api/v1/datasets` sigue dando 59 hasta el sync. `pitch/datasets_cm.md`, regenerado el 20 nov, los pone en «todavía sin ingerir» (de 9 a 11) y no cambia los 39 CM. **No se cuentan en el pitch hasta el sync:** después, D vuelve a leer la API y, si el total cambia, actualiza `datasets_cm.md`, la slide 2, el guion y las preguntas 7 y 23.
 
+
+## MELODA: la calidad de los datos CM que usamos (20 nov)
+
+Pedido por Mariano el 20 nov («Sí MELODA»), vía datamad-10. MELODA es la métrica de reutilización de Alberto Abella, del jurado; spain.meloda.org la aplica a los portales españoles.
+
+| Qué | Dónde | Estado |
+|---|---|---|
+| Instantánea de la API de spain.meloda.org, con la fecha, la fuente y la licencia (CC BY 4.0) | `pitch/meloda_cm_snapshot.json`, que escribe `pitch/build_datasets_cm.py --refresh-meloda` | **Hecho el 20 nov.** 28 peticiones en total, con pausas: la documentación, la lista de portales, las 23 páginas del portal CM y «Sobre el proyecto». La instantánea se construyó con esas mismas páginas, sin volver a pedirlas |
+| Nota y las seis dimensiones que puntúa el Monitorizador (D1–D6; MELODA 5 tiene ocho, con difusión y reputación) de cada dataset CM, emparejado por la URL exacta de su ficha | `pitch/datasets_cm.md` (generado): «Reutilización según MELODA», una columna en el resumen y en «todavía sin ingerir», y una línea en cada ficha | **Hecho el 20 nov.** 39 de 39, y los 5 CM aún sin ingerir |
+| «¿Qué calidad tienen los datos que usáis?» | pregunta 62 (y la 3 remite a ella) | **Hecho el 20 nov.** Media de 16,0 sobre 49 en los 39; 18,7 en los 29 de la Comunidad, frente a 18,1 en todo su portal; 8 en las fichas del Consorcio. Lo mejor, licencia y formato; lo peor, frecuencia (la que más pesa) y acceso |
+| ¿En una slide? | — | **Propuesta de D: no.** La nota es de los metadatos de las fichas del portal, no de nuestro trabajo, y «16 sobre 49, básico» en pantalla se lee como un punto débil sin tiempo para explicarlo. Mejor como respuesta preparada para Alberto Abella (pregunta 62). La voz y las slides no cambian |
+| Tras el sync del sábado 21 | — | Si entra algún dataset CM nuevo, se vuelve a leer MELODA con `--refresh-meloda`. Los dos de D-253 no son del portal CM: no tienen nota |
+
 ---
 
 ## Condiciones de publicación de `metodologia.md`
