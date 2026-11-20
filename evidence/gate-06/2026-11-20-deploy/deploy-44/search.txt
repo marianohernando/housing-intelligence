@@ -1,0 +1,68 @@
+The API before the deploy (dpl_94jjgL9uoCocQcfFajZtbZMpsmL3, d29e8416, 00:39 UTC) and after it (dpl_5udnLokddKKNCueMzPiwnPsrvQXX, a6690573, 00:48 UTC),
+the same requests compared without `meta`: deploy-43's 54 (11 POST /api/v1/search bodies, GET /api/v1/gaps of 21 districts and 10 municipios,
+the feature lists at 3 levels, 6 context values and 3 investor answers) and GET /api/v1/datasets.
+
+file | before → after the deploy | bytes before / after
+buy400 | identical | 131925 / 131925
+couple1500-madrid | identical | 100229 / 100229
+couple1500-pueblos | identical | 112889 / 112889
+couple1500 | identical | 139182 / 139182
+datasets | identical | 37865 / 37865
+example | identical | 160402 / 160402
+feat-ambitos_residenciales_en_desarrollo-distrito | identical | 11964 / 11964
+feat-compraventas_obra_nueva_pct-municipio | identical | 49663 / 49663
+feat-list-barrio | identical | 949 / 949
+feat-list-distrito | identical | 9394 / 9394
+feat-list-municipio | identical | 47662 / 47662
+feat-plan_vive_viviendas-distrito | identical | 6231 / 6231
+feat-plan_vive_viviendas-municipio | identical | 49472 / 49472
+feat-suelo_publico_vivienda_m2-distrito | identical | 20312 / 20312
+feat-suelo_publico_vivienda_m2-municipio | identical | 155511 / 155511
+gaps-distrito-2807901 | identical | 34372 / 34372
+gaps-distrito-2807902 | identical | 34295 / 34295
+gaps-distrito-2807903 | identical | 34364 / 34364
+gaps-distrito-2807904 | identical | 34284 / 34284
+gaps-distrito-2807905 | identical | 34290 / 34290
+gaps-distrito-2807906 | identical | 34365 / 34365
+gaps-distrito-2807907 | identical | 34376 / 34376
+gaps-distrito-2807908 | identical | 34376 / 34376
+gaps-distrito-2807909 | identical | 34371 / 34371
+gaps-distrito-2807910 | identical | 34361 / 34361
+gaps-distrito-2807911 | identical | 34293 / 34293
+gaps-distrito-2807912 | identical | 34292 / 34292
+gaps-distrito-2807913 | identical | 34384 / 34384
+gaps-distrito-2807914 | identical | 34523 / 34523
+gaps-distrito-2807915 | identical | 34377 / 34377
+gaps-distrito-2807916 | identical | 34372 / 34372
+gaps-distrito-2807917 | identical | 34378 / 34378
+gaps-distrito-2807918 | identical | 34380 / 34380
+gaps-distrito-2807919 | identical | 34371 / 34371
+gaps-distrito-2807920 | identical | 34384 / 34384
+gaps-distrito-2807921 | identical | 34672 / 34672
+gaps-municipio-28001 | identical | 36158 / 36158
+gaps-municipio-28005 | identical | 35715 / 35715
+gaps-municipio-28006 | identical | 35700 / 35700
+gaps-municipio-28049 | identical | 35944 / 35944
+gaps-municipio-28074 | identical | 35697 / 35697
+gaps-municipio-28092 | identical | 35611 / 35611
+gaps-municipio-28106 | identical | 35603 / 35603
+gaps-municipio-28148 | identical | 35628 / 35628
+gaps-municipio-28161 | identical | 35918 / 35918
+gaps-municipio-28180 | identical | 36787 / 36787
+inv-via | identical | 4261 / 4261
+inv-zone164 | changed: the ICIO citation (D-253 point 10), below | 60552 / 60577
+inv-zones | identical | 76089 / 76089
+pueblos | identical | 136152 / 136152
+rent10k | identical | 134022 / 134022
+retired-noflag | identical | 118786 / 118786
+retired | identical | 118783 / 118783
+student | identical | 146554 / 146554
+telework | identical | 158347 / 158347
+
+54 of 55 identical. The one that changes is Pinar del Rey's sheet, only in `defaults.cost_parts[2].source`:
+  before: «ICIO de Madrid, 3,75 % del presupuesto (Ordenanza fiscal 7/2023, art. 25: tipo aprobado para 2024 y vigente en 2025), …»
+  after:  «ICIO de Madrid, 3,75 % del presupuesto (ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025), …»
+/api/v1/datasets is identical: 59 datasets (total 59, CM open data 39). It reads dataset_registry and
+source_registry from the database, so D-253's new ayto_edificios_protegidos, cm_costes_referencia_edificacion and source cnmc_capacidad_redes
+are not listed until the registry sync (pending, see the report).
+`meta`: only generated_at and request_id change.

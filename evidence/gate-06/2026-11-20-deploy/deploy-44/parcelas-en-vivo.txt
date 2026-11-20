@@ -1,0 +1,24 @@
+The four demo parcels after the deploy of a6690573 (the code of 1677f515, #110 D-253; dpl_5udnLokddKKNCueMzPiwnPsrvQXX). Only the demo references.
+
+Lookups of this run that reached the API's parcel code (CDN «MISS»): 7 of the 12 allowed
+  4 sheets by reference, once each, to warm the CDN (curl, 00:47 UTC): a new deployment starts with an empty CDN
+  3 address boxes of check-parcela («calle de prueba 1», at 360, 390 and 1440 px): candidates are private and never in the CDN
+  every other sheet came from the CDN («HIT»): the second visit by curl (4), the D-253 probes (16), check-parcela (12) and the e2e (4)
+
+Each warm-up: the CDN's record of the request → uvicorn's access line of the answer (two clocks: about ±0.1 s), its answer, the second visit
+parcel | reference | request → answer (UTC) | s | buildability | catalogue | degraded | Cache-Control | 2nd visit
+Méndez Álvaro 47 | 2122202VK4722A | 00:46:59.4 → 00:47:09.1 | 9.7 | oficial, 13,121 m² | not in it | none | public, max-age=3600 | HIT, 0.22 s
+Almería 1 | 3959601VK4735H | 00:47:09.3 → 00:47:18.4 | 9.1 | sin dato | not in it | none | public, max-age=3600 | HIT, 0.11 s
+Luis Misson 2 | 0390314VK4709A | 00:47:18.5 → 00:47:28.7 | 10.2 | sin dato | not in it | none | public, max-age=3600 | HIT, 0.12 s
+Mayor 61 | 9943003VK3794D | 00:47:28.9 → 00:47:36.6 | 7.8 | supuesto, 224.4 m² | nº 02933, Parcial | none | public, max-age=3600 | HIT, 0.10 s
+
+The timing lines (D-252c's `stages=`, now with D-253's `catalog`):
+  2122202VK4722A degraded=- ms=9689  upstream_ms=9450  parts=- stages=catastro:381,planning:9103,catalog:442,instrument:444,z:6215,layer3:9102
+  3959601VK4735H degraded=- ms=9111  upstream_ms=8974  parts=- stages=catastro:757,planning:8217,instrument:176,catalog:295,layer3:5791,z:8215
+  0390314VK4709A degraded=- ms=10159 upstream_ms=10036 parts=- stages=catastro:751,planning:9285,instrument:125,catalog:219,z:285,layer3:9285
+  9943003VK3794D degraded=- ms=7707  upstream_ms=7587  parts=- stages=catastro:986,planning:6601,catalog:235,instrument:237,z:254,layer3:6601
+
+What it says:
+  - The new catalogue layer (EDIFICIOS_PROTEGIDOS/5) takes 219–442 ms, in parallel with the other planning layers; it never degraded.
+  - The Catastro takes 0.4–1.0 s. The first lookup's time is still sigma's layer 3 and Z when cold: 5.8–9.3 s.
+  - The four sheets took 7.7–10.2 s, under the 15 s budget.

@@ -1,0 +1,573 @@
+{
+  "base": "production",
+  "widths": {
+    "360": {
+      "parcels": {
+        "2122202VK4722A": {
+          "h1": "Calle Mendez Alvaro 47, 28045 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Obras de urbanización del APR.02.06: finalizado, según el Ayuntamiento. Electricidad Supuesto Con unas 164 viviendas (los m² edificables de partida entre 80 m², la vivienda tipo), la previsión de potencia es de al menos 499,1 kW: 5,75 kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (86,8 para 164 viviendas). Sin servicios comunes ni garaje, que se suman aparte. Por encima de 100 kW, el edificio tiene que reservar un local para un centro de transformación de la distribuidora (RD 1048/2013, art. 26.1). Y la extensión de red la paga quien pide el suministro (art. 25.2): solo hasta 100 kW en baja tensión, en suelo urbanizado, la hace la distribuidora y cobra los derechos de extensión (art. 25.1). Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": "164",
+          "kw": "499,1",
+          "transformer": true,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": "Base Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del suelo, urbanización y derribo: unos 61,2 millones de € (unos 4.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "9943003VK3794D": {
+          "h1": "Calle Mayor 61, 28013 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía. Electricidad Supuesto Con unas 3 viviendas (los m² edificables de partida entre 80 m², la vivienda tipo), la previsión de potencia es de al menos 17,3 kW: 5,75 kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (3,0 para 3 viviendas). Sin servicios comunes ni garaje, que se suman aparte. Hasta 100 kW en baja tensión, en suelo urbanizado, la extensión de red la hace la distribuidora y cobra los derechos de extensión (RD 1048/2013, art. 25.1). Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": "3",
+          "kw": "17,3",
+          "transformer": false,
+          "art25_1": true,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos Protección parcial, nº 02933 (nivel 3 de 3) ",
+          "catalogNone": false,
+          "existingBuilding": "La calculadora es de obra nueva sobre suelo libre: no cuenta el derribo, el desalojo ni la compra a los propietarios de sus inmuebles.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "0390314VK4709A": {
+          "h1": "Calle Luis Misson 2, 28039 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía. Electricidad Sin m² edificables de partida no estimamos la potencia. Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": null,
+          "kw": null,
+          "transformer": false,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": null,
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "3959601VK4735H": {
+          "h1": "Calle Almeria 1, 28028 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Obras de urbanización del APR.04.09: sin iniciar, según el Ayuntamiento. Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1). El Portal del Suelo dice que esta parcela está sin urbanizar. Electricidad Sin m² edificables de partida no estimamos la potencia. Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": null,
+          "kw": null,
+          "transformer": false,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": "La calculadora es de obra nueva sobre suelo libre: no cuenta el derribo ni el desalojo.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        }
+      },
+      "method": {
+        "icioSentences": [
+          "Por un coeficiente de 1,3575: el PEM más, sobre el PEM, un 19 % de gastos generales y beneficio industrial del constructor (de PEM a PEC); un 8 % de honorarios técnicos: proyecto, dirección de obra y seguridad y salud; un 4,75 % de licencia, ICIO y tasas; un 4 % de otros: seguro decenal, organismo de control, ensayos y acometidas (supuesto; el ICIO de Madrid es del 3,75 %: ordenanza fiscal del ICIO, art.",
+          "Incluye la obra en sí (el PEM: materiales, mano de obra, maquinaria e instalaciones) y, con el coeficiente, gastos generales y beneficio industrial del constructor (de PEM a PEC); honorarios técnicos: proyecto, dirección de obra y seguridad y salud; licencia, ICIO y tasas; otros: seguro decenal, organismo de control, ensayos y acometidas.",
+          "ICIO: el impuesto municipal sobre construcciones, instalaciones y obras."
+        ],
+        "has7_2023": false,
+        "services": true
+      },
+      "consoleErrors": []
+    },
+    "390": {
+      "parcels": {
+        "2122202VK4722A": {
+          "h1": "Calle Mendez Alvaro 47, 28045 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Obras de urbanización del APR.02.06: finalizado, según el Ayuntamiento. Electricidad Supuesto Con unas 164 viviendas (los m² edificables de partida entre 80 m², la vivienda tipo), la previsión de potencia es de al menos 499,1 kW: 5,75 kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (86,8 para 164 viviendas). Sin servicios comunes ni garaje, que se suman aparte. Por encima de 100 kW, el edificio tiene que reservar un local para un centro de transformación de la distribuidora (RD 1048/2013, art. 26.1). Y la extensión de red la paga quien pide el suministro (art. 25.2): solo hasta 100 kW en baja tensión, en suelo urbanizado, la hace la distribuidora y cobra los derechos de extensión (art. 25.1). Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": "164",
+          "kw": "499,1",
+          "transformer": true,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": "Base Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del suelo, urbanización y derribo: unos 61,2 millones de € (unos 4.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "9943003VK3794D": {
+          "h1": "Calle Mayor 61, 28013 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía. Electricidad Supuesto Con unas 3 viviendas (los m² edificables de partida entre 80 m², la vivienda tipo), la previsión de potencia es de al menos 17,3 kW: 5,75 kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (3,0 para 3 viviendas). Sin servicios comunes ni garaje, que se suman aparte. Hasta 100 kW en baja tensión, en suelo urbanizado, la extensión de red la hace la distribuidora y cobra los derechos de extensión (RD 1048/2013, art. 25.1). Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": "3",
+          "kw": "17,3",
+          "transformer": false,
+          "art25_1": true,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos Protección parcial, nº 02933 (nivel 3 de 3) ",
+          "catalogNone": false,
+          "existingBuilding": "La calculadora es de obra nueva sobre suelo libre: no cuenta el derribo, el desalojo ni la compra a los propietarios de sus inmuebles.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "0390314VK4709A": {
+          "h1": "Calle Luis Misson 2, 28039 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía. Electricidad Sin m² edificables de partida no estimamos la potencia. Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": null,
+          "kw": null,
+          "transformer": false,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": null,
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "3959601VK4735H": {
+          "h1": "Calle Almeria 1, 28028 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Obras de urbanización del APR.04.09: sin iniciar, según el Ayuntamiento. Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1). El Portal del Suelo dice que esta parcela está sin urbanizar. Electricidad Sin m² edificables de partida no estimamos la potencia. Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": null,
+          "kw": null,
+          "transformer": false,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": "La calculadora es de obra nueva sobre suelo libre: no cuenta el derribo ni el desalojo.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        }
+      },
+      "method": {
+        "icioSentences": [
+          "Por un coeficiente de 1,3575: el PEM más, sobre el PEM, un 19 % de gastos generales y beneficio industrial del constructor (de PEM a PEC); un 8 % de honorarios técnicos: proyecto, dirección de obra y seguridad y salud; un 4,75 % de licencia, ICIO y tasas; un 4 % de otros: seguro decenal, organismo de control, ensayos y acometidas (supuesto; el ICIO de Madrid es del 3,75 %: ordenanza fiscal del ICIO, art.",
+          "Incluye la obra en sí (el PEM: materiales, mano de obra, maquinaria e instalaciones) y, con el coeficiente, gastos generales y beneficio industrial del constructor (de PEM a PEC); honorarios técnicos: proyecto, dirección de obra y seguridad y salud; licencia, ICIO y tasas; otros: seguro decenal, organismo de control, ensayos y acometidas.",
+          "ICIO: el impuesto municipal sobre construcciones, instalaciones y obras."
+        ],
+        "has7_2023": false,
+        "services": true
+      },
+      "consoleErrors": []
+    },
+    "1440": {
+      "parcels": {
+        "2122202VK4722A": {
+          "h1": "Calle Mendez Alvaro 47, 28045 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Obras de urbanización del APR.02.06: finalizado, según el Ayuntamiento. Electricidad Supuesto Con unas 164 viviendas (los m² edificables de partida entre 80 m², la vivienda tipo), la previsión de potencia es de al menos 499,1 kW: 5,75 kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (86,8 para 164 viviendas). Sin servicios comunes ni garaje, que se suman aparte. Por encima de 100 kW, el edificio tiene que reservar un local para un centro de transformación de la distribuidora (RD 1048/2013, art. 26.1). Y la extensión de red la paga quien pide el suministro (art. 25.2): solo hasta 100 kW en baja tensión, en suelo urbanizado, la hace la distribuidora y cobra los derechos de extensión (art. 25.1). Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": "164",
+          "kw": "499,1",
+          "transformer": true,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": "Base Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del suelo, urbanización y derribo: unos 61,2 millones de € (unos 4.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "9943003VK3794D": {
+          "h1": "Calle Mayor 61, 28013 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía. Electricidad Supuesto Con unas 3 viviendas (los m² edificables de partida entre 80 m², la vivienda tipo), la previsión de potencia es de al menos 17,3 kW: 5,75 kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (3,0 para 3 viviendas). Sin servicios comunes ni garaje, que se suman aparte. Hasta 100 kW en baja tensión, en suelo urbanizado, la extensión de red la hace la distribuidora y cobra los derechos de extensión (RD 1048/2013, art. 25.1). Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": "3",
+          "kw": "17,3",
+          "transformer": false,
+          "art25_1": true,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos Protección parcial, nº 02933 (nivel 3 de 3) ",
+          "catalogNone": false,
+          "existingBuilding": "La calculadora es de obra nueva sobre suelo libre: no cuenta el derribo, el desalojo ni la compra a los propietarios de sus inmuebles.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "0390314VK4709A": {
+          "h1": "Calle Luis Misson 2, 28039 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía. Electricidad Sin m² edificables de partida no estimamos la potencia. Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": null,
+          "kw": null,
+          "transformer": false,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": null,
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        },
+        "3959601VK4735H": {
+          "h1": "Calle Almeria 1, 28028 Madrid",
+          "services": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene. Obras de urbanización del APR.04.09: sin iniciar, según el Ayuntamiento. Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1). El Portal del Suelo dice que esta parcela está sin urbanizar. Electricidad Sin m² edificables de partida no estimamos la potencia. Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar. La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar. Ver el mapa de capacidad de demanda de la CNMC (se abre en una pestaña nueva) Agua El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos. Ver los compromisos de Canal de Isabel II (Comunidad de Madrid) (se abre en una pestaña nueva) Palabras y plazos de los suministros",
+          "homes": null,
+          "kw": null,
+          "transformer": false,
+          "art25_1": false,
+          "cnmcLinks": 1,
+          "canal": true,
+          "glossary": [
+            [
+              "CUPS",
+              true
+            ],
+            [
+              "Acometida",
+              false
+            ],
+            [
+              "Centro de transformación",
+              false
+            ]
+          ],
+          "catalogLine": "Catálogo de edificios protegidos No aparece en el catálogo en el punto de referencia de la parcela ",
+          "catalogNone": true,
+          "existingBuilding": "La calculadora es de obra nueva sobre suelo libre: no cuenta el derribo ni el desalojo.",
+          "sources300158": 1,
+          "study": "Lo que añade un estudio completo La nota simple del Registro, con sus cargas. El informe urbanístico del Ayuntamiento. La consulta a la distribuidora eléctrica y a Canal de Isabel II. El levantamiento topográfico y el estudio geotécnico. Un estudio de mercado con testigos de venta. Un plan de negocio con plazos y financiación. Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005). Si la zona lo pide, el estudio arqueológico. Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+          "firstFilter": true,
+          "takeItCount": 2,
+          "overflow": 0,
+          "print": {
+            "details": 6,
+            "open": 6
+          }
+        }
+      },
+      "method": {
+        "icioSentences": [
+          "Por un coeficiente de 1,3575: el PEM más, sobre el PEM, un 19 % de gastos generales y beneficio industrial del constructor (de PEM a PEC); un 8 % de honorarios técnicos: proyecto, dirección de obra y seguridad y salud; un 4,75 % de licencia, ICIO y tasas; un 4 % de otros: seguro decenal, organismo de control, ensayos y acometidas (supuesto; el ICIO de Madrid es del 3,75 %: ordenanza fiscal del ICIO, art.",
+          "Incluye la obra en sí (el PEM: materiales, mano de obra, maquinaria e instalaciones) y, con el coeficiente, gastos generales y beneficio industrial del constructor (de PEM a PEC); honorarios técnicos: proyecto, dirección de obra y seguridad y salud; licencia, ICIO y tasas; otros: seguro decenal, organismo de control, ensayos y acometidas.",
+          "ICIO: el impuesto municipal sobre construcciones, instalaciones y obras."
+        ],
+        "has7_2023": false,
+        "services": true
+      },
+      "consoleErrors": []
+    }
+  },
+  "sheetResponses": [
+    {
+      "width": "360",
+      "path": "/api/v1/investors/parcels",
+      "rc": "2122202VK4722A",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "360",
+      "path": "/api/v1/investors/parcels",
+      "rc": "9943003VK3794D",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "360",
+      "path": "/api/v1/investors/parcels",
+      "rc": "0390314VK4709A",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "360",
+      "path": "/api/v1/investors/parcels",
+      "rc": "3959601VK4735H",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "390",
+      "path": "/api/v1/investors/parcels",
+      "rc": "2122202VK4722A",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "390",
+      "path": "/api/v1/investors/parcels",
+      "rc": "9943003VK3794D",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "390",
+      "path": "/api/v1/investors/parcels",
+      "rc": "0390314VK4709A",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "390",
+      "path": "/api/v1/investors/parcels",
+      "rc": "3959601VK4735H",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "1440",
+      "path": "/api/v1/investors/parcels",
+      "rc": "2122202VK4722A",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "1440",
+      "path": "/api/v1/investors/parcels",
+      "rc": "9943003VK3794D",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "1440",
+      "path": "/api/v1/investors/parcels",
+      "rc": "0390314VK4709A",
+      "status": 200,
+      "cache": "HIT"
+    },
+    {
+      "width": "1440",
+      "path": "/api/v1/investors/parcels",
+      "rc": "3959601VK4735H",
+      "status": 200,
+      "cache": "HIT"
+    }
+  ],
+  "pdfMayor61": {
+    "format": "A4",
+    "from": "Chromium page.pdf after emulateMedia print and beforeprint, at 1440 px",
+    "pages": 32,
+    "bytes": 772527,
+    "committed": false,
+    "why": "the site's footer links the code repository, whose URL carries a surname"
+  }
+}
