@@ -1,0 +1,32 @@
+The four demo parcels after the deploy of d29e8416 (D-252c, dpl_94jjgL9uoCocQcfFajZtbZMpsmL3). Only the demo references.
+
+Lookups of this run that reached the API's parcel code (CDN «MISS»): 7 of the 16 left (11 of the 20 since D-252b)
+  4 sheets by reference, once each, to warm the CDN (curl, 00:20 UTC)
+  3 address boxes of check-parcela («calle de prueba 1», at 360, 390 and 1440 px): candidates are private and never in the CDN
+  every other sheet came from the CDN («HIT»): the second visit by curl (4), the probe (9), check-parcela (12) and the e2e (4)
+
+Each warm-up: the CDN's record of the request → uvicorn's access line of the answer (two clocks: about ±0.1 s), its answer,
+and D-252c's timing line
+parcel | reference | request → answer (UTC) | s | buildability | degraded | Cache-Control | 2nd visit
+Méndez Álvaro 47 | 2122202VK4722A | 00:20:37.6 → 00:20:46.9 | 9.4 | oficial, 13,121 m² | none | public, max-age=3600 | HIT, 0.10 s
+Almería 1 | 3959601VK4735H | 00:20:47.1 → 00:20:48.3 | 1.3 | sin dato (32,697 m² as reference) | none | public, max-age=3600 | HIT, 0.10 s
+Luis Misson 2 | 0390314VK4709A | 00:20:49.5 → 00:21:03.8 | 14.4 | sin dato | none | public, max-age=3600 | HIT, 0.12 s
+Mayor 61 | 9943003VK3794D | 00:21:04.0 → 00:21:13.5 | 9.5 | supuesto, 224.4 m² | none | public, max-age=3600 | HIT, 0.10 s
+
+  2122202VK4722A degraded=- ms=9296  upstream_ms=8994 parts=- stages=catastro:380,planning:8646,instrument:523,layer3:7397,z:8644
+  3959601VK4735H degraded=- ms=1236  upstream_ms=1119 parts=- stages=catastro:750,planning:369,instrument:141,z:270,layer3:369
+  0390314VK4709A degraded=- ms=14348 upstream_ms=9551 parts=- stages=catastro:618,planning:8933,instrument:108,layer3:443,z:8931
+  9943003VK3794D degraded=- ms=9440  upstream_ms=9301 parts=- stages=catastro:970,planning:8331,instrument:231,layer3:8253,z:8329
+
+How to read `stages=` (D-252c): the ms of each step, also on a complete sheet. The Catastro goes first; the planning follows, with its
+layers in parallel (layer 3, the plan in force and the Z), so `planning` is about the slowest of them. The plan's uses no longer appear:
+they come from the snapshot (`hi_domain.plan_uses_data`, «del plan a fecha 20/11/2026»), with no request.
+
+What it says:
+  - The Catastro takes 0.4–1.0 s. The time of a first lookup is sigma's other layers when cold: layer 3 7.4–8.3 s and the Z 8.3–8.9 s.
+    The 7.6–10 s before the tables in deploy-42 were these layers, not the Catastro.
+  - Almería 1 took 1.2 s: its sigma layers answered in 0.1–0.4 s. Why its layers were fast and the others' were not is not known;
+    all four had been asked 52 minutes before (deploy-42).
+  - Luis Misson: 14.3 s of the 15 s budget, 4.8 s of it outside the sources (ms − upstream_ms), so not waiting for sigma or the Catastro.
+  - The snapshot reached the API's image: Méndez Álvaro's plan uses (60,230.88 m² residential and 21,299.91 m² tertiary of MANZANA B)
+    are on its sheet with no table request, and the uses' source says «del plan a fecha 20/11/2026».
