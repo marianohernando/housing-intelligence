@@ -3,9 +3,10 @@
 Which datasets, what each one feeds and its Gate 1 evidence come from data/catalog and
 evidence/gate-01, with no network. The official title and licence shown on the Comunidad de
 Madrid portal come from a dated snapshot of its CKAN API (pitch/portal_cm_snapshot.json). The
-MELODA reusability score of each CM dataset comes from a dated snapshot of the spain.meloda.org
-API (pitch/meloda_cm_snapshot.json; data under CC BY 4.0), matched by the exact URL of the
-dataset's page on the CM portal.
+MELODA reusability score of each CM dataset comes from a dated snapshot of the API of the
+spain.meloda.org Monitorizador (pitch/meloda_cm_snapshot.json; data under CC BY 4.0), matched by
+the exact URL of the dataset's page on the CM portal. The Monitorizador scores 6 dimensions
+(D1–D6, 0 to 49); MELODA 5 itself has 8.
 
 Usage:
     uv run python pitch/build_datasets_cm.py                   # offline, deterministic
@@ -265,7 +266,7 @@ def dataset_block(
     lines.extend(f"  - {line}" for line in uses(catalog, dataset))
     lines.append(f"- **Quality Gate 1:** {' · '.join(p for p in gate_parts if p)}")
     if meloda:
-        lines.append(f"- **MELODA (spain.meloda.org):** {meloda}")
+        lines.append(f"- **MELODA (Monitorizador spain.meloda.org):** {meloda}")
     lines.append("")
     return lines
 
@@ -323,7 +324,7 @@ def meloda_section(cm_own: list[Row], cm_partner: list[Row], meloda: dict[str, A
     return [
         "## Reutilización según MELODA",
         "",
-        f"> Fuente: spain.meloda.org ({meloda['method']}), datos bajo {meloda['license']}. "
+        f"> Fuente: spain.meloda.org. {meloda['method']}; datos bajo {meloda['license']}. "
         f"API leída el {meloda['fetched_at']}; cosecha del portal CM del "
         f"{cm_portal['last_harvest'][:10]}. Instantánea: `pitch/meloda_cm_snapshot.json`. "
         "Cada dataset se empareja por la URL exacta de su ficha en datos.comunidad.madrid: "
@@ -343,11 +344,13 @@ def meloda_section(cm_own: list[Row], cm_partner: list[Row], meloda: dict[str, A
         "",
         *dimension_rows(used, cm_portal),
         "",
-        "La puntuación y los niveles son los que da la API, sin recalcular: el total pondera cada "
-        "dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). MELODA se calcula solo "
-        "con los metadatos públicos de la ficha del portal, no con el contenido del dataset. Un "
-        "nivel fuera del rango que documenta la API (como −1 en geolocalización) se deja como "
-        "viene.",
+        "La puntuación y los niveles son los que da la API del Monitorizador, sin recalcular: el "
+        "total pondera cada dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). El "
+        "Monitorizador puntúa seis dimensiones (D1–D6); MELODA 5 tiene ocho, con difusión y "
+        "reputación (Alberto Abella, formación de DATAMAD del 5 nov, diapositiva 43: "
+        "github.com/albertoabellagarcia/DATAMAD2026). La puntuación se calcula solo con los "
+        "metadatos públicos de la ficha del portal, no con el contenido del dataset. Un nivel "
+        "fuera del rango que documenta la API (como −1 en geolocalización) se deja como viene.",
         "",
     ]
 
@@ -519,7 +522,7 @@ def meloda_snapshot(
         "attribution": "Fuente: spain.meloda.org",
         "license": "CC BY 4.0",
         "license_url": "https://creativecommons.org/licenses/by/4.0/",
-        "method": "MELODA 5: 6 dimensiones, de 0 a 49",
+        "method": "Monitorizador spain.meloda.org (MELODA 5): 6 dimensiones D1–D6, de 0 a 49",
         "api": f"{MELODA_API}/portals/{MELODA_CM_PORTAL}/datasets",
         "match": "URL exacta de la ficha del dataset en datos.comunidad.madrid",
         "portals": portal_rows,

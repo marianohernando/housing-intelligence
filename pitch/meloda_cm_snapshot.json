@@ -623,7 +623,7 @@
   "license": "CC BY 4.0",
   "license_url": "https://creativecommons.org/licenses/by/4.0/",
   "match": "URL exacta de la ficha del dataset en datos.comunidad.madrid",
-  "method": "MELODA 5: 6 dimensiones, de 0 a 49",
+  "method": "Monitorizador spain.meloda.org (MELODA 5): 6 dimensiones D1–D6, de 0 a 49",
   "portals": {
     "comunidad_madrid": {
       "datasets_harvested": 2275,
