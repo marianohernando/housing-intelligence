@@ -9,6 +9,7 @@ import {
   buildableText,
   byUseSource,
   byUseText,
+  dayMonthYear,
   DEMO_PARCELS,
   degradedLines,
   divisionText,
@@ -192,6 +193,16 @@ describe("Edificabilidad por uso (D-252)", () => {
     expect(planUseText(offices, 1000)).toBe("Terciario: 1.200 m² (1,2 m²/m² × 1.000 m² de la parcela urbanística: supuesto)");
     expect(planUseSource(offices)).toBe("Otro uso: servicios terciarios");
     expect(SHEET_TEXT.planUsesTitle("MANZANA B")).toBe("Según el plan, la parcela urbanística MANZANA B tiene:");
+    // D-252c: the snapshot's date, and a use without a figure said as such
+    expect(dayMonthYear("2026-11-20")).toBe("20/11/2026");
+    expect(SHEET_TEXT.planUsesSource("20/11/2026")).toContain(", del plan a fecha 20/11/2026.");
+    expect(SHEET_TEXT.planUsesWithoutFigure("SIN USO PORMENORIZADO")).toBe(
+      "El plan no fija uso pormenorizado ni cifra de edificabilidad para esta parcela urbanística.",
+    );
+    expect(SHEET_TEXT.planUsesWithoutFigure("RESIDENCIAL VIVIENDA COLECTIVA")).toBe(
+      "El plan fija su uso principal (residencial vivienda colectiva), pero sin cifra de edificabilidad.",
+    );
+    expect(SHEET_TEXT.planUsesWithoutFigure("DOTACIONAL VÍA PÚBLICA PRINCIPAL")).toContain("(dotacional vía pública principal)");
     expect(SHEET_TEXT.planUsesCaveats).toContain("no lo que queda por construir");
     expect(SHEET_TEXT.planUsesCaveats).toContain("art. 7.2.8");
   });

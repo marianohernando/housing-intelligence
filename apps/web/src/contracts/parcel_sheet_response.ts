@@ -350,6 +350,10 @@ export type Nz = number;
 export type Notice = string;
 export type ObservedAt1 = string;
 /**
+ * D-252c: table 4's principal use of the urban parcel when the plan gives it no figure (it can be «SIN USO PORMENORIZADO»)
+ */
+export type PlanUseWithoutFigure = string | null;
+/**
  * D-252: what the plan allows by use on the urban parcel; [] when it publishes nothing, null when it could not be read
  */
 export type PlanUses = PlanUseFigure[] | null;
@@ -371,6 +375,10 @@ export type UseOwnership = "publico" | "privado";
  * m²; with a coefficient, coefficient × urban parcel area
  */
 export type ValueM22 = number | null;
+/**
+ * D-252c: the date of the snapshot of tables 4 and 5
+ */
+export type PlanUsesAsOf = string | null;
 export type SheetLabel = string | null;
 /**
  * The official record: the instrument's, or the article of the Normas Urbanísticas for a norma zonal
@@ -768,7 +776,9 @@ export interface PlanningBlock {
   norma_zonal: NormaZonal | null;
   notice: Notice;
   observed_at: ObservedAt1;
+  plan_use_without_figure?: PlanUseWithoutFigure;
   plan_uses?: PlanUses;
+  plan_uses_as_of?: PlanUsesAsOf;
   sheet_label: SheetLabel;
   sheet_url: SheetUrl;
   urban_parcel: UrbanParcel;

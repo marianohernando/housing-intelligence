@@ -17,11 +17,13 @@
 
 import re
 import unicodedata
+from bisect import bisect_right
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 
 from hi_contracts.pro.investors import BuildabilityKind, PlanningKind, UseClass, UseOwnership
 from hi_domain import ambit_status as ambits
+from hi_domain import plan_uses_data as plan_data
 from hi_domain.gaps import es_number
 from hi_domain.geo.bounds import BBox
 from hi_domain.geo.names import LOWER_PARTICLES, title_case
@@ -350,6 +352,46 @@ class UseFigureResult:
     source: str
     dataset_id: str
     residential: bool
+
+
+# D-252c: the snapshot of tables 4 and 5 of USOS_SUELO, by CODIGO (= UBOV_ID)
+PLAN_USES_AS_OF = plan_data.AS_OF
+
+
+def _table_4_runs() -> tuple[list[int], list[int], list[int]]:
+    """The runs of table 4 decoded once: first CODIGO, last CODIGO and principal use index."""
+    starts, ends, uses, last = [], [], [], -1
+    for gap, span, use in plan_data.TABLE_4:
+        low = last + gap + 1
+        last = low + span
+        starts.append(low)
+        ends.append(last)
+        uses.append(use)
+    return starts, ends, uses
+
+
+_TABLE_4_STARTS, _TABLE_4_ENDS, _TABLE_4_USES = _table_4_runs()
+
+
+def plan_rows(urban_parcel_id: int) -> tuple[tuple[str, float, str, bool], ...]:
+    """(use, figure, unit, principal) of the rows with a figure of an urban parcel; () if none."""
+    return tuple(
+        (plan_data.USES[use], value, plan_data.UNITS[unit], principal)
+        for use, value, unit, principal in plan_data.ROWS.get(urban_parcel_id, ())
+    )
+
+
+def principal_use(urban_parcel_id: int) -> str | None:
+    """Table 4's principal use of the urban parcel (with a figure or not); None if absent."""
+    at = bisect_right(_TABLE_4_STARTS, urban_parcel_id) - 1
+    if at < 0 or _TABLE_4_ENDS[at] < urban_parcel_id:
+        return None
+    return plan_data.USES[_TABLE_4_USES[at]]
+
+
+def in_table_4(urban_parcel_id: int) -> bool:
+    """Whether table 4 has the urban parcel (every one there has a principal use row)."""
+    return principal_use(urban_parcel_id) is not None
 
 
 @dataclass(frozen=True)

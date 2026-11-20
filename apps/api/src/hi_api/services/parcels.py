@@ -20,11 +20,11 @@ deadline leaves time for it (D-252b).
 import asyncio
 import re
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Awaitable, Coroutine, Iterator, Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime
-from typing import Any, Literal, Protocol
+from typing import Any, Literal
 
 import httpx
 from pydantic import HttpUrl, ValidationError
@@ -42,6 +42,8 @@ from hi_domain.parcels import (
     classify_planning,
     is_vacant,
     normalize_rc,
+    plan_rows,
+    principal_use,
     street_address,
     summarize_units,
 )
@@ -52,16 +54,12 @@ COORDENADAS = f"{CATASTRO}/COVCCoordenadas.svc/json"
 SIGMA = "https://sigma.madrid.es/hosted/rest/services"
 USOS_SUELO_SERVICE = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer"
 USOS_SUELO = f"{USOS_SUELO_SERVICE}/3/query"
-# D-252: the plan's buildable m² of the urban parcel, by its UBOV_ID (= CODIGO): table 4 for
-# the principal use («Uso cualificado principal»), table 5 for the others
-PLAN_USES = (f"{USOS_SUELO_SERVICE}/4/query", f"{USOS_SUELO_SERVICE}/5/query")
-# Review of #109, R-01: tables 4 and 5 run after layer 3, so they get their own time, never past
-# the sheet's deadline: out of time they degrade only the plan's uses, never the planning
-# D-252b: they get the time left before the sheet's deadline (minus the margin), not a fixed cap;
-# without a deadline (the demo snapshot), at most PLAN_USES_TIMEOUT_S. Under MIN_TRY_S, no try.
-PLAN_USES_TIMEOUT_S = 10.0
+# D-252c: the plan's buildable m² by use (tables 4 and 5 of USOS_SUELO) come from the snapshot in
+# hi_domain.plan_uses_data, never live: a cold query of one CODIGO takes 6,5–10 s on sigma's side.
+# The secondary layers (instrument, Z) get the time left before the sheet's deadline, minus this
+# margin: out of time they degrade only their part; layer 3 is the only one that fails the
+# planning.
 DEADLINE_MARGIN_S = 0.5
-MIN_TRY_S = 0.3
 PLANEAMIENTO = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/PLANEAMIENTO_URBANISTICO/MapServer/3/query"
 CONDICIONES = f"{SIGMA}/PGOUM97/PG_CONDICIONES_EDIFICACION/MapServer/6/query"
 CARTOCIUDAD = "https://www.cartociudad.es/geocoder/api/geocoder/candidates"
@@ -481,9 +479,14 @@ class PlanningRecord:
     z_failed: bool = False  # the 1997 plan of building conditions did not answer (NZ 1 only)
     urban_parcel_area_m2: float | None = None
     urban_parcel_id: int | None = None  # UBOV_ID: what tables 4 and 5 are asked by
-    # D-252: (use, figure, unit, principal) of tables 4 and 5; None when they did not answer
+    # D-252: (use, figure, unit, principal) of tables 4 and 5 (D-252c: from the snapshot); None
+    # without the urban parcel's UBOV_ID
     plan_rows: tuple[PlanRow, ...] | None = ()
     uses_failed: bool = False
+    # D-252c: table 4's principal use of the urban parcel when it gives it no figure
+    use_without_figure: str | None = None
+    # D-252c: (stage, ms) of each layer asked now, for the sheet's log line
+    timings: tuple[tuple[str, int], ...] = ()
     # D-252b: (stage, error class, ms) of each part that failed, for the logs
     failures: tuple[tuple[str, str, int], ...] = ()
 
@@ -521,47 +524,12 @@ async def arcgis_point(
         return attributes
 
 
-async def arcgis_rows(
-    client: httpx.AsyncClient, url: str, where: str, fields: str
-) -> list[dict[str, Any]]:
-    """The attributes of every row of a table that match `where`."""
-    params = {"where": where, "outFields": fields, "returnGeometry": "false", "f": "json"}
-    payload = await get_json(client, "planning", url, params, SIGMA_TIMEOUT)
-    if not isinstance(payload, dict) or "error" in payload:
-        raise UpstreamError("planning", "ArcGIS error")
-    with parsing("planning"):
-        rows = [(f or {}).get("attributes") for f in payload.get("features") or []]
-        if any(not isinstance(r, dict) for r in rows):
-            raise TypeError("attributes")
-        return [r for r in rows if isinstance(r, dict)]
-
-
-async def plan_rows(client: httpx.AsyncClient, urban_parcel_id: int) -> tuple[PlanRow, ...]:
-    """D-252: tables 4 and 5 of the urban parcel, in parallel."""
-    where = f"CODIGO={int(urban_parcel_id)}"
-    try:  # review of #111, R-08: one table failing cancels its sibling
-        async with asyncio.TaskGroup() as group:
-            asked = [
-                group.create_task(arcgis_rows(client, url, where, "USO,EDIFICABIL,UNIDAD"))
-                for url in PLAN_USES
-            ]
-    except ExceptionGroup as failed:
-        first = failed.exceptions[0]
-        if isinstance(first, UpstreamError):
-            raise first from first.__cause__
-        raise
-    principal, others = (task.result() for task in asked)
-    with parsing("planning"):
-        return tuple(
-            PlanRow(
-                clean(r.get("USO")),
-                catastro_number(r.get("EDIFICABIL")),
-                clean(r.get("UNIDAD")),
-                main,
-            )
-            for rows, main in ((principal, True), (others, False))
-            for r in rows
-        )
+def snapshot_rows(urban_parcel_id: int) -> tuple[PlanRow, ...]:
+    """D-252c: tables 4 and 5 of an urban parcel from the snapshot (its rows with a figure)."""
+    return tuple(
+        PlanRow(use, value, unit, principal)
+        for use, value, unit, principal in plan_rows(urban_parcel_id)
+    )
 
 
 @dataclass(frozen=True)
@@ -593,56 +561,35 @@ def instrument_url(value: Any) -> str | None:
     return https_url(clean(value))
 
 
-class RowsCache(Protocol):
-    """Where the rows of tables 4 and 5 are kept by UBOV_ID (D-252b: by parts)."""
-
-    def rows(self, urban_parcel_id: int) -> tuple[PlanRow, ...] | None: ...
-
-    def keep(self, urban_parcel_id: int, rows: tuple[PlanRow, ...]) -> None: ...
-
-
-def time_left(deadline: float | None) -> float:
-    """Seconds the tables may take: what is left before the sheet's deadline, minus the margin
-    (D-252b: no fixed cap); without a deadline (the demo snapshot), PLAN_USES_TIMEOUT_S."""
+def time_left(deadline: float | None) -> float | None:
+    """Seconds a secondary layer may take: what is left before the sheet's deadline, minus the
+    margin; None without a deadline (the demo snapshot: the client's own timeout)."""
     if deadline is None:
-        return PLAN_USES_TIMEOUT_S
+        return None
     return deadline - asyncio.get_running_loop().time() - DEADLINE_MARGIN_S
 
 
-async def bounded_plan_rows(
-    client: httpx.AsyncClient, urban_parcel_id: int, deadline: float | None
-) -> tuple[PlanRow, ...]:
-    """Tables 4 and 5 within the time left before the sheet's deadline; a quick failure (an
-    error, not the time running out) is asked once more if there is time. Out of time,
-    UpstreamError, so only `plan_uses` is degraded (R-01)."""
-    for attempt in (1, 2):
-        budget = time_left(deadline)
-        if budget < MIN_TRY_S:
-            raise UpstreamError("planning", "no time left for the plan's uses")
-        try:
-            async with asyncio.timeout(budget):
-                return await plan_rows(client, urban_parcel_id)
-        except TimeoutError as exc:
-            raise UpstreamError("planning", "the plan's uses out of time") from exc
-        except UpstreamError:
-            if attempt == 2:
-                raise
-    raise AssertionError("unreachable")  # pragma: no cover
+async def within(deadline: float | None, task: Coroutine[Any, Any, Any]) -> Any:
+    """A secondary layer within the time left (D-252c, review of #110): out of time it is an
+    UpstreamError, so a Failure that degrades only its part, never the whole planning."""
+    budget = time_left(deadline)
+    if budget is not None and budget <= 0:
+        task.close()
+        raise UpstreamError("planning", "no time left")
+    try:
+        async with asyncio.timeout(budget):
+            return await task
+    except TimeoutError as exc:
+        raise UpstreamError("planning", "out of the time left") from exc
 
 
-async def plan_rows_for(
-    client: httpx.AsyncClient,
-    urban_parcel_id: int,
-    deadline: float | None,
-    cache: RowsCache | None,
-) -> tuple[PlanRow, ...]:
-    """The rows of an urban parcel: kept ones if any, else asked (and kept)."""
-    if cache is not None and (kept := cache.rows(urban_parcel_id)) is not None:
-        return kept
-    rows = await bounded_plan_rows(client, urban_parcel_id, deadline)
-    if cache is not None:
-        cache.keep(urban_parcel_id, rows)
-    return rows
+async def clocked(stage: str, task: Awaitable[Any], times: dict[str, int]) -> Any:
+    """D-252c: how long each stage takes, kept for the sheet's log line (failed or not)."""
+    started = time.perf_counter()
+    try:
+        return await task
+    finally:
+        times[stage] = round((time.perf_counter() - started) * 1000)
 
 
 def urban_parcel_id(uses: Mapping[str, Any]) -> int:
@@ -686,35 +633,38 @@ async def fetch_planning(
     y: float,
     deadline: float | None = None,
     *,
-    rows_cache: RowsCache | None = None,
     base: PlanningRecord | None = None,
 ) -> PlanningRecord | None:
     """The planning at the parcel's reference point, its layers in parallel; None when no layer
-    covers it. The Z of norma zonal 1 is asked always (one cheap call) and read only there.
-    Tables 4 and 5 follow layer 3 (they need its UBOV_ID), with the time left before the
-    deadline. With `base` (a record kept with some part failed), only those parts are asked."""
+    covers it. The Z of norma zonal 1 is asked always (one cheap call) and read only there. The
+    plan's m² by use come from the snapshot by layer 3's UBOV_ID. The secondary layers get the
+    time left before the deadline. With `base` (a record kept with some part failed), only those
+    parts are asked."""
     if base is not None:
-        return await repair_planning(client, x, y, deadline, rows_cache, base)
-
-    async def uses_and_rows() -> tuple[dict[str, Any] | None, int | None, Any]:
-        uses = await arcgis_point(client, USOS_SUELO, x, y, USES_FIELDS)
-        if uses is None or clean(uses.get("AMB_TX_ETIQ")) is None:
-            return uses, None, ()
-        try:
-            ubov = urban_parcel_id(uses)
-        except UpstreamError:
-            return uses, None, Failure("NoUrbanParcelId", 0)
-        return uses, ubov, await optional(plan_rows_for(client, ubov, deadline, rows_cache))
-
-    (uses, ubov, rows), instrument, conditions = await asyncio.gather(
-        uses_and_rows(),
-        optional(arcgis_point(client, PLANEAMIENTO, x, y, INSTRUMENT_FIELDS)),
-        optional(arcgis_point(client, CONDICIONES, x, y, "COEF_Z")),
+        return await repair_planning(client, x, y, deadline, base)
+    times: dict[str, int] = {}
+    uses, instrument, conditions = await asyncio.gather(
+        clocked("layer3", arcgis_point(client, USOS_SUELO, x, y, USES_FIELDS), times),
+        optional(
+            clocked(
+                "instrument",
+                within(deadline, arcgis_point(client, PLANEAMIENTO, x, y, INSTRUMENT_FIELDS)),
+                times,
+            )
+        ),
+        optional(
+            clocked("z", within(deadline, arcgis_point(client, CONDICIONES, x, y, "COEF_Z")), times)
+        ),
     )
     code = clean((uses or {}).get("AMB_TX_ETIQ"))
     if uses is None or code is None:
         return None
     z_layer = needs_z(code)
+    try:
+        ubov: int | None = urban_parcel_id(uses)
+        rows: Any = snapshot_rows(ubov)
+    except UpstreamError:  # R-07: a code without its urban parcel is the layer failing
+        ubov, rows = None, Failure("NoUrbanParcelId", 0)
     with parsing("planning"):
         found = {} if isinstance(instrument, Failure) or instrument is None else instrument
         z = (
@@ -722,6 +672,9 @@ async def fetch_planning(
             if isinstance(conditions, Failure) or conditions is None or not z_layer
             else conditions
         )
+        principal = None if ubov is None else principal_use(ubov)
+        has_figure = isinstance(rows, tuple) and any(r.principal for r in rows)
+        no_figure = None if has_figure else principal
         return PlanningRecord(
             code=code,
             name=clean(uses.get("AMB_TX_DENOM")),
@@ -737,11 +690,13 @@ async def fetch_planning(
             urban_parcel_id=ubov,
             plan_rows=None if isinstance(rows, Failure) else rows,
             uses_failed=isinstance(rows, Failure),
+            use_without_figure=no_figure,
             failures=failures_of(
                 instrument=instrument,
                 z=conditions if z_layer else None,
                 plan_uses=rows,
             ),
+            timings=tuple(times.items()),
         )
 
 
@@ -750,30 +705,30 @@ async def repair_planning(
     x: float,
     y: float,
     deadline: float | None,
-    rows_cache: RowsCache | None,
     base: PlanningRecord,
 ) -> PlanningRecord:
-    """A kept record with some part failed: only those parts are asked again (D-252b)."""
+    """A kept record with some part failed: only those parts are asked again (D-252b). The
+    plan's uses never need it (D-252c: they come from the snapshot)."""
 
     async def kept() -> None:
         return None
 
-    async def no_id() -> Failure:
-        return Failure("NoUrbanParcelId", 0)
-
-    ubov = base.urban_parcel_id
-    if not base.uses_failed:
-        rows_task: Any = kept()
-    elif ubov is None:
-        rows_task = no_id()
-    else:
-        rows_task = optional(plan_rows_for(client, ubov, deadline, rows_cache))
-    instrument, conditions, rows = await asyncio.gather(
-        optional(arcgis_point(client, PLANEAMIENTO, x, y, INSTRUMENT_FIELDS))
+    times: dict[str, int] = {}
+    instrument, conditions = await asyncio.gather(
+        optional(
+            clocked(
+                "instrument",
+                within(deadline, arcgis_point(client, PLANEAMIENTO, x, y, INSTRUMENT_FIELDS)),
+                times,
+            )
+        )
         if base.instrument_failed
         else kept(),
-        optional(arcgis_point(client, CONDICIONES, x, y, "COEF_Z")) if base.z_failed else kept(),
-        rows_task,
+        optional(
+            clocked("z", within(deadline, arcgis_point(client, CONDICIONES, x, y, "COEF_Z")), times)
+        )
+        if base.z_failed
+        else kept(),
     )
     updates: dict[str, Any] = {}
     with parsing("planning"):
@@ -785,10 +740,8 @@ async def repair_planning(
                 "coef_z": catastro_number((conditions or {}).get("COEF_Z")),
                 "z_failed": False,
             }
-        if base.uses_failed and not isinstance(rows, Failure):
-            updates |= {"plan_rows": rows, "uses_failed": False}
-    failures = failures_of(instrument=instrument, z=conditions, plan_uses=rows)
-    return replace(base, **updates, failures=failures)
+    failures = failures_of(instrument=instrument, z=conditions)
+    return replace(base, **updates, failures=failures, timings=tuple(times.items()))
 
 
 # --- CartoCiudad ---

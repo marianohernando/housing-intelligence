@@ -617,6 +617,15 @@ class PlanningBlock(BaseModel):
         description="D-252: what the plan allows by use on the urban parcel; [] when it publishes "
         "nothing, null when it could not be read",
     )
+    plan_uses_as_of: date | None = Field(
+        default=None, description="D-252c: the date of the snapshot of tables 4 and 5"
+    )
+    plan_use_without_figure: str | None = Field(
+        default=None,
+        description="D-252c: table 4's principal use of the urban parcel when the plan gives it "
+        "no figure (it can be «SIN USO PORMENORIZADO»)",
+        examples=["RESIDENCIAL VIVIENDA COLECTIVA", "SIN USO PORMENORIZADO"],
+    )
     ambit: AmbitStatus | None = Field(
         default=None, description="D-252: the state of the planning area; null for a norma zonal"
     )

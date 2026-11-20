@@ -1852,6 +1852,23 @@
           "title": "Observed At",
           "type": "string"
         },
+        "plan_use_without_figure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252c: table 4's principal use of the urban parcel when the plan gives it no figure (it can be «SIN USO PORMENORIZADO»)",
+          "examples": [
+            "RESIDENCIAL VIVIENDA COLECTIVA",
+            "SIN USO PORMENORIZADO"
+          ],
+          "title": "Plan Use Without Figure"
+        },
         "plan_uses": {
           "anyOf": [
             {
@@ -1867,6 +1884,20 @@
           "default": null,
           "description": "D-252: what the plan allows by use on the urban parcel; [] when it publishes nothing, null when it could not be read",
           "title": "Plan Uses"
+        },
+        "plan_uses_as_of": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-252c: the date of the snapshot of tables 4 and 5",
+          "title": "Plan Uses As Of"
         },
         "sheet_label": {
           "anyOf": [

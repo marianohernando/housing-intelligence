@@ -8,6 +8,7 @@ from hi_domain.parcels import (
     DOTACIONAL,
     NO_PLANNING,
     NON_BUILDABLE,
+    PLAN_USES_AS_OF,
     RUSTIC,
     OfficialFigure,
     Unit,
@@ -17,12 +18,15 @@ from hi_domain.parcels import (
     classify_planning,
     classify_use,
     in_madrid_bbox,
+    in_table_4,
     initial_buildability,
     is_vacant,
     normalize_rc,
     parcel_cautions,
     parse_address,
+    plan_rows,
     plan_use,
+    principal_use,
     same_street,
     street_address,
     summarize_units,
@@ -493,3 +497,26 @@ def test_an_official_figure_in_an_area_whose_state_is_not_published_says_so() ->
     texts = dict(parcel_cautions("RESIDENCIAL VIVIENDA COLECTIVA", [figure], centre))
     assert texts["ambito_sin_estado"].startswith("El Ayuntamiento no publica el estado del ámbito")
     assert "ambito_sin_estado" not in dict(parcel_cautions("RESIDENCIAL", [], centre))
+
+
+# --- D-252c: the snapshot of tables 4 and 5 ---
+
+
+def test_the_snapshot_gives_the_plan_by_use_of_an_urban_parcel() -> None:
+    """MANZANA B of APR.02.06 (CODIGO 68695): 60.230,88 m² residential, 21.299,91 terciario."""
+    assert sorted(plan_rows(68695)) == [
+        ("RESIDENCIAL VIVIENDA COLECTIVA", 60230.88, "m²", True),
+        ("SERVICIOS TERCIARIOS", 21299.91, "m²", False),
+    ]
+    assert in_table_4(68695)
+
+
+def test_a_parcel_with_its_principal_use_and_no_figure_is_in_table_4_only() -> None:
+    """Almería 1 (CODIGO 50282): table 4 says «SIN USO PORMENORIZADO» without a figure."""
+    assert plan_rows(50282) == () and in_table_4(50282)
+    assert principal_use(50282) == "SIN USO PORMENORIZADO"
+    assert principal_use(27263) == "RESIDENCIAL VIVIENDA COLECTIVA"  # Luis Misson 2, no figure
+    assert principal_use(9_999_999) is None
+    assert plan_rows(9_999_999) == () and not in_table_4(9_999_999)
+    assert not in_table_4(0)
+    assert PLAN_USES_AS_OF == "2026-11-20"

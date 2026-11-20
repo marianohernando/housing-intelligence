@@ -50,6 +50,8 @@
             "assumed": false
           }
         ],
+        "plan_uses_as_of": "2026-11-20",
+        "plan_use_without_figure": null,
         "ambit": {
           "code": "APR.02.06",
           "tracked": true,
@@ -143,6 +145,8 @@
         "urban_parcel": "231123",
         "urban_parcel_area_m2": 20745.2010065,
         "plan_uses": [],
+        "plan_uses_as_of": "2026-11-20",
+        "plan_use_without_figure": "SIN USO PORMENORIZADO",
         "ambit": {
           "code": "APR.04.09",
           "tracked": true,
@@ -236,6 +240,8 @@
         "urban_parcel": "M03772_4",
         "urban_parcel_area_m2": 3751.861274,
         "plan_uses": [],
+        "plan_uses_as_of": "2026-11-20",
+        "plan_use_without_figure": "RESIDENCIAL VIVIENDA COLECTIVA",
         "ambit": null,
         "instrument": null,
         "sheet_url": "https://transparencia.madrid.es/UnidadesDescentralizadas/UrbanismoyVivienda/Urbanismo/Transparencia/Planeamiento%20urban%C3%ADstico/PUInformacionPublica/Planeamiento/Ficheros/3.%20Refundido%20de%20las%20normas%20urban%C3%ADsticas.pdf#page=349",
@@ -307,6 +313,8 @@
         "urban_parcel": "M08336",
         "urban_parcel_area_m2": 3435.159032,
         "plan_uses": [],
+        "plan_uses_as_of": "2026-11-20",
+        "plan_use_without_figure": "RESIDENCIAL VIVIENDA COLECTIVA",
         "ambit": null,
         "instrument": null,
         "sheet_url": "https://www.bocm.es/boletin/CM_Orden_BOCM/2023/11/27/BOCM-20231127-34.PDF#page=150",
