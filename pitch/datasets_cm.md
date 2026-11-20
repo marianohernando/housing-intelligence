@@ -623,17 +623,19 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
   - Red peatonal para medir la distancia a pie a cada servicio
 - **Quality Gate 1:** PASS · 2026-11-11 · 5/5 checks críticos · versión `2026-11-11-a3206c2d1d5f` · 57.658,8 km de calles y caminos · [quality_report.json](../evidence/gate-01/2026-11-11/osm_red_peatonal/quality_report.json)
 
-## 4. En el catálogo, todavía sin ingerir (9)
+## 4. En el catálogo, todavía sin ingerir (11)
 
 Revisados y con licencia clara, pero todavía sin control de calidad: no se citan como usados.
 
 | Dataset | Publica | ¿Portal CM? | Ficha |
 |---|---|---|---|
 | Arbolado en parques y zonas verdes de Madrid (detalle) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300761-0-arbolado-especies |
+| Catálogo de edificios protegidos | Ayuntamiento de Madrid (Dirección General de Planeamiento) | no | https://datos.madrid.es/dataset/300158-0-edificios-protegidos |
 | Equipamientos y entidades de la ciudad de Madrid (que hay publicados en www.madrid.es) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300331-0-equipamientos-municipales |
 | Planeamiento y desarrollos del PGOUM (visor urbanístico) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300489-0-planeamiento-desarrollos-pgoum |
 | Urbanismo. Destino urbanístico del suelo | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo |
 | Barrios del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/barrios_municipio_madrid |
+| Costes de Referencia General de la edificación (actualizados al año 2022) | Comunidad de Madrid (Dirección General de Vivienda y Rehabilitación) | no | https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf |
 | Distritos del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/distritos_municipio_madrid |
 | Covid 19 -TIA por Municipios y Distritos de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/covid19_tia_muni_y_distritos |
 | Personas con discapacidad por edad y sexo. Municipios | Instituto de Estadística | sí | https://datos.comunidad.madrid/dataset/personas_discapacidad_por_edad_y_sexo |
