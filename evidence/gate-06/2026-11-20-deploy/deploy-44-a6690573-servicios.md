@@ -102,7 +102,7 @@
 11. **e2e:** **145/145** at 1440 px and **121/121** at 390 px, with 0 console errors ([report](deploy-44/e2e-report.json)).
 12. **Live lookups: 7 of the 12 allowed.**
     - What they were: the 4 sheets by reference and check-parcela's 3 address boxes.
-    - 36 sheet reads of this run came from the CDN, and so did the visitor's one.
+    - 36 sheet reads of this run came from the CDN, and so did the unidentified visitor's one.
 13. **Logs from 00:44 UTC** ([deploy-44/logs.txt](deploy-44/logs.txt)):
     - **Runtime:** 515 lines, all info, with 9 instances started. 0 `WARNING`, and 0 pool, authentication or traceback lines.
     - **The timing lines:** the 4 `parcel input=` lines and the 3 `parcel candidates=` lines.
@@ -110,7 +110,7 @@
     - **CDN:** 2,273 records, the whole window (2 pages of the listing), every one from the new deployment.
       - **0 5xx:** 200 × 2,167, 304 × 105, and one 499 (a static chunk the probe cancelled when it navigated).
       - **WAF:** all `allow`.
-    - **A visitor:** at 00:51:21–00:53:05 UTC, a Chrome browser on a Mac.
+    - **«Visitante sin identificar (Chrome/Mac)»:** at 00:51:21–00:53:05 UTC, a Chrome browser on a Mac. Who it was is not known.
       - It visited the map, «Qué falta», «Cómo lo calculamos», «Inversores» and 3 parcel sheets.
       - It sent 3 Web Analytics page views.
       - Its one parcel-sheet API request was a CDN «HIT», and it typed no address.

@@ -22,7 +22,7 @@ the parcel routes (path as the CDN records it, status, cache, client):
      4 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/sheets-a669
      4 GET /api/v1/investors/parcels 200 HIT · headless Chromium, this run's e2e
      3 GET /api/v1/investors/parcels/candidates 200 MISS · vida-facil-smoke/check-parcela-a669
-     1 GET /api/v1/investors/parcels 200 HIT · a visitor's browser (Chrome, Mac)
+     1 GET /api/v1/investors/parcels 200 HIT · «visitante sin identificar (Chrome/Mac)»
 API by path and status (all pages):
      72 GET /api/v1/datasets 200
      51 GET /api/v1/geo/admin-units 200
@@ -102,7 +102,7 @@ The parcel timing lines (`hi_api.services.parcel_sheet`, INFO), every one of thi
 
 Lines with «lat=» or «lon=»: 0.
 Lines with «address=» or «q=»: 3, all «q=[redactado]» (check-parcela's address boxes); lines with the typed text («prueba»): 0.
-A visitor: from 2026-11-20T00:51:21.603Z to 2026-11-20T00:53:05.109Z, 110 requests not from this run.
+«Visitante sin identificar (Chrome/Mac)»: from 2026-11-20T00:51:21.603Z to 2026-11-20T00:53:05.109Z, 110 requests not from this run.
   A Chrome browser on a Mac: the map, «Qué falta», «Cómo lo calculamos», «Inversores» and 3 parcel-sheet pages, with
   3 Web Analytics page views; its one parcel-sheet API request was a CDN «HIT» (no live lookup), and it typed no address.
   A client on Windows asked for 2 parcel-sheet pages without running their JavaScript (no API request): a link preview, probably.
