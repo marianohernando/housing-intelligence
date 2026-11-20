@@ -1,7 +1,7 @@
 # Datasets que usa Vida Fácil
 
 > Fichero generado: no se edita a mano. Se regenera con `uv run python pitch/build_datasets_cm.py`.
-> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-19).
+> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y `evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal (`pitch/portal_cm_snapshot.json`, leída el 2026-11-19). La puntuación MELODA sale de la API de spain.meloda.org (`pitch/meloda_cm_snapshot.json`, leída el 2026-11-20; Fuente: spain.meloda.org, CC BY 4.0).
 
 **39 datasets del Portal de Datos Abiertos de la Comunidad de Madrid, 39 con Quality Gate 1 en PASS:** 29 publicados por la Comunidad y su Instituto de Estadística, y 10 del Consorcio Regional de Transportes que también tienen ficha en el portal.
 
@@ -9,47 +9,66 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 
 ## Resumen
 
-| # | Dataset | Publica | Gate 1 |
-|---|---|---|---|
-| 1 | [Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid](https://datos.comunidad.madrid/dataset/1934259) | Instituto de Estadística | PASS 2026-10-22 |
-| 2 | [Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios](https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000) | Instituto de Estadística | PASS 2026-10-22 |
-| 3 | [Red de Calidad del Aire. Estaciones](https://datos.comunidad.madrid/dataset/calidad_aire_estaciones) | Comunidad de Madrid | PASS 2026-11-14 |
-| 4 | [Red de Calidad del Aire. Datos horarios desde 2005](https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico) | Comunidad de Madrid | PASS 2026-11-14 |
-| 5 | [Red de Calidad del Aire. Municipios por zonas](https://datos.comunidad.madrid/dataset/calidad_aire_zonas) | Comunidad de Madrid | PASS 2026-11-14 |
-| 6 | [Catastro Inmobiliario. Inmuebles por distrito y uso](https://datos.comunidad.madrid/dataset/catastro_inmuebles_por_distrito_y_uso) | Instituto de Estadística de la Comunidad de Madrid | PASS 2026-11-19 |
-| 7 | [Catastro Inmobiliario. Unidades urbanas por uso. Municipios](https://datos.comunidad.madrid/dataset/unidades_urbanas_por_uso) | Instituto de Estadística de la Comunidad de Madrid | PASS 2026-11-19 |
-| 8 | [Registro de centros de atención social](https://datos.comunidad.madrid/dataset/atencion_social_registro_centros) | Comunidad de Madrid | PASS 2026-11-12 |
-| 9 | [Centros educativos de la comunidad de Madrid](https://datos.comunidad.madrid/dataset/centros_educativos) | Comunidad de Madrid | PASS 2026-11-12 |
-| 10 | [Centros, servicios y establecimientos sanitarios](https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios) | Comunidad de Madrid | PASS 2026-11-12 |
-| 11 | [Dotación de camas por dependencia](https://datos.comunidad.madrid/dataset/1912720) | Instituto de Estadística | PASS 2026-11-12 |
-| 12 | [Recursos sanitarios. Farmacias. Municipios](https://datos.comunidad.madrid/dataset/farmacias) | Instituto de Estadística | PASS 2026-11-10 |
-| 13 | [Hogares por tamaño del hogar. Censo 2021. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo) | Instituto de Estadística | PASS 2026-10-22 |
-| 14 | [Hospitales y datos asistenciales](https://datos.comunidad.madrid/dataset/1912744) | Instituto de Estadística | PASS 2026-11-12 |
-| 15 | [Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio](https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio) | Instituto de Estadística | PASS 2026-11-14 |
-| 16 | [Nacidos vivos por lugar de residencia de la madre y sexo. Municipios](https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo) | Instituto de Estadística | PASS 2026-11-10 |
-| 17 | [Oficinas de farmacia](https://datos.comunidad.madrid/dataset/oficinas_farmacia) | Comunidad de Madrid | PASS 2026-11-12 |
-| 18 | [Parcelas publicadas en el Portal del Suelo 4.0](https://datos.comunidad.madrid/dataset/parcelas_portal_suelo) | Comunidad de Madrid | PASS 2026-11-18 |
-| 19 | [Población censada por edad, nacionalidad y sexo. Censo anual. Municipios](https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo) | Instituto de Estadística | PASS 2026-10-22 |
-| 20 | [Indicador de Renta Disponible Bruta Municipal. Municipios](https://datos.comunidad.madrid/dataset/irpf_indicador_renta) | Instituto de Estadística | PASS 2026-10-22 |
-| 21 | [Secciones censales](https://datos.comunidad.madrid/dataset/secciones_censales) | Comunidad de Madrid | PASS 2026-10-20 |
-| 22 | [Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid](https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio) | Instituto de Estadística | PASS 2026-11-14 |
-| 23 | [Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) | Instituto de Estadística | PASS 2026-11-10 |
-| 24 | [Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios](https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 |
-| 25 | [Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios](https://datos.comunidad.madrid/dataset/1004050) | Instituto de Estadística | PASS 2026-11-12 |
-| 26 | [Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características de los edificios](https://datos.comunidad.madrid/dataset/1006022) | Comunidad de Madrid | PASS 2026-11-19 |
-| 27 | [Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 |
-| 28 | [Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada) | Instituto de Estadística | PASS 2026-10-22 |
-| 29 | [Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia) | Instituto de Estadística | PASS 2026-11-10 |
-| 30 | [Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/aparcamientos_disuasion) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-14 |
-| 31 | [Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 32 | [Oferta planificada de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 33 | [Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 34 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 35 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 36 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 37 | [Topología de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 38 | [Topología de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
-| 39 | [Topología de la Red de Metro Ligero / Tranvía](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 |
+| # | Dataset | Publica | Gate 1 | MELODA |
+|---|---|---|---|---|
+| 1 | [Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid](https://datos.comunidad.madrid/dataset/1934259) | Instituto de Estadística | PASS 2026-10-22 | 18, básico |
+| 2 | [Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios](https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000) | Instituto de Estadística | PASS 2026-10-22 | 18, básico |
+| 3 | [Red de Calidad del Aire. Estaciones](https://datos.comunidad.madrid/dataset/calidad_aire_estaciones) | Comunidad de Madrid | PASS 2026-11-14 | 23, bueno |
+| 4 | [Red de Calidad del Aire. Datos horarios desde 2005](https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico) | Comunidad de Madrid | PASS 2026-11-14 | 14, básico |
+| 5 | [Red de Calidad del Aire. Municipios por zonas](https://datos.comunidad.madrid/dataset/calidad_aire_zonas) | Comunidad de Madrid | PASS 2026-11-14 | 18, básico |
+| 6 | [Catastro Inmobiliario. Inmuebles por distrito y uso](https://datos.comunidad.madrid/dataset/catastro_inmuebles_por_distrito_y_uso) | Instituto de Estadística de la Comunidad de Madrid | PASS 2026-11-19 | 20, básico |
+| 7 | [Catastro Inmobiliario. Unidades urbanas por uso. Municipios](https://datos.comunidad.madrid/dataset/unidades_urbanas_por_uso) | Instituto de Estadística de la Comunidad de Madrid | PASS 2026-11-19 | 20, básico |
+| 8 | [Registro de centros de atención social](https://datos.comunidad.madrid/dataset/atencion_social_registro_centros) | Comunidad de Madrid | PASS 2026-11-12 | 18, básico |
+| 9 | [Centros educativos de la comunidad de Madrid](https://datos.comunidad.madrid/dataset/centros_educativos) | Comunidad de Madrid | PASS 2026-11-12 | 20, básico |
+| 10 | [Centros, servicios y establecimientos sanitarios](https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios) | Comunidad de Madrid | PASS 2026-11-12 | 17, básico |
+| 11 | [Dotación de camas por dependencia](https://datos.comunidad.madrid/dataset/1912720) | Instituto de Estadística | PASS 2026-11-12 | 18, básico |
+| 12 | [Recursos sanitarios. Farmacias. Municipios](https://datos.comunidad.madrid/dataset/farmacias) | Instituto de Estadística | PASS 2026-11-10 | 18, básico |
+| 13 | [Hogares por tamaño del hogar. Censo 2021. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo) | Instituto de Estadística | PASS 2026-10-22 | 18, básico |
+| 14 | [Hospitales y datos asistenciales](https://datos.comunidad.madrid/dataset/1912744) | Instituto de Estadística | PASS 2026-11-12 | 18, básico |
+| 15 | [Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio](https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio) | Instituto de Estadística | PASS 2026-11-14 | 20, básico |
+| 16 | [Nacidos vivos por lugar de residencia de la madre y sexo. Municipios](https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo) | Instituto de Estadística | PASS 2026-11-10 | 20, básico |
+| 17 | [Oficinas de farmacia](https://datos.comunidad.madrid/dataset/oficinas_farmacia) | Comunidad de Madrid | PASS 2026-11-12 | 18, básico |
+| 18 | [Parcelas publicadas en el Portal del Suelo 4.0](https://datos.comunidad.madrid/dataset/parcelas_portal_suelo) | Comunidad de Madrid | PASS 2026-11-18 | 20, básico |
+| 19 | [Población censada por edad, nacionalidad y sexo. Censo anual. Municipios](https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo) | Instituto de Estadística | PASS 2026-10-22 | 17, básico |
+| 20 | [Indicador de Renta Disponible Bruta Municipal. Municipios](https://datos.comunidad.madrid/dataset/irpf_indicador_renta) | Instituto de Estadística | PASS 2026-10-22 | 18, básico |
+| 21 | [Secciones censales](https://datos.comunidad.madrid/dataset/secciones_censales) | Comunidad de Madrid | PASS 2026-10-20 | 23, bueno |
+| 22 | [Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid](https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio) | Instituto de Estadística | PASS 2026-11-14 | 20, básico |
+| 23 | [Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios](https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza) | Instituto de Estadística | PASS 2026-11-10 | 17, básico |
+| 24 | [Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios](https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 | 20, básico |
+| 25 | [Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios](https://datos.comunidad.madrid/dataset/1004050) | Instituto de Estadística | PASS 2026-11-12 | 20, básico |
+| 26 | [Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características de los edificios](https://datos.comunidad.madrid/dataset/1006022) | Comunidad de Madrid | PASS 2026-11-19 | 18, básico |
+| 27 | [Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad) | Instituto de Estadística | PASS 2026-11-14 | 18, básico |
+| 28 | [Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios](https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada) | Instituto de Estadística | PASS 2026-10-22 | 18, básico |
+| 29 | [Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios](https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia) | Instituto de Estadística | PASS 2026-11-10 | 18, básico |
+| 30 | [Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/aparcamientos_disuasion) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-14 | 8, deficiente |
+| 31 | [Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 32 | [Oferta planificada de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 33 | [Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT](https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 34 | [Oferta planificada de la Red de Autobuses Interurbanos](https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 35 | [Oferta planificada de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 36 | [Oferta planificada de la Red de Metro Ligero](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 37 | [Topología de la Red de Cercanías Madrid](https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 38 | [Topología de la Red de Metro](https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+| 39 | [Topología de la Red de Metro Ligero / Tranvía](https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes) | Consorcio Regional de Transportes de Madrid | PASS 2026-11-12 | 8, deficiente |
+
+## Reutilización según MELODA
+
+> Fuente: spain.meloda.org (MELODA 5: 6 dimensiones, de 0 a 49), datos bajo CC BY 4.0. API leída el 2026-11-20; cosecha del portal CM del 2026-11-15. Instantánea: `pitch/meloda_cm_snapshot.json`. Cada dataset se empareja por la URL exacta de su ficha en datos.comunidad.madrid: 39 de 39 encontrados.
+
+- **Los 39 datasets CM que usamos:** media de 16,0 sobre 49 (de 8 a 23): 2 bueno, 27 básico y 10 deficiente.
+- **Publicados por la Comunidad (29):** media de 18,7. **Del CRTM con ficha en el portal CM (10):** media de 8,0; MELODA puntúa su ficha en el portal CM, y los datos se descargan del portal del CRTM.
+- **Todo el portal CM en MELODA:** 2.275 datasets, media de 18,1. **El portal del CRTM:** 281 datasets, media de 24,7 (sus datasets no se emparejan uno a uno).
+
+| Dimensión | Nivel máximo | Puntos en el total | Los 39 que usamos: cuántos con cada nivel | Media del portal CM |
+|---|---|---|---|---|
+| Licencia | 3 | 6 | 3: 29 · 1: 10 | 2,98 |
+| Acceso | 3 | 6 | 1: 39 | 1,00 |
+| Formato | 3 | 6 | 3: 28 · 2: 1 · 1: 10 | 2,96 |
+| Estandarización | 4 | 10 | 2: 39 | 2,03 |
+| Geolocalización | 3 | 6 | 3: 2 · 2: 9 · 1: 24 · -1: 4 | 1,05 |
+| Frecuencia de actualización | 5 | 15 | 1: 39 | 1,00 |
+
+La puntuación y los niveles son los que da la API, sin recalcular: el total pondera cada dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). MELODA se calcula solo con los metadatos públicos de la ficha del portal, no con el contenido del dataset. Un nivel fuera del rango que documenta la API (como −1 en geolocalización) se deja como viene.
 
 ## 1. Portal CM: publicados por la Comunidad de Madrid (29)
 
@@ -59,6 +78,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-bc14c1e36441` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_alquiler_m2_codigo_postal_madrid/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210628)
 
 ### Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000 · id `cm_alquiler_m2_municipios` · publica: Instituto de Estadística
@@ -67,6 +87,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales) (`alquiler_m2_mensual`, fuente principal)
   - Indicador por zona: Alquiler por metro cuadrado de un contrato nuevo, referencia del Ministerio de Vivienda (donde la Comunidad no lo publica) (`alquiler_m2_mensual_referencia`, fuente de apoyo)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-82cdb192ed1b` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_alquiler_m2_municipios/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211754)
 
 ### Red de Calidad del Aire. Estaciones
 - **Ficha:** https://datos.comunidad.madrid/dataset/calidad_aire_estaciones · id `cm_calidad_aire_estaciones` · publica: Comunidad de Madrid
@@ -75,6 +96,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
   - Puntos del mapa (other): `GET /api/v1/places?category=other`
 - **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-071a20075f6f` · 28 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/cm_calidad_aire_estaciones/quality_report.json)
+- **MELODA (spain.meloda.org):** 23/49, bueno · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 3/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212108)
 
 ### Red de Calidad del Aire. Datos horarios desde 2005
 - **Ficha:** https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico · id `cm_calidad_aire_horario_2025` · publica: Comunidad de Madrid
@@ -82,6 +104,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 4/4 checks críticos · versión `2026-11-14-b5363164c0cf` · [quality_report.json](../evidence/gate-01/2026-11-14/cm_calidad_aire_horario_2025/quality_report.json)
+- **MELODA (spain.meloda.org):** 14/49, básico · licencia 3/3 · acceso 1/3 · formato 2/3 · estandarización 2/4 · geolocalización -1 (fuera de 0–3) · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212109)
 
 ### Red de Calidad del Aire. Municipios por zonas
 - **Ficha:** https://datos.comunidad.madrid/dataset/calidad_aire_zonas · id `cm_calidad_aire_zonas` · publica: Comunidad de Madrid
@@ -89,6 +112,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire (`no2_media_anual`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 3/3 checks críticos · versión `2026-11-14-66c035302c37` · [quality_report.json](../evidence/gate-01/2026-11-14/cm_calidad_aire_zonas/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212148)
 
 ### Catastro Inmobiliario. Inmuebles por distrito y uso
 - **Ficha:** https://datos.comunidad.madrid/dataset/catastro_inmuebles_por_distrito_y_uso · id `cm_catastro_inmuebles_distrito_uso` · publica: Instituto de Estadística de la Comunidad de Madrid
@@ -96,6 +120,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Unidades urbanas de uso comercial del Catastro por cada 1.000 habitantes (`unidades_comerciales_1000hab`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-19 · 10/10 checks críticos · versión `2026-11-19-1824bb422681` · 441 observaciones · [quality_report.json](../evidence/gate-01/2026-11-19/cm_catastro_inmuebles_distrito_uso/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211768)
 
 ### Catastro Inmobiliario. Unidades urbanas por uso. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/unidades_urbanas_por_uso · id `cm_catastro_unidades_urbanas_uso` · publica: Instituto de Estadística de la Comunidad de Madrid
@@ -104,6 +129,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Dato de contexto en la vista de zona (no puntúa): Unidades urbanas de suelo vacante del Catastro (`suelo_vacante_unidades`, fuente principal)
   - Dato de contexto en la vista de zona (no puntúa): Unidades urbanas de uso comercial del Catastro por cada 1.000 habitantes (`unidades_comerciales_1000hab`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-19 · 6/6 checks críticos · versión `2026-11-19-bdcced72b2c3` · 14.898 observaciones · [quality_report.json](../evidence/gate-01/2026-11-19/cm_catastro_unidades_urbanas_uso/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211965)
 
 ### Registro de centros de atención social
 - **Ficha:** https://datos.comunidad.madrid/dataset/atencion_social_registro_centros · id `cm_centros_atencion_social` · publica: Comunidad de Madrid
@@ -117,6 +143,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Centros de mayores» (dato extra): Plazas en residencias de mayores por cada 100 personas de 65 años o más (`plazas_residencia_por_100_mayores`, fuente principal)
   - Puntos del mapa (mayores y atención social): `GET /api/v1/places?category=social`
 - **Quality Gate 1:** PASS · 2026-11-12 · 5/5 checks críticos · versión `2026-11-10-1332ab0048a6` · 1.014 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_atencion_social/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212137)
 
 ### Centros educativos de la comunidad de Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_educativos · id `cm_centros_educativos` · publica: Comunidad de Madrid
@@ -133,6 +160,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil (`pct_calle_escuela_infantil_10min`, fuente principal)
   - Puntos del mapa (educación): `GET /api/v1/places?category=education`
 - **Quality Gate 1:** PASS · 2026-11-12 · 5/5 checks críticos · versión `2026-10-21-27483ff8498b` · 3.866 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_educativos/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212176)
 
 ### Centros, servicios y establecimientos sanitarios
 - **Ficha:** https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios · id `cm_centros_sanitarios` · publica: Comunidad de Madrid
@@ -146,6 +174,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud (`pct_calle_centro_salud_15min`, fuente principal)
   - Puntos del mapa (salud): `GET /api/v1/places?category=health`
 - **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-adef54b3fabc` · 553 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_centros_sanitarios/quality_report.json)
+- **MELODA (spain.meloda.org):** 17/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización -1 (fuera de 0–3) · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210113)
 
 ### Dotación de camas por dependencia
 - **Ficha:** https://datos.comunidad.madrid/dataset/1912720 · id `cm_dotacion_camas` · publica: Instituto de Estadística
@@ -153,6 +182,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Camas de hospital instaladas por cada 1.000 habitantes (Comunidad de Madrid) (`camas_instaladas_por_1000_hab`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-db9e8751577e` · 90 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/cm_dotacion_camas/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211388)
 
 ### Recursos sanitarios. Farmacias. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/farmacias · id `cm_farmacias_municipios` · publica: Instituto de Estadística
@@ -160,6 +190,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - «Qué falta», fila «Farmacias» (dato extra): Farmacias por cada 10.000 habitantes según la Comunidad de Madrid (ratio oficial) (`farmacias_por_10000_hab_oficial`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-a2011625bc89` · 6.494 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_farmacias_municipios/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210089)
 
 ### Hogares por tamaño del hogar. Censo 2021. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo · id `cm_hogares_tamano_censo_2021` · publica: Instituto de Estadística
@@ -170,6 +201,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Vivienda para familias» (dato extra): Tamaño medio del hogar (aproximado) (`tamano_medio_hogar`, fuente principal)
   - «Qué falta», fila «Vivienda para familias»: Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas (`viviendas_grandes_por_100_hogares_grandes`, denominador)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-823dd42839c0` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_hogares_tamano_censo_2021/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212076)
 
 ### Hospitales y datos asistenciales
 - **Ficha:** https://datos.comunidad.madrid/dataset/1912744 · id `cm_hospitales_datos_asistenciales` · publica: Instituto de Estadística
@@ -177,6 +209,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Hospitales con régimen de internado (Comunidad de Madrid) (`hospitales_total`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-254596b46ee3` · 81 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/cm_hospitales_datos_asistenciales/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211387)
 
 ### Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio
 - **Ficha:** https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio · id `cm_infracciones_penales_municipios` · publica: Instituto de Estadística
@@ -184,6 +217,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Infracciones penales conocidas (sin cibercriminalidad) por cada 1.000 habitantes (`infracciones_penales_por_1000_hab`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 9/9 checks críticos · versión `2026-11-14-d717bfe7732e` · 586 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_infracciones_penales_municipios/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210033)
 
 ### Nacidos vivos por lugar de residencia de la madre y sexo. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo · id `cm_nacidos_vivos_municipios` · publica: Instituto de Estadística
@@ -191,6 +225,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - «Qué falta», fila «Escuelas infantiles» (dato extra): Nacimientos por cada 1.000 habitantes (último año publicado) (`nacimientos_por_1000_hab`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-9119056a0e09` · 22.538 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_nacidos_vivos_municipios/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212051)
 
 ### Oficinas de farmacia
 - **Ficha:** https://datos.comunidad.madrid/dataset/oficinas_farmacia · id `cm_oficinas_farmacia` · publica: Comunidad de Madrid
@@ -202,6 +237,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 10 minutos a pie o menos de una farmacia (`pct_calle_farmacia_10min`, fuente principal)
   - Puntos del mapa (pharmacy): `GET /api/v1/places?category=pharmacy`
 - **Quality Gate 1:** PASS · 2026-11-12 · 5/5 checks críticos · versión `2026-11-10-de61d48d7b4a` · 2.957 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/cm_oficinas_farmacia/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210347)
 
 ### Parcelas publicadas en el Portal del Suelo 4.0
 - **Ficha:** https://datos.comunidad.madrid/dataset/parcelas_portal_suelo · id `cm_parcelas_portal_suelo` · publica: Comunidad de Madrid
@@ -209,6 +245,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Suelo público para vivienda en el Portal del Suelo (m² edificables) (`suelo_publico_vivienda_m2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-18 · 9/9 checks críticos · versión `2026-11-18-b96deb8ff739` · 367 observaciones · [quality_report.json](../evidence/gate-01/2026-11-18/cm_parcelas_portal_suelo/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210102)
 
 ### Población censada por edad, nacionalidad y sexo. Censo anual. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo · id `cm_poblacion_edad_nacionalidad_sexo` · publica: Instituto de Estadística
@@ -233,6 +270,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Dato de contexto en la vista de zona (no puntúa): Unidades urbanas de uso comercial del Catastro por cada 1.000 habitantes (`unidades_comerciales_1000hab`, denominador)
   - «Qué falta», fila «Escuelas infantiles» (dato extra): Aulas de educación infantil por cada 1.000 niños de 0 a 4 años (`unidades_infantil_por_1000_ninos`, denominador)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-fd59e7826648` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_poblacion_edad_nacionalidad_sexo/quality_report.json)
+- **MELODA (spain.meloda.org):** 17/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización -1 (fuera de 0–3) · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212094)
 
 ### Indicador de Renta Disponible Bruta Municipal. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/irpf_indicador_renta · id `cm_renta_disponible_municipal` · publica: Instituto de Estadística
@@ -240,6 +278,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Renta disponible bruta per cápita (`renta_per_capita`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-66a17af60f8e` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_renta_disponible_municipal/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212032)
 
 ### Secciones censales
 - **Ficha:** https://datos.comunidad.madrid/dataset/secciones_censales · id `cm_secciones_censales` · publica: Comunidad de Madrid
@@ -248,6 +287,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Geografía de todas las zonas del mapa y de la lista de lo que falta
   - Indicador por zona: Superficie de la unidad administrativa (km²) (`admin_unit_area_km2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-10-20 · 10/10 checks críticos · versión `2026-10-20-37703ffcdfd0` · 179 municipios · 246 distritos censales · 131 barrios de Madrid · 4.417 secciones censales · 86.361 celdas H3 · [quality_report.json](../evidence/gate-01/2026-10-20/cm_secciones_censales/quality_report.json)
+- **MELODA (spain.meloda.org):** 23/49, bueno · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 3/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212239)
 
 ### Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio · id `cm_transacciones_nueva_usada` · publica: Instituto de Estadística
@@ -255,6 +295,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Compraventas de vivienda de obra nueva en el último año (`compraventas_obra_nueva_pct`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 8/8 checks críticos · versión `2026-11-14-186273268c03` · 3.580 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_transacciones_nueva_usada/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210408)
 
 ### Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza · id `cm_unidades_escolares` · publica: Instituto de Estadística
@@ -263,6 +304,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Colegios»: Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años (`aulas_primaria_a_pie_por_1000_ninos`, fuente principal)
   - «Qué falta», fila «Escuelas infantiles» (dato extra): Aulas de educación infantil por cada 1.000 niños de 0 a 4 años (`unidades_infantil_por_1000_ninos`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-bdf7c1ff864a` · 95.309 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_unidades_escolares/quality_report.json)
+- **MELODA (spain.meloda.org):** 17/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización -1 (fuera de 0–3) · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210295)
 
 ### Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad · id `cm_valor_tasado_vivienda_antiguedad` · publica: Instituto de Estadística
@@ -271,6 +313,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Dato de contexto en la vista de zona (no puntúa): Valor tasado medio de la vivienda libre de hasta 5 años por metro cuadrado (`valor_tasado_vivienda_nueva_m2`, fuente principal)
   - Dato de contexto en la vista de zona (no puntúa): Valor tasado medio de la vivienda libre de más de 5 años por metro cuadrado (`valor_tasado_vivienda_usada_m2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 6/6 checks críticos · versión `2026-11-14-4a293502d054` · 1.790 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_valor_tasado_vivienda_antiguedad/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211962)
 
 ### Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/1004050 · id `cm_valor_tasado_vivienda_municipios` · publica: Instituto de Estadística
@@ -279,6 +322,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: Precio de compra estimado por metro cuadrado (valor tasado de la ciudad repartido según el valor catastral) (`precio_compra_estimado_m2`, fuente principal)
   - Indicador por zona: Valor tasado medio de la vivienda libre por metro cuadrado (`valor_tasado_vivienda_m2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 6/6 checks críticos · versión `2026-11-12-60a2ddbf2260` · 895 observaciones · [quality_report.json](../evidence/gate-01/2026-11-12/cm_valor_tasado_vivienda_municipios/quality_report.json)
+- **MELODA (spain.meloda.org):** 20/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 2/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211577)
 
 ### Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características de los edificios
 - **Ficha:** https://datos.comunidad.madrid/dataset/1006022 · id `cm_visados_presupuesto_obra` · publica: Comunidad de Madrid
@@ -286,6 +330,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Presupuesto de ejecución material por m² de los visados de obra nueva de viviendas en bloque (Comunidad de Madrid) (`pem_visado_vivienda_bloque_m2`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-19 · 7/7 checks críticos · versión `2026-11-19-37e839d23fbf` · 15 observaciones · [quality_report.json](../evidence/gate-01/2026-11-19/cm_visados_presupuesto_obra/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5210233)
 
 ### Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad · id `cm_viviendas_antiguedad` · publica: Instituto de Estadística
@@ -293,6 +338,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Dato de contexto en la vista de zona (no puntúa): Porcentaje de viviendas construidas desde 2001 (`viviendas_desde_2001_pct`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-14 · 6/6 checks críticos · versión `2026-11-14-cf76bf4eb9f8` · 6.112 observaciones · [quality_report.json](../evidence/gate-01/2026-11-14/cm_viviendas_antiguedad/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211749)
 
 ### Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada · id `cm_viviendas_superficie` · publica: Instituto de Estadística
@@ -301,6 +347,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - «Qué falta», fila «Vivienda para familias»: Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas (`viviendas_grandes_por_100_hogares_grandes`, fuente principal)
   - Indicador por zona: Porcentaje de viviendas de menos de 60 m² (`viviendas_menos_60m2_pct`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-10-22 · 6/6 checks críticos · versión `2026-10-21-1673f7e6ca4a` · [quality_report.json](../evidence/gate-01/2026-10-22/cm_viviendas_superficie/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211748)
 
 ### Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios
 - **Ficha:** https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia · id `cm_viviendas_tenencia_censo_2021` · publica: Instituto de Estadística
@@ -308,6 +355,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - «Qué falta», fila «Vivienda para familias» (dato extra): Viviendas principales en alquiler (%) (`viviendas_alquiler_pct`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-10 · 6/6 checks críticos · versión `2026-11-10-048892fa99bc` · 567 observaciones · [quality_report.json](../evidence/gate-01/2026-11-10/cm_viviendas_tenencia_censo_2021/quality_report.json)
+- **MELODA (spain.meloda.org):** 18/49, básico · licencia 3/3 · acceso 1/3 · formato 3/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5211956)
 
 ## 2. Portal CM: horarios y estaciones del CRTM con ficha en el portal (10)
 
@@ -319,6 +367,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Dato de contexto en la vista de zona (no puntúa): Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona) (`min_a_pie_aparcamiento_publico`, fuente principal)
   - Puntos del mapa (other): `GET /api/v1/places?category=other`
 - **Quality Gate 1:** PASS · 2026-11-14 · 5/5 checks críticos · versión `2026-11-14-dd011ca20087` · 71 puntos · [quality_report.json](../evidence/gate-01/2026-11-14/crtm_aparcamientos_disuasion/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212207)
 
 ### Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia · id `crtm_gtfs_autobuses_urbanos` · publica: Consorcio Regional de Transportes de Madrid
@@ -330,6 +379,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de autobuses urbanos del resto de municipios con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 9/9 checks críticos · versión `2026-11-10-41f7f9c15b61` · 3.023 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_autobuses_urbanos/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212211)
 
 ### Oferta planificada de la Red de Cercanías Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia · id `crtm_gtfs_cercanias` · publica: Consorcio Regional de Transportes de Madrid
@@ -342,6 +392,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de Cercanías con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-72e73ca7b487` · 93 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_cercanias/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212214)
 
 ### Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia · id `crtm_gtfs_emt` · publica: Consorcio Regional de Transportes de Madrid
@@ -353,6 +404,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de autobuses EMT de Madrid con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 9/9 checks críticos · versión `2026-11-10-8478ae5c9262` · 4.935 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_emt/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212212)
 
 ### Oferta planificada de la Red de Autobuses Interurbanos
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia · id `crtm_gtfs_interurbanos` · publica: Consorcio Regional de Transportes de Madrid
@@ -364,6 +416,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de autobuses interurbanos con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 9/9 checks críticos · versión `2026-11-10-5bbf3c95047c` · 6.645 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_interurbanos/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212209)
 
 ### Oferta planificada de la Red de Metro
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia · id `crtm_gtfs_metro` · publica: Consorcio Regional de Transportes de Madrid
@@ -376,6 +429,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de metro con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-840132dbc546` · 230 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_metro/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212218)
 
 ### Oferta planificada de la Red de Metro Ligero
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia · id `crtm_gtfs_metro_ligero` · publica: Consorcio Regional de Transportes de Madrid
@@ -388,6 +442,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
   - Indicador por zona: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público (`pct_calle_transporte_5min`, fuente principal)
   - Paradas y estaciones de metro ligero con su frecuencia de paso
 - **Quality Gate 1:** PASS · 2026-11-12 · 10/10 checks críticos · versión `2026-11-12-e6a5daaf76ec` · 56 puntos · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_gtfs_metro_ligero/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212216)
 
 ### Topología de la Red de Cercanías Madrid
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_cercanias` · publica: Consorcio Regional de Transportes de Madrid
@@ -396,6 +451,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-cbd6ab397c04` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_cercanias/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212215)
 
 ### Topología de la Red de Metro
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_metro` · publica: Consorcio Regional de Transportes de Madrid
@@ -404,6 +460,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-c788fd9285b8` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212219)
 
 ### Topología de la Red de Metro Ligero / Tranvía
 - **Ficha:** https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes · id `crtm_topologia_metro_ligero` · publica: Consorcio Regional de Transportes de Madrid
@@ -412,6 +469,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 - **Qué alimenta:**
   - Indicador por zona: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona) (`min_a_pie_estacion_sin_escaleras`, fuente principal)
 - **Quality Gate 1:** PASS · 2026-11-12 · 3/3 checks críticos · versión `2026-11-12-9e34e07839c7` · [quality_report.json](../evidence/gate-01/2026-11-12/crtm_topologia_metro_ligero/quality_report.json)
+- **MELODA (spain.meloda.org):** 8/49, deficiente · licencia 1/3 · acceso 1/3 · formato 1/3 · estandarización 2/4 · geolocalización 1/3 · frecuencia de actualización 1/5 · [API](https://spain.meloda.org/api/v1/datasets/5212217)
 
 ## 3. Fuentes complementarias en uso (20)
 
@@ -627,16 +685,16 @@ No cuentan como datos CM. Sirven para calcular, no sustituyen a una fuente regio
 
 Revisados y con licencia clara, pero todavía sin control de calidad: no se citan como usados.
 
-| Dataset | Publica | ¿Portal CM? | Ficha |
-|---|---|---|---|
-| Arbolado en parques y zonas verdes de Madrid (detalle) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300761-0-arbolado-especies |
-| Catálogo de edificios protegidos | Ayuntamiento de Madrid (Dirección General de Planeamiento) | no | https://datos.madrid.es/dataset/300158-0-edificios-protegidos |
-| Equipamientos y entidades de la ciudad de Madrid (que hay publicados en www.madrid.es) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300331-0-equipamientos-municipales |
-| Planeamiento y desarrollos del PGOUM (visor urbanístico) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300489-0-planeamiento-desarrollos-pgoum |
-| Urbanismo. Destino urbanístico del suelo | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo |
-| Barrios del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/barrios_municipio_madrid |
-| Costes de Referencia General de la edificación (actualizados al año 2022) | Comunidad de Madrid (Dirección General de Vivienda y Rehabilitación) | no | https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf |
-| Distritos del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/distritos_municipio_madrid |
-| Covid 19 -TIA por Municipios y Distritos de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/covid19_tia_muni_y_distritos |
-| Personas con discapacidad por edad y sexo. Municipios | Instituto de Estadística | sí | https://datos.comunidad.madrid/dataset/personas_discapacidad_por_edad_y_sexo |
-| Número de transacciones inmobiliarias, por municipio. Vivienda libre y vivienda protegida. Comunidad de Madrid | Instituto de Estadística | sí | https://datos.comunidad.madrid/dataset/transacciones_inmobiliarias_municipio |
+| Dataset | Publica | ¿Portal CM? | Ficha | MELODA |
+|---|---|---|---|---|
+| Arbolado en parques y zonas verdes de Madrid (detalle) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300761-0-arbolado-especies | — |
+| Catálogo de edificios protegidos | Ayuntamiento de Madrid (Dirección General de Planeamiento) | no | https://datos.madrid.es/dataset/300158-0-edificios-protegidos | — |
+| Equipamientos y entidades de la ciudad de Madrid (que hay publicados en www.madrid.es) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300331-0-equipamientos-municipales | — |
+| Planeamiento y desarrollos del PGOUM (visor urbanístico) | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300489-0-planeamiento-desarrollos-pgoum | — |
+| Urbanismo. Destino urbanístico del suelo | Ayuntamiento de Madrid | no | https://datos.madrid.es/dataset/300744-0-usos-suelo-urbanismo | — |
+| Barrios del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/barrios_municipio_madrid | 18, básico |
+| Costes de Referencia General de la edificación (actualizados al año 2022) | Comunidad de Madrid (Dirección General de Vivienda y Rehabilitación) | no | https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf | — |
+| Distritos del Municipio de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/distritos_municipio_madrid | 18, básico |
+| Covid 19 -TIA por Municipios y Distritos de Madrid | Comunidad de Madrid | sí | https://datos.comunidad.madrid/dataset/covid19_tia_muni_y_distritos | 20, básico |
+| Personas con discapacidad por edad y sexo. Municipios | Instituto de Estadística | sí | https://datos.comunidad.madrid/dataset/personas_discapacidad_por_edad_y_sexo | 18, básico |
+| Número de transacciones inmobiliarias, por municipio. Vivienda libre y vivienda protegida. Comunidad de Madrid | Instituto de Estadística | sí | https://datos.comunidad.madrid/dataset/transacciones_inmobiliarias_municipio | 20, básico |

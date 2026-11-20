@@ -12,7 +12,7 @@
 
 **Marcas:** «pendiente de A/B/C» = todavía no existe. Se revisa el 23 nov (freeze) y el 25 nov (ensayos).
 
-**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov), de la 51 a la 53 (lo que cambió tras la prueba, 14 nov), de la 54 a la 59 (contexto de la zona, alquiler de los anuncios, coche y validación de la fórmula, 15 nov), la 60 (el siguiente paso: desde el 19 nov ya se puede buscar una parcela exacta de Madrid capital y calcular si una promoción sale; decir qué vivienda hace falta construir en ella, todavía no) y la 61 (¿por qué no van a una consultora?, de la prueba con un inversor del 19 nov).
+**Las más probables** están al final y hay que prepararlas primero: de la 41 a la 45 (jurado simulado del 12 nov), la 46 y la 47 (cifras de impacto, 12 nov), la 48 (barrios, 13 nov), la 49 y la 50 (prueba con usuarios, 14 nov), de la 51 a la 53 (lo que cambió tras la prueba, 14 nov), de la 54 a la 59 (contexto de la zona, alquiler de los anuncios, coche y validación de la fórmula, 15 nov), la 60 (el siguiente paso: desde el 19 nov ya se puede buscar una parcela exacta de Madrid capital y calcular si una promoción sale; decir qué vivienda hace falta construir en ella, todavía no) la 61 (¿por qué no van a una consultora?, de la prueba con un inversor del 19 nov) y la 62 (la calidad de los datos según MELODA, la métrica de Alberto Abella, 20 nov).
 
 ---
 
@@ -33,6 +33,7 @@ Sí: un servidor MCP con siete herramientas de solo lectura (buscar zonas, qué 
 **3. ¿Vuestro catálogo de datos es reutilizable?**
 Sí. Cada fuente, dataset, métrica y feature está descrito en YAML legible por máquina, con licencia, propietario y enlace, y ese catálogo se publica en CC BY 4.0. De ahí sale, por ejemplo, la lista de datasets que habéis visto, generada con un script.
 - Evidencia: `data/catalog/` · D-191 · `pitch/build_datasets_cm.py`.
+- Si pregunta por la calidad de esos datos, o por MELODA: pregunta 62.
 
 **4. ¿Podría ser un producto de datos en un espacio de datos?**
 Encaja, porque cada resultado sale ya con su fuente, versión, licencia y nivel de confianza. Exportarlo en DCAT-AP o con un conector de espacio de datos todavía no está hecho: sería el siguiente paso.
@@ -473,3 +474,15 @@ Porque antes de pagar un estudio completo hay que saber qué parcela merece uno,
   - los servicios: `power` de la misma respuesta (Méndez Álvaro 47: 164 viviendas, 499,1 kW, por encima del umbral del centro de transformación), leído por D el 20 nov; captura C11;
   - el cliente: `CLAUDE.md` §16 (cliente inicial, «promotoras/inmobiliarias medianas»; «vender informes/estudios antes del SaaS completo») · las consultoras y las inmobiliarias, entre los clientes de la capa PRO (`docs/01_product/05_pro_layer.md`) y del go-to-market (`docs/06_business/06_go_to_market.md`) · el plan Equipo, en `pitch/modelo_negocio.md`.
 - Estado: **cerrada el 20 nov.** El posicionamiento, en el pitch desde el 19 nov (preguntas 6, 9 y 61 y `modelo_negocio.md`); la edificabilidad por uso y el coste, en producción desde el 19 nov (D-252); los servicios, el catálogo, el primer filtro y la frase para consultoras, desde el 20 nov (D-253). La voz y las slides no cambian.
+
+## Una más: la calidad de los datos según MELODA (20 nov)
+MELODA (Methodology for Releasing Open DAta) es el marco de Alberto Abella para medir la reutilización de un dataset abierto, y spain.meloda.org puntúa con él los portales españoles («Sobre el proyecto», leído por D el 20 nov). Pedido por Mariano el 20 nov.
+
+**62. ¿Qué calidad tienen los datos que usáis?**
+Medidos con MELODA en spain.meloda.org, los 29 conjuntos que publica la Comunidad y usamos tienen una media de 18,7 sobre 49, en línea con la de todo su portal (18,1 en 2.275 conjuntos); con los 10 del Consorcio, cuyas fichas en el portal de la Comunidad sacan 8, la media de los 39 es 16,0. Lo mejor es la licencia y el formato (3 de 3 en la licencia de los 29 de la Comunidad y en el formato de 28); lo peor, la frecuencia de actualización (1 de 5) y el acceso (1 de 3), en los 39, y la frecuencia es la dimensión que más pesa (15 de los 49 puntos). MELODA mide la ficha del portal, no el contenido, así que cada conjunto pasa además nuestro control de calidad antes de entrar, y cada cifra guarda de dónde viene.
+- Si pregunta por el Consorcio: lo que MELODA puntúa es su ficha en el portal de la Comunidad, con la licencia, el acceso, el formato y la geolocalización a 1 de 3. Los datos los descargamos del portal propio del Consorcio, que MELODA puntúa con una media de 24,7 en 281 conjuntos; no los hemos emparejado uno a uno, así que no damos su nota por conjunto.
+- Si pregunta qué mide MELODA: seis dimensiones, con su peso en los 49 puntos: licencia (6), acceso (6), formato (6), estandarización (10), geolocalización (6) y frecuencia de actualización (15). Niveles: deficiente, básico, bueno y óptimo. De los 39: 2 bueno, 27 básico y 10 deficiente.
+- Límite, si insiste: MELODA se calcula solo con los metadatos públicos de cada ficha; la propia web avisa de que una nota baja puede deberse «tanto a datos poco reutilizables como a metadatos pobres». Las notas son de la cosecha del portal del 15 nov. En 4 conjuntos la geolocalización sale −1, fuera del rango que documenta la API (0–3), y se deja como viene.
+- Si pregunta cómo lo comprobamos: cada conjunto se empareja por la URL exacta de su ficha en datos.comunidad.madrid, nunca por un título parecido: 39 de 39 encontrados, y también los 5 de la Comunidad que están en el catálogo y aún sin ingerir. La lista con la nota y las seis dimensiones de cada uno, en `pitch/datasets_cm.md`, «Reutilización según MELODA».
+- Evidencia: `pitch/meloda_cm_snapshot.json` (API de spain.meloda.org leída el 20 nov; «Fuente: spain.meloda.org», CC BY 4.0) · se vuelve a leer con `uv run python pitch/build_datasets_cm.py --refresh-meloda` (unas 25 peticiones, con pausas: la API admite 60 por minuto) · la metodología y los pesos, en [spain.meloda.org](https://spain.meloda.org/sobre.php) («Sobre el proyecto») · nuestro control de calidad, en `evidence/gate-01/` (preguntas 5 y 7).
+- Estado: en el repo desde el 20 nov; no está en la web, ni en el guion ni en las slides.
