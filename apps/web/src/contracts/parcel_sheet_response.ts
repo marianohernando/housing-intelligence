@@ -81,7 +81,13 @@ export type ValueM21 = number | null;
  * D-252: what keeps the sheet's figures from passing for free housing ready to build.
  */
 export type ParcelCautionKey =
-  "otro_uso" | "ambito_pendiente" | "vivienda_protegida" | "unifamiliar" | "ambito_sin_estado";
+  | "otro_uso"
+  | "ambito_pendiente"
+  | "vivienda_protegida"
+  | "unifamiliar"
+  | "ambito_sin_estado"
+  | "edificio_catalogado"
+  | "edificio_existente";
 export type Text = string;
 /**
  * D-252: shown before the figures
@@ -262,7 +268,9 @@ export type Notices = string[];
 /**
  * The parts that could not be read now
  */
-export type Degraded = ("catastro" | "planning" | "buildability" | "context" | "plan_uses")[];
+export type Degraded = (
+  "catastro" | "planning" | "buildability" | "context" | "plan_uses" | "catalog"
+)[];
 /**
  * Served from the saved demo sheet because a source failed
  */
@@ -379,6 +387,14 @@ export type ValueM22 = number | null;
  * D-252c: the date of the snapshot of tables 4 and 5
  */
 export type PlanUsesAsOf = string | null;
+/**
+ * NNUU art. 4.3.4
+ */
+export type Level = number | null;
+export type Name6 = string | null;
+export type CatalogNumber = string | null;
+export type Protection = string | null;
+export type Url5 = string | null;
 export type SheetLabel = string | null;
 /**
  * The official record: the instrument's, or the article of the Normas Urbanísticas for a norma zonal
@@ -394,14 +410,22 @@ export type Use4 = string | null;
  * The Geoportal viewer, centred on the parcel
  */
 export type ViewerUrl = string;
+export type Homes = number;
+export type Kw = number;
+export type KwPerHome = number;
+/**
+ * Above 100 kW (RD 1048/2013, art. 26.1)
+ */
+export type OverTransformerThreshold = boolean;
+export type Simultaneity = number;
 export type AccessedAt = string | null;
 export type Attribution = string;
 export type License1 = string;
 export type LicenseUrl = string | null;
-export type Name6 = string;
+export type Name7 = string;
 export type Publisher1 = string;
 export type SourceId = string;
-export type Url5 = string | null;
+export type Url6 = string | null;
 export type Sources = ParcelSource[];
 export type ApiVersion = string;
 export type DataVersion = string | null;
@@ -440,6 +464,10 @@ export interface ParcelSheet {
    * null when the Ayuntamiento fails
    */
   planning: PlanningBlock | null;
+  /**
+   * D-253: from the starting buildable m²; null without them
+   */
+  power?: PowerEstimate | null;
   /**
    * D-252: the parcel as public land of the Portal del Suelo in its barrio (owner, regime, urbanization), when the barrio's sheet lists it
    */
@@ -779,6 +807,10 @@ export interface PlanningBlock {
   plan_use_without_figure?: PlanUseWithoutFigure;
   plan_uses?: PlanUses;
   plan_uses_as_of?: PlanUsesAsOf;
+  /**
+   * D-253: the building in the catalogue at the parcel's point
+   */
+  protected_building?: ProtectedBuilding | null;
   sheet_label: SheetLabel;
   sheet_url: SheetUrl;
   urban_parcel: UrbanParcel;
@@ -840,6 +872,27 @@ export interface PlanUseFigure {
   value_m2?: ValueM22;
 }
 /**
+ * D-253: the Plan General's catalogue of protected buildings (datos.madrid.es 300158).
+ */
+export interface ProtectedBuilding {
+  level?: Level;
+  name: Name6;
+  number: CatalogNumber;
+  protection: Protection;
+  url?: Url5;
+}
+/**
+ * D-253: the least power the homes of the starting buildable m² need (ITC-BT-10), an
+ * assumption: homes ≈ m² / 80, 5,75 kW each, times the coefficient of simultaneity.
+ */
+export interface PowerEstimate {
+  homes: Homes;
+  kw: Kw;
+  kw_per_home: KwPerHome;
+  over_transformer_threshold: OverTransformerThreshold;
+  simultaneity: Simultaneity;
+}
+/**
  * Who the sheet's data comes from, its licence and how it asks to be cited.
  */
 export interface ParcelSource {
@@ -847,10 +900,10 @@ export interface ParcelSource {
   attribution: Attribution;
   license: License1;
   license_url?: LicenseUrl;
-  name: Name6;
+  name: Name7;
   publisher: Publisher1;
   source_id: SourceId;
-  url?: Url5;
+  url?: Url6;
 }
 export interface Meta {
   api_version?: ApiVersion;

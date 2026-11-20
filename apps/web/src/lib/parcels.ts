@@ -11,6 +11,8 @@ import type {
   ParcelSheet,
   PlanningBlock,
   PlanUseFigure,
+  PowerEstimate,
+  ProtectedBuilding,
   SourcedValue,
   UseClass,
   UseFigure,
@@ -18,7 +20,10 @@ import type {
 } from "@/contracts/parcel_sheet_response";
 import { formatNumber } from "@/lib/format";
 import { AREA_STAGE_TEXT, isoInWords, landCaution, REGIME_TEXT } from "@/lib/investors";
+import { INVESTOR_METHOD } from "@/lib/investorMethod";
 import { titleCase } from "@/lib/names";
+
+const HOME_M2 = INVESTOR_METHOD.homeM2;
 
 /** A parcel near a point on the street (a 404's `details.nearest`; not in a response schema). */
 export interface NearbyParcel {
@@ -77,11 +82,13 @@ export const SHEET_TEXT = {
     parcel: "1. Datos de la parcela",
     planning: "2. Planeamiento",
     buildability: "3. Edificabilidad",
-    demand: (district: boolean) => `4. Quién vive en el ${district ? "distrito" : "barrio"}`,
-    prices: (district: boolean) => `5. Precios en el ${district ? "distrito" : "barrio"}`,
-    gaps: "6. Qué falta",
-    land: (district: boolean) => `7. Suelo en el ${district ? "distrito" : "barrio"}`,
-    viability: "8. ¿Sale la promoción?",
+    services: "4. Servicios y suministros",
+    demand: (district: boolean) => `5. Quién vive en el ${district ? "distrito" : "barrio"}`,
+    prices: (district: boolean) => `6. Precios en el ${district ? "distrito" : "barrio"}`,
+    gaps: "7. Qué falta",
+    land: (district: boolean) => `8. Suelo en el ${district ? "distrito" : "barrio"}`,
+    viability: "9. ¿Sale la promoción?",
+    study: "Lo que añade un estudio completo",
     sources: "Fuentes y avisos",
   },
   area: "Superficie de la parcela",
@@ -131,6 +138,25 @@ export const SHEET_TEXT = {
   ambitUntracked: "El Ayuntamiento no publica su estado.",
   ambitAsOf: (code: string, day: string) => `${code}, según el Ayuntamiento a ${day}`,
   publicLand: "Suelo público",
+  catalog: "Catálogo de edificios protegidos",
+  // Review of #110, R-02: the layer is read at the parcel's reference point only
+  catalogNone: "No aparece en el catálogo en el punto de referencia de la parcela",
+  catalogUnread: "No lo hemos podido leer ahora",
+  catalogDown: "No hemos podido leer ahora el catálogo de edificios protegidos; el resto de la ficha sí. Vuelve a intentarlo en un rato.",
+  // D-253 (audit D6): what this sheet is, and what it is not
+  firstFilter:
+    "Esto es un primer filtro de minutos, gratis y con fuentes. No sustituye al estudio de viabilidad que hace una consultora o un arquitecto.",
+  takeIt: "Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.",
+  studyItems: [
+    "La nota simple del Registro, con sus cargas.",
+    "El informe urbanístico del Ayuntamiento.",
+    "La consulta a la distribuidora eléctrica y a Canal de Isabel II.",
+    "El levantamiento topográfico y el estudio geotécnico.",
+    "Un estudio de mercado con testigos de venta.",
+    "Un plan de negocio con plazos y financiación.",
+    "Si hubo industria, el estudio de suelos contaminados (Real Decreto 9/2005).",
+    "Si la zona lo pide, el estudio arqueológico.",
+  ],
   article: (n: string) => `Ver el artículo ${n} de las Normas Urbanísticas`,
   contextDown: "No hemos podido leer el barrio ahora; el resto de la ficha sí. La calculadora empieza sin los precios del barrio.",
   instrumentDown:
@@ -253,6 +279,7 @@ export function degradedLines(sheet: Pick<ParcelSheet, "degraded" | "fallback" |
   if (degraded.includes("planning") && sheet.planning) lines.push(SHEET_TEXT.instrumentDown);
   if (degraded.includes("buildability")) lines.push(SHEET_TEXT.zDown);
   if (degraded.includes("plan_uses")) lines.push(SHEET_TEXT.planUsesDown);
+  if (degraded.includes("catalog")) lines.push(SHEET_TEXT.catalogDown);
   if (degraded.includes("context")) lines.push(SHEET_TEXT.contextDown);
   return lines;
 }
@@ -352,4 +379,95 @@ export function publicLandText(item: LandItem): string {
 export function dayMonthYear(iso: string | null | undefined): string | null {
   const match = iso ? /^(\d{4})-(\d{2})-(\d{2})/.exec(iso) : null;
   return match ? `${match[3]}/${match[2]}/${match[1]}` : null;
+}
+
+/** «Protección parcial, nº 02933 (nivel 3 de 3)», from the Plan General's catalogue (D-253). */
+export function catalogText(building: ProtectedBuilding | null | undefined, unread = false): string {
+  if (unread) return SHEET_TEXT.catalogUnread;
+  if (!building) return SHEET_TEXT.catalogNone;
+  const status = (building.protection ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  if (status === "descatalogado" || status === "demolicion total") {
+    // The layer also gives these: never said as a protection
+    return `${sentence(building.protection) ?? ""}${building.number ? `, nº ${building.number}` : ""}`;
+  }
+  const protection = building.protection ? `Protección ${building.protection.toLowerCase()}` : "Catalogado";
+  const number = building.number ? `, nº ${building.number}` : "";
+  const level = building.level ? ` (nivel ${building.level} de 3)` : "";
+  return `${protection}${number}${level}`;
+}
+
+// The finished states of an area's works: the domain's (hi_domain.parcels.DONE_PHASES), generated
+const DONE_WORKS = new Set<string>(INVESTOR_METHOD.doneWorks);
+
+/** D-253 (audit D1): services and supplies. Legal texts read at their source (BOE, BOCM, CNMC, Comunidad de Madrid). */
+export const SERVICES_TEXT = {
+  solar:
+    "Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las redes públicas (Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a). Ningún dato abierto dice si esta parcela los tiene.",
+  zonal:
+    "Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía.",
+  works: (code: string, state: string) => `Obras de urbanización del ${code}: ${state.toLowerCase()}, según el Ayuntamiento.`,
+  worksPending:
+    "Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1).",
+  untracked: "El Ayuntamiento no publica el estado de este ámbito: no sabemos si su urbanización está terminada.",
+  portal: (stage: string): string | null =>
+    stage === "urbanizado"
+      ? "El Portal del Suelo dice que esta parcela está urbanizada."
+      : stage === "sin_urbanizar"
+        ? "El Portal del Suelo dice que esta parcela está sin urbanizar."
+        : null,
+  electricity: "Electricidad",
+  power: (p: PowerEstimate) =>
+    `Con unas ${formatNumber(p.homes, 0)} viviendas (los m² edificables de partida entre ${formatNumber(HOME_M2, 0)} m², la vivienda tipo), la previsión de potencia es de al menos ${formatNumber(p.kw, 1)} kW: ${formatNumber(p.kw_per_home, 2)} kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de la ITC-BT-10 del Reglamento de Baja Tensión (${formatNumber(p.simultaneity, 1)} para ${formatNumber(p.homes, 0)} viviendas). Sin servicios comunes ni garaje, que se suman aparte.`,
+  powerNone: "Sin m² edificables de partida no estimamos la potencia.",
+  transformer:
+    "Por encima de 100 kW, el edificio tiene que reservar un local para un centro de transformación de la distribuidora (RD 1048/2013, art. 26.1). Y la extensión de red la paga quien pide el suministro (art. 25.2): solo hasta 100 kW en baja tensión, en suelo urbanizado, la hace la distribuidora y cobra los derechos de extensión (art. 25.1).",
+  belowTransformer:
+    "Hasta 100 kW en baja tensión, en suelo urbanizado, la extensión de red la hace la distribuidora y cobra los derechos de extensión (RD 1048/2013, art. 25.1).",
+  capacity:
+    "Aunque haya red en la calle, la subestación puede no tener capacidad. Antes de comprar, pregunta a la distribuidora (en Madrid, i-DE o UFD) por el punto de suministro (CUPS) de la parcela y por la potencia que te puede dar.",
+  cnmc: "La CNMC publica cada mes un mapa de la capacidad de las redes para nuevos consumos: es informativo y sus cifras no se pueden sumar.",
+  cnmcLink: "Ver el mapa de capacidad de demanda de la CNMC",
+  cnmcUrl: "https://experience.arcgis.com/experience/c7dc433cb2e44d53a908a8a467523f5a",
+  water: "Agua",
+  canal:
+    "El agua la da Canal de Isabel II, que no publica datos de su red. Antes de comprar, pregúntale si hay una red adecuada: para una acometida nueva se compromete a 10 días laborables, «siempre que exista una red adecuada» y tenga los permisos.",
+  canalLink: "Ver los compromisos de Canal de Isabel II (Comunidad de Madrid)",
+  canalUrl: "https://www.comunidad.madrid/consumo/informacion-completa-agua",
+  wordsTitle: "Palabras y plazos de los suministros",
+  words: [
+    {
+      term: "CUPS",
+      text: "El código que identifica un punto de suministro (una vivienda, un local), no a la persona que lo contrata (guía «El CUPS» de la CNMC). La distribuidora lo guarda en su base de datos de puntos de suministro (Reglamento del RD 88/2026, art. 8). Si la parcela no tiene, es que no ha tenido suministro: no quiere decir que no pueda tenerlo.",
+    },
+    { term: "Acometida", text: "La conexión entre la red de la calle y el edificio." },
+    {
+      term: "Derechos de acometida",
+      text: "Lo que se paga a la distribuidora por un suministro nuevo: los de extensión, de acceso y de supervisión de instalaciones cedidas (RD 1048/2013, art. 24.2). El enganche y la verificación se cobran aparte (art. 29.1).",
+    },
+    {
+      term: "Quién paga la red",
+      text: "Hasta 100 kW en baja tensión (250 kW en alta), en suelo urbanizado con sus servicios, la hace la distribuidora y cobra los derechos de extensión (RD 1048/2013, art. 25.1). En el resto, la paga quien pide el suministro (art. 25.2) y, si la van a usar más consumidores, la cede a la distribuidora (art. 25.5). La ley del suelo pone a cargo de quien urbaniza la conexión con las redes generales y su ampliación (texto refundido de la Ley de Suelo, art. 18.1.c).",
+    },
+    {
+      term: "Centro de transformación",
+      text: "Por encima de 100 kW, el edificio reserva un local cerrado, con acceso desde la calle, para la distribuidora (RD 1048/2013, art. 26.1).",
+    },
+    {
+      term: "Plazos de la norma",
+      text: "La distribuidora contesta a una solicitud de acceso en 15 días hábiles en baja tensión (5 hasta 15 kW si no hay que extender la red) y en 30 entre 1 y 36 kV (RD 1183/2020, art. 13). Con centro de transformación, el presupuesto en 20 días hábiles; y, si la obra la hace la distribuidora, 60 días hábiles desde que se pagan los derechos, que no empiezan a contar hasta que se firma la cesión del local, y sin contar los permisos (RD 1955/2000, art. 103).",
+    },
+  ],
+} as const;
+
+/** The planning's signal about services: a norma zonal, the area's works, or nothing said. */
+export function servicesSignal(planning: PlanningBlock | null | undefined): string[] {
+  if (!planning) return [];
+  if (planning.norma_zonal || planning.kind === "norma_zonal") return [SERVICES_TEXT.zonal];
+  const ambit = planning.ambit;
+  if (!ambit) return [];
+  if (!ambit.tracked) return [SERVICES_TEXT.untracked];
+  const works = (ambit.phases ?? []).find((p) => p.label === "Obras de urbanización");
+  if (!works) return [];
+  const done = DONE_WORKS.has(works.state.toLowerCase());
+  return done ? [SERVICES_TEXT.works(ambit.code, works.state)] : [SERVICES_TEXT.works(ambit.code, works.state), SERVICES_TEXT.worksPending];
 }

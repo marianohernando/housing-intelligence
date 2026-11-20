@@ -16,6 +16,7 @@ import {
   buildabilityMark,
   buildableText,
   byUseSource,
+  catalogText,
   byUseText,
   dayMonthYear,
   degradedLines,
@@ -27,6 +28,8 @@ import {
   publicLandText,
   qualificationText,
   sentence,
+  SERVICES_TEXT,
+  servicesSignal,
   SHEET_TEXT as TEXT,
   landUseNote,
   vacantText,
@@ -121,6 +124,9 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
         </Fact>
         {planning.urban_parcel && <Fact label={TEXT.urbanParcel}>{planning.urban_parcel}</Fact>}
         {instrument && <Fact label={TEXT.instrument}>{instrument}</Fact>}
+        <Fact label={TEXT.catalog} note={planning.protected_building?.name ?? null}>
+          {catalogText(planning.protected_building, sheet.degraded?.includes("catalog"))}
+        </Fact>
         {planning.ambit && (
           <Fact label={TEXT.ambit} note={planning.ambit.tracked ? TEXT.ambitAsOf(planning.ambit.code, isoInWords(planning.ambit.as_of)) : null}>
             {ambitText(planning.ambit)}
@@ -233,6 +239,68 @@ function BuildabilitySection({ sheet }: { sheet: Sheet }) {
         {TEXT.housingOnly} {TEXT.buildableEditable}
       </p>
       <MethodLink />
+    </Section>
+  );
+}
+
+/** D-253 (audit D1): what no open data says (the legal «solar», the network's capacity) and what can be said. */
+function Services({ sheet }: { sheet: Sheet }) {
+  const signal = servicesSignal(sheet.planning);
+  const stage = sheet.public_land?.stage;
+  const power = sheet.power;
+  return (
+    <Section id="servicios" title={TEXT.sections.services}>
+      <p>{SERVICES_TEXT.solar}</p>
+      {signal.map((line) => (
+        <p key={line} className={styles.note}>
+          {line}
+        </p>
+      ))}
+      {stage && SERVICES_TEXT.portal(stage) && <p className={styles.note}>{SERVICES_TEXT.portal(stage)}</p>}
+      <h3 className={styles.subhead}>{SERVICES_TEXT.electricity}</h3>
+      {power ? (
+        <p>
+          <MarkTag mark="supuesto" /> {SERVICES_TEXT.power(power)}
+        </p>
+      ) : (
+        <p className={styles.note}>{SERVICES_TEXT.powerNone}</p>
+      )}
+      {power && <p>{power.over_transformer_threshold ? SERVICES_TEXT.transformer : SERVICES_TEXT.belowTransformer}</p>}
+      <p className={styles.caution}>
+        <Info size={18} aria-hidden="true" />
+        <span>{SERVICES_TEXT.capacity}</span>
+      </p>
+      <p className={styles.note}>{SERVICES_TEXT.cnmc}</p>
+      <External href={SERVICES_TEXT.cnmcUrl}>{SERVICES_TEXT.cnmcLink}</External>
+      <span className={styles.printOnly}>{SERVICES_TEXT.cnmcUrl}</span>
+      <h3 className={styles.subhead}>{SERVICES_TEXT.water}</h3>
+      <p>{SERVICES_TEXT.canal}</p>
+      <External href={SERVICES_TEXT.canalUrl}>{SERVICES_TEXT.canalLink}</External>
+      <span className={styles.printOnly}>{SERVICES_TEXT.canalUrl}</span>
+      <details className={styles.parts}>
+        <summary>{SERVICES_TEXT.wordsTitle}</summary>
+        <ul>
+          {SERVICES_TEXT.words.map((w) => (
+            <li key={w.term}>
+              <strong>{w.term}:</strong> {w.text}
+            </li>
+          ))}
+        </ul>
+      </details>
+    </Section>
+  );
+}
+
+/** D-253 (audit D6): what a full study adds, for whoever takes the PDF to a consultancy. */
+function Study() {
+  return (
+    <Section id="estudio" title={TEXT.sections.study}>
+      <ul className={styles.notices}>
+        {TEXT.studyItems.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <p className={styles.note}>{TEXT.takeIt}</p>
     </Section>
   );
 }
@@ -389,13 +457,19 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
         <p className={styles.eyebrow}>{TEXT.eyebrow(sheet.barrio?.name ?? null, sheet.district?.name ?? null)}</p>
         <h1 className={styles.title}>{sheet.parcel.address ?? TEXT.rcLine(sheet.parcel.rc14)}</h1>
         <p className={styles.lead}>{TEXT.rcLine(sheet.parcel.rc14)}</p>
+        <p className={styles.caution} data-first-filter>
+          <Info size={18} aria-hidden="true" />
+          <span>{TEXT.firstFilter}</span>
+        </p>
         <p className={styles.printOnly}>{INVESTOR_TEXT.generated(today(), version)}</p>
         <div className={`${styles.actions} no-print`}>
           <Button variant="secondary" onClick={() => window.print()}>
             <Printer size={18} aria-hidden="true" />
             {INVESTOR_TEXT.print}
           </Button>
-          <span className={styles.note}>{INVESTOR_TEXT.printHelp}</span>
+          <span className={styles.note}>
+            {INVESTOR_TEXT.printHelp} {TEXT.takeIt}
+          </span>
         </div>
         {notes.map((line) => (
           <p key={line} className={styles.caution} role="status">
@@ -413,10 +487,12 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
       <ParcelData sheet={sheet} />
       <Planning sheet={sheet} retry={result.retry} />
       <BuildabilitySection sheet={sheet} />
+      <Services sheet={sheet} />
       <Context sheet={sheet} />
       <Section id="viabilidad" title={TEXT.sections.viability}>
         <Calculator defaults={sheet.defaults} parcels={[]} remaining={[]} parcel={start} methodLink={false} />
       </Section>
+      <Study />
       <Sources sheet={sheet} version={version} />
       <p className={styles.printOnly}>{`Datos de la parcela consultados el ${isoInWords(sheet.parcel.observed_at)}.`}</p>
     </div>

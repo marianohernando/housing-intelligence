@@ -38,10 +38,11 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     expect(t).toContain(`de ${n(M.costReferences.crg.defaultPem)} €/m², el punto medio del bloque abierto en Madrid`);
     expect(t).toContain(`Comunidad de Madrid (${M.pem.year}): ${n(M.pem.eurM2)} €/m²`);
     expect(n(M.costCoefficient)).toBe("1,3575");
-    expect(t).toContain(`el ICIO de Madrid es del ${n(M.icioPct)} %: Ordenanza fiscal 7/2023, art. 25, tipo aprobado para 2024 y vigente en 2025`);
+    expect(t).toContain(`el ICIO de Madrid es del ${n(M.icioPct)} %: ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025`);
     expect(t).toContain(`margen mínimo del ${n(M.appraisalMinMarginPct)} % en vivienda de primera residencia`);
     expect(t).not.toContain("pero no una cifra de m²");
-    expect(t).not.toMatch(/\bsolar\b/);
+    // «Solar» only where it is defined by law, in the services section (D-253)
+    expect(t.split("4. Servicios y suministros")[0]).not.toMatch(/\bsolar\b/);
     expect(t).toContain(`coeficiente de ${n(M.costCoefficient)}`);
     expect(t).toContain(`un ${n(M.salesCostsPct)} % de las ventas`);
     expect(t).toContain(`un ${n(M.targetMarginPct)} % de las ventas`);
@@ -109,5 +110,21 @@ describe("«Cómo calculamos la ficha para inversores» (D-251)", () => {
     for (const line of CALCULATOR_TEXT.costExcludes) expect(t).toContain(line.replace(/&/g, "&amp;"));
     expect(t).toContain("Hasta cuánto puede costar la construcción (el punto de equilibrio)");
     expect(t).toContain("Punto de equilibrio:");
+  });
+
+  it("says the services and supplies and what a full study adds, with the code's figures (D-253)", () => {
+    const t = text();
+    expect(t).toContain("4. Servicios y suministros");
+    expect(t).toContain("(Ley 9/2001 del Suelo de la Comunidad de Madrid, art. 14.1.a)");
+    expect(t).toContain(`${n(M.supplies.kwPerHome)} kW por vivienda (electrificación básica)`);
+    expect(t).toContain(`de ${n(M.supplies.simultaneityOne)} con una vivienda a ${n(M.supplies.simultaneityMax)} con ${M.supplies.tableHomes}`);
+    expect(t).toContain("(RD 1048/2013, art. 26.1)");
+    expect(t).toContain("Solo enlazamos su mapa: no copiamos sus cifras.");
+    expect(t).toContain("arts. 4.3.4 y 4.3.7");
+    expect(t).toContain("Esto es un primer filtro de minutos, gratis y con fuentes.");
+    expect(t).toContain("(Real Decreto 9/2005)");
+    for (const word of ["CUPS:", "Acometida:", "Derechos de acometida:", "Quién paga la red:", "Centro de transformación:", "Plazos de la norma:"]) {
+      expect(t).toContain(word);
+    }
   });
 });

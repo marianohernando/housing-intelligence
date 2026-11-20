@@ -63,8 +63,9 @@ class Part:
     source: str
 
 
-# ICIO of Madrid: 3,75 % (Ordenanza fiscal 7/2023, art. 25; the rate approved for 2024 and still
-# in the 2025 book of fiscal ordinances; 4 % before), on the PEM; the licence fee and other taxes,
+# ICIO of Madrid: 3,75 % (ordenanza fiscal del ICIO, art. 25, approved on 22/12/2023, without a
+# number in the 2024 book of fiscal ordinances, p. 154; still in the 2025 book; 4 % before), on
+# the PEM; the licence fee and other taxes,
 # about 1 % («supuesto»). Review of #109, R-02: the 2026 rate is not verified at the source.
 ICIO_RATE = 0.0375
 LICENCE_FEES_SHARE = 0.01
@@ -90,8 +91,9 @@ COST_PARTS: tuple[Part, ...] = (
         "licencias_icio",
         "Licencia, ICIO y tasas",
         ICIO_RATE + LICENCE_FEES_SHARE,
-        f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto (Ordenanza fiscal "
-        "7/2023, art. 25: tipo aprobado para 2024 y vigente en 2025), y la tasa de la licencia y "
+        f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto (ordenanza fiscal del "
+        "ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025), y la "
+        "tasa de la licencia y "
         f"otros tributos, alrededor de un {es_number(LICENCE_FEES_SHARE * 100, 0)} % (supuesto)",
     ),
     Part(

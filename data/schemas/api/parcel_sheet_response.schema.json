@@ -1394,7 +1394,9 @@
         "ambito_pendiente",
         "vivienda_protegida",
         "unifamiliar",
-        "ambito_sin_estado"
+        "ambito_sin_estado",
+        "edificio_catalogado",
+        "edificio_existente"
       ],
       "title": "ParcelCautionKey",
       "type": "string"
@@ -1491,7 +1493,8 @@
               "planning",
               "buildability",
               "context",
-              "plan_uses"
+              "plan_uses",
+              "catalog"
             ],
             "type": "string"
           },
@@ -1545,6 +1548,18 @@
             }
           ],
           "description": "null when the Ayuntamiento fails"
+        },
+        "power": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PowerEstimate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-253: from the starting buildable m²; null without them"
         },
         "public_land": {
           "anyOf": [
@@ -1899,6 +1914,18 @@
           "description": "D-252c: the date of the snapshot of tables 4 and 5",
           "title": "Plan Uses As Of"
         },
+        "protected_building": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProtectedBuilding"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D-253: the building in the catalogue at the parcel's point"
+        },
         "sheet_label": {
           "anyOf": [
             {
@@ -2101,6 +2128,43 @@
       "title": "PlanningKind",
       "type": "string"
     },
+    "PowerEstimate": {
+      "additionalProperties": false,
+      "description": "D-253: the least power the homes of the starting buildable m² need (ITC-BT-10), an\nassumption: homes ≈ m² / 80, 5,75 kW each, times the coefficient of simultaneity.",
+      "properties": {
+        "homes": {
+          "minimum": 1,
+          "title": "Homes",
+          "type": "integer"
+        },
+        "kw": {
+          "title": "Kw",
+          "type": "number"
+        },
+        "kw_per_home": {
+          "title": "Kw Per Home",
+          "type": "number"
+        },
+        "over_transformer_threshold": {
+          "description": "Above 100 kW (RD 1048/2013, art. 26.1)",
+          "title": "Over Transformer Threshold",
+          "type": "boolean"
+        },
+        "simultaneity": {
+          "title": "Simultaneity",
+          "type": "number"
+        }
+      },
+      "required": [
+        "homes",
+        "simultaneity",
+        "kw_per_home",
+        "kw",
+        "over_transformer_threshold"
+      ],
+      "title": "PowerEstimate",
+      "type": "object"
+    },
     "PricesBlock": {
       "additionalProperties": false,
       "properties": {
@@ -2124,6 +2188,89 @@
         "rent_m2_month"
       ],
       "title": "PricesBlock",
+      "type": "object"
+    },
+    "ProtectedBuilding": {
+      "additionalProperties": false,
+      "description": "D-253: the Plan General's catalogue of protected buildings (datos.madrid.es 300158).",
+      "properties": {
+        "level": {
+          "anyOf": [
+            {
+              "maximum": 3,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NNUU art. 4.3.4",
+          "title": "Level"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Name"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "02933"
+          ],
+          "title": "CatalogNumber"
+        },
+        "protection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "examples": [
+            "Parcial",
+            "Integral"
+          ],
+          "title": "Protection"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "number",
+        "name",
+        "protection"
+      ],
+      "title": "ProtectedBuilding",
       "type": "object"
     },
     "SourcedValue": {

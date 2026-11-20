@@ -62,6 +62,8 @@ USOS_SUELO = f"{USOS_SUELO_SERVICE}/3/query"
 DEADLINE_MARGIN_S = 0.5
 PLANEAMIENTO = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/PLANEAMIENTO_URBANISTICO/MapServer/3/query"
 CONDICIONES = f"{SIGMA}/PGOUM97/PG_CONDICIONES_EDIFICACION/MapServer/6/query"
+# D-253: the catalogue of protected buildings (datos.madrid.es 300158, CC BY 4.0), at the point
+CATALOGO = f"{SIGMA}/DESARROLLO_URBANO_ACTUALIZADO/EDIFICIOS_PROTEGIDOS/MapServer/5/query"
 CARTOCIUDAD = "https://www.cartociudad.es/geocoder/api/geocoder/candidates"
 
 # Generic: who calls, never a person
@@ -461,6 +463,14 @@ class PlanRow:
 
 
 @dataclass(frozen=True)
+class CatalogRow:
+    number: str | None
+    name: str | None
+    protection: str | None
+    url: str | None
+
+
+@dataclass(frozen=True)
 class PlanningRecord:
     """Our fields of the planning at a point, and which secondary layer did not answer."""
 
@@ -489,10 +499,21 @@ class PlanningRecord:
     timings: tuple[tuple[str, int], ...] = ()
     # D-252b: (stage, error class, ms) of each part that failed, for the logs
     failures: tuple[tuple[str, str, int], ...] = ()
+    # D-253: the catalogued building at the point (number, name, protection, link), if any
+    catalog: CatalogRow | None = None
+    catalog_failed: bool = False
 
     @property
     def complete(self) -> bool:
-        return not (self.instrument_failed or self.z_failed or self.uses_failed)
+        return not (
+            self.instrument_failed or self.z_failed or self.uses_failed or self.catalog_failed
+        )
+
+
+def named(value: Any) -> str | None:
+    """A name, or None for a placeholder without letters or digits («---»)."""
+    text = clean(value)
+    return text if text and any(c.isalnum() for c in text) else None
 
 
 def clean(value: Any) -> str | None:
@@ -602,6 +623,7 @@ def urban_parcel_id(uses: Mapping[str, Any]) -> int:
 
 
 INSTRUMENT_FIELDS = "EXP_TX_NUMERO,EXP_TX_DENOM,FIG_TX_ETIQ,ENLACE"
+CATALOG_FIELDS = "N_CATALOGO,NOMBRE,PROTECCION_ACTUAL,ENLACE"
 USES_FIELDS = (
     "AMB_TX_ETIQ,AMB_TX_DENOM,ZURV_TX_NOMBRE,UBOV_TX_ETIQ,USP_TX_DENOM,UBOV_ID,SHAPE.STArea()"
 )
@@ -614,6 +636,18 @@ def instrument_fields(found: Mapping[str, Any]) -> dict[str, Any]:
         "file_number": clean(found.get("EXP_TX_NUMERO")),
         "instrument_url": instrument_url(found.get("ENLACE")),
     }
+
+
+def catalog_row(found: Any) -> CatalogRow | None:
+    """D-253: the catalogued building of the layer's answer; None without one or on failure."""
+    if found is None or isinstance(found, Failure):
+        return None
+    return CatalogRow(
+        number=clean(found.get("N_CATALOGO")),
+        name=named(found.get("NOMBRE")),
+        protection=clean(found.get("PROTECCION_ACTUAL")),
+        url=https_url(clean(found.get("ENLACE"))),
+    )
 
 
 def failures_of(**parts: Any) -> tuple[tuple[str, str, int], ...]:
@@ -643,7 +677,7 @@ async def fetch_planning(
     if base is not None:
         return await repair_planning(client, x, y, deadline, base)
     times: dict[str, int] = {}
-    uses, instrument, conditions = await asyncio.gather(
+    uses, instrument, conditions, catalog = await asyncio.gather(
         clocked("layer3", arcgis_point(client, USOS_SUELO, x, y, USES_FIELDS), times),
         optional(
             clocked(
@@ -654,6 +688,13 @@ async def fetch_planning(
         ),
         optional(
             clocked("z", within(deadline, arcgis_point(client, CONDICIONES, x, y, "COEF_Z")), times)
+        ),
+        optional(
+            clocked(
+                "catalog",
+                within(deadline, arcgis_point(client, CATALOGO, x, y, CATALOG_FIELDS)),
+                times,
+            )
         ),
     )
     code = clean((uses or {}).get("AMB_TX_ETIQ"))
@@ -691,10 +732,13 @@ async def fetch_planning(
             plan_rows=None if isinstance(rows, Failure) else rows,
             uses_failed=isinstance(rows, Failure),
             use_without_figure=no_figure,
+            catalog=catalog_row(catalog),
+            catalog_failed=isinstance(catalog, Failure),
             failures=failures_of(
                 instrument=instrument,
                 z=conditions if z_layer else None,
                 plan_uses=rows,
+                catalog=catalog,
             ),
             timings=tuple(times.items()),
         )
@@ -714,7 +758,7 @@ async def repair_planning(
         return None
 
     times: dict[str, int] = {}
-    instrument, conditions = await asyncio.gather(
+    instrument, conditions, catalog = await asyncio.gather(
         optional(
             clocked(
                 "instrument",
@@ -729,6 +773,15 @@ async def repair_planning(
         )
         if base.z_failed
         else kept(),
+        optional(
+            clocked(
+                "catalog",
+                within(deadline, arcgis_point(client, CATALOGO, x, y, CATALOG_FIELDS)),
+                times,
+            )
+        )
+        if base.catalog_failed
+        else kept(),
     )
     updates: dict[str, Any] = {}
     with parsing("planning"):
@@ -740,7 +793,9 @@ async def repair_planning(
                 "coef_z": catastro_number((conditions or {}).get("COEF_Z")),
                 "z_failed": False,
             }
-    failures = failures_of(instrument=instrument, z=conditions)
+        if base.catalog_failed and not isinstance(catalog, Failure):
+            updates |= {"catalog": catalog_row(catalog), "catalog_failed": False}
+    failures = failures_of(instrument=instrument, z=conditions, catalog=catalog)
     return replace(base, **updates, failures=failures, timings=tuple(times.items()))
 
 
