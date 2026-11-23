@@ -83,6 +83,7 @@ def test_a_barrio_sheet_says_where_each_figure_comes_from(client: TestClient) ->
     assert permits is not None and permits.value == PEM_EUR_M2
     assert permits.mark is ValueMark.DATO
     assert sheet.defaults.cost_coefficient.mark is ValueMark.SUPUESTO
+    assert sheet.defaults.sale_price_m2.mark is ValueMark.ESTIMACION  # D-234: shared out
     assert sum(p.pct for p in sheet.defaults.cost_parts) == pytest.approx(35.75)
     assert sheet.notices[0].startswith("No es una tasación")
 

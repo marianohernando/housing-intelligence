@@ -34,6 +34,15 @@ export type Datasets = DatasetRef[];
  */
 export type ConfidenceLevel = number | null;
 /**
+ * Rows of the per-zone list of what is missing (GAP-001, D-194).
+ */
+export type GapRowKey =
+  "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
+/**
+ * Rows shown as context (gap-0.4, D-254): value and reference with status CONTEXTO (SIN_DATOS when unknown), never FALTA, JUSTO or CUBIERTO, no ratio, no p and not in GET /gaps/impact
+ */
+export type ContextRows = GapRowKey[];
+/**
  * ratio at or above this -> CUBIERTO
  */
 export type CubiertoFrom = number;
@@ -110,11 +119,6 @@ export type RatioToReference1 = number;
  * Where to invest first: zones in FALTA, most people affected first
  */
 export type Ranking = GapImpactZone[];
-/**
- * Rows of the per-zone list of what is missing (GAP-001, D-194).
- */
-export type GapRowKey =
-  "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
 export type ShareInFalta = number;
 export type Summary = string;
 /**
@@ -122,6 +126,9 @@ export type Summary = string;
  */
 export type Zones = number;
 export type ZonesInFalta = number;
+/**
+ * The rows judged: never a context row (gap-0.4)
+ */
 export type Rows = GapImpactRow[];
 export type Version2 = string;
 /**
@@ -172,6 +179,7 @@ export interface DatasetRef {
  */
 export interface GapMethod {
   confidence_level?: ConfidenceLevel;
+  context_rows?: ContextRows;
   cubierto_from: CubiertoFrom;
   falta_below: FaltaBelow;
   reference: Reference;

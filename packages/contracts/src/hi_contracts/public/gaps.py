@@ -1,9 +1,11 @@
 """Per-zone list of what is missing (GAP-001, D-194).
 
 Each row compares the zone with the regional reference per population and says FALTA, JUSTO
-or CUBIERTO; SIN_DATOS when the value is unknown (never 0). Proxies are declared per row.
+or CUBIERTO; SIN_DATOS when the value is unknown (never 0). Proxies are declared per row. A
+context row (gap-0.4, D-254) shows its value and reference with no verdict: CONTEXTO.
 """
 
+from collections.abc import Iterable
 from enum import StrEnum
 from typing import Literal, Self
 
@@ -33,6 +35,7 @@ class GapStatus(StrEnum):
     JUSTO = "JUSTO"
     CUBIERTO = "CUBIERTO"
     SIN_DATOS = "SIN_DATOS"
+    CONTEXTO = "CONTEXTO"  # a context row (gap-0.4, D-254): shown, never judged
 
 
 class GapMethod(BaseModel):
@@ -52,6 +55,12 @@ class GapMethod(BaseModel):
         "the zone's count at this level below the count expected at the reference rate. "
         "None: the ratio alone decides",
     )
+    context_rows: list[GapRowKey] = Field(
+        default_factory=list[GapRowKey],
+        description="Rows shown as context (gap-0.4, D-254): value and reference with status "
+        "CONTEXTO (SIN_DATOS when unknown), never FALTA, JUSTO or CUBIERTO, no ratio, no p and "
+        "not in GET /gaps/impact",
+    )
 
     @model_validator(mode="after")
     def _ordered(self) -> Self:
@@ -59,6 +68,17 @@ class GapMethod(BaseModel):
             msg = "falta_below must not exceed cubierto_from"
             raise ValueError(msg)
         return self
+
+    def check_context(self, row: GapRowKey, statuses: Iterable[GapStatus]) -> None:
+        """gap-0.4 (D-254): a context row is never judged, and only a context row is CONTEXTO."""
+        allowed = (
+            {GapStatus.CONTEXTO, GapStatus.SIN_DATOS}
+            if row in self.context_rows
+            else set(GapStatus) - {GapStatus.CONTEXTO}
+        )
+        if any(status not in allowed for status in statuses):
+            msg = f"{row}: a context row is CONTEXTO or SIN_DATOS, and only a context row"
+            raise ValueError(msg)
 
 
 class ComparisonGroup(BaseModel):
@@ -101,7 +121,10 @@ class GapRow(BaseModel):
     )
     direction: Literal["higher_is_better", "lower_is_better"]
     ratio_to_reference: float | None = Field(
-        default=None, ge=0, description="Oriented so that above 1 is better than the reference"
+        default=None,
+        ge=0,
+        description="Oriented so that above 1 is better than the reference; None when the "
+        "value is unknown, and always in a context row (gap-0.4)",
     )
     explanation: str = Field(
         examples=[
@@ -162,6 +185,8 @@ class ZoneGapList(BaseModel):
         if len(keys) != len(set(keys)):
             msg = "each row key appears at most once"
             raise ValueError(msg)
+        for row in self.rows:
+            self.method.check_context(row.row, [row.status])
         return self
 
 
@@ -184,7 +209,10 @@ class ZoneGapStatus(BaseModel):
         default=None, examples=["Municipios urbanos de la Comunidad de Madrid"]
     )
     ratio_to_reference: float | None = Field(
-        default=None, ge=0, description="Oriented so that above 1 is better than the reference"
+        default=None,
+        ge=0,
+        description="Oriented so that above 1 is better than the reference; None when the "
+        "value is unknown, and always in a context row (gap-0.4)",
     )
     confidence: float = Field(ge=0, le=1)
     null_reason: NullReason | None = None
@@ -220,6 +248,7 @@ class GapStatusCounts(BaseModel):
     justo: int = Field(ge=0)
     cubierto: int = Field(ge=0)
     sin_datos: int = Field(ge=0)
+    contexto: int = Field(default=0, ge=0, description="Zones of a context row (gap-0.4)")
 
 
 class GapRowMap(BaseModel):
@@ -258,6 +287,7 @@ class GapRowMap(BaseModel):
         if tally != expected:
             msg = "counts must match the zones"
             raise ValueError(msg)
+        self.method.check_context(self.row, [z.status for z in self.zones])
         return self
 
 
@@ -343,5 +373,13 @@ class GapImpact(BaseModel):
     zones_note: str = Field(
         description="Which zones are counted: the municipios and Madrid capital's districts"
     )
-    rows: list[GapImpactRow]
+    rows: list[GapImpactRow] = Field(description="The rows judged: never a context row (gap-0.4)")
     datasets: list[DatasetRef]
+
+    @model_validator(mode="after")
+    def _no_context_rows(self) -> Self:
+        context = [r.row for r in self.rows if r.row in self.method.context_rows]
+        if context:
+            msg = f"context rows are not judged, so they have no impact: {context}"
+            raise ValueError(msg)
+        return self

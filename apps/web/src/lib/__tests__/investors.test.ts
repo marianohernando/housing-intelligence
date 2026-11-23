@@ -28,11 +28,13 @@ import {
   initialFields,
   isoInWords,
   landName,
+  MARK_TEXT,
   missingFields,
   money,
   parcelsLine,
   parseNumber,
   rentRange,
+  residualText,
   viabilityRequest,
   withoutMark,
 } from "../investors";
@@ -65,6 +67,11 @@ const defaults: ViabilityDefaults = {
 const parcel = (code: string, m2: number | null): LandItem => ({ kind: "parcela", code, name: `Calle ${code}`, parcel: null, buildable_m2: m2 });
 
 describe("figures in words", () => {
+  it("names the barrio's estimated price «Estimación», never «Dato» (D-234)", () => {
+    expect(MARK_TEXT.estimacion).toBe("Estimación");
+    expect(new Set(Object.values(MARK_TEXT)).size).toBe(Object.keys(MARK_TEXT).length);
+  });
+
   it("says the unknown as such, never 0", () => {
     expect(figure(value(null, "%"))).toBe("Sin dato");
     expect(figure(value(0, "%"))).toBe("0 %");
@@ -91,6 +98,22 @@ describe("figures in words", () => {
   it("drops the «supuesto:» the tag already says", () => {
     expect(withoutMark("supuesto: un piso de 2 o 3 dormitorios")).toBe("Un piso de 2 o 3 dormitorios");
     expect(withoutMark("Ley 12/2023")).toBe("Ley 12/2023");
+  });
+
+  it("names the method by the version the API serves, never «viabilidad v0 (D-248)» (F14)", () => {
+    expect(SHEET_TEXT.version("2026-11-19", "viability-0.2")).toBe("Datos calculados el 19 de noviembre de 2026. Método: viability-0.2.");
+    expect(SHEET_TEXT.version(null, "parcels-0.1")).toBe("Método: parcels-0.1.");
+    expect(SHEET_TEXT.version("2026-11-19", null)).toBe("Datos calculados el 19 de noviembre de 2026.");
+    expect(SHEET_TEXT.version(null, null)).toBe("");
+    expect(CALCULATOR_TEXT.method("viability-0.2")).toBe("Método de la cuenta: viability-0.2.");
+    expect(JSON.stringify(SHEET_TEXT.version("2026-11-19", "viability-0.2"))).not.toContain("D-248");
+  });
+
+  it("says the zone the vacant land figure is of: 13.813 is all of Madrid, not the barrio (F14)", () => {
+    expect(SHEET_TEXT.vacant("municipio")).toBe("Suelo vacante de toda la ciudad (Catastro)");
+    expect(SHEET_TEXT.vacant("distrito")).toBe("Suelo vacante del distrito (Catastro)");
+    expect(SHEET_TEXT.vacant("barrio")).toBe("Suelo vacante del barrio (Catastro)");
+    expect(SHEET_TEXT.vacant(null)).toBe("Suelo vacante (Catastro)");
   });
 });
 
@@ -284,6 +307,20 @@ describe("the cost and its break-even (D-252)", () => {
     expect(roughMoney(900_091)).toBe("unos 900.000 €");
     expect(roughMoney(4297.4)).toBe("unos 4.300 €");
     expect(roughMoney(1_002_000)).toBe("alrededor de 1 millón de €"); // review of #109, R-10
+  });
+
+  it("says the residual per m² buildable and as a share of the sales, and what the account leaves out (F14)", () => {
+    // Méndez Álvaro as the jury read it: 61,2 M€ on 13.121 m² and 109,4 M€ of sales
+    const mendez = { residual_land_value: 61_234_000, residual_land_value_m2: 4_666.9, revenue: 109_400_000 };
+    expect(residualText(mendez)).toBe("unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por ventas)");
+    // Not even free land reaches the target margin: no share of a negative figure
+    const none = { residual_land_value: -200_000, residual_land_value_m2: -150, revenue: 1_000_000 };
+    expect(residualText(none)).toBe("unos -200.000 € (unos -150 € por m² edificable)");
+    // The four parts it names are not in the cost: the PEM goes on the buildable m² above ground, and the coefficient's and
+    // the sales costs' parts are others
+    expect(CALCULATOR_TEXT.residualLeavesOut).toBe("La cuenta no incluye sótanos, urbanización, financiación ni IVA.");
+    const parts = [...M.costParts, ...M.salesCostParts].map((p) => p.label.toLowerCase()).join(" · ");
+    for (const left of ["sótano", "urbaniza", "financia", "iva"]) expect(parts).not.toContain(left);
   });
 
   it("gives the semaphore and the scenarios from the code's figures (D-252, D8)", () => {

@@ -6,7 +6,7 @@
 import type { InvestorZoneSummary } from "@/contracts/investor_zone_list_response";
 import type { DatasetRef, LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 import type { ViabilityRequest } from "@/contracts/viability_request";
-import type { BreakEven, Verdict } from "@/contracts/viability_response";
+import type { BreakEven, ScenarioOutcome, Verdict } from "@/contracts/viability_response";
 import { formatEuros, formatNumber } from "@/lib/format";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
@@ -57,6 +57,7 @@ export const METHOD_LINK = {
 /** «dato», «supuesto», «lo pones tú» next to a figure (never a colour alone). */
 export const MARK_TEXT: Record<SourcedValue["mark"] | "sin_dato", string> = {
   dato: "Dato",
+  estimacion: "Estimación",
   supuesto: "Supuesto",
   usuario: "Lo pones tú",
   sin_dato: "Sin dato",
@@ -428,6 +429,8 @@ export const CALCULATOR_TEXT = {
   priceProtected:
     "Precio libre del barrio: no vale para vivienda con protección pública, que tiene un precio máximo legal. Pon el de su régimen.",
   excludedLink: "Qué no incluye esta cuenta",
+  // F14 (jury A1): the parts of the cost are the PEM × coefficient (its parts) and the sales costs; none of these four
+  residualLeavesOut: "La cuenta no incluye sótanos, urbanización, financiación ni IVA.",
   costReset: "Volver a nuestros supuestos de coste",
   costScopeTitle: "Qué incluye el coste y qué no",
   costIncludes: (parts: string[]) =>
@@ -465,6 +468,7 @@ export const CALCULATOR_TEXT = {
   noYield: "Rentabilidad bruta si se alquila: ni con el suelo gratis se llega al margen objetivo, así que no hay precio de suelo con el que calcularla",
   invalid: "Revisa los campos marcados: hay alguno fuera de su rango.",
   demandTitle: "¿Lo pueden pagar los hogares del barrio?",
+  method: (version: string) => `Método de la cuenta: ${version}.`,
 } as const;
 
 const eurM2 = (value: number) => `${formatNumber(Math.round(value), 0)} €/m²`;
@@ -551,6 +555,18 @@ function costReferenceLines(permits?: SourcedValue | null): { text: string; href
   ];
 }
 
+/**
+ * F14 (jury A1): the residual land value with what it weighs, per m² buildable and as a share of
+ * the sales: «unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por
+ * ventas)». Without a positive figure, no share.
+ */
+export function residualText(scenario: Pick<ScenarioOutcome, "residual_land_value" | "residual_land_value_m2" | "revenue">): string {
+  const value = scenario.residual_land_value;
+  const perM2 = `${roughMoney(scenario.residual_land_value_m2)} por m² edificable`;
+  if (value <= 0 || scenario.revenue <= 0) return `${roughMoney(value)} (${perM2})`;
+  return `${roughMoney(value)} (${perM2}; el ${percent((100 * value) / scenario.revenue, 0)} de los ingresos por ventas)`;
+}
+
 /** «unos 67 millones de €», «unos 900.000 €»: an estimate on assumptions never says its cents (D-252, D7). */
 export function roughMoney(amount: number): string {
   if (amount === 0) return "0 €";
@@ -599,12 +615,15 @@ export const SHEET_TEXT = {
   remaining: "Edificabilidad residencial que queda en los ámbitos del Plan General",
   remainingUnknown: "Aún sin dato para este barrio.",
   noRemaining: "Ningún ámbito del barrio tiene edificabilidad residencial disponible.",
-  vacant: "Suelo vacante (Catastro)",
+  // F14 (jury A1): the figure is of the zone its source says (13.813 is all of Madrid), never of the barrio by default
+  vacant: (level: string | null | undefined) =>
+    level && LEVEL_TEXT[level] ? `Suelo vacante ${LEVEL_TEXT[level]} (Catastro)` : "Suelo vacante (Catastro)",
   viewer: "Ver en el visor de la Comunidad",
   record: "Ver la ficha oficial",
   notPilot: "Ese barrio no está en el piloto (Madrid capital dentro de la M-40).",
-  version: (version: string | null) =>
-    version ? `Datos calculados el ${isoInWords(version)}. Método: viabilidad v0 (D-248).` : "Método: viabilidad v0 (D-248).",
+  // F14: the method's version as the API serves it (meta.methodology_version), not a label of ours
+  version: (version: string | null, method: string | null) =>
+    [version ? `Datos calculados el ${isoInWords(version)}.` : null, method ? `Método: ${method}.` : null].filter(Boolean).join(" "),
   datasets: (n: number) => `Los ${n} conjuntos de datos de esta ficha`,
   open: "Ver la fuente",
   pemDataset:
