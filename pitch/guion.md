@@ -20,7 +20,7 @@
   - «viven en 3 distritos donde faltan escuelas infantiles», para que no se oiga como «niños sin escuela»;
   - «cumplen lo que piden 42 zonas», y no «les convienen»: 12 de las 42 salen «Poco recomendable»;
   - el precio: «es el precio de los contratos de 2024; un anuncio de hoy pide más» (pregunta 57);
-  - «API abierta y gratuita; MCP de código abierto», y no «API y MCP gratis»: el MCP solo funciona en local.
+  - «API y MCP abiertos y gratuitos, sin clave»: desde el 23 nov el MCP funciona en remoto (D-255). Comprobar en producción antes de decirlo.
 - **Farmacias:** no se presume de ellas en la parte de personas (segunda prueba de P6, 23 nov: a un ciudadano no le sirve el dato; la web las quita de la tarjeta de zona si no se piden). En «Qué falta», para ayuntamientos, se quedan.
 - **Capturas:** C5 (slide 1), C1 (slide 4) y C3 (slide 3) se rehacen después del despliegue del 23 nov (`pitch/slides.md`, «Capturas necesarias»). Hasta entonces enseñan textos anteriores, como el lema viejo y «35 conjuntos».
 
@@ -191,7 +191,7 @@ Y la base, para quien busca casa. En la formación nos contaron que lo que ganó
 - «Ninguna cifra la genera una IA»: `CLAUDE.md` §3 (IA: «El LLM no calcula si existe una función determinista»; «El LLM no inventa cifras faltantes») y pregunta 32. La IA se usó para programar, como permiten las bases (§7).
 - «El código es abierto»: `LICENSE` (Apache-2.0, D-191).
 - «La API, abierta y gratuita, y el MCP, de código abierto»: la API pública está en producción, sin claves, con su OpenAPI en `/api/v1/openapi.json` y una página pública, `/desarrolladores` (D-249). El MCP, 7 herramientas de solo lectura, funciona en local (`make mcp`) con el código abierto: no se dice «en remoto» (preguntas 1 y 2).
-- «¿Quién paga?»: decisión de Mariano del 23 nov (`pitch/modelo_negocio.md`). Gratis siempre: los datos, las zonas, «Qué falta», cada ficha de parcela y la API. De pago: el plan empresarial (carteras de parcelas, avisos de suelo nuevo, volumen con clave y MCP remoto) y los informes personalizados (estudios de suelo a medida). «Pagarán»: hoy no se cobra nada. Los precios no se dicen; si preguntan, pregunta 6.
+- «¿Quién paga?»: decisión de Mariano del 23 nov (`pitch/modelo_negocio.md`). Gratis siempre: los datos, las zonas, «Qué falta», cada ficha de parcela y la API. De pago: el plan empresarial (carteras de parcelas, avisos de suelo nuevo y la API y el MCP a gran volumen con clave) y los informes personalizados (estudios de suelo a medida). «Pagarán»: hoy no se cobra nada. Los precios no se dicen; si preguntan, pregunta 6.
 - La privacidad («nunca vendemos datos de personas») ya no se dice en voz alta, por tiempo: está en la slide 3 («Solo zonas, nunca datos de personas.») y en la pregunta 33.
 
 ---

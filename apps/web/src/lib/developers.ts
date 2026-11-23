@@ -333,6 +333,14 @@ export const MCP_TOOLS: readonly McpTool[] = [
 const LOCAL_DATABASE_URL = "postgresql+psycopg://housing:housing@localhost:5440/housing";
 const CLONE_PATH = "/ruta/a/housing-intelligence";
 
+/** D-255: the MCP served over HTTP (Streamable HTTP, stateless, read-only) in front of the public API. */
+export const MCP_REMOTE_URL = `${SITE_URL}/api/v1/mcp`;
+
+export const MCP_CLAUDE_CODE_REMOTE = `claude mcp add --transport http vida-facil ${MCP_REMOTE_URL}`;
+
+/** For clients that only speak stdio: the mcp-remote bridge. */
+export const MCP_STDIO_BRIDGE = `npx -y mcp-remote ${MCP_REMOTE_URL}`;
+
 export const MCP_SETUP = `git clone ${REPO_URL}.git
 cd housing-intelligence
 cp .env.example .env
@@ -375,10 +383,6 @@ export interface PlannedItem {
 }
 
 export const PLANNED: readonly PlannedItem[] = [
-  {
-    title: "El MCP en remoto (HTTP), en este mismo dominio",
-    text: "Para conectar tu asistente sin instalar nada ni cargar una base de datos.",
-  },
   {
     title: "Avisos de suelo público nuevo",
     text: "Un aviso cuando aparezca una parcela para vivienda nueva en el Portal del Suelo de la Comunidad de Madrid.",

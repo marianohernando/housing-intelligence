@@ -291,7 +291,7 @@ function GapMethod() {
       <p className={styles.para}>
         <strong>Ejemplo real.</strong> En Puente de Vallecas la escuela infantil más cercana está a unos 6 minutos andando,
         pero son pocas para tantos niños: 2,8 al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los demás
-        municipios urbanos. Con tantos niños, no es casualidad: sale <strong>FALTA</strong>. En Centro la cifra es parecida,
+        municipios urbanos. Con tantos niños, la diferencia es demasiado grande para explicarla por el tamaño de la zona: sale <strong>FALTA</strong>. En Centro la cifra es parecida,
         pero con menos niños la diferencia podría ser casualidad: sale <strong>JUSTO</strong>.
       </p>
       <p className={styles.para}>
