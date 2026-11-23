@@ -239,10 +239,12 @@ const CHILD_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio"];
 
 /**
  * The rows of «Qué falta» that matter to this household, in the card's order (D-244 and review of
- * PR #79: «lo que le falta que le afecte»): the same rule as highlight_rows of hi_domain/search.py,
- * which feeds `gap_highlights`, without the housing row. Escuela infantil with a child of 0 to 2
- * (or ages not given), colegio with any child, the health centre and the pharmacy always, and the
- * centres for older people with «Somos mayores» or someone older looked after.
+ * PR #79: «lo que le falta que le afecte»): the rule of highlight_rows of hi_domain/search.py,
+ * which feeds `gap_highlights`, without the housing row nor the pharmacy. Escuela infantil with a
+ * child of 0 to 2 (or ages not given), colegio with any child, the health centre always, and the
+ * centres for older people with «Somos mayores» or someone older looked after. The pharmacy only
+ * when the person marks it (F14, user test: «siempre hay una cerca de casa»): `marked` of topRows
+ * and markedRows of lib/essentials.ts. «Qué falta» of the whole zone keeps it.
  */
 export function householdRows(household: HouseholdLike | null | undefined): GapRowKey[] {
   const minors = household?.minors ?? 0;
@@ -250,7 +252,7 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
   const rows: GapRowKey[] = [];
   if (minors > 0 && (ages.length === 0 || Math.min(...ages) <= INFANT_MAX_AGE)) rows.push("escuela_infantil");
   if (minors > 0) rows.push("colegio");
-  rows.push("centro_salud", "farmacia");
+  rows.push("centro_salud");
   if (household?.seniors === true || (household?.seniors_in_care ?? 0) > 0) rows.push("mayores");
   return rows;
 }

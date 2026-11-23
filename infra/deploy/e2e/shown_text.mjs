@@ -22,14 +22,14 @@ export function speaksToMany(household) {
   return (household.adults ?? 1) + (household.minors ?? 0) + (household.seniors_in_care ?? 0) > 1;
 }
 
-/** The rows of «Qué falta» that matter to a household (householdRows of lib/gaps.ts, highlight_rows of the API without housing). */
+/** The rows of «Qué falta» that matter to a household (householdRows of lib/gaps.ts, highlight_rows of the API without housing nor the pharmacy, F14). */
 export function householdRows(household) {
   const minors = household?.minors ?? 0;
   const ages = household?.minor_ages ?? [];
   const rows = [];
   if (minors > 0 && (ages.length === 0 || Math.min(...ages) <= 2)) rows.push("escuela_infantil");
   if (minors > 0) rows.push("colegio");
-  rows.push("centro_salud", "farmacia");
+  rows.push("centro_salud");
   if (household?.seniors === true || (household?.seniors_in_care ?? 0) > 0) rows.push("mayores");
   return rows;
 }
