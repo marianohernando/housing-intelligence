@@ -207,17 +207,17 @@ Lo que pidieron y no entra antes del freeze (proyectos futuros y filtrar pisos p
 
 | Clave | Texto | Notas |
 |---|---|---|
-| `meta.title` | Vida Fácil — Encuentra tu sitio en Madrid | `<title>` de la portada |
+| `meta.title` | Vida Fácil — La zona que te conviene, y lo que le falta | `<title>` de la portada. **Cambia (23 nov, lema nuevo, decisión de Mariano).** Antes, «Vida Fácil —» con el lema anterior (D-199). En el código, `TITLE` de `apps/web/src/app/layout.tsx` y el texto alternativo de la imagen para redes (`opengraph-image.alt.txt`). **Pendiente de B** |
 | `meta.title.plantilla` | {página} · Vida Fácil | Resto de páginas |
 | `meta.description` | En qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca, y qué le falta a cada una, con datos abiertos. | **Cambia (15 nov, revisión del PR #79).** Sin «encaja» (`layout.tsx`). |
 | `cabecera.nombre` | Vida Fácil | Logo de texto |
-| `cabecera.lema` | Encuentra tu sitio en Madrid | |
+| `cabecera.lema` | La zona que te conviene, y lo que le falta | **Cambia (23 nov, lema nuevo, decisión de Mariano).** Antes, el lema de D-199. Es el mismo lema que la slide 1 y la última frase del guion. **Pendiente de B** |
 | `pestana.mapa` | Mapa | |
 | `pestana.que_falta` | Qué falta | |
 | `pestana.como` | Cómo lo calculamos | Nunca «Metodología» ni «Análisis» |
 | `pestana.inversores` | Inversores | **Nueva (19 nov, D-251).** Última pestaña, en todas las páginas, también en el mapa. Marca `/inversores`, la ficha de un barrio y la de una parcela. A 360 px las cuatro van en una fila con un relleno lateral más fino por debajo de 380 px; «Cómo lo calculamos» y «Qué falta» se parten en dos líneas dentro de su píldora |
 | `a11y.saltar` | Saltar al contenido | Enlace oculto hasta recibir el foco |
-| `portada.titulo` | Encuentra tu sitio en Madrid | Ya está así en la web de B |
+| `portada.titulo` | La zona que te conviene, y lo que le falta | **Cambia (23 nov, lema nuevo, decisión de Mariano).** Antes, el lema de D-199, con «en Madrid» en violeta (`apps/web/src/app/(vida)/(mapa)/page.tsx`); si se mantiene el acento, va en «y lo que le falta» (decide B). **Pendiente de B** |
 | `portada.subtitulo` | Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca. | **Cambia (15 nov, UX móvil 1).** Dice para qué sirve (auditoría §3 C5). Antes: «Te decimos qué zonas encajan con tu vida y qué le falta a cada una, con datos oficiales.» |
 | `portada.como_funciona.titulo` | Así funciona | Ya está así en la web de B |
 | `portada.paso1` | **Cuéntanos cómo es tu hogar** y lo que quieres tener cerca: colegios, centro de salud, transporte… | **Cambia (15 nov, revisión del PR #79).** Antes «… y lo que te importa: colegios, salud, transporte…», como el formulario |

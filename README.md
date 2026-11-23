@@ -1,8 +1,8 @@
 <img src="apps/web/public/brand/vida-facil.png" alt="Vida Fácil" width="320">
 
-# Vida Fácil · Encuentra tu sitio en Madrid
+# Vida Fácil · La zona que te conviene, y lo que le falta
 
-Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el transporte en otra, y nadie le dice qué zona va con su vida. Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid para enseñarte qué zonas encajan contigo y qué le falta a cada una.**
+Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos; un promotor elige suelo sin ver la demanda; y quien busca casa mira el precio en una web, los colegios en otra y el transporte en otra. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid, descargados por API y sin scraping, para decir qué le falta a cada zona, dar la ficha de una parcela exacta de Madrid capital y servirlo todo por una API abierta. Debajo, como base, las zonas que le convienen a quien busca casa.**
 
 **Pruébalo:** [vidafacil-madrid.vercel.app](https://vidafacil-madrid.vercel.app)
 
@@ -48,7 +48,7 @@ Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»
 
 Un servidor MCP local deja que un asistente (Claude Desktop, Claude Code u otro cliente MCP) pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Tiene 7 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre, listar las fuentes y, para inversores, la ficha de un barrio y la viabilidad de una promoción. Nunca ejecuta SQL. Se arranca con `make mcp` y funciona solo en tu ordenador, contra tu base local; no está desplegado. Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225, D-249).
 
-La API pública y el MCP son gratis para todos, sin clave. Rutas, ejemplos con `curl` y cómo conectar el MCP: [vidafacil-madrid.vercel.app/desarrolladores](https://vidafacil-madrid.vercel.app/desarrolladores).
+La API pública es abierta y gratuita, sin clave, y el MCP es de código abierto. Rutas, ejemplos con `curl` y cómo conectar el MCP: [vidafacil-madrid.vercel.app/desarrolladores](https://vidafacil-madrid.vercel.app/desarrolladores).
 
 ## Arráncalo en tu ordenador
 
@@ -74,6 +74,14 @@ npm ci && NEXT_PUBLIC_API_URL=http://localhost:8010 npm run web:dev   # web en h
 - `evidence/`: las pruebas de cada control de calidad.
 
 El progreso, fase a fase, está en [`board/BOARD.md`](board/BOARD.md).
+
+## Cómo se verifica
+
+- **Tests, contados el 23 nov:** 2.147. Son 1.337 de Python, unitarios y de contratos de datos, sin base de datos ni red; 173 de integración contra PostGIS; y 637 de la web, en 43 ficheros. Se cuentan con `uv run pytest --collect-only -q tests` y `npm run -w apps/web test -- --run`.
+- **Cómo se ejecutan:** `make test`. Por partes: `make test-unit` (Python sin base y la web) y `make test-db` (integración, contra `TEST_DATABASE_URL`).
+- **CI en cada push y en cada PR** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)), con cinco trabajos: Python (lint, tipos y tests unitarios y de datos), web (lint, tipos, tests y build), integración con PostGIS (tests, migraciones y registro del catálogo), auditoría de dependencias y búsqueda de secretos en todo el historial.
+- **Cada mañana,** una prueba de humo contra la web pública ([`.github/workflows/smoke-demo.yml`](.github/workflows/smoke-demo.yml)).
+- **Cada conjunto de datos** pasa un control de calidad antes de entrar; la evidencia está en [`evidence/gate-01/`](evidence/gate-01/).
 
 ## Licencias
 

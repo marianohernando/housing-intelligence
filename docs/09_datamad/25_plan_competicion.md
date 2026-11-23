@@ -4,7 +4,7 @@ Vigente desde el 10 nov 2026. Decisiones: D-192 (replan), D-193 (formulario), D-
 
 ## 1. Qué presentamos
 
-**Producto: «Vida Fácil». Lema: «Encuentra tu sitio en Madrid» (D-199).** El repo sigue llamándose `housing-intelligence`.
+**Producto: «Vida Fácil». Lema: «La zona que te conviene, y lo que le falta»** (decisión de Mariano del 23 nov, que sustituye al lema de D-199). El repo sigue llamándose `housing-intelligence`.
 - **Escala (D-200):** municipios (179), con Madrid capital por sus 21 distritos.
 - **Mapa (D-201):** 2D en la vista general y 3D al entrar en una zona.
 - **Encaje (D-202):** % de encaje con hechos tangibles y su confianza, nunca notas sobre 100.
