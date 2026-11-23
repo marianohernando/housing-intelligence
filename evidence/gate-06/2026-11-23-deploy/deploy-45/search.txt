@@ -1,0 +1,77 @@
+The API before the deploy (dpl_5udnLokddKKNCueMzPiwnPsrvQXX, a6690573, 2026-11-23 10:24:49-10:25:08 UTC) and after it
+(dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6, 861f94f0, 10:28:12 UTC), the same 62 requests compared without `meta`:
+deploy-44's 55 (11 POST /api/v1/search bodies, GET /api/v1/gaps of 21 districts and 10 municipios, the feature lists at 3 levels,
+6 context values, 3 investor answers and /api/v1/datasets) and 7 new ones for #121: GET /api/v1/gaps/municipio/28165 (Valdilecha) and
+/28079 (Madrid), GET /api/v1/gaps/impact, the maps GET /api/v1/gaps?row=vivienda (municipio, distrito) and ?row=escuela_infantil
+(municipio), and GET /api/v1/openapi.json. inv-via has a new body (1.000 m² buildable, 4.500 €/m², PEM 968), so its bytes differ from deploy-44's.
+The other 54 of deploy-44's set had the same bytes before this deploy as after deploy-44: the data did not change in between.
+
+file | before -> after the deploy | bytes before / after
+buy400 | changed: only the housing highlight leaves gap_highlights (15 -> 0) with its 2 datasets; zones, %, order, facts and the other highlights identical | 131925 / 129718
+couple1500-madrid | identical | 100229 / 100229
+couple1500-pueblos | changed: only the housing highlight leaves gap_highlights (10 -> 0) with its 2 datasets; zones, %, order, facts and the other highlights identical | 112889 / 111047
+couple1500 | changed: only the housing highlight leaves gap_highlights (12 -> 0) with its 2 datasets; zones, %, order, facts and the other highlights identical | 139182 / 137187
+datasets | identical | 37865 / 37865
+example | identical | 160402 / 160402
+feat-ambitos_residenciales_en_desarrollo-distrito | identical | 11964 / 11964
+feat-compraventas_obra_nueva_pct-municipio | identical | 49663 / 49663
+feat-list-barrio | identical | 949 / 949
+feat-list-distrito | identical | 9394 / 9394
+feat-list-municipio | identical | 47662 / 47662
+feat-plan_vive_viviendas-distrito | identical | 6231 / 6231
+feat-plan_vive_viviendas-municipio | identical | 49472 / 49472
+feat-suelo_publico_vivienda_m2-distrito | identical | 20312 / 20312
+feat-suelo_publico_vivienda_m2-municipio | identical | 155511 / 155511
+gapmap-escuela_infantil-municipio | changed: gap-0.4 method and status_counts.contexto 0 only; every zone identical | 74247 / 74326
+gapmap-vivienda-distrito | changed: label, gap-0.4 method and status_counts.contexto; the 21 districts stay SIN_DATOS | 10309 / 10423
+gapmap-vivienda-municipio | changed: 179 municipios CUBIERTO 134 · FALTA 25 · JUSTO 20 -> CONTEXTO 179, ratio null, new label, gap-0.4 | 57217 / 57259
+gaps-distrito-2807901 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34372 / 34473
+gaps-distrito-2807902 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34295 / 34396
+gaps-distrito-2807903 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34364 / 34465
+gaps-distrito-2807904 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34284 / 34385
+gaps-distrito-2807905 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34290 / 34391
+gaps-distrito-2807906 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34365 / 34466
+gaps-distrito-2807907 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34376 / 34477
+gaps-distrito-2807908 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34376 / 34477
+gaps-distrito-2807909 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34371 / 34472
+gaps-distrito-2807910 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34361 / 34462
+gaps-distrito-2807911 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34293 / 34394
+gaps-distrito-2807912 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34292 / 34393
+gaps-distrito-2807913 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34384 / 34485
+gaps-distrito-2807914 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34523 / 34624
+gaps-distrito-2807915 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34377 / 34478
+gaps-distrito-2807916 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34372 / 34473
+gaps-distrito-2807917 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34378 / 34479
+gaps-distrito-2807918 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34380 / 34481
+gaps-distrito-2807919 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34371 / 34472
+gaps-distrito-2807920 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34384 / 34485
+gaps-distrito-2807921 | changed: gap-0.4 method (version, reference, context_rows) and the housing row's label; that row stays SIN_DATOS (no district value) | 34672 / 34773
+gaps-impact | changed: the housing row (25 zones, 99,483 households, p values) leaves; its 2 datasets leave; gap-0.4 method; the 5 judged rows identical | 23930 / 13272
+gaps-municipio-28001 | changed: gap-0.4 method; housing row CUBIERTO (ratio 24.7) -> CONTEXTO (ratio None), new label and the context sentence | 36158 / 36284
+gaps-municipio-28005 | changed: gap-0.4 method; housing row JUSTO (ratio 0.9293) -> CONTEXTO (ratio None), new label and the context sentence | 35715 / 35934
+gaps-municipio-28006 | changed: gap-0.4 method; housing row FALTA (ratio 0.7828) -> CONTEXTO (ratio None), new label and the context sentence | 35700 / 35919
+gaps-municipio-28049 | changed: gap-0.4 method; housing row JUSTO (ratio 0.8631) -> CONTEXTO (ratio None), new label and the context sentence | 35944 / 36163
+gaps-municipio-28074 | changed: gap-0.4 method; housing row FALTA (ratio 0.6717) -> CONTEXTO (ratio None), new label and the context sentence | 35697 / 35916
+gaps-municipio-28079 | changed: gap-0.4 method; housing row JUSTO (ratio 0.9072) -> CONTEXTO (ratio None), new label and the context sentence | 35701 / 35920
+gaps-municipio-28092 | changed: gap-0.4 method; housing row JUSTO (ratio 0.8786) -> CONTEXTO (ratio None), new label and the context sentence | 35611 / 35830
+gaps-municipio-28106 | changed: gap-0.4 method; housing row FALTA (ratio 0.6057) -> CONTEXTO (ratio None), new label and the context sentence | 35603 / 35822
+gaps-municipio-28148 | changed: gap-0.4 method; housing row JUSTO (ratio 0.829) -> CONTEXTO (ratio None), new label and the context sentence | 35628 / 35848
+gaps-municipio-28161 | changed: gap-0.4 method; housing row JUSTO (ratio 0.9274) -> CONTEXTO (ratio None), new label and the context sentence | 35918 / 36137
+gaps-municipio-28165 | changed: gap-0.4 method; housing row FALTA (ratio 0.5981) -> CONTEXTO (ratio None), new label and the context sentence | 36969 / 37188
+gaps-municipio-28180 | changed: gap-0.4 method; housing row FALTA (ratio 0.668) -> CONTEXTO (ratio None), new label and the context sentence | 36787 / 37007
+inv-via | identical | 3312 / 3312
+inv-zone164 | changed: mark «estimacion» on prices.sale_m2, prices.new_build_sale_m2 and defaults.sale_price_m2; ICIO without «vigente en 2025»; the housing row's label | 60577 / 60613
+inv-zones | identical | 76089 / 76089
+openapi | changed: info (title «Vida Fácil API», description, license Apache-2.0, contact), servers, CONTEXTO, context_rows, «estimacion» | 103387 / 104683
+pueblos | identical | 136152 / 136152
+rent10k | changed: only the housing highlight leaves gap_highlights (10 -> 0) with its 2 datasets; zones, %, order, facts and the other highlights identical | 134022 / 132164
+retired-noflag | identical | 118786 / 118786
+retired | identical | 118783 / 118783
+student | changed: only the housing highlight leaves gap_highlights (15 -> 0) with its 2 datasets; zones, %, order, facts and the other highlights identical | 146554 / 144348
+telework | identical | 158347 / 158347
+
+18 of 62 identical. Every change is #121's (gap-0.4, D-254: the housing row is context; ValueMark «estimacion»; ICIO;
+OpenAPI info). No search changes a zone, a %, an order or a fact: the 5 changed search bodies (households without children) lose only the third
+highlight, «Vivienda para familias», which leaves 2 (centro de salud, farmacia).
+/api/v1/datasets is identical: 59 datasets (the registry sync is still pending, deploy-44).
+`meta`: generated_at and request_id change; methodology_version of the gap answers goes gap-0.3 -> gap-0.4.

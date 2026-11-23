@@ -1,0 +1,342 @@
+{
+  "base": "https://vidafacil-madrid.vercel.app",
+  "checked_at": "2026-11-23T10:38:37.088Z",
+  "results": [
+    {
+      "width": "390",
+      "page": "/",
+      "name": "H1 = new tagline",
+      "ok": true,
+      "detail": "La zona que te conviene, y lo que le falta"
+    },
+    {
+      "width": "390",
+      "page": "/",
+      "name": "<title> = new tagline",
+      "ok": true,
+      "detail": "Vida Fácil · La zona que te conviene, y lo que le falta"
+    },
+    {
+      "width": "390",
+      "page": "Mayor 61",
+      "name": "calculator m² empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "Mayor 61",
+      "name": "calculator marked «Sin dato»",
+      "ok": true,
+      "detail": "9. ¿Sale la promoción? Calcula solo vivienda, con los precios y alquileres de vivienda del barrio: no oficinas, locales ni naves. Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar:"
+    },
+    {
+      "width": "390",
+      "page": "Mayor 61",
+      "name": "calculator help for a catalogued building",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "Mayor 61",
+      "name": "rehabilitation notice",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "Mayor 61",
+      "name": "buildability still «Supuesto» 224 m² in its section",
+      "ok": true,
+      "detail": "3. Edificabilidad Edificabilidad de partida 224 m² edificables Supuesto 68 m² de parcela × Z 5 × C 0,66 Supuesto aproximado: norma zonal 1 grado 2º, art. 8.1.10"
+    },
+    {
+      "width": "390",
+      "page": "Mayor 61",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "390",
+      "page": "Almería 1",
+      "name": "«Antes de pedir licencia…»",
+      "ok": true,
+      "detail": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las re"
+    },
+    {
+      "width": "390",
+      "page": "Almería 1",
+      "name": "no licence-with-urbanization sentence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "Almería 1",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "390",
+      "page": "Méndez Álvaro",
+      "name": "residual row «€ por m² edificable» and «% de los ingresos por ventas» (3 scenarios)",
+      "ok": true,
+      "detail": "Lo máximo que se puede pagar por el suelo unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por ventas) | Lo máximo que se puede pagar por el suelo unos 69,9 millones de € (unos 5.330 € por m² edificable; el 58 % de los ingresos por ventas) | Lo máximo que se puede pag"
+    },
+    {
+      "width": "390",
+      "page": "Méndez Álvaro",
+      "name": "(info) the API's verdict sentence, unchanged by #120",
+      "ok": true,
+      "detail": "Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del suelo, urbanización y derribo: unos 61,2 millones de € (unos 4.670 € por m² edificable)"
+    },
+    {
+      "width": "390",
+      "page": "Méndez Álvaro",
+      "name": "what the account leaves out",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "Méndez Álvaro",
+      "name": "the method's real version",
+      "ok": true,
+      "detail": "Método de la cuenta: viability-0."
+    },
+    {
+      "width": "390",
+      "page": "Méndez Álvaro",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "390",
+      "page": "Luis Misson",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "390",
+      "page": "Pinar del Rey",
+      "name": "sale price marked «Estimación»",
+      "ok": true,
+      "detail": "2. Precios Precio de venta estimado 4.847 €/m² Estimación Es una estimación del precio de la vivienda usada, no el de un anuncio ni el de una venta. Fuente: Ayuntamiento de Madrid, Instituto de Estadí"
+    },
+    {
+      "width": "390",
+      "page": "Pinar del Rey",
+      "name": "«Suelo vacante de toda la ciudad (Catastro)»",
+      "ok": true,
+      "detail": ") 13.813 unidades Dato Fuente: Instituto de Estadística de la Comunidad de Madrid · 2026 · dato de toda la ciudad · Ver la fuente (se abre en una pestaña nueva)"
+    },
+    {
+      "width": "390",
+      "page": "Pinar del Rey",
+      "name": "the method as the API serves it (not «viabilidad v0 (D-248)»)",
+      "ok": true,
+      "detail": "Método: viability-0."
+    },
+    {
+      "width": "390",
+      "page": "/como-lo-calculamos",
+      "name": "ICIO cited without «vigente en 2025»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/como-lo-calculamos",
+      "name": "housing «(solo contexto)»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "all",
+      "name": "0 console errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "all",
+      "name": "every parcel sheet request from the CDN (HIT)",
+      "ok": true,
+      "detail": "9943003VK3794D 200 HIT public, max-age=3600 | 3959601VK4735H 200 HIT public, max-age=3600 | 2122202VK4722A 200 HIT public, max-age=3600 | 0390314VK4709A 200 HIT public, max-age=3600"
+    },
+    {
+      "width": "1440",
+      "page": "/",
+      "name": "H1 = new tagline",
+      "ok": true,
+      "detail": "La zona que te conviene, y lo que le falta"
+    },
+    {
+      "width": "1440",
+      "page": "/",
+      "name": "<title> = new tagline",
+      "ok": true,
+      "detail": "Vida Fácil · La zona que te conviene, y lo que le falta"
+    },
+    {
+      "width": "1440",
+      "page": "Mayor 61",
+      "name": "calculator m² empty",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "Mayor 61",
+      "name": "calculator marked «Sin dato»",
+      "ok": true,
+      "detail": "9. ¿Sale la promoción? Calcula solo vivienda, con los precios y alquileres de vivienda del barrio: no oficinas, locales ni naves. Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar:"
+    },
+    {
+      "width": "1440",
+      "page": "Mayor 61",
+      "name": "calculator help for a catalogued building",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "Mayor 61",
+      "name": "rehabilitation notice",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "Mayor 61",
+      "name": "buildability still «Supuesto» 224 m² in its section",
+      "ok": true,
+      "detail": "3. Edificabilidad Edificabilidad de partida 224 m² edificables Supuesto 68 m² de parcela × Z 5 × C 0,66 Supuesto aproximado: norma zonal 1 grado 2º, art. 8.1.10"
+    },
+    {
+      "width": "1440",
+      "page": "Mayor 61",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "1440",
+      "page": "Almería 1",
+      "name": "«Antes de pedir licencia…»",
+      "ok": true,
+      "detail": "4. Servicios y suministros Para ser solar, la parcela tiene que estar completamente urbanizada: calzadas pavimentadas, aceras, y agua, saneamiento, electricidad y alumbrado público conectados a las re"
+    },
+    {
+      "width": "1440",
+      "page": "Almería 1",
+      "name": "no licence-with-urbanization sentence",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "Almería 1",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "1440",
+      "page": "Méndez Álvaro",
+      "name": "residual row «€ por m² edificable» and «% de los ingresos por ventas» (3 scenarios)",
+      "ok": true,
+      "detail": "Lo máximo que se puede pagar por el suelo unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por ventas) | Lo máximo que se puede pagar por el suelo unos 69,9 millones de € (unos 5.330 € por m² edificable; el 58 % de los ingresos por ventas) | Lo máximo que se puede pag"
+    },
+    {
+      "width": "1440",
+      "page": "Méndez Álvaro",
+      "name": "(info) the API's verdict sentence, unchanged by #120",
+      "ok": true,
+      "detail": "Lo máximo que se puede pagar por el suelo, antes de financiación, impuestos de compra del suelo, urbanización y derribo: unos 61,2 millones de € (unos 4.670 € por m² edificable)"
+    },
+    {
+      "width": "1440",
+      "page": "Méndez Álvaro",
+      "name": "what the account leaves out",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "Méndez Álvaro",
+      "name": "the method's real version",
+      "ok": true,
+      "detail": "Método de la cuenta: viability-0."
+    },
+    {
+      "width": "1440",
+      "page": "Méndez Álvaro",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "1440",
+      "page": "Luis Misson",
+      "name": "«Llévate esta ficha» once",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "width": "1440",
+      "page": "Pinar del Rey",
+      "name": "sale price marked «Estimación»",
+      "ok": true,
+      "detail": "2. Precios Precio de venta estimado 4.847 €/m² Estimación Es una estimación del precio de la vivienda usada, no el de un anuncio ni el de una venta. Fuente: Ayuntamiento de Madrid, Instituto de Estadí"
+    },
+    {
+      "width": "1440",
+      "page": "Pinar del Rey",
+      "name": "«Suelo vacante de toda la ciudad (Catastro)»",
+      "ok": true,
+      "detail": ") 13.813 unidades Dato Fuente: Instituto de Estadística de la Comunidad de Madrid · 2026 · dato de toda la ciudad · Ver la fuente (se abre en una pestaña nueva)"
+    },
+    {
+      "width": "1440",
+      "page": "Pinar del Rey",
+      "name": "the method as the API serves it (not «viabilidad v0 (D-248)»)",
+      "ok": true,
+      "detail": "Método: viability-0."
+    },
+    {
+      "width": "1440",
+      "page": "/como-lo-calculamos",
+      "name": "ICIO cited without «vigente en 2025»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/como-lo-calculamos",
+      "name": "housing «(solo contexto)»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "all",
+      "name": "0 console errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "all",
+      "name": "every parcel sheet request from the CDN (HIT)",
+      "ok": true,
+      "detail": "9943003VK3794D 200 HIT public, max-age=3600 | 3959601VK4735H 200 HIT public, max-age=3600 | 2122202VK4722A 200 HIT public, max-age=3600 | 0390314VK4709A 200 HIT public, max-age=3600"
+    }
+  ]
+}
