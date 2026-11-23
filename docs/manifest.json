@@ -1,6 +1,6 @@
 {
-  "version": "0.5.93",
-  "updated": "2026-11-20T00:17:22.511537+00:00",
+  "version": "0.5.94",
+  "updated": "2026-11-23T10:00:24.587281+00:00",
   "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
@@ -928,8 +928,8 @@
       "bytes": 4321
     },
     "09_datamad/25_plan_competicion.md": {
-      "sha256": "411fb5c0b88ed373e552b7970c11ad12c4c15109446407b128d85cd57c9c4562",
-      "bytes": 12630
+      "sha256": "0f675a65b0647da27f65883c8ded1d1c79dee0e5104f182a5a4518a7ed8a8849",
+      "bytes": 12702
     },
     "10_research/01_references.md": {
       "sha256": "ec2758e37420b9a7fcb7ebb10a41bf78d03bc6c16b1fc45d19c8ef5921d1241e",
