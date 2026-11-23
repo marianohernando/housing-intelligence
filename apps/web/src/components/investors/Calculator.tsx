@@ -26,7 +26,7 @@ import {
   money,
   parseNumber,
   percent,
-  roughMoney,
+  residualText,
   viabilityRequest,
   withoutMark,
 } from "@/lib/investors";
@@ -197,8 +197,8 @@ function ScenarioCard({ scenario }: { scenario: ScenarioOutcome }) {
   if (scenario.margin_pct !== null && scenario.margin_pct !== undefined) {
     rows.push([TEXT.profit, money(scenario.profit ?? 0)], [TEXT.margin, percent(scenario.margin_pct)]);
   }
-  // D-252 (D7): three significant figures, never cents on assumptions
-  rows.push([TEXT.residual, `${roughMoney(scenario.residual_land_value)} (${roughMoney(scenario.residual_land_value_m2)} por m² edificable)`]);
+  // D-252 (D7): three significant figures, never cents on assumptions; F14: per m² buildable and share of the sales
+  rows.push([TEXT.residual, residualText(scenario)]);
   // Never without land: with the price given, or without one at the residual land value
   if (scenario.break_even) rows.push([TEXT.breakEvenRow, breakEvenValue(scenario.break_even)]);
   if (scenario.break_even_free_land) rows.push([TEXT.breakEvenFreeRow, breakEvenValue(scenario.break_even_free_land)]);
@@ -258,6 +258,7 @@ function Results({ result, costMark }: { result: ViabilityResponse["data"]; cost
         ))}
       </div>
       <p className={styles.note}>
+        {TEXT.residualLeavesOut}{" "}
         <a
           href={`#${COST_SCOPE_ID}`}
           onClick={() => {
@@ -270,6 +271,7 @@ function Results({ result, costMark }: { result: ViabilityResponse["data"]; cost
       </p>
       {base && <BreakEvenBlock scenario={base} costMark={costMark} />}
       <p className={styles.thresholds}>{TEXT.thresholds}</p>
+      <p className={styles.note}>{TEXT.method(result.version)}</p>
       {result.demand && (
         <section aria-labelledby="demanda-check" className={styles.demand}>
           <h4 id="demanda-check">{TEXT.demandTitle}</h4>

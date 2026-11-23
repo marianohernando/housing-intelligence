@@ -307,7 +307,7 @@ function Essentials({ zone, result, gaps }: { zone: ZoneProperties; result: Sear
 /**
  * «Ver más sobre {zona}»: everything the card said before the second delivery, folded. The % with
  * its band and what it is, the place in the list and the ties, every fact with its confidence, the
- * full price with why it is orientative, the whole «Qué falta» of the card and «Ver la zona».
+ * full price with what it is for, the whole «Qué falta» of the card and «Ver la zona».
  */
 function MoreAbout({ zone, result, gaps, mode }: { zone: ZoneProperties; result: SearchResult; gaps: Gaps; mode: Props["mode"] }) {
   const { match } = zoneFit(result, zone.zone_key);
@@ -337,7 +337,7 @@ function MoreAbout({ zone, result, gaps, mode }: { zone: ZoneProperties; result:
           </Help>
         )}
         <FitDetails result={result} zoneKey={zone.zone_key} />
-        {/* The price is said once among the essentials and in the cost fact above: here, only what it is for and why it is orientative */}
+        {/* The price is said once among the essentials, with why it is orientative, and in the cost fact above: here, only what it is for */}
         {price && <PriceTag price={price} variant="breakdown" />}
         <MissingSection zone={zone} gaps={gaps} mode={mode} withStates={false} />
         <CardAction zone={zone} mode={mode} />

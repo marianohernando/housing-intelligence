@@ -203,13 +203,14 @@ describe("sortRows and topRows", () => {
   });
 
   // Review of PR #79: «lo que le falta que le afecte», the household's rows first for every home
-  it("knows which rows matter to each home, as highlight_rows of hi_domain/search.py", () => {
-    expect(householdRows({ minors: 1, minor_ages: [1] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
-    expect(householdRows({ minors: 2, minor_ages: [4, 8] })).toEqual(["colegio", "centro_salud", "farmacia"]);
-    expect(householdRows({ minors: 1, minor_ages: [] })).toEqual(["escuela_infantil", "colegio", "centro_salud", "farmacia"]);
-    expect(householdRows({ seniors: true })).toEqual(["centro_salud", "farmacia", "mayores"]);
-    expect(householdRows({ seniors_in_care: 1 })).toEqual(["centro_salud", "farmacia", "mayores"]);
-    expect(householdRows({})).toEqual(["centro_salud", "farmacia"]);
+  // F14 (user test): the pharmacy is no longer one of them, «siempre hay una cerca de casa»
+  it("knows which rows matter to each home, as highlight_rows of hi_domain/search.py without the pharmacy", () => {
+    expect(householdRows({ minors: 1, minor_ages: [1] })).toEqual(["escuela_infantil", "colegio", "centro_salud"]);
+    expect(householdRows({ minors: 2, minor_ages: [4, 8] })).toEqual(["colegio", "centro_salud"]);
+    expect(householdRows({ minors: 1, minor_ages: [] })).toEqual(["escuela_infantil", "colegio", "centro_salud"]);
+    expect(householdRows({ seniors: true })).toEqual(["centro_salud", "mayores"]);
+    expect(householdRows({ seniors_in_care: 1 })).toEqual(["centro_salud", "mayores"]);
+    expect(householdRows({})).toEqual(["centro_salud"]);
   });
 
   // Barajas for the retired couple of the example (GET /gaps/distrito/2807921, 15 nov): the health
@@ -223,8 +224,11 @@ describe("sortRows and topRows", () => {
     { row: "vivienda", status: "SIN_DATOS" },
   ] as const;
 
-  it("shows a retired couple the health centre first, then the pharmacy and the centres for older people, never schools", () => {
-    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "farmacia", "mayores"]);
+  it("shows a retired couple the health centre and the centres for older people first, never schools", () => {
+    // The pharmacy is not theirs (F14) and never fills in (review R-02): another row does, even without data
+    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "mayores", "vivienda"]);
+    // Marked in «Lo quiero a un paseo», it is theirs
+    expect(topRows([...barajas], 3, { seniors: true }, ["farmacia"]).map((r) => r.row)).toEqual(["centro_salud", "mayores", "farmacia"]);
     // Without a household, by status, as before: the colegio JUSTO first
     expect(topRows([...barajas]).map((r) => r.row)[0]).toBe("colegio");
   });
@@ -253,10 +257,15 @@ describe("sortRows and topRows", () => {
       { row: "vivienda", status: "SIN_DATOS" },
     ] as const;
     const top = topRows([...rows], 3, { minors: 0 });
-    expect(top.map((r) => r.row)).toEqual(["farmacia", "centro_salud", "mayores"]);
+    // The pharmacy JUSTO is not theirs (F14) and never fills in (review R-02), even before a row without data
+    expect(top.map((r) => r.row)).toEqual(["centro_salud", "mayores", "vivienda"]);
+    // Marked in «Lo quiero a un paseo», it is theirs again, and what is short of theirs goes first
+    expect(topRows([...rows], 3, { minors: 0 }, ["farmacia"]).map((r) => r.row)).toEqual(["farmacia", "centro_salud", "mayores"]);
     // Rows of the household without data go after the others with data
     const noHealthData = rows.map((r) => (r.row === "centro_salud" ? { ...r, status: "SIN_DATOS" as const } : r));
-    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["farmacia", "mayores", "centro_salud"]);
+    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["mayores", "centro_salud", "vivienda"]);
+    // Without a household (the zone's own «Qué falta», before a search) the pharmacy stays, by status
+    expect(topRows([...rows]).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "farmacia"]);
   });
 });
 
