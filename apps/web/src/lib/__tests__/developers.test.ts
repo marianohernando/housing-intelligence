@@ -1,6 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { API_BASE, API_GROUPS, curlOf, MCP_CLAUDE_CODE, MCP_CLAUDE_DESKTOP, MCP_SETUP, SITE_URL } from "@/lib/developers";
+import {
+  API_BASE,
+  API_GROUPS,
+  curlOf,
+  MCP_CLAUDE_CODE,
+  MCP_CLAUDE_CODE_REMOTE,
+  MCP_CLAUDE_DESKTOP,
+  MCP_REMOTE_URL,
+  MCP_SETUP,
+  MCP_STDIO_BRIDGE,
+  PLANNED,
+  SITE_URL,
+} from "@/lib/developers";
 
 const EXAMPLES = API_GROUPS.flatMap((group) => group.examples);
 
@@ -64,8 +76,23 @@ describe("«Para desarrolladores» (D-249)", () => {
     expect(MCP_SETUP).toContain("make ingest-all");
   });
 
+  it("the remote MCP (D-255) is served under the public API, and is no longer planned", () => {
+    expect(MCP_REMOTE_URL).toBe(`${API_BASE}/mcp`);
+    expect(MCP_CLAUDE_CODE_REMOTE).toBe(`claude mcp add --transport http vida-facil ${MCP_REMOTE_URL}`);
+    expect(MCP_STDIO_BRIDGE).toBe(`npx mcp-remote ${MCP_REMOTE_URL}`);
+    expect(PLANNED.some((item) => /MCP/.test(item.title))).toBe(false);
+  });
+
   it("names only the public address of the site", () => {
-    const everything = JSON.stringify({ API_GROUPS, MCP_CLAUDE_CODE, MCP_CLAUDE_DESKTOP, MCP_SETUP });
+    const everything = JSON.stringify({
+      API_GROUPS,
+      MCP_CLAUDE_CODE,
+      MCP_CLAUDE_CODE_REMOTE,
+      MCP_CLAUDE_DESKTOP,
+      MCP_REMOTE_URL,
+      MCP_SETUP,
+      MCP_STDIO_BRIDGE,
+    });
     for (const host of everything.match(/[\w.-]+\.vercel\.app/g) ?? []) expect(`https://${host}`).toBe(SITE_URL);
     expect(everything).not.toMatch(/\/Users\/|\/private\/|~\/Desktop/);
   });

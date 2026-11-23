@@ -17,7 +17,7 @@ export const INVESTOR_TEXT = {
     "Qué le falta a cada barrio, dónde hay suelo y si una promoción sale. Con datos abiertos y la fuente de cada cifra.",
   pilot: "Piloto: los barrios de Madrid capital dentro de la M-40.",
   model:
-    "Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro.",
+    "Las personas y los ayuntamientos usan Vida Fácil gratis. Para inversores y promotores habrá un plan empresarial e informes personalizados; durante el concurso, el acceso es libre y sin registro.",
   developers: "¿Integrarlo en tu sistema? API y MCP gratis", // inversores.desarrolladores (D-249)
   listTitle: "Explorar barrios", // inversores.lista.titulo (D-250: after «Busca tu parcela»)
   listIntro: "O empieza por un barrio del piloto: qué le falta, dónde hay suelo público y sus precios.",
