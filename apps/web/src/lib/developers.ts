@@ -339,7 +339,7 @@ export const MCP_REMOTE_URL = `${SITE_URL}/api/v1/mcp`;
 export const MCP_CLAUDE_CODE_REMOTE = `claude mcp add --transport http vida-facil ${MCP_REMOTE_URL}`;
 
 /** For clients that only speak stdio: the mcp-remote bridge. */
-export const MCP_STDIO_BRIDGE = `npx mcp-remote ${MCP_REMOTE_URL}`;
+export const MCP_STDIO_BRIDGE = `npx -y mcp-remote ${MCP_REMOTE_URL}`;
 
 export const MCP_SETUP = `git clone ${REPO_URL}.git
 cd housing-intelligence
