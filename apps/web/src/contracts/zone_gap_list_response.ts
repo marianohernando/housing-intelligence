@@ -37,6 +37,15 @@ export type Datasets = DatasetRef[];
  */
 export type ConfidenceLevel = number | null;
 /**
+ * Rows of the per-zone list of what is missing (GAP-001, D-194).
+ */
+export type GapRowKey =
+  "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
+/**
+ * Rows shown as context (gap-0.4, D-254): value and reference with status CONTEXTO (SIN_DATOS when unknown), never FALTA, JUSTO or CUBIERTO, no ratio, no p and not in GET /gaps/impact
+ */
+export type ContextRows = GapRowKey[];
+/**
  * ratio at or above this -> CUBIERTO
  */
 export type CubiertoFrom = number;
@@ -107,7 +116,7 @@ export type Count = number;
 export type Label2 = string;
 export type ProxyNote = string | null;
 /**
- * Oriented so that above 1 is better than the reference
+ * Oriented so that above 1 is better than the reference; None when the value is unknown, and always in a context row (gap-0.4)
  */
 export type RatioToReference1 = number | null;
 /**
@@ -123,12 +132,7 @@ export type RegionalReference = number | null;
  * False when the zone is too small for this row: the count expected at the reference rate is under the 95 % bound of a zero count (3,7), so not even having none would be a significant shortfall. The status is then never FALTA; show it as «poco fiable» (D-213). True also when the test does not apply (no counts)
  */
 export type Reliable = boolean;
-/**
- * Rows of the per-zone list of what is missing (GAP-001, D-194).
- */
-export type GapRowKey =
-  "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
-export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS";
+export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS" | "CONTEXTO";
 export type Rows = GapRow[];
 /**
  * geo_admin_unit id for /api/v1/geo/admin-units; None for H3 cells
@@ -193,6 +197,7 @@ export interface DatasetRef {
  */
 export interface GapMethod {
   confidence_level?: ConfidenceLevel;
+  context_rows?: ContextRows;
   cubierto_from: CubiertoFrom;
   falta_below: FaltaBelow;
   reference: Reference;

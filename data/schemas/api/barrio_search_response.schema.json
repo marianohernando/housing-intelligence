@@ -502,7 +502,8 @@
         "FALTA",
         "JUSTO",
         "CUBIERTO",
-        "SIN_DATOS"
+        "SIN_DATOS",
+        "CONTEXTO"
       ],
       "title": "GapStatus",
       "type": "string"

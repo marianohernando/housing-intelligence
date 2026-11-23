@@ -176,6 +176,9 @@ export const SHEET_TEXT = {
       : kind === "supuesto"
         ? "Supuesta con la norma: compruébala en la ficha"
         : "Ponla tú: la norma no fija una cifra para esta parcela",
+  // F14 (jury A1, A2): a catalogued building is not land for a new building
+  calculatorCatalogued: "Ponla tú si quieres: en un edificio catalogado no partimos de ninguna cifra",
+  catalogued: "Edificio catalogado: una cuenta de obra nueva no sirve; hace falta un estudio de rehabilitación.",
 } as const;
 
 /** What a failed lookup says, by the API's code. */
@@ -381,12 +384,19 @@ export function dayMonthYear(iso: string | null | undefined): string | null {
   return match ? `${match[3]}/${match[2]}/${match[1]}` : null;
 }
 
+// Statuses the catalogue layer also gives besides the levels: not a protection (UNPROTECTED_STATUSES of hi_domain.parcels)
+const UNPROTECTED = new Set(["descatalogado", "demolicion total"]);
+
+/** The parcel's building is in the catalogue with a protection (not «Descatalogado» nor «Demolición total»). */
+export function isCatalogued(building: ProtectedBuilding | null | undefined): boolean {
+  return Boolean(building) && !UNPROTECTED.has(folded(building?.protection ?? "").trim());
+}
+
 /** «Protección parcial, nº 02933 (nivel 3 de 3)», from the Plan General's catalogue (D-253). */
 export function catalogText(building: ProtectedBuilding | null | undefined, unread = false): string {
   if (unread) return SHEET_TEXT.catalogUnread;
   if (!building) return SHEET_TEXT.catalogNone;
-  const status = (building.protection ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  if (status === "descatalogado" || status === "demolicion total") {
+  if (!isCatalogued(building)) {
     // The layer also gives these: never said as a protection
     return `${sentence(building.protection) ?? ""}${building.number ? `, nº ${building.number}` : ""}`;
   }
@@ -396,7 +406,28 @@ export function catalogText(building: ProtectedBuilding | null | undefined, unre
   return `${protection}${number}${level}`;
 }
 
-// The finished states of an area's works: the domain's (hi_domain.parcels.DONE_PHASES), generated
+/** Where the calculator of a parcel's sheet starts (D-250): the buildable m² with its mark, or none. */
+export interface CalculatorStart {
+  m2: number | null;
+  mark: SourcedValue["mark"] | "sin_dato";
+  help: string;
+  /** Why it starts without a figure, said above the fields; null when it starts from the sheet's */
+  caution: string | null;
+}
+
+/**
+ * The sheet's buildable m², marked as the sheet marks it. On a catalogued building (F14, jury A1
+ * and A2) a new-build account does not apply: «Sin dato», as without buildability, and why.
+ */
+export function calculatorStart(sheet: Pick<ParcelSheet, "buildability" | "planning">): CalculatorStart {
+  if (isCatalogued(sheet.planning?.protected_building)) {
+    return { m2: null, mark: "sin_dato", help: SHEET_TEXT.calculatorCatalogued, caution: SHEET_TEXT.catalogued };
+  }
+  const kind = sheet.buildability.kind;
+  return { m2: sheet.buildability.value_m2 ?? null, mark: buildabilityMark(kind), help: SHEET_TEXT.calculatorFrom(kind), caution: null };
+}
+
+// The finished states of an area's phases: the domain's (hi_domain.parcels.DONE_PHASES), generated
 const DONE_WORKS = new Set<string>(INVESTOR_METHOD.doneWorks);
 
 /** D-253 (audit D1): services and supplies. Legal texts read at their source (BOE, BOCM, CNMC, Comunidad de Madrid). */
@@ -406,8 +437,11 @@ export const SERVICES_TEXT = {
   zonal:
     "Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía.",
   works: (code: string, state: string) => `Obras de urbanización del ${code}: ${state.toLowerCase()}, según el Ayuntamiento.`,
+  /** Only when the area's planning and management are finished: what is left is its urbanization */
   worksPending:
     "Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1).",
+  /** The area's planning or management is not finished (Almería 1, APR.04.09): no licence with the works yet */
+  planningFirst: "Antes de pedir licencia, el ámbito necesita su planeamiento y su gestión.",
   untracked: "El Ayuntamiento no publica el estado de este ámbito: no sabemos si su urbanización está terminada.",
   portal: (stage: string): string | null =>
     stage === "urbanizado"
@@ -459,15 +493,29 @@ export const SERVICES_TEXT = {
   ],
 } as const;
 
-/** The planning's signal about services: a norma zonal, the area's works, or nothing said. */
+// The phases before the urbanization (PHASE_LABELS of hi_domain.parcels): both finished before a licence with the works
+const PLANNING_PHASES = ["Planeamiento", "Gestión"] as const;
+// VEDA's situations of an area not finished: the domain's (hi_domain.parcels.PENDING_STAGES), generated (review R-03)
+const PENDING_STAGES = new Set<string>(INVESTOR_METHOD.pendingStages);
+
+/**
+ * The planning's signal about services: a norma zonal, the area's works, or nothing said. Works not
+ * finished: a licence with the urbanization at once only when planning and management are finished,
+ * by their phases and by VEDA (a pending situation there means not finished, as AmbitState.pending).
+ */
 export function servicesSignal(planning: PlanningBlock | null | undefined): string[] {
   if (!planning) return [];
   if (planning.norma_zonal || planning.kind === "norma_zonal") return [SERVICES_TEXT.zonal];
   const ambit = planning.ambit;
   if (!ambit) return [];
   if (!ambit.tracked) return [SERVICES_TEXT.untracked];
-  const works = (ambit.phases ?? []).find((p) => p.label === "Obras de urbanización");
+  const phases = ambit.phases ?? [];
+  const finished = (label: string) => phases.some((p) => p.label === label && DONE_WORKS.has(p.state.toLowerCase()));
+  const works = phases.find((p) => p.label === "Obras de urbanización");
   if (!works) return [];
-  const done = DONE_WORKS.has(works.state.toLowerCase());
-  return done ? [SERVICES_TEXT.works(ambit.code, works.state)] : [SERVICES_TEXT.works(ambit.code, works.state), SERVICES_TEXT.worksPending];
+  const line = SERVICES_TEXT.works(ambit.code, works.state);
+  if (finished(works.label)) return [line];
+  const vedaPending = ambit.veda_stage != null && PENDING_STAGES.has(ambit.veda_stage);
+  const planned = PLANNING_PHASES.every(finished) && !vedaPending;
+  return [line, planned ? SERVICES_TEXT.worksPending : SERVICES_TEXT.planningFirst];
 }

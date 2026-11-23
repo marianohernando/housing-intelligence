@@ -1,4 +1,4 @@
-import { CircleCheck, CircleExclamationPoint, CircleMinus, CircleQuestionMark, type LucideIcon } from "lucide-react";
+import { CircleCheck, CircleExclamationPoint, CircleMinus, CircleQuestionMark, Info, type LucideIcon } from "lucide-react";
 
 import type { GapStatus } from "@/contracts/zone_gap_list_response";
 import { GAP_STATUS } from "@/lib/gaps";
@@ -10,10 +10,11 @@ const ICONS: Record<GapStatus, LucideIcon> = {
   JUSTO: CircleMinus,
   CUBIERTO: CircleCheck,
   SIN_DATOS: CircleQuestionMark,
+  CONTEXTO: Info,
 };
 
 /**
- * FALTA / JUSTO / CUBIERTO / SIN DATOS with icon and text (never colour alone). What each means is
+ * FALTA / JUSTO / CUBIERTO / SIN DATOS / CONTEXTO with icon and text (never colour alone). What each means is
  * visible where the badges show (the card's key, the legend of «Qué falta», «¿Qué quiere decir cada
  * estado?» of the lists): a tooltip never showed on a phone (UX mobile audit, A5).
  */

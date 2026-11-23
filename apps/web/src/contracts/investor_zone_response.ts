@@ -36,7 +36,7 @@ export type Confidence = number | null;
 export type FeatureId = string | null;
 export type High = number | null;
 export type Low = number | null;
-export type ValueMark = "dato" | "supuesto" | "usuario";
+export type ValueMark = "dato" | "estimacion" | "supuesto" | "usuario";
 export type NullReason =
   | "NOT_APPLICABLE"
   | "SOURCE_NO_COVERAGE"
@@ -140,7 +140,7 @@ export type Count = number;
 export type Label3 = string;
 export type ProxyNote = string | null;
 /**
- * Oriented so that above 1 is better than the reference
+ * Oriented so that above 1 is better than the reference; None when the value is unknown, and always in a context row (gap-0.4)
  */
 export type RatioToReference1 = number | null;
 /**
@@ -161,7 +161,7 @@ export type Reliable = boolean;
  */
 export type GapRowKey =
   "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
-export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS";
+export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS" | "CONTEXTO";
 export type Rows = GapRow[];
 export type Warnings = string[];
 export type ZoneName = string;

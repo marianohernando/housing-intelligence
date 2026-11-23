@@ -363,7 +363,7 @@ export const ENVELOPE_EXAMPLE = `{
     "request_id": "…",
     "generated_at": "2026-11-19T09:54:01Z",
     "api_version": "v1",
-    "methodology_version": "gap-0.3",
+    "methodology_version": "gap-0.4",
     "data_version": "2026-11-19"
   },
   "warnings": []

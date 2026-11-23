@@ -270,6 +270,11 @@ export const INVESTOR_METHOD = {
     "pgoum-85",
     "pgoum-97"
   ],
+  "pendingStages": [
+    "gestion_urbanizacion",
+    "pendiente_planeamiento",
+    "pendiente_sectorizacion"
+  ],
   "supplies": {
     "kwPerHome": 5.75,
     "transformerKw": 100.0,

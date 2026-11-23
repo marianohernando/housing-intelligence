@@ -34,4 +34,4 @@ limitations:
   - "90 m² es el corte de las bandas de la CM más cercano a una vivienda de 3 dormitorios para 4 personas."
   - "En municipios pequeños la cifra puede ser muy alta (pocos hogares grandes); por debajo de 100 hogares de 4 o más personas se publica con confidence 0,5."
   - "La CM no publica estas tablas por distrito: en los distritos de Madrid la fila sale SIN DATOS."
-gap_row: {row: vivienda, role: primary, label: "Vivienda para familias", phrase: "viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", proxy_note: "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio."}
+gap_row: {row: vivienda, role: primary, label: "Viviendas grandes por cada 100 hogares grandes (contexto)", phrase: "viviendas de más de 90 m² por cada 100 hogares de 4 o más personas", proxy_note: "Compara el parque de viviendas grandes con los hogares grandes, no el mercado: no dice cuántas están disponibles ni a qué precio."}

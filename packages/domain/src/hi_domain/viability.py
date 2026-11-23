@@ -92,7 +92,7 @@ COST_PARTS: tuple[Part, ...] = (
         "Licencia, ICIO y tasas",
         ICIO_RATE + LICENCE_FEES_SHARE,
         f"ICIO de Madrid, {es_number(ICIO_RATE * 100, 2)} % del presupuesto (ordenanza fiscal del "
-        "ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025), y la "
+        "ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154), y la "
         "tasa de la licencia y "
         f"otros tributos, alrededor de un {es_number(LICENCE_FEES_SHARE * 100, 0)} % (supuesto)",
     ),

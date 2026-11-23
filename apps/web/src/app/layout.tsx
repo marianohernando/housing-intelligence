@@ -13,7 +13,7 @@ import { bodyFont, titleFont } from "./fonts";
  */
 const ANALYTICS_ON = process.env.NEXT_PUBLIC_VERCEL_ENV === "production";
 
-const TITLE = "Vida Fácil · Encuentra tu sitio en Madrid";
+const TITLE = "Vida Fácil · La zona que te conviene, y lo que le falta";
 const DESCRIPTION =
   "En qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca, y qué le falta a cada una, con datos abiertos.";
 
