@@ -31,6 +31,7 @@ from hi_contracts.public.responses import (
     ZoneLookupResponse,
 )
 from hi_db.session import make_engine
+from hi_domain.viability import VIABILITY_VERSION
 from hi_mcp import tools
 from hi_mcp.server import DB_UNAVAILABLE, build_server, reply
 
@@ -128,6 +129,13 @@ def test_the_viability_takes_the_request_of_the_api() -> None:
     expected = ViabilityRequest.model_json_schema()
     assert schema["$defs"]["ViabilityRequest"]["properties"] == expected["properties"]
     assert schema["$defs"]["ViabilityRequest"]["required"] == expected["required"]
+
+
+def test_the_viability_names_the_method_version_of_the_domain() -> None:
+    """The description reads the version from hi_domain.viability, never a typed one."""
+    description = _tools(build_server(_never_connects))["viabilidad"].description or ""
+    assert f"({VIABILITY_VERSION})" in description
+    assert description.count("viability-") == 1  # no other version typed by hand
 
 
 def test_the_viability_is_the_route_without_a_database() -> None:
