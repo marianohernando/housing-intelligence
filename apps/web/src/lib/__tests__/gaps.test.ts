@@ -225,8 +225,10 @@ describe("sortRows and topRows", () => {
   ] as const;
 
   it("shows a retired couple the health centre and the centres for older people first, never schools", () => {
-    // The pharmacy is not theirs (F14): it only fills in the third row, as any other row with data
-    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "mayores", "farmacia"]);
+    // The pharmacy is not theirs (F14) and never fills in (review R-02): another row does, even without data
+    expect(topRows([...barajas], 3, { seniors: true }).map((r) => r.row)).toEqual(["centro_salud", "mayores", "vivienda"]);
+    // Marked in «Lo quiero a un paseo», it is theirs
+    expect(topRows([...barajas], 3, { seniors: true }, ["farmacia"]).map((r) => r.row)).toEqual(["centro_salud", "mayores", "farmacia"]);
     // Without a household, by status, as before: the colegio JUSTO first
     expect(topRows([...barajas]).map((r) => r.row)[0]).toBe("colegio");
   });
@@ -255,13 +257,15 @@ describe("sortRows and topRows", () => {
       { row: "vivienda", status: "SIN_DATOS" },
     ] as const;
     const top = topRows([...rows], 3, { minors: 0 });
-    // The pharmacy JUSTO is not theirs (F14): after the health centre, among the others by status
-    expect(top.map((r) => r.row)).toEqual(["centro_salud", "farmacia", "mayores"]);
+    // The pharmacy JUSTO is not theirs (F14) and never fills in (review R-02), even before a row without data
+    expect(top.map((r) => r.row)).toEqual(["centro_salud", "mayores", "vivienda"]);
     // Marked in «Lo quiero a un paseo», it is theirs again, and what is short of theirs goes first
     expect(topRows([...rows], 3, { minors: 0 }, ["farmacia"]).map((r) => r.row)).toEqual(["farmacia", "centro_salud", "mayores"]);
     // Rows of the household without data go after the others with data
     const noHealthData = rows.map((r) => (r.row === "centro_salud" ? { ...r, status: "SIN_DATOS" as const } : r));
-    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["farmacia", "mayores", "centro_salud"]);
+    expect(topRows(noHealthData, 3, {}).map((r) => r.row)).toEqual(["mayores", "centro_salud", "vivienda"]);
+    // Without a household (the zone's own «Qué falta», before a search) the pharmacy stays, by status
+    expect(topRows([...rows]).map((r) => r.row)).toEqual(["escuela_infantil", "colegio", "farmacia"]);
   });
 });
 

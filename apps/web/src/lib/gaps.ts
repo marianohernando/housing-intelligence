@@ -236,6 +236,8 @@ export interface HouseholdLike {
 const INFANT_MAX_AGE = 2;
 /** The rows about children: they never stand in for another row in a home without children. */
 const CHILD_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio"];
+/** Rows a home sees only when the person marks them (F14, user test and review R-02): never as a filler. */
+const MARKED_ONLY: readonly GapRowKey[] = ["farmacia"];
 
 /**
  * The rows of «Qué falta» that matter to this household, in the card's order (D-244 and review of
@@ -262,7 +264,8 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
  * the API order). With one, what matters to it first (householdRows), whatever its status, a «No
  * comparable» one included: among them, what is short (FALTA, then JUSTO) and then the household's
  * order. Other rows only fill in when fewer than three of the household's have data, by status;
- * those about children never do in a home without children. The household's rows without data go last.
+ * those about children never do in a home without children, and the pharmacy never does (only when
+ * marked). The household's rows without data go last. Without a household, every row, the pharmacy too.
  */
 export function topRows<T extends Classified & { row?: GapRowKey }>(
   rows: readonly T[],
@@ -275,7 +278,7 @@ export function topRows<T extends Classified & { row?: GapRowKey }>(
   const mine = [...new Set([...householdRows(household), ...marked])];
   const children = (household.minors ?? 0) > 0;
   const ownRank = (r: T) => (r.row === undefined ? -1 : mine.indexOf(r.row));
-  const fills = (r: T) => children || r.row === undefined || !CHILD_ROWS.includes(r.row);
+  const fills = (r: T) => r.row === undefined || ((children || !CHILD_ROWS.includes(r.row)) && !MARKED_ONLY.includes(r.row));
   const known = (r: T) => r.status !== "SIN_DATOS";
   // 0: the household's with data · 1: others with data · 2: the household's without · 3: others without
   const group = (r: T) => (ownRank(r) >= 0 ? (known(r) ? 0 : 2) : known(r) ? 1 : 3);
