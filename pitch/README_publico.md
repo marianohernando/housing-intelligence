@@ -1,7 +1,8 @@
 <!--
 INTEGRADO: la línea A lo pasó al README.md de la raíz el 12 nov (6c4dd4b). El texto vigente es README.md.
 Este fichero se conserva como registro: solo se ponen al día sus cifras de datos (39 conjuntos CM y 59 en total el 19 nov,
-como README.md y pitch/datasets_cm.md). El resto del texto es del 11 nov.
+como README.md y pitch/datasets_cm.md) y, desde el 23 nov, el lema (decisión de Mariano). El resto del texto es del 11 nov.
+El README.md de la raíz lleva el mismo lema desde el 23 nov.
 
 Borrador de la línea D para el README.md de la raíz (lo integra la línea A, que es su dueña).
 - Los enlaces son relativos a la raíz del repo, como quedarán en README.md; desde pitch/ no funcionan.
@@ -11,7 +12,7 @@ Borrador de la línea D para el README.md de la raíz (lo integra la línea A, q
 
 > **Borrador ya integrado: el texto vigente es el [README.md de la raíz](../README.md).** Este fichero se conserva como registro. Las cifras de datos se han puesto al día el 15 nov con [`datasets_cm.md`](datasets_cm.md), que es la fuente de la lista; el resto del texto es del 11 nov; los enlaces de abajo son relativos a la raíz del repo y desde aquí no funcionan.
 
-# Vida Fácil · Encuentra tu sitio en Madrid
+# Vida Fácil · La zona que te conviene, y lo que le falta
 
 Quien busca casa en Madrid mira el precio en una web, los colegios en otra y el transporte en otra, y nadie le dice qué zona va con su vida. Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid para enseñarte qué zonas encajan contigo y qué le falta a cada una.**
 
@@ -107,7 +108,7 @@ npm ci && NEXT_PUBLIC_API_URL=http://localhost:8010 npm run web:dev   # web en h
 Las bases de DATAMAD 2026 permiten partir de trabajo previo si se identifica (§6, «Proyectos preexistentes»). El nuestro está marcado con el tag [`pre-datamad`](https://github.com/marianohernando/housing-intelligence/tree/pre-datamad): commit `cf39459`, del 22 oct de 2026. Incluía la geografía común de la región, los primeros 10 conjuntos de datos y un mapa base.
 
 Todo lo posterior se ha hecho durante el concurso (desde el 7 nov):
-- el transporte público y otros 5 conjuntos de datos;
+- el transporte público (los 10 conjuntos del Consorcio con ficha en el portal de la Comunidad) y otros 19 conjuntos de la Comunidad;
 - la lista de lo que falta por zona;
 - el buscador;
 - las distancias a pie;

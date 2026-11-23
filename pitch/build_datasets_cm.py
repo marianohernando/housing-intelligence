@@ -347,8 +347,8 @@ def meloda_section(cm_own: list[Row], cm_partner: list[Row], meloda: dict[str, A
         "La puntuación y los niveles son los que da la API del Monitorizador, sin recalcular: el "
         "total pondera cada dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). El "
         "Monitorizador puntúa seis dimensiones (D1–D6); MELODA 5 tiene ocho, con difusión y "
-        "reputación (Alberto Abella, formación de DATAMAD del 5 nov, diapositiva 43: "
-        "github.com/albertoabellagarcia/DATAMAD2026). La puntuación se calcula solo con los "
+        "reputación (presentación de la formación de DATAMAD del 5 nov, diapositiva 43). "
+        "La puntuación se calcula solo con los "
         "metadatos públicos de la ficha del portal, no con el contenido del dataset. Un nivel "
         "fuera del rango que documenta la API (como −1 en geolocalización) se deja como viene.",
         "",
