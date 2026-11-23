@@ -271,6 +271,7 @@ function Results({ result, costMark }: { result: ViabilityResponse["data"]; cost
       </p>
       {base && <BreakEvenBlock scenario={base} costMark={costMark} />}
       <p className={styles.thresholds}>{TEXT.thresholds}</p>
+      <p className={styles.note}>{TEXT.method(result.version)}</p>
       {result.demand && (
         <section aria-labelledby="demanda-check" className={styles.demand}>
           <h4 id="demanda-check">{TEXT.demandTitle}</h4>

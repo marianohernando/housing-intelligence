@@ -467,6 +467,7 @@ export const CALCULATOR_TEXT = {
   noYield: "Rentabilidad bruta si se alquila: ni con el suelo gratis se llega al margen objetivo, así que no hay precio de suelo con el que calcularla",
   invalid: "Revisa los campos marcados: hay alguno fuera de su rango.",
   demandTitle: "¿Lo pueden pagar los hogares del barrio?",
+  method: (version: string) => `Método de la cuenta: ${version}.`,
 } as const;
 
 const eurM2 = (value: number) => `${formatNumber(Math.round(value), 0)} €/m²`;
@@ -613,12 +614,15 @@ export const SHEET_TEXT = {
   remaining: "Edificabilidad residencial que queda en los ámbitos del Plan General",
   remainingUnknown: "Aún sin dato para este barrio.",
   noRemaining: "Ningún ámbito del barrio tiene edificabilidad residencial disponible.",
-  vacant: "Suelo vacante (Catastro)",
+  // F14 (jury A1): the figure is of the zone its source says (13.813 is all of Madrid), never of the barrio by default
+  vacant: (level: string | null | undefined) =>
+    level && LEVEL_TEXT[level] ? `Suelo vacante ${LEVEL_TEXT[level]} (Catastro)` : "Suelo vacante (Catastro)",
   viewer: "Ver en el visor de la Comunidad",
   record: "Ver la ficha oficial",
   notPilot: "Ese barrio no está en el piloto (Madrid capital dentro de la M-40).",
-  version: (version: string | null) =>
-    version ? `Datos calculados el ${isoInWords(version)}. Método: viabilidad v0 (D-248).` : "Método: viabilidad v0 (D-248).",
+  // F14: the method's version as the API serves it (meta.methodology_version), not a label of ours
+  version: (version: string | null, method: string | null) =>
+    [version ? `Datos calculados el ${isoInWords(version)}.` : null, method ? `Método: ${method}.` : null].filter(Boolean).join(" "),
   datasets: (n: number) => `Los ${n} conjuntos de datos de esta ficha`,
   open: "Ver la fuente",
   pemDataset:

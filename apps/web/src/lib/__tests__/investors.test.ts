@@ -93,6 +93,22 @@ describe("figures in words", () => {
     expect(withoutMark("supuesto: un piso de 2 o 3 dormitorios")).toBe("Un piso de 2 o 3 dormitorios");
     expect(withoutMark("Ley 12/2023")).toBe("Ley 12/2023");
   });
+
+  it("names the method by the version the API serves, never «viabilidad v0 (D-248)» (F14)", () => {
+    expect(SHEET_TEXT.version("2026-11-19", "viability-0.2")).toBe("Datos calculados el 19 de noviembre de 2026. Método: viability-0.2.");
+    expect(SHEET_TEXT.version(null, "parcels-0.1")).toBe("Método: parcels-0.1.");
+    expect(SHEET_TEXT.version("2026-11-19", null)).toBe("Datos calculados el 19 de noviembre de 2026.");
+    expect(SHEET_TEXT.version(null, null)).toBe("");
+    expect(CALCULATOR_TEXT.method("viability-0.2")).toBe("Método de la cuenta: viability-0.2.");
+    expect(JSON.stringify(SHEET_TEXT.version("2026-11-19", "viability-0.2"))).not.toContain("D-248");
+  });
+
+  it("says the zone the vacant land figure is of: 13.813 is all of Madrid, not the barrio (F14)", () => {
+    expect(SHEET_TEXT.vacant("municipio")).toBe("Suelo vacante de toda la ciudad (Catastro)");
+    expect(SHEET_TEXT.vacant("distrito")).toBe("Suelo vacante del distrito (Catastro)");
+    expect(SHEET_TEXT.vacant("barrio")).toBe("Suelo vacante del barrio (Catastro)");
+    expect(SHEET_TEXT.vacant(null)).toBe("Suelo vacante (Catastro)");
+  });
 });
 
 describe("the list of barrios", () => {
