@@ -620,6 +620,13 @@ a {
   margin-top: 4px;
 }
 
+/* 23 nov, tarde: la dirección del MCP remoto, bajo la de la demo (D-255) */
+.s3 .link .mcp {
+  margin-top: 4px;
+  font-size: 22px;
+  color: var(--ink);
+}
+
 /* ---------- Slide 4 ---------- */
 .s4 .title {
   margin-top: 40px;

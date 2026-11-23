@@ -20,7 +20,8 @@
   - «viven en 3 distritos donde faltan escuelas infantiles», para que no se oiga como «niños sin escuela»;
   - «cumplen lo que piden 42 zonas», y no «les convienen»: 12 de las 42 salen «Poco recomendable»;
   - el precio: «es el precio de los contratos de 2024; un anuncio de hoy suele pedir más», como dice la tarjeta desde el deploy-46 (pregunta 57);
-  - «API y MCP abiertos y gratuitos, sin clave»: desde el 23 nov el MCP funciona en remoto (D-255). Comprobar en producción antes de decirlo.
+  - «API y MCP abiertos y gratuitos, sin clave»: desde el 23 nov el MCP funciona en remoto (D-255), comprobado en producción en el deploy-46.
+- **El MCP, ante este jurado** (el formador del 6 nov, que dijo que el MCP «morirá más pronto que tarde», está en el jurado; jurado simulado B5, §9): como mucho una frase en los 5 minutos, en el bloque de la API (bloque 5), y nunca una demo en vivo. En voz, nunca «cualquiera con Claude», que suena a anuncio de un proveedor: se dice «cualquier asistente compatible con MCP». Lo demás, en las preguntas 2 y 67.
 - **Farmacias:** no se presume de ellas en la parte de personas (segunda prueba de P6, 23 nov: a un ciudadano no le sirve el dato; la web las quita de la tarjeta de zona si no se piden). En «Qué falta», para ayuntamientos, se quedan.
 - **Capturas:** C5 (slide 1), C1 (slide 4), C3 (slide 3) y C6 (slide 4) rehechas el 23 nov en producción con el deploy-46 (`542283b8`): lema nuevo, pestaña «Inversores» y «39 conjuntos» (`pitch/slides.md`, «Capturas necesarias»).
 
@@ -29,14 +30,19 @@
 | 1 | 0:00–0:30 | 30 s | Slide 1 → slide 2 | Tres preguntas: ayuntamiento, promotor y API; sin scraping | 62 | 29 s |
 | 2 | 0:30–1:45 | 75 s | Demo: «Qué falta» | Dónde invertir primero y Puente de Vallecas | 108 | 50 s + unos 12 s de clics |
 | 3 | 1:45–2:45 | 60 s | Demo: «Inversores» | La ficha de una parcela exacta: Méndez Álvaro 47 | 89 | 41 s + unos 15 s de bajar por la ficha |
-| 4 | 2:45–3:40 | 55 s | Demo: «Mapa» | La base: la zona que te conviene, frente a lo de 2024 | 109 | 50 s + unos 10 s de clics |
-| 5 | 3:40–4:35 | 55 s | Slide 2 → slide 3 | Datos, MELODA, la IA, la API y quién paga | 133 | 61 s |
-| 6 | 4:35–5:00 | 25 s | Slide 4 | Pruebas con personas y cierre con el lema | 44 | 20 s |
-| **Total** | | **300 s** | | | **545** | **252 s + unos 41 s de clics y cambios = unos 7 s de margen** |
+| 4 | 2:45–3:45 | 60 s | Demo: «Mapa» | La base: la zona que te conviene, frente a lo de 2024, y el «¿y si?» | 124 | 57 s + unos 16 s de clics |
+| 5 | 3:45–4:40 | 55 s | Slide 2 → slide 3 | Datos, MELODA, una comprobación, la API y el MCP, y quién paga | 123 | 57 s |
+| 6 | 4:40–5:00 | 20 s | Slide 4 | Pruebas con personas y cierre con el lema | 34 | 16 s |
+| **Total** | | **300 s** | | | **540** | **249 s + unos 47 s de clics y cambios = unos 4 s de margen** |
 
-**Recuento del 23 nov, tras el deploy-46** (comando de arriba): b1 62, b2 108, b3 89, b4 109, b5 133 y b6 44; 545 palabras, dentro de las 500–550 que pidió Mariano. Tras el deploy-46, el bloque 3 dice «en qué fase está su ámbito» (antes, «si su urbanización está terminada»: +1 palabra) y el bloque 4, «un anuncio de hoy suele pedir más», como la tarjeta (+1). Antes, tras la revisión del #122: 543. El bloque 4 atribuye lo de 2024 a la formación (+6 palabras, R-06) y el bloque 5 pierde «Cada conjunto pasa nuestro control de calidad.» (lo dice la slide 2). El margen baja de unos 26 s a unos 8 s porque hay un recorrido más (la parcela) y la frase de MELODA, que pasó el coordinador con las cifras de `pitch/meloda_cm_snapshot.json`. Los clics son una estimación: se miden en los ensayos. Si no llega, se quita, por este orden:
-1. «Una de ellas repitió esta semana: «ha mejorado un montón».», del bloque 6 (9 palabras, unos 4 s; la cita sigue en la slide 3);
-2. «Y, para quien busca casa, la zona que le conviene.», del bloque 1 (10 palabras, unos 5 s; el bloque 4 ya lo cuenta).
+**Recuento del 23 nov, por la tarde, para el jurado con el formador del 6 nov** (comando de arriba): b1 62, b2 108, b3 89, b4 124, b5 123 y b6 34; 540 palabras, dentro de las 540–550 que pidió el coordinador. Cambios, por el jurado simulado B5:
+- el bloque 4 recupera el clic del «¿y si?», lo más interactivo: «¿Y si aceptan cinco minutos más hasta el colegio? Salen [cuarenta y nueve] zonas más.» (+14 palabras y unos 6 s de clics);
+- el bloque 5 dice una comprobación concreta (Parla, 2,03 frente a 2,04) y la frase del MCP, y deja en la slide la comparación de MELODA con el Consorcio, «uno de cinco», el código abierto y la lista larga de quién paga;
+- el bloque 6 deja la cita de P6 en la slide 3 («Una de ellas repitió esta semana: «ha mejorado un montón».»).
+
+El margen baja a unos 4 s: los clics son una estimación y se miden en los ensayos. Si no llega, se quita «Y, para quien busca casa, la zona que le conviene.», del bloque 1 (10 palabras, unos 5 s; el bloque 4 ya lo cuenta).
+
+**Recuento del 23 nov, tras el deploy-46:** b1 62, b2 108, b3 89, b4 109, b5 133 y b6 44; 545 palabras.
 
 ### Recuentos anteriores (orden del 19 nov: personas, ayuntamiento, datos)
 - **19 nov, tras la búsqueda por parcela (D-250):** b1 74, b2 130, b2s 136, b3 125, b4 105 y b5 66: 500 palabras con buscador y 506 sin él, con unos 26 s de margen.
@@ -57,7 +63,7 @@
    - **2:** «Qué falta» sin zona, con «Dónde invertir primero»: https://vidafacil-madrid.vercel.app/que-falta;
    - **3:** la ficha de Méndez Álvaro 47: https://vidafacil-madrid.vercel.app/inversores/parcela/2122202VK4722A. La primera consulta de una parcela tarda unos 11 s, porque pregunta al Catastro y al Ayuntamiento; las siguientes, unos 0,3 s (deploy-39, punto 13). Por eso se carga antes;
    - **4:** la portada de la demo: https://vidafacil-madrid.vercel.app.
-4. Plan B abierto en una pestaña oculta: el vídeo de 2 min (PITCH-003, `pitch/video_respaldo.md`) y el paquete sin red de C (`make demo-offline`, `infra/deploy/offline/`). **Ojo:** el vídeo sigue el recorrido del 19 nov (personas y luego «Qué falta») y no enseña la parcela.
+4. Plan B abierto en una pestaña oculta: el vídeo de 2 min (PITCH-003, `pitch/video_respaldo.md`) y el paquete sin red de C (`make demo-offline`, `infra/deploy/offline/`). El guion del vídeo sigue ya el orden del pitch, con la parcela (#128, 23 nov).
 5. Pestaña de respaldo de «Qué falta», ya cargada: https://vidafacil-madrid.vercel.app/que-falta?zona=distrito/2807913 (Puente de Vallecas).
 
 ---
@@ -157,27 +163,28 @@ Ahora, un promotor busca una parcela de Madrid capital: Méndez Álvaro cuarenta
 - el precio es el de los contratos firmados en 2024 (Agencia Tributaria, D-228): en varias zonas baratas, un anuncio de hoy pide entre 1,28 y 1,33 veces esa cifra (pregunta 57).
 
 <!-- habla:b4:inicio -->
-Y la base, para quien busca casa. En la formación nos contaron que lo que ganó en 2024 daba pisos sacados con scraping, con el ambulatorio y el metro cercanos. Nosotros lo hacemos en los ciento setenta y nueve municipios, solo con datos oficiales, con el trayecto al trabajo y con lo que le falta. Una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana: cumplen lo que piden [cuarenta y dos] zonas. La primera: [colegio a cuatro minutos], [cuarenta y un minutos al trabajo] y [unos mil ciento veintinueve euros]: es el precio de los contratos de 2024; un anuncio de hoy suele pedir más.
+Y la base, para quien busca casa. En la formación nos contaron que lo que ganó en 2024 daba pisos sacados con scraping, con el ambulatorio y el metro cercanos. Nosotros lo hacemos en los ciento setenta y nueve municipios, solo con datos oficiales, con el trayecto al trabajo y con lo que le falta. Una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana: cumplen lo que piden [cuarenta y dos] zonas. La primera: [colegio a cuatro minutos], [cuarenta y un minutos al trabajo] y [unos mil ciento veintinueve euros]: es el precio de los contratos de 2024; un anuncio de hoy suele pedir más. ¿Y si aceptan cinco minutos más hasta el colegio? Salen [cuarenta y nueve] zonas más.
 <!-- habla:b4:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
 |---|---|---|---|
 | 4.1 | Pestaña 4: clic en «Ejemplo: pareja con 2 hijos que trabaja en la Castellana» | Se rellena «Tu búsqueda» y sale «Zonas que os convienen», con «Hemos encontrado 42 zonas para vosotros.» | Si tarda más de 3 s, seguir hablando de lo de 2024; si no llega, pasar al vídeo (plan B) |
 | 4.2 | Clic en la 1.ª de la lista y leer tres hechos | Tarjeta de Puente de Vallecas: «Colegio con primaria a unos 4 min andando», «41 min en transporte público hasta Paseo de la Castellana (Azca)…» y «Unos 1.129 € al mes». Si sale otra zona, se leen los corchetes tal como salgan | Leer solo la banda y el precio |
+| 4.3 | «‹ Volver a la lista», bajar a «¿Queréis ver más zonas?» y pulsar «Ver esas zonas» en la primera opción | «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total»; al pulsar, el mapa se recalcula con las 91 zonas | Si tarda, leer la cifra de la opción sin pulsar |
 
 **«179 municipios»:** el buscador cubre las 199 zonas: 178 municipios y los 21 distritos de Madrid, que sustituyen al municipio (D-215, punto 1). **El trayecto al trabajo:** horarios publicados de las 6 redes del Consorcio, llegando a las 9:00 (D-220). **«Lo que le falta a cada zona»:** la tarjeta lo dice en «Ver más» («Tiene lo que pedís. Aun así, comparado con municipios parecidos, aquí faltan escuelas infantiles.»).
 
-**No se abren** «Ver más», «¿Queréis ver más zonas?» ni «Casi valen»: no caben en el tiempo. Si preguntan: «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total» y Chamartín, «Se pasa unos 90 € al mes de vuestro presupuesto» (preguntas 18 y 48).
+**Se abre «¿Queréis ver más zonas?»** desde la tarde del 23 nov (jurado simulado B5, mejora 3: es lo más interactivo de la demo). En producción, con el deploy-46: «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total» y «+150 €/mes · saldrían 3 más: 45 zonas en total» (captura C3). **No se abren** «Ver más» ni «Casi valen»: no caben en el tiempo. Si preguntan por las que se quedan fuera por poco: Chamartín, «Se pasa unos 90 € al mes de vuestro presupuesto» (preguntas 18 y 48).
 
 **Al terminar:** volver a la pestaña 1, en la slide 2 (Cmd + 1).
 
 ---
 
 ## Bloque 5 · 3:40–4:35 · Datos, MELODA, la IA, la API y quién paga
-**Pantalla:** la slide 2 en «¿Con qué datos?», con las dos líneas de MELODA bajo la tabla («MELODA: 16 sobre 49 de media; 1 de 5 en actualización. Las 10 fichas del Consorcio sacan 8 en este portal, frente a 24,7 de media en el portal del Consorcio (281 conjuntos).»), de donde se leen los corchetes, y la slide 3 en «¿Quién paga?». La columna «Viabilidad» de la slide 3 dice lo mismo: «Gratis siempre…», «Pagarán las empresas…», «API abierta y gratuita; MCP de código abierto.» y «Ninguna cifra la genera una IA…».
+**Pantalla:** la slide 2 en «¿Con qué datos?», con las dos líneas de MELODA bajo la tabla, de donde se leen [Treinta y nueve] y [dieciséis]. En «Ninguna cifra la genera una IA» se pasa a la slide 3: su columna «Viabilidad» acaba con la comprobación de Parla, de donde se leen [dos coma cero tres] y [dos coma cero cuatro], y en la banda, bajo la URL de la demo, está «MCP, sin clave: vidafacil-madrid.vercel.app/api/v1/mcp», la dirección a la que apunta «con esta dirección». «¿Quién paga?» se dice con la misma slide.
 
 <!-- habla:b5:inicio -->
-¿Con qué datos? [Treinta y nueve] conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid, y medimos su reutilización con MELODA: [dieciséis] sobre cuarenta y nueve de media. Lo más flojo es la actualización: [uno de cinco] en todos. Las diez fichas del Consorcio sacan [ocho] en el portal de la Comunidad, frente a [veinticuatro coma siete] de media en su propio portal. Ninguna cifra la genera una IA: salen de cálculos deterministas sobre datos oficiales, cada una con su fuente. El código es abierto; la API, abierta y gratuita, y el MCP, de código abierto. ¿Quién paga? Gratis siempre: los datos, las zonas, qué falta, cada ficha de parcela y la API. Pagarán las empresas un plan con carteras de parcelas y avisos de suelo nuevo, e informes a medida.
+¿Con qué datos? [Treinta y nueve] conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid, medidos con MELODA: [dieciséis] sobre cuarenta y nueve de media; lo más flojo, la actualización. Ninguna cifra la genera una IA: son cálculos deterministas sobre datos oficiales, y los comprobamos. En Parla contamos [dos coma cero tres] farmacias por cada diez mil habitantes; la estadística oficial da [dos coma cero cuatro]. La base es una API abierta; el MCP es una capa fina encima: cualquier asistente compatible con MCP se conecta con esta dirección, sin clave ni instalar nada. ¿Quién paga? Gratis siempre: datos, zonas, qué falta, cada parcela y la API; pagarán las empresas carteras de parcelas, avisos de suelo nuevo e informes a medida.
 <!-- habla:b5:fin -->
 
 **Fuentes de lo que se dice:**
@@ -185,13 +192,14 @@ Y la base, para quien busca casa. En la formación nos contaron que lo que ganó
 - **MELODA** (P6 del informe del jurado simulado; MELODA es la métrica que se enseñó en la formación del 5 nov). La frase la pasó el coordinador el 23 nov, y sus cifras están comprobadas aquí contra `pitch/meloda_cm_snapshot.json` (los 39 emparejados por la URL de su ficha) y `pitch/datasets_cm.md`, «Reutilización según MELODA»:
   - media de los 39 en el Monitorizador de spain.meloda.org: 15,97 sobre 49, que se dice «dieciséis» (`datasets_cm.md`: 16,0);
   - la frecuencia de actualización (`d6_frequency`): 1 de 5 en los 39. Es la dimensión que más pesa (15 de 49 puntos). No se dice por qué: no lo sabemos con lo que hay en el repo;
-  - las 10 fichas del Consorcio en el portal de la Comunidad: 8 cada una; el portal del propio Consorcio, 24,7 de media en 281 conjuntos. Son medias de portal: los conjuntos del Consorcio no se han emparejado uno a uno (pregunta 62), así que no se dice que «el mismo conjunto» saque 24,7;
+  - las 10 fichas del Consorcio en el portal de la Comunidad: 8 cada una; el portal del propio Consorcio, 24,7 de media en 281 conjuntos. **Desde la tarde del 23 nov no se dice en voz alta** (jurado simulado B5: ahí manda la parte técnica); queda en la slide 2. Son medias de portal: los conjuntos del Consorcio no se han emparejado uno a uno (pregunta 62);
   - si preguntan por los de la Comunidad sola: los 29 que publica tienen 18,7 de media, y todo su portal, 18,1 (2.275 conjuntos);
   - el Monitorizador puntúa seis dimensiones de las ocho de MELODA 5: nunca decir «MELODA mide seis dimensiones». Detalle, en la pregunta 62.
-- «Ninguna cifra la genera una IA»: `CLAUDE.md` §3 (IA: «El LLM no calcula si existe una función determinista»; «El LLM no inventa cifras faltantes») y pregunta 32. La IA se usó para programar, como permiten las bases (§7).
-- «El código es abierto»: `LICENSE` (Apache-2.0, D-191).
-- «La API, abierta y gratuita, y el MCP, de código abierto»: la API pública está en producción, sin claves, con su OpenAPI en `/api/v1/openapi.json` y una página pública, `/desarrolladores` (D-249). El MCP, 7 herramientas de solo lectura, funciona en local (`make mcp`) con el código abierto: no se dice «en remoto» (preguntas 1 y 2).
-- «¿Quién paga?»: decisión de Mariano del 23 nov (`pitch/modelo_negocio.md`). Gratis siempre: los datos, las zonas, «Qué falta», cada ficha de parcela y la API. De pago: el plan empresarial (carteras de parcelas, avisos de suelo nuevo y la API y el MCP a gran volumen con clave) y los informes personalizados (estudios de suelo a medida). «Pagarán»: hoy no se cobra nada. Los precios no se dicen; si preguntan, pregunta 6.
+- «Ninguna cifra la genera una IA: son cálculos deterministas sobre datos oficiales, y los comprobamos»: `CLAUDE.md` §3 (IA: «El LLM no calcula si existe una función determinista»; «El LLM no inventa cifras faltantes») y pregunta 32. La IA se usó para programar, como permiten las bases (§7). Matiz, si preguntan: por el MCP, la cifra es la de la API, pero el texto lo redacta el modelo del asistente (pregunta 67).
+- «En Parla contamos [dos coma cero tres] farmacias por cada diez mil habitantes; la estadística oficial da [dos coma cero cuatro]»: `GET /api/v1/gaps/municipio/28106` en producción (`data_version` 2026-11-19, leída el 23 nov), fila de farmacias: `oficinas_farmacia_por_10000_hab` 2,029, contadas en el registro de oficinas de farmacia de la Comunidad con su población, frente a `farmacias_por_10000_hab_oficial` 2,04, la estadística de farmacias por municipio de la Comunidad. Son dos conjuntos distintos de la Comunidad que cuadran (pregunta 32). Los tests y las 62 respuestas del despliegue, solo si preguntan.
+- El código abierto (`LICENSE`, Apache-2.0, D-191) ya no se dice en voz alta, por tiempo: está en la slide 3 («Código abierto», con el enlace al repositorio) y en el pie de la slide 1.
+- «La base es una API abierta; el MCP es una capa fina encima: cualquier asistente compatible con MCP se conecta con esta dirección, sin clave ni instalar nada»: la API pública está en producción, sin claves, con su OpenAPI en `/api/v1/openapi.json` y una página pública, `/desarrolladores` (D-249). El MCP tiene 7 herramientas de solo lectura y, **desde el deploy-46, funciona en remoto**, gratis y sin clave, en `https://vidafacil-madrid.vercel.app/api/v1/mcp` (D-255; en el deploy-46, `initialize`, `tools/list` con 7 herramientas y tres `tools/call` en producción, y Claude Code conectado). Mariano lo probó también desde Claude web, el 23 nov, y las cifras coinciden con la API. Es la única frase del MCP en los 5 minutos: lo demás, en las preguntas 2 y 67. Nunca «cualquiera con Claude» ni una demo en vivo.
+- «¿Quién paga? Gratis siempre: datos, zonas, qué falta, cada parcela y la API; pagarán las empresas carteras de parcelas, avisos de suelo nuevo e informes a medida»: decisión de Mariano del 23 nov (`pitch/modelo_negocio.md`). De pago: el plan empresarial (carteras de parcelas, avisos de suelo nuevo y la API y el MCP a gran volumen con clave) y los informes personalizados (estudios de suelo a medida). «Pagarán»: hoy no se cobra nada. Los precios no se dicen; si preguntan, pregunta 6.
 - La privacidad («nunca vendemos datos de personas») ya no se dice en voz alta, por tiempo: está en la slide 3 («Solo zonas, nunca datos de personas.») y en la pregunta 33.
 
 ---
@@ -200,13 +208,13 @@ Y la base, para quien busca casa. En la formación nos contaron que lo que ganó
 **Pantalla:** la slide 4 (pantallazo) con la URL. El recuadro dice «Probada con 8 personas».
 
 <!-- habla:b6:inicio -->
-La probaron ocho personas: siete que buscan casa, una de ellas mayor, y un inversor; y se hizo lo que pidieron. Una de ellas repitió esta semana: «ha mejorado un montón». Vida Fácil: la zona que te conviene, y lo que le falta. Gracias.
+La probaron ocho personas: siete que buscan casa, una de ellas mayor, y un inversor; y se hizo lo que pidieron. Vida Fácil: la zona que te conviene, y lo que le falta. Gracias.
 <!-- habla:b6:fin -->
 
 **Las ocho personas:**
 - **Siete que buscan casa, del 13 al 15 nov:** P1 a P6, de 26 a 55 años, y una persona mayor. Lo que pidieron está en producción desde el 14 nov: «¿Dónde?» con Madrid capital por barrios (D-238, lo pidieron 4 de las 6) y el límite de tiempo al trabajo (PR #53). La persona mayor la probó el 15 nov en el móvil y le costó: desde ese día la web es otra (D-244 y D-245; letra de 16 px o más y botones de 44 px o más, medidos; pregunta 43). Todavía no la ha vuelto a probar: no se dice que ahora le resulte fácil.
 - **Un inversor, el 19 nov:** P7, con experiencia en promoción, probó la versión para inversores. Lo que pidió (los servicios de la parcela, la edificabilidad por uso y de dónde sale el coste) está en la ficha desde el 20 nov (D-252 y D-253; pregunta 61).
-- **Segunda ronda, 23 nov:** P6 volvió a probar la versión actual: «Ha mejorado un montón… ahora sí que te arroja cosas interesantes» y, con un caso parecido al suyo, «me hace una buena criba». Es la misma persona: el recuento no cambia. Su crítica: el dato de farmacias no le sirve a un ciudadano, y la web las quita de la tarjeta de zona si no se piden.
+- **Segunda ronda, 23 nov:** P6 volvió a probar la versión actual: «Ha mejorado un montón… ahora sí que te arroja cosas interesantes» y, con un caso parecido al suyo, «me hace una buena criba». Es la misma persona: el recuento no cambia. Desde la tarde del 23 nov la cita no se dice en voz alta, por tiempo: está en la slide 3. Su crítica: el dato de farmacias no le sirve a un ciudadano, y la web las quita de la tarjeta de zona si no se piden.
 - Nunca se nombra a nadie: solo P1 a P7 y «una persona mayor».
 
 **Lema:** «La zona que te conviene, y lo que le falta», decisión de Mariano del 23 nov. Lo propuso A4 en el jurado simulado. Sustituye al lema anterior (D-199) en el deck, en este cierre, en `pitch/README_publico.md` y en `pitch/textos_web.md`.
