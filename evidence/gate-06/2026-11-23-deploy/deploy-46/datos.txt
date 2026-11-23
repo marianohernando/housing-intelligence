@@ -1,0 +1,11 @@
+The DCAT-AP and Smart Data Models files (#124) in production, dpl_GyEfen16H6Kxbcng13cABR124UY6 (542283b8), 2026-11-23 11:22 UTC (curl), and from
+the links of /desarrolladores at 1440 and 390 px (probe-d46.json). Before the deploy, all three were 404.
+
+path | HTTP | Content-Type | bytes | JSON | same bytes as apps/web/public in the repo | what it holds
+/datos/catalogo.dcat.jsonld | 200 | application/ld+json | 236,366 | parses | yes | @graph of 76: 1 dcat:Catalog, 1 dcat:DataService, 62 dcat:Dataset, 11 foaf:Agent, 1 vcard:Kind
+/datos/sdm/datasets.json | 200 | application/json; charset=utf-8 | 66,784 | parses | yes | 39 entities Dataset, dataModel.DCAT-AP/Dataset 3.0.0, with MELODA
+/datos/sdm/farmacias.json | 200 | application/json; charset=utf-8 | 1,719,965 | parses | yes | 2,957 entities PointOfInterest, dataModel.PointOfInterest 0.3.1
+
+Cache: Vercel serves them as static files, «public, max-age=0, must-revalidate»; the first request was a CDN MISS and the next two HIT.
+The 3 links of /desarrolladores («Catálogo y Smart Data Models: ficheros para descargar») point to these paths and each answers 200 with the
+same Content-Type and bytes, at both widths.

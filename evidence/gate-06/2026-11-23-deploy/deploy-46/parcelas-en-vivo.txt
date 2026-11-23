@@ -1,0 +1,21 @@
+The four demo parcels after the deploy of 542283b8 (dpl_GyEfen16H6Kxbcng13cABR124UY6). Only the demo references.
+
+Lookups of this run that reached the API's parcel code (CDN «MISS»): 7
+  4 sheets by reference, once each, to warm the CDN (curl, 11:22-11:23 UTC)
+  3 address boxes of check-parcela («calle de prueba 1»): 2 from the API's own cache (ms=0), 1 reached CartoCiudad (ms=360)
+  every other sheet came from the CDN: 20 «HIT» (curl's second visits, check-parcela and the e2e)
+
+parcel | reference | first visit (UTC) | s | buildability | catalogue | degraded | Cache-Control | 2nd visit
+Méndez Álvaro 47 | 2122202VK4722A | 11:22:31 | 7.9 | oficial, 13,121 m² | not in it | none | public, max-age=3600 | HIT, 0.10 s
+Almería 1 | 3959601VK4735H | 11:22:39 | 10.9 | sin dato | not in it | none | public, max-age=3600 | HIT, 0.13 s
+Luis Misson 2 | 0390314VK4709A | 11:22:50 | 10.7 | sin dato | not in it | none | public, max-age=3600 | HIT, 0.10 s
+Mayor 61 | 9943003VK3794D | 11:23:01 | 1.6 | supuesto, 224.4 m² | Parcial | none | public, max-age=3600 | HIT, 0.11 s
+The second visit's body is byte-identical to the first, and each sheet is identical, without meta, to deploy-45's: sale_price_m2.mark
+«estimacion», no «vigente en 2025», 0 warnings.
+
+The timing lines (runtime log):
+  2122202VK4722A degraded=- ms=7721  upstream_ms=7512  parts=- stages=catastro:413,planning:7131,instrument:251,layer3:281,catalog:309,z:7129
+  3959601VK4735H degraded=- ms=10728 upstream_ms=10576 parts=- stages=catastro:795,planning:9782,layer3:138,instrument:220,catalog:242,z:9781
+  0390314VK4709A degraded=- ms=10607 upstream_ms=10446 parts=- stages=catastro:869,planning:9577,layer3:153,catalog:192,instrument:251,z:9575
+  9943003VK3794D degraded=- ms=1465  upstream_ms=1320  parts=- stages=catastro:1011,planning:309,layer3:171,z:228,instrument:273,catalog:307
+  As in deploy-45, the slow part is sigma's Z when cold (7.1-9.8 s); this time Mayor 61 found it warm.

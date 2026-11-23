@@ -1,0 +1,24 @@
+Logs of production from the deploy (11:17:30 UTC) to 11:26:17 UTC, 2026-11-23. IPs and parcel references of visitors are not shown.
+
+Runtime (npx vercel@65.12.1 logs --environment production): 843 records
+  by deployment: 835 dpl_GyEfen16H6Kxbcng13cABR124UY6 · 8 dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6 (smoke round 0) · all info
+  442 distinct lines: the other 401 records repeat a line under a second request id. 251 of those are under Claude Code's
+  subscriptions/listen request, which Vercel kept open from 11:21:41 for 300 s (mcp.txt, point 5)
+  lines with warning, error, traceback, pool, EMAXCONN, «password authentication», «Invalid Host», «not built» or «did not start»: 0
+  so the MCP was built and its session manager started on every instance; 7 instances started, all of the new deployment
+  hi_mcp tool lines (name and time, never the arguments): encontrar_zona 0.02 s · fuentes_de_datos 0.04 s · que_falta 0.09 s
+  /api/v1/mcp access lines (distinct, the same as the CDN records): POST 200 × 17 (smoke 4, curl 8, claude-code 5) · POST 403 × 1 (the
+  Origin test) · GET 405 × 4 (1 test, 3 visitors) · OPTIONS 405 × 1
+  the timing lines: the 4 «parcel input=rc» of the warm-up (parcelas-en-vivo.txt) and 3 «parcel candidates=5» (ms=360, 0, 0)
+  no coordinates and no typed text: lines with lat=, lon= or the typed address: 0
+
+CDN (npx vercel@65.12.1 logs requests --environment production): 2084 records, the whole window (2 pages: 2,000 + 84)
+  by deployment: 2,079 dpl_GyEfen16H6Kxbcng13cABR124UY6 · 5 dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6 (5 of the 15 requests of smoke round 0)
+  by status: 200 × 1,979 · 304 × 99 · 403 × 1 · 405 × 5 · 0 5xx
+  WAF: 2,084 allow
+  4xx: the Origin test (403), the GET and OPTIONS tests (405 × 2), and 3 GET /api/v1/mcp of visitors (405)
+  parcel sheets: HIT 20 · MISS 4; candidates: MISS 3; /datos/: 3 MISS and 6 HIT
+  who: this run's tools (smoke and curl with «vida-facil-smoke/<tag>», check-parcela, check-inversores, the e2e and the
+    probe as HeadlessChrome, and 5 POSTs of claude-code/2.1.326) made 2,081
+  «Visitantes sin identificar (Chrome/Windows)»: 3 GET /api/v1/mcp at 11:20:29, 11:21:08 and 11:24:59 UTC, each with a different
+    Chrome version and from a US connection, each answered 405 (the MCP takes POST only). No other request from them. Who they were is not known.

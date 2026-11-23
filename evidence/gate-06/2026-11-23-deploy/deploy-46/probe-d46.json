@@ -1,0 +1,244 @@
+{
+  "base": "https://vidafacil-madrid.vercel.app",
+  "checked_at": "2026-11-23T11:25:56.107Z",
+  "results": [
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "MCP section marked «Funciona hoy»",
+      "ok": true,
+      "detail": "El MCP, para agentes de IA Funciona hoy El MCP (Model Context Protocol) deja que"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "remote URL shown",
+      "ok": true,
+      "detail": "https://vidafacil-madrid.vercel.app/api/v1/mcp"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "Claude Code command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "mcp-remote bridge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "«Sus 7 herramientas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "3 planned items, none is the remote MCP",
+      "ok": true,
+      "detail": "3 items"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "3 links to /datos/",
+      "ok": true,
+      "detail": "/datos/catalogo.dcat.jsonld, /datos/sdm/datasets.json, /datos/sdm/farmacias.json"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "link /datos/catalogo.dcat.jsonld reaches the file",
+      "ok": true,
+      "detail": "200 application/ld+json 236366 B"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "link /datos/sdm/datasets.json reaches the file",
+      "ok": true,
+      "detail": "200 application/json; charset=utf-8 66784 B"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "link /datos/sdm/farmacias.json reaches the file",
+      "ok": true,
+      "detail": "200 application/json; charset=utf-8 1719965 B"
+    },
+    {
+      "width": "390",
+      "page": "/desarrolladores",
+      "name": "no horizontal overflow",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "width": "390",
+      "page": "/inversores",
+      "name": "«plan empresarial e informes personalizados»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/inversores",
+      "name": "no «plan de pago»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/como-lo-calculamos",
+      "name": "no «no es casualidad»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "/como-lo-calculamos",
+      "name": "«demasiado grande para explicarla por el tamaño de la zona»",
+      "ok": true,
+      "detail": "2 times"
+    },
+    {
+      "width": "390",
+      "page": "/",
+      "name": "no «no es casualidad» on the home either",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "390",
+      "page": "all",
+      "name": "0 console errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "MCP section marked «Funciona hoy»",
+      "ok": true,
+      "detail": "El MCP, para agentes de IA Funciona hoy El MCP (Model Context Protocol) deja que"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "remote URL shown",
+      "ok": true,
+      "detail": "https://vidafacil-madrid.vercel.app/api/v1/mcp"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "Claude Code command",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "mcp-remote bridge",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "«Sus 7 herramientas»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "3 planned items, none is the remote MCP",
+      "ok": true,
+      "detail": "3 items"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "3 links to /datos/",
+      "ok": true,
+      "detail": "/datos/catalogo.dcat.jsonld, /datos/sdm/datasets.json, /datos/sdm/farmacias.json"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "link /datos/catalogo.dcat.jsonld reaches the file",
+      "ok": true,
+      "detail": "200 application/ld+json 236366 B"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "link /datos/sdm/datasets.json reaches the file",
+      "ok": true,
+      "detail": "200 application/json; charset=utf-8 66784 B"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "link /datos/sdm/farmacias.json reaches the file",
+      "ok": true,
+      "detail": "200 application/json; charset=utf-8 1719965 B"
+    },
+    {
+      "width": "1440",
+      "page": "/desarrolladores",
+      "name": "no horizontal overflow",
+      "ok": true,
+      "detail": "0"
+    },
+    {
+      "width": "1440",
+      "page": "/inversores",
+      "name": "«plan empresarial e informes personalizados»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/inversores",
+      "name": "no «plan de pago»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/como-lo-calculamos",
+      "name": "no «no es casualidad»",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "/como-lo-calculamos",
+      "name": "«demasiado grande para explicarla por el tamaño de la zona»",
+      "ok": true,
+      "detail": "2 times"
+    },
+    {
+      "width": "1440",
+      "page": "/",
+      "name": "no «no es casualidad» on the home either",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "width": "1440",
+      "page": "all",
+      "name": "0 console errors",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}
