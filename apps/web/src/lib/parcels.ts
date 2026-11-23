@@ -176,6 +176,9 @@ export const SHEET_TEXT = {
       : kind === "supuesto"
         ? "Supuesta con la norma: compruébala en la ficha"
         : "Ponla tú: la norma no fija una cifra para esta parcela",
+  // F14 (jury A1, A2): a catalogued building is not land for a new building
+  calculatorCatalogued: "Ponla tú si quieres: en un edificio catalogado no partimos de ninguna cifra",
+  catalogued: "Edificio catalogado: una cuenta de obra nueva no sirve; hace falta un estudio de rehabilitación.",
 } as const;
 
 /** What a failed lookup says, by the API's code. */
@@ -381,12 +384,19 @@ export function dayMonthYear(iso: string | null | undefined): string | null {
   return match ? `${match[3]}/${match[2]}/${match[1]}` : null;
 }
 
+// Statuses the catalogue layer also gives besides the levels: not a protection (UNPROTECTED_STATUSES of hi_domain.parcels)
+const UNPROTECTED = new Set(["descatalogado", "demolicion total"]);
+
+/** The parcel's building is in the catalogue with a protection (not «Descatalogado» nor «Demolición total»). */
+export function isCatalogued(building: ProtectedBuilding | null | undefined): boolean {
+  return Boolean(building) && !UNPROTECTED.has(folded(building?.protection ?? "").trim());
+}
+
 /** «Protección parcial, nº 02933 (nivel 3 de 3)», from the Plan General's catalogue (D-253). */
 export function catalogText(building: ProtectedBuilding | null | undefined, unread = false): string {
   if (unread) return SHEET_TEXT.catalogUnread;
   if (!building) return SHEET_TEXT.catalogNone;
-  const status = (building.protection ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-  if (status === "descatalogado" || status === "demolicion total") {
+  if (!isCatalogued(building)) {
     // The layer also gives these: never said as a protection
     return `${sentence(building.protection) ?? ""}${building.number ? `, nº ${building.number}` : ""}`;
   }
@@ -394,6 +404,27 @@ export function catalogText(building: ProtectedBuilding | null | undefined, unre
   const number = building.number ? `, nº ${building.number}` : "";
   const level = building.level ? ` (nivel ${building.level} de 3)` : "";
   return `${protection}${number}${level}`;
+}
+
+/** Where the calculator of a parcel's sheet starts (D-250): the buildable m² with its mark, or none. */
+export interface CalculatorStart {
+  m2: number | null;
+  mark: SourcedValue["mark"] | "sin_dato";
+  help: string;
+  /** Why it starts without a figure, said above the fields; null when it starts from the sheet's */
+  caution: string | null;
+}
+
+/**
+ * The sheet's buildable m², marked as the sheet marks it. On a catalogued building (F14, jury A1
+ * and A2) a new-build account does not apply: «Sin dato», as without buildability, and why.
+ */
+export function calculatorStart(sheet: Pick<ParcelSheet, "buildability" | "planning">): CalculatorStart {
+  if (isCatalogued(sheet.planning?.protected_building)) {
+    return { m2: null, mark: "sin_dato", help: SHEET_TEXT.calculatorCatalogued, caution: SHEET_TEXT.catalogued };
+  }
+  const kind = sheet.buildability.kind;
+  return { m2: sheet.buildability.value_m2 ?? null, mark: buildabilityMark(kind), help: SHEET_TEXT.calculatorFrom(kind), caution: null };
 }
 
 // The finished states of an area's phases: the domain's (hi_domain.parcels.DONE_PHASES), generated

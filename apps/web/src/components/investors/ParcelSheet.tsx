@@ -18,6 +18,7 @@ import {
   byUseSource,
   catalogText,
   byUseText,
+  calculatorStart,
   dayMonthYear,
   degradedLines,
   divisionText,
@@ -400,13 +401,14 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
   const data = result.data?.data ?? null;
   const start = useMemo<ParcelStart | undefined>(() => {
     if (!data) return undefined;
+    const { m2, mark, help, caution } = calculatorStart(data);
     const cautions = (data.cautions ?? []).filter((c) => c.key === "vivienda_protegida" || c.key === "unifamiliar").map((c) => c.text);
     if (data.public_land) cautions.push(publicLandText(data.public_land));
     return {
-      m2: data.buildability.value_m2 ?? null,
-      mark: buildabilityMark(data.buildability.kind),
-      help: TEXT.calculatorFrom(data.buildability.kind),
-      cautions,
+      m2,
+      mark,
+      help,
+      cautions: caution ? [caution, ...cautions] : cautions,
       protectedHousing: (data.cautions ?? []).some((c) => c.key === "vivienda_protegida"),
     };
   }, [data]);

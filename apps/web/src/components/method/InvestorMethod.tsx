@@ -301,7 +301,8 @@ export default function InvestorMethod() {
           (Ayuntamiento de Madrid, datos abiertos). En los niveles 1 y 2 (singular, integral, estructural y volumétrico) el edificio
           está protegido en su conjunto y ni siquiera en ruina puede tener orden o licencia de demolición; en el nivel 3 (parcial y
           ambiental), en ruina se puede rehabilitar o derribar, pero la licencia puede obligar a mantener los elementos protegidos
-          (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). En los dos casos, la cuenta de obra nueva no vale tal cual.
+          (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). En los dos casos, la cuenta de obra nueva no vale tal cual: en un edificio
+          catalogado, la calculadora empieza sin superficie («Sin dato») y avisa de que hace falta un estudio de rehabilitación.
         </li>
         <li>
           <strong>Lo que hay construido.</strong> Si el Catastro dice que hay un edificio, la ficha lo recuerda: la calculadora es de

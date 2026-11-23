@@ -8,6 +8,7 @@ import {
   buildabilityMark,
   buildableText,
   byUseSource,
+  calculatorStart,
   catalogText,
   byUseText,
   dayMonthYear,
@@ -15,6 +16,7 @@ import {
   degradedLines,
   divisionText,
   instrumentText,
+  isCatalogued,
   parcelHref,
   parcelRc,
   planUseSource,
@@ -297,5 +299,29 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     expect(catalogText({ number: "01234", name: null, protection: "Descatalogado", level: null })).toBe("Descatalogado, nº 01234");
     expect(SHEET_TEXT.firstFilter).toMatch(/^Esto es un primer filtro/);
     expect(SHEET_TEXT.studyItems).toHaveLength(8);
+  });
+
+  it("starts the calculator without a figure on a catalogued building, and says why (F14)", () => {
+    // Mayor 61: catálogo nº 02933, protección parcial; the sheet's 224 m² are «supuesto»
+    const buildability = { kind: "supuesto" as const, value_m2: 224.4, source: "x", editable: true as const };
+    const mayor = { number: "02933", name: null, protection: "Parcial", level: 3 };
+    expect(isCatalogued(mayor)).toBe(true);
+    expect(calculatorStart({ buildability, planning: planning({ protected_building: mayor }) })).toEqual({
+      m2: null,
+      mark: "sin_dato",
+      help: SHEET_TEXT.calculatorCatalogued,
+      caution: "Edificio catalogado: una cuenta de obra nueva no sirve; hace falta un estudio de rehabilitación.",
+    });
+    // Without a catalogued building, the sheet's figure with its own mark
+    const plain = { m2: 224.4, mark: "supuesto", help: SHEET_TEXT.calculatorFrom("supuesto"), caution: null };
+    expect(calculatorStart({ buildability, planning: planning({}) })).toEqual(plain);
+    expect(calculatorStart({ buildability, planning: null })).toEqual(plain);
+    // «Descatalogado» and «Demolición total» are not a protection: the account of a new building stands
+    for (const protection of ["Descatalogado", "Demolición total"]) {
+      const building = { ...mayor, protection, level: null };
+      expect(isCatalogued(building)).toBe(false);
+      expect(calculatorStart({ buildability, planning: planning({ protected_building: building }) }).m2).toBe(224.4);
+    }
+    expect(isCatalogued(null)).toBe(false);
   });
 });
