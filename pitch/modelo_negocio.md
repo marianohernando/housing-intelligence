@@ -1,21 +1,26 @@
 # Modelo de negocio
 
-**Decisión de Mariano (19 nov), que sustituye a la del 12 nov.** Tres patas:
-- **Personas: gratis.** Para quien busca dónde vivir, Vida Fácil es gratis y completa. La versión gratuita no se recorta para empujar a pagar (`CLAUDE.md` §3 y §16).
-- **Ayuntamientos: gratis.** Cada ayuntamiento ve qué le falta a su municipio frente a municipios parecidos, dónde y a cuánta gente afecta, con la fuente de cada dato. Es «Qué falta», que ya está en producción en los 179 municipios y en los 21 distritos de Madrid (`GET /api/v1/gaps?level=municipio` y `?level=distrito`, 179 y 21 zonas, 19 nov). Les sirve para decidir dónde invertir primero, sin contrato ni licitación. Por ejemplo, Parla sale FALTA en farmacias: 2,0 por cada 10.000 habitantes a pie, frente a 4,2 en los demás municipios urbanos (`GET /api/v1/gaps/municipio/28106`, `gap-0.3`, 19 nov).
-- **Inversores y promotores privados: pagarán, con un plan de precios.** Su versión, «Para inversores y promotores», está en la web desde el 19 nov. Empieza, como las herramientas de pago, por la parcela exacta: «Busca tu parcela», por referencia catastral, dirección o clic en el mapa, en toda Madrid capital (D-250; despliegue de `79020a1` verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-39-79020a1-parcela.md`, PR #102). La ficha da los datos de la parcela (elaborados a partir de los del Catastro), su planeamiento con el enlace oficial, la edificabilidad de partida, el cálculo de si una promoción sale (el semáforo, solo con el precio del suelo) y, al lado, el contexto de demanda de su zona (D-247 y D-248; despliegue de `396d8f6` verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-37-396d8f6-inversores.md`, PR #96). El contexto completo del barrio es el del piloto, los 108 barrios de Madrid capital dentro de la M-40; fuera, con las cifras del distrito o de la ciudad. Lo que la distingue es ese contexto de demanda al lado de la parcela; cruzarlo con la vivienda que le falta a la zona, para decir qué hace falta construir en ella (el Housing Gap), es el siguiente paso (pregunta 60). Durante el concurso es de acceso libre: sin cobro, sin cuentas y sin datos de nadie, y la web lo dice: «Plan Inversor (acceso libre durante el concurso)» (D-248 §1). El plan de precios es una hipótesis (ver «Qué falta para cobrar»).
+**Decisión de Mariano (23 nov), que sustituye a la del 19 nov.** Tras el jurado simulado del 21 nov («no está claro quién paga ni por qué, si la API da gratis lo de inversores»):
 
-**Del mismo lado de pago, las consultoras y las inmobiliarias** que les hacen el estudio a los promotores y a los inversores. Se añadió el 19 nov, tras la prueba de la versión para inversores con P7 (inversor), con experiencia en promoción: «la gente que va a hacer eso se va a una inmobiliaria o una consultora a que les hagan el estudio completo».
-- **No son la competencia, sino clientes.** La ficha de la parcela es el primer filtro, en minutos, antes de pagar un estudio completo; quien hace esos estudios la usa para hacerlos más rápido, con cada dato citado. Para ellas es el plan Equipo (ver «Planes y precios»). Desde el 20 nov la web lo dice así (D-253 §8): arriba de la ficha, «Esto es un primer filtro de minutos, gratis y con fuentes. No sustituye al estudio de viabilidad que hace una consultora o un arquitecto.»; la sección «Lo que añade un estudio completo»; y «Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.».
+- **Gratis siempre, para todos: los datos, las zonas, «Qué falta», cada ficha de parcela y la API.**
+  - **Personas:** para quien busca dónde vivir, Vida Fácil es gratis y completa. La versión gratuita no se recorta para empujar a pagar (`CLAUDE.md` §3 y §16).
+  - **Ayuntamientos:** cada ayuntamiento ve qué le falta a su municipio frente a municipios parecidos, dónde y a cuánta gente afecta, con la fuente de cada dato. Es «Qué falta», en producción en los 179 municipios y en los 21 distritos de Madrid (`GET /api/v1/gaps?level=municipio` y `?level=distrito`, 179 y 21 zonas, 19 nov). Les sirve para saber qué pedir primero y dónde reservar suelo, sin contrato ni licitación: las farmacias, la salud y los colegios los decide la Comunidad, y el ayuntamiento pone el suelo (pregunta 64).
+  - **Inversores y promotores:** la ficha de cada parcela es gratis. «Busca tu parcela», por referencia catastral, dirección o clic en el mapa, en toda Madrid capital (D-250; despliegue de `79020a1` verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-39-79020a1-parcela.md`, PR #102). La ficha da los datos de la parcela (elaborados a partir de los del Catastro), su planeamiento con el enlace oficial, la edificabilidad de partida, sus servicios, el cálculo de si una promoción sale y, al lado, el contexto de demanda de su zona (D-247, D-248, D-252 y D-253). El contexto completo del barrio es el del piloto, los 108 barrios de Madrid capital dentro de la M-40; fuera, con las cifras del distrito o de la ciudad.
+  - **La API pública:** abierta y gratuita, sin claves, igual que los datos (abajo).
+- **De pago: lo que solo necesita quien trabaja con suelo a escala.**
+  - **El plan empresarial:** carteras de parcelas, avisos de suelo nuevo, la API a gran volumen con clave y el MCP remoto, para conectar un agente sin montar nada.
+  - **Los informes personalizados:** estudios de suelo a medida, revisados a mano antes de entregarlos.
+- **Hoy no se cobra nada, y lo de pago no existe todavía.** Durante el concurso la web dice «Plan Inversor (acceso libre durante el concurso)» (D-248 §1), que es el modelo del 19 nov: se cambia en la web cuando se decida (pendiente de B: `inversores.modelo`, `inversores.desarrolladores` y `pie.desarrolladores` en `pitch/textos_web.md`).
+
+**Del lado de pago, las consultoras y las inmobiliarias** que les hacen el estudio a los promotores y a los inversores. Se añadió el 19 nov, tras la prueba de la versión para inversores con P7 (inversor), con experiencia en promoción: «la gente que va a hacer eso se va a una inmobiliaria o una consultora a que les hagan el estudio completo».
+- **No son la competencia, sino clientes.** La ficha de la parcela es el primer filtro, en minutos, antes de pagar un estudio completo; quien hace esos estudios la usa para hacerlos más rápido, con cada dato citado, y para seguir muchas parcelas a la vez es el plan empresarial. Desde el 20 nov la web lo dice así (D-253 §8): arriba de la ficha, «Esto es un primer filtro de minutos, gratis y con fuentes. No sustituye al estudio de viabilidad que hace una consultora o un arquitecto.»; la sección «Lo que añade un estudio completo»; y «Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.».
 - **Es el cliente inicial del repo:** «promotoras/inmobiliarias medianas», con la idea de «vender informes/estudios antes del SaaS completo» (`CLAUDE.md` §16). Las consultoras y las inmobiliarias ya estaban entre los clientes de la capa PRO (`docs/01_product/05_pro_layer.md`) y del go-to-market (`docs/06_business/06_go_to_market.md`).
 - **No sustituye al estudio completo, y lo decimos nosotros:** «No es una tasación ni un informe vinculante ni una garantía de rentabilidad.», en la ficha de cada parcela y en la sección de inversores de «Cómo lo calculamos» (D-251; leído por D en producción el 19 nov).
-- **Es una hipótesis, como los precios:** se valida en las mismas entrevistas de disposición a pagar. Las respuestas, en la pregunta 61 de `pitch/preguntas.md`.
+- **Es una hipótesis, como los precios:** se valida en las mismas entrevistas de disposición a pagar. Las respuestas, en las preguntas 6, 7 y 61 de `pitch/preguntas.md`.
 
-**La API pública y el MCP: gratis para todos, igual que los datos** (otra decisión de Mariano, del 19 nov). También para empresas y ayuntamientos, que pueden meter «Qué falta» y el encaje de cada zona en sus propias herramientas o en un agente de IA. Lo explica una página pública, **`/desarrolladores`** («API y MCP para desarrolladores»), en producción desde el 19 nov (D-249; despliegue de `20b46d9` verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-38-20b46d9-desarrolladores.md`, PR #99): qué funciona hoy, cómo conectarlo y qué está solo planteado, marcado «Aún no disponible». Lo que hay hoy:
-- **La API pública** (`/api/v1`) está en producción y no pide claves. Tiene 15 rutas de datos y 2 de salud, con su descripción OpenAPI en `/api/v1/openapi.json` (leída por D en producción el 19 nov, tras el despliegue de `79020a1`). 5 de las rutas de datos son de la versión para inversores, también gratis: 3 de D-248 y las 2 de la búsqueda por parcela (D-250). Las rutas y sus contratos están en `docs/04_technical_architecture/31_public_api_routes.md`, y en `/desarrolladores` cada una lleva un `curl` que se probó contra producción (D-249 §1; las 2 de la parcela, en el despliegue de `79020a1`, PR #102).
-- **El MCP** tiene siete herramientas de solo lectura: buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos (D-225, `docs/04_technical_architecture/32_mcp_server.md`), y desde el 19 nov, dos de la versión para inversores, `ficha_inversor` y `viabilidad` (D-249 §2). Hoy funciona en local (`make mcp`) y no está desplegado: `/desarrolladores` lo marca «Funciona en local» y explica cómo conectarlo. Como el código es abierto (Apache-2.0), cualquiera puede arrancarlo, pero necesita su propia base Postgres con los datos cargados («Arrancarlo en local» en `32_mcp_server.md`). Servirlo en remoto está planteado: en `/desarrolladores`, «Aún no disponible», sin fecha.
-
-**Lo único de pago:** los planes para inversores (Inversor y Equipo) y el estudio a medida.
+**La API pública: abierta y gratuita; el MCP: de código abierto.** También para empresas y ayuntamientos, que pueden meter «Qué falta» y el encaje de cada zona en sus propias herramientas o en un agente de IA. Lo explica una página pública, **`/desarrolladores`** («API y MCP para desarrolladores»), en producción desde el 19 nov (D-249; despliegue de `20b46d9` verificado por C: `evidence/gate-06/2026-11-19-deploy/deploy-38-20b46d9-desarrolladores.md`, PR #99): qué funciona hoy, cómo conectarlo y qué está solo planteado, marcado «Aún no disponible». Lo que hay hoy:
+- **La API pública** (`/api/v1`) está en producción y no pide claves. Tiene 15 rutas de datos y 2 de salud, con su descripción OpenAPI en `/api/v1/openapi.json` (leída por D en producción el 19 nov, tras el despliegue de `79020a1`). 5 de las rutas de datos son de la versión para inversores, también gratis: 3 de D-248 y las 2 de la búsqueda por parcela (D-250). Las rutas y sus contratos están en `docs/04_technical_architecture/31_public_api_routes.md`, y en `/desarrolladores` cada una lleva un `curl` que se probó contra producción (D-249 §1; las 2 de la parcela, en el despliegue de `79020a1`, PR #102). La clave sería solo para el gran volumen, en el plan empresarial; el uso normal sigue sin clave.
+- **El MCP** tiene siete herramientas de solo lectura: buscar zonas, qué falta, explicar una zona, encontrar una zona por su nombre y las fuentes de datos (D-225, `docs/04_technical_architecture/32_mcp_server.md`), y desde el 19 nov, dos de la versión para inversores, `ficha_inversor` y `viabilidad` (D-249 §2). Hoy funciona en local (`make mcp`) y no está desplegado: `/desarrolladores` lo marca «Funciona en local» y explica cómo conectarlo. Como el código es abierto (Apache-2.0), cualquiera puede arrancarlo, pero necesita su propia base Postgres con los datos cargados («Arrancarlo en local» en `32_mcp_server.md`). Servirlo en remoto, sin montar nada, entraría en el plan empresarial; hoy, en `/desarrolladores`, «Aún no disponible», sin fecha.
 
 **Lo que no cambia:** nunca se venden datos de personas; solo zonas, y siempre agregadas.
 
@@ -25,46 +30,47 @@
 
 | Plan | Para quién | Precio | Qué incluye |
 |---|---|---|---|
-| Gratis | personas y ayuntamientos | 0 € | la búsqueda, la ficha de cada zona, «Qué falta» y el suelo público para vivienda (D-246). Todo está en producción |
-| API y MCP | todos, también empresas | 0 € | la API pública, en producción, y el MCP, hoy en local (ver arriba). Documentados en `/desarrolladores` |
-| Inversor | un inversor o un promotor | unos 99–199 €/mes | lo que solo necesita quien invierte: la ficha de su parcela, con el cálculo de si una promoción sale y el contexto de demanda de su zona (hoy en la web para Madrid capital, de acceso libre durante el concurso), exportación a PDF y Excel, y avisos de suelo nuevo |
-| Equipo | una promotora, un fondo, una consultora o una inmobiliaria con varias personas | unos 399 €/mes | lo del plan Inversor, con usuarios ilimitados, informes con su marca y carteras de parcelas |
-| Estudio a medida | quien quiere el trabajo hecho | 490–1.500 € | un estudio de zona, revisado a mano antes de entregarlo |
+| Gratis | todos: personas, ayuntamientos, inversores y empresas | 0 € | los datos, las zonas, «Qué falta», el suelo público para vivienda (D-246), la ficha de cada parcela de Madrid capital y la API pública sin clave. Todo está en producción. El MCP, de código abierto, se arranca en local |
+| Plan empresarial | una promotora, un fondo, una consultora o una inmobiliaria | de 249 a 399 €/mes | carteras de parcelas, avisos de suelo nuevo, la API a gran volumen con clave y el MCP remoto. **Nada de esto existe todavía** |
+| Informes personalizados | quien quiere el trabajo hecho | de 490 a 1.500 € | un estudio de suelo a medida, revisado a mano antes de entregarlo |
 
-**Lo de pago no recorta lo gratis.** Personas y ayuntamientos tienen la web entera, sin límites; los planes de pago añaden lo que solo usa quien invierte.
-
-**De los planes de pago, hoy solo existe la versión para inversores, de acceso libre durante el concurso** (D-248 y D-250): la búsqueda por parcela en Madrid capital y su ficha, con el cálculo de si una promoción sale y el contexto de demanda de su zona, que se guarda en PDF con la impresión del navegador. No hay cuentas, ni cobro, ni Excel, ni avisos. Se apoya en lo que ya es gratis: las fichas de zona, «Qué falta» y el suelo público.
-
-**La API y el MCP no se cobran** (decisión de Mariano del 19 nov). Por eso ya no vale la línea «Enterprise/API, personalizado» de `docs/06_business/03_pricing.md`.
+**Lo de pago no recorta lo gratis.** Personas, ayuntamientos e inversores tienen la web entera, sin límites, y cada ficha de parcela; los planes de pago añaden lo que se usa a escala.
 
 **De dónde salen los precios:**
 - **Los del repo** (`docs/06_business/03_pricing.md`):
-  - suscripción individual, 79–99 €/mes;
-  - para equipos, 249–399 €/mes;
-  - informes de 490, 990 y 1.500 €.
+  - PRO Business, 249–399 €/mes: el plan empresarial toma esta horquilla;
+  - informes de 490, 990 y 1.500 €: los informes personalizados.
 
-  El plan Equipo toma el techo de la horquilla de equipos y el estudio a medida, la de los informes. El plan Inversor sube el techo hasta 199 €/mes, más cerca de la referencia de mercado.
+  El plan Inversor del 19 nov (99–199 €/mes) desaparece: lo que incluía, la ficha de la parcela, pasa a ser gratis.
 - **Referencia de mercado:** Nestra, que analiza en España la normativa urbanística de una parcela, cobra 175, 437,50 y 1.050 €/mes en sus planes Starter, Professional y Business. Son precios sin IVA y con pago anual; tiene además un plan gratuito y uno a medida ([precios de Nestra](https://www.nestra.es/precios), consultados el 19 nov).
 - El análisis de mercado completo es un documento interno del 19 nov, fuera del repo, como el brief de diseño.
+
+**Punto de equilibrio, con lo que sabemos:** la infraestructura mínima para poder cobrar cuesta unos 45 $/mes (ver «Coste a escala»), así que un solo plan empresarial la cubre. El tiempo de quien lo mantiene, no: media hora a la semana, medio día por trimestre y 2–3 días al año según «Mantenimiento con una sola persona» (estimación de D), más lo que pida cada informe. No hay todavía ningún cliente ni ninguna entrevista hecha.
 
 **Regla del repo:** no se fija ningún precio sin entrevistas de disposición a pagar (`docs/08_validation/09_pricing_validation.md`).
 
 ## Qué falta para cobrar
-- Decidir qué sigue libre y qué pasa a ser de pago al acabar el concurso: hoy la versión para inversores es de acceso libre (D-248 §1).
+- Construir lo de pago: las carteras, los avisos, la clave de la API y el MCP remoto.
 - Cuentas y cobro: la demo no tiene cuentas ni proyectos guardados.
 - Pasar a un plan comercial: el gratuito de Vercel no admite cobrar (ver «Coste a escala»).
 - Las entrevistas de disposición a pagar con inversores y promotores, y también con consultoras e inmobiliarias.
 
 ## Qué se dice en el pitch
-- **Slide 3, columna «Viabilidad»:** «Gratis para personas y ayuntamientos. Pagarán inversores y promotores.», «Código abierto, y API y MCP gratis.» (decisión de Mariano del 19 nov) y, al pie, «Ya está, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.» (aprobada por Mariano el 19 nov por la tarde; medida en 3 líneas a 1920 × 1080). Dice lo mismo que el bloque 4 del guion.
-- **Guion, bloque 4:** «Gratis para personas y ayuntamientos: cada ayuntamiento ve qué le falta a su municipio. Nunca vendemos datos personales: solo zonas, siempre sumadas. Pagarán inversores y promotores, y su versión ya está: buscar una parcela de Madrid capital y calcular si una promoción sale, con la demanda de la zona.».
-- **No se dice «de dónde vivir a dónde construir»** como algo hecho (revisión del #98): hoy ninguna parcela se cruza con la vivienda que le falta a su zona. Es el paso siguiente (pregunta 60).
+- **Slide 3, columna «Viabilidad»:** «Gratis siempre: datos, zonas, «Qué falta», cada ficha de parcela y la API.», «Pagarán las empresas: plan empresarial e informes a medida.», «API abierta y gratuita; MCP de código abierto.» y, al pie, «Ninguna cifra la genera una IA: salen de cálculos deterministas sobre datos oficiales, cada una con su fuente.».
+- **Slide 3, columna «Utilidad»:** «Inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.».
+- **Guion, bloque 5:** «¿Quién paga? Gratis siempre: los datos, las zonas, qué falta, cada ficha de parcela y la API. Pagarán las empresas un plan con carteras de parcelas y avisos de suelo nuevo, e informes a medida.».
 - **«Pagarán», no «pagan»:** hoy no se cobra nada.
+- **«API abierta y gratuita; MCP de código abierto», nunca «API y MCP gratis»:** el MCP solo funciona en local, y el remoto iría en el plan empresarial.
+- **No se dice «de dónde vivir a dónde construir»** como algo hecho (revisión del #98): hoy ninguna parcela se cruza con la vivienda que le falta a su zona. Es el paso siguiente (pregunta 60).
 - **Cobertura, sin exagerar:** la búsqueda por parcela, toda Madrid capital; el contexto completo del barrio y «Explorar barrios», el piloto de la M-40 (108 barrios). Nunca «toda la región».
 - **El Catastro:** «datos de la parcela, elaborados a partir de los del Catastro», nunca «información catastral» (D-250 §1).
-- **Las consultoras y las inmobiliarias** (19 nov) no van en la voz ni en la slide: el bloque 4 y la slide 3 siguen diciendo «inversores y promotores». Si preguntan, están en las preguntas 6, 9 y 61 de `pitch/preguntas.md`.
+- **Las consultoras y las inmobiliarias** no van en la voz ni en la slide: se dice «las empresas». Si preguntan, están en las preguntas 6, 9 y 61 de `pitch/preguntas.md`.
 - **Los precios** no se dicen en voz alta ni van en la slide. Si preguntan, están en la pregunta 6 de `pitch/preguntas.md`.
-- **La API y el MCP gratis para todos:** en el bloque 4 del guion, «La API y el MCP para agentes de IA son gratis para todos.» (13 palabras, unos 6 s), y en la slide 3, «Código abierto, y API y MCP gratis.», que cabe en una línea a 1920 × 1080 (medido por D el 19 nov). Con detalle, en las preguntas 1, 2 y 6.
+
+## Lo que decía el 19 nov (sustituido el 23 nov)
+- Personas y ayuntamientos, gratis; pagarían los inversores y los promotores por su versión, con un plan Inversor (unos 99–199 €/mes), un plan Equipo (unos 399 €/mes) y el estudio a medida (490–1.500 €).
+- La API y el MCP, gratis para todos. En la slide 3, «Gratis para personas y ayuntamientos. Pagarán inversores y promotores.» y «Código abierto, y API y MCP gratis.».
+- Por qué cambia: el jurado simulado vio que lo que se quería cobrar ya era gratis en la API, y que «API y MCP gratis» prometía un MCP que solo funciona en local.
 
 ## Lo que decía el 12 nov (sustituido)
 - En el pitch, los ayuntamientos pagaban un informe de «Qué falta» de 990–1.500 €, por contrato menor.
@@ -96,7 +102,7 @@ El texto completo, con las tres opciones que se compararon, está en el historia
   - CPU activa desde 0,128 $ por hora;
   - memoria desde 0,0106 $ por GB y hora.
 - Con unos miles de búsquedas al día debería caber en el crédito incluido, pero no está medido: hay que vigilar el panel de uso el primer mes.
-- Con la API gratis para todos, ese cómputo es lo primero que se vigila. Hoy no pide claves; si el uso crece, se añade un límite por IP (`docs/04_technical_architecture/29_api_mcp_security_rate_limits.md`).
+- Con la API gratis para todos, ese cómputo es lo primero que se vigila. Hoy no pide claves; si el uso crece, se añade un límite por IP (`docs/04_technical_architecture/29_api_mcp_security_rate_limits.md`), y el gran volumen pasa a la clave del plan empresarial.
 - La recarga de datos se hace en local (`make ingest`, `make supabase-sync`), así que no cuesta nada en la nube.
 
 ## Mantenimiento con una sola persona
