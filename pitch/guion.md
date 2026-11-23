@@ -19,7 +19,7 @@
   - «cada falta lleva su probabilidad», y no «nunca inventamos una falta»: sin corrección por comparaciones múltiples, una falta puede salir por azar (pregunta 46);
   - «viven en 3 distritos donde faltan escuelas infantiles», para que no se oiga como «niños sin escuela»;
   - «cumplen lo que piden 42 zonas», y no «les convienen»: 12 de las 42 salen «Poco recomendable»;
-  - el precio: «es el precio de los contratos de 2024; un anuncio de hoy pide más» (pregunta 57);
+  - el precio: «es el precio de los contratos de 2024; un anuncio de hoy suele pedir más», como dice la tarjeta desde el deploy-46 (pregunta 57);
   - «API y MCP abiertos y gratuitos, sin clave»: desde el 23 nov el MCP funciona en remoto (D-255). Comprobar en producción antes de decirlo.
 - **Farmacias:** no se presume de ellas en la parte de personas (segunda prueba de P6, 23 nov: a un ciudadano no le sirve el dato; la web las quita de la tarjeta de zona si no se piden). En «Qué falta», para ayuntamientos, se quedan.
 - **Capturas:** C5 (slide 1), C1 (slide 4) y C3 (slide 3) se rehacen después del despliegue del 23 nov (`pitch/slides.md`, «Capturas necesarias»). Hasta entonces enseñan textos anteriores, como el lema viejo y «35 conjuntos».
@@ -28,13 +28,13 @@
 |---|---|---|---|---|---|---|
 | 1 | 0:00–0:30 | 30 s | Slide 1 → slide 2 | Tres preguntas: ayuntamiento, promotor y API; sin scraping | 62 | 29 s |
 | 2 | 0:30–1:45 | 75 s | Demo: «Qué falta» | Dónde invertir primero y Puente de Vallecas | 108 | 50 s + unos 12 s de clics |
-| 3 | 1:45–2:45 | 60 s | Demo: «Inversores» | La ficha de una parcela exacta: Méndez Álvaro 47 | 88 | 41 s + unos 15 s de bajar por la ficha |
-| 4 | 2:45–3:40 | 55 s | Demo: «Mapa» | La base: la zona que te conviene, frente a lo de 2024 | 108 | 50 s + unos 10 s de clics |
+| 3 | 1:45–2:45 | 60 s | Demo: «Inversores» | La ficha de una parcela exacta: Méndez Álvaro 47 | 89 | 41 s + unos 15 s de bajar por la ficha |
+| 4 | 2:45–3:40 | 55 s | Demo: «Mapa» | La base: la zona que te conviene, frente a lo de 2024 | 109 | 50 s + unos 10 s de clics |
 | 5 | 3:40–4:35 | 55 s | Slide 2 → slide 3 | Datos, MELODA, la IA, la API y quién paga | 133 | 61 s |
 | 6 | 4:35–5:00 | 25 s | Slide 4 | Pruebas con personas y cierre con el lema | 44 | 20 s |
-| **Total** | | **300 s** | | | **543** | **251 s + unos 41 s de clics y cambios = unos 8 s de margen** |
+| **Total** | | **300 s** | | | **545** | **252 s + unos 41 s de clics y cambios = unos 7 s de margen** |
 
-**Recuento del 23 nov, tras la revisión del #122** (comando de arriba): b1 62, b2 108, b3 88, b4 108, b5 133 y b6 44; 543 palabras, dentro de las 500–550 que pidió Mariano. El bloque 4 atribuye lo de 2024 a la formación (+6 palabras, R-06) y el bloque 5 pierde «Cada conjunto pasa nuestro control de calidad.» (lo dice la slide 2). El margen baja de unos 26 s a unos 8 s porque hay un recorrido más (la parcela) y la frase de MELODA, que pasó el coordinador con las cifras de `pitch/meloda_cm_snapshot.json`. Los clics son una estimación: se miden en los ensayos. Si no llega, se quita, por este orden:
+**Recuento del 23 nov, tras el deploy-46** (comando de arriba): b1 62, b2 108, b3 89, b4 109, b5 133 y b6 44; 545 palabras, dentro de las 500–550 que pidió Mariano. Tras el deploy-46, el bloque 3 dice «en qué fase está su ámbito» (antes, «si su urbanización está terminada»: +1 palabra) y el bloque 4, «un anuncio de hoy suele pedir más», como la tarjeta (+1). Antes, tras la revisión del #122: 543. El bloque 4 atribuye lo de 2024 a la formación (+6 palabras, R-06) y el bloque 5 pierde «Cada conjunto pasa nuestro control de calidad.» (lo dice la slide 2). El margen baja de unos 26 s a unos 8 s porque hay un recorrido más (la parcela) y la frase de MELODA, que pasó el coordinador con las cifras de `pitch/meloda_cm_snapshot.json`. Los clics son una estimación: se miden en los ensayos. Si no llega, se quita, por este orden:
 1. «Una de ellas repitió esta semana: «ha mejorado un montón».», del bloque 6 (9 palabras, unos 4 s; la cita sigue en la slide 3);
 2. «Y, para quien busca casa, la zona que le conviene.», del bloque 1 (10 palabras, unos 5 s; el bloque 4 ya lo cuenta).
 
@@ -109,27 +109,27 @@ Empiezo por el ayuntamiento. Abro «Qué falta»: en toda la región, [más de v
 
 **Lo que se lee** (API de producción, 21 nov, `parcel_2122202VK4722A`; F-B cambia hoy la ficha, así que el 25 nov se vuelve a mirar):
 - edificabilidad: 13.121 m² de «RESIDENCIAL VIVIENDA COLECTIVA», «VEDA Madrid (Ayuntamiento de Madrid), julio de 2026», marcada «Dato»;
-- el ámbito APR.02.06, con sus cuatro fases «Finalizado», y el enlace a la ficha oficial;
+- el ámbito APR.02.06, «Méndez Álvaro Norte I», con el enlace a la ficha oficial y sus fases, según el Ayuntamiento a 1 de julio de 2026: «Proyecto de urbanización: finalizado · Obras de urbanización: finalizado · VEDA: en fase de edificación, según el Ayuntamiento: no quiere decir que se pueda construir ya (hace falta licencia)» (producción, 23 nov, deploy-46);
 - servicios: unas 164 viviendas, al menos 499,1 kW, marcado «Supuesto», con el aviso del centro de transformación;
 - el contexto de demanda del barrio de Atocha (piloto de la M-40): quién vive, precios, qué falta y suelo.
 - **No se dice en voz alta la cifra del suelo** (lo máximo que se podría pagar). El jurado simulado (A1) la vio poco creíble sin los costes que deja fuera; se enseña solo si preguntan, con lo que excluye (pregunta 6).
 
 <!-- habla:b3:inicio -->
-Ahora, un promotor busca una parcela de Madrid capital: Méndez Álvaro cuarenta y siete. La ficha le da su planeamiento, con el enlace oficial; [trece mil] metros edificables de vivienda que publica el Ayuntamiento; si su urbanización está terminada y la potencia eléctrica que pediría; y al lado, la demanda de su zona: quién vive, a qué precios y qué le falta. Con eso calcula cuánto podría pagar por el suelo, con cada supuesto a la vista. Es un primer filtro de minutos, antes de pagar un estudio.
+Ahora, un promotor busca una parcela de Madrid capital: Méndez Álvaro cuarenta y siete. La ficha le da su planeamiento, con el enlace oficial; [trece mil] metros edificables de vivienda que publica el Ayuntamiento; en qué fase está su ámbito y la potencia eléctrica que pediría; y al lado, la demanda de su zona: quién vive, a qué precios y qué le falta. Con eso calcula cuánto podría pagar por el suelo, con cada supuesto a la vista. Es un primer filtro de minutos, antes de pagar un estudio.
 <!-- habla:b3:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
 |---|---|---|---|
 | 3.1 | Pestaña 3: señalar la cabecera de la ficha | La pestaña «Inversores» marcada, Méndez Álvaro 47, barrio de Atocha y el aviso «Esto es un primer filtro de minutos, gratis y con fuentes…» | Si no carga, buscar `2122202VK4722A` en «Busca tu parcela» y seguir hablando: tarda unos 11 s |
 | 3.2 | Bajar a «2. Planeamiento» y «3. Edificabilidad» | El ámbito APR.02.06 con el enlace oficial, y «13.121 m²» marcado «Dato», de VEDA | Leer «[trece mil]» de donde esté |
-| 3.3 | Bajar a «4. Servicios y suministros» | «Finalizado» en las obras de urbanización y la potencia, «Supuesto» | Saltar «si su urbanización…» |
+| 3.3 | Señalar las fases del ámbito, en «2. Planeamiento», y bajar a «4. Servicios y suministros» | «Obras de urbanización: finalizado · VEDA: en fase de edificación…» y la potencia, «Supuesto» | Saltar «en qué fase está su ámbito…» |
 | 3.4 | Bajar a «5. Quién vive en el barrio» y señalar «¿Sale la promoción?» sin leer cifras | El contexto de demanda y la calculadora con sus supuestos | — |
 
 **Fuentes de lo que se dice:**
 - «Busca una parcela de Madrid capital»: D-250 §6 (`/inversores` abre con «Busca tu parcela», por referencia catastral, dirección o clic en el mapa; un punto de fuera da «Ese punto está fuera de Madrid capital»).
 - «Su planeamiento, con el enlace oficial»: el Ayuntamiento, con «Información urbanística sin valor jurídico» (D-250, D-252 §3).
 - «Metros edificables de vivienda que publica el Ayuntamiento»: VEDA (`ayto_edificabilidad_remanente_ambitos`); si la parcela no tiene cifra oficial, la ficha dice «Supuesto» o «Sin dato» (D-252 §1–4).
-- «Si su urbanización está terminada y la potencia eléctrica que pediría»: D-253 §1–5. Ningún dato abierto dice si la parcela tiene los servicios; se da el estado de la urbanización y una potencia mínima supuesta.
+- «En qué fase está su ámbito y la potencia eléctrica que pediría»: las fases que publica el Ayuntamiento (D-252 §3) y D-253 §1–5. Desde el deploy-46 la ficha añade «VEDA: en fase de edificación… no quiere decir que se pueda construir ya (hace falta licencia)», así que no se dice que la parcela esté lista para construir. Ningún dato abierto dice si la parcela tiene los servicios; se da el estado de la urbanización y una potencia mínima supuesta.
 - «La demanda de su zona»: la ficha del barrio de D-248 (completa en los 108 barrios del piloto dentro de la M-40; fuera, con las cifras del distrito o de la ciudad, D-250 §5). No es todavía el cruce con la vivienda que le falta a la zona (pregunta 60).
 - «Cuánto podría pagar por el suelo»: sin precio del suelo, la calculadora da lo máximo que se podría pagar; con él, el semáforo (`viability-0.2`, D-252 §6). Cada supuesto va marcado.
 - «Un primer filtro de minutos, antes de pagar un estudio»: el aviso de la ficha (D-253 §8; pregunta 61).
@@ -153,11 +153,11 @@ Ahora, un promotor busca una parcela de Madrid capital: Méndez Álvaro cuarenta
 - «Hemos encontrado 42 zonas para vosotros.»; la leyenda cuenta 42 que cumplen todo, 157 que no y 0 sin datos, de las 199 zonas (178 municipios y los 21 distritos de Madrid);
 - todas cumplen lo que pide la familia; el % dice cuánto le conviene todo lo demás: 12 «Muy buena opción», 5 «Buena opción», 13 «Opción regular» y 12 «Poco recomendable». Por eso se dice «cumplen lo que piden», no «les convienen»;
 - arriba, Puente de Vallecas y Latina, las dos «Muy buena opción · 94 %»; la web pone 1.ª a Puente de Vallecas porque tiene más cerca los servicios del día a día;
-- la tarjeta de Puente de Vallecas: «Unos 1.129 € al mes» («Precio orientativo»), «Colegio con primaria a unos 4 min andando», «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «No le falta nada de lo que buscáis.»;
+- la tarjeta de Puente de Vallecas: «Unos 1.129 € al mes» y, debajo, «Precio de los contratos de alquiler de 2024: un anuncio de hoy suele pedir más.» (desde el deploy-46; antes, «Precio orientativo»), «Colegio con primaria a unos 4 min andando», «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «No le falta nada de lo que buscáis.»;
 - el precio es el de los contratos firmados en 2024 (Agencia Tributaria, D-228): en varias zonas baratas, un anuncio de hoy pide entre 1,28 y 1,33 veces esa cifra (pregunta 57).
 
 <!-- habla:b4:inicio -->
-Y la base, para quien busca casa. En la formación nos contaron que lo que ganó en 2024 daba pisos sacados con scraping, con el ambulatorio y el metro cercanos. Nosotros lo hacemos en los ciento setenta y nueve municipios, solo con datos oficiales, con el trayecto al trabajo y con lo que le falta. Una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana: cumplen lo que piden [cuarenta y dos] zonas. La primera: [colegio a cuatro minutos], [cuarenta y un minutos al trabajo] y [unos mil ciento veintinueve euros]: es el precio de los contratos de 2024; un anuncio de hoy pide más.
+Y la base, para quien busca casa. En la formación nos contaron que lo que ganó en 2024 daba pisos sacados con scraping, con el ambulatorio y el metro cercanos. Nosotros lo hacemos en los ciento setenta y nueve municipios, solo con datos oficiales, con el trayecto al trabajo y con lo que le falta. Una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana: cumplen lo que piden [cuarenta y dos] zonas. La primera: [colegio a cuatro minutos], [cuarenta y un minutos al trabajo] y [unos mil ciento veintinueve euros]: es el precio de los contratos de 2024; un anuncio de hoy suele pedir más.
 <!-- habla:b4:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
