@@ -349,8 +349,9 @@ a {
   color: var(--violet-strong);
 }
 
+/* 23 nov: 24 px arriba y abajo (antes 36) para que quepan las dos líneas de MELODA */
 .s2 .data {
-  padding: 36px 44px;
+  padding: 24px 44px;
 }
 
 .s2 .headline {
@@ -361,7 +362,7 @@ a {
 
 .s2 .headline .big {
   font-family: var(--font-title);
-  font-size: 120px;
+  font-size: 100px; /* 23 nov: 100 px (antes 120), por las dos líneas de MELODA */
   font-weight: 700;
   line-height: 1;
   color: var(--violet);
@@ -377,14 +378,14 @@ a {
 .s2 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 12px;
+  margin-top: 6px; /* 23 nov: 6 px (antes 12), por las líneas de MELODA */
 }
 
 .s2 th,
 .s2 td {
   text-align: left;
   vertical-align: top;
-  padding: 5px 0;
+  padding: 3px 0; /* 23 nov: 3 px (antes 5), por las líneas de MELODA */
   border-top: 2px solid rgba(20, 27, 61, 0.1);
   font-size: 24px;
   line-height: 1.3;
@@ -398,9 +399,18 @@ a {
 }
 
 .s2 .complement {
-  margin-top: 10px;
+  margin-top: 6px;
   font-size: 24px;
   color: var(--ink-soft);
+}
+
+/* 23 nov: dos líneas de MELODA bajo la de apoyo (P6 del informe del jurado simulado); 22 px, el mínimo
+   del build, para que quepan con «(281 conjuntos)» (revisión del #122, R-07) */
+.s2 .meloda {
+  margin-top: 4px;
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--ink);
 }
 
 /* ---------- Slide 3 ---------- */
@@ -438,10 +448,11 @@ a {
   padding-left: 30px;
 }
 
+/* 23 nov: 24 px (antes 26) para que quepan las columnas del nuevo orden: parcela y personas en una, y quién paga */
 .s3 li {
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.35;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .s3 .shots {
@@ -554,7 +565,7 @@ a {
   margin: auto 0 0;
   padding: 4px 0 4px 18px;
   border-left: 6px solid var(--violet);
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.3;
 }
 
@@ -737,7 +748,7 @@ a {
 
 .s4 .tested p {
   margin: 6px 0 0;
-  font-size: 26px;
+  font-size: 24px; /* 23 nov: 24 px (antes 26), para que «Se hizo lo que pidieron…» no suba sobre el paso 3 */
   line-height: 1.3;
 }
 
