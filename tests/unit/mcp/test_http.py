@@ -4,6 +4,7 @@ answers as hi_api.main:app does."""
 
 import json
 import logging
+import sys
 from collections.abc import Callable
 from contextlib import nullcontext
 from typing import Any
@@ -14,12 +15,14 @@ import pytest
 from fastapi.testclient import TestClient
 from mcp.server.mcpserver import MCPServer
 from sqlalchemy import Engine
+from starlette.applications import Starlette
 
 from hi_api.deps import get_engine
 from hi_api.main import app as api_app
 from hi_contracts.public import DatasetList
 from hi_db.session import make_engine
-from hi_mcp.http import MCP_PATH, build_http_server, create_app
+from hi_mcp import http
+from hi_mcp.http import MCP_PATH, build_http_server, create_app, log_tools_to_stdout
 from hi_mcp.server import DB_UNAVAILABLE, build_server
 from tests.unit.mcp.test_server import NO_DATABASE, OUTPUTS, VIABILITY
 
@@ -46,9 +49,10 @@ def _send(
     requests: list[tuple[str, str, dict[str, Any] | None, dict[str, str]]],
     server: MCPServer | None = None,
     base_url: str = LOCAL,
+    app: Starlette | None = None,
 ) -> list[httpx.Response]:
     """(method, path, JSON body, headers) through a fresh app, inside its lifespan."""
-    app = create_app(server or build_server(_never_connects))
+    app = app or create_app(server or build_server(_never_connects))
 
     async def run() -> list[httpx.Response]:
         with anyio.fail_after(30):  # a stream left open would hang the test, not fail it
@@ -140,9 +144,10 @@ def test_other_hosts_and_origins_are_refused(headers: dict[str, str], status: in
     assert "tools" not in response.text
 
 
-@pytest.mark.parametrize("method", ["GET", "DELETE"])
+@pytest.mark.parametrize("method", ["GET", "DELETE", "OPTIONS"])
 def test_only_post_no_stream_and_no_session_to_end(method: str) -> None:
-    """In stateless mode the SDK would hold a GET open as an empty SSE stream."""
+    """In stateless mode the SDK would hold a GET open as an empty SSE stream. OPTIONS too: no
+    CORS preflight, so MCP clients that run in a browser cannot call it."""
     response = _send([(method, MCP_PATH, None, ACCEPT)])[0]
     assert response.status_code == 405
     assert response.headers["allow"] == "POST"
@@ -193,6 +198,47 @@ def test_the_api_container_keeps_its_logging(monkeypatch: pytest.MonkeyPatch) ->
     build_http_server()
     assert root.handlers == []
     assert root.level == logging.WARNING
+    log_tools_to_stdout()
     tools_log = logging.getLogger("hi_mcp")
     assert tools_log.level == logging.INFO
     assert tools_log.handlers
+
+
+def _build_fails() -> MCPServer:
+    raise RuntimeError("the MCP server could not be built")
+
+
+@pytest.mark.parametrize("failure", ["sdk_import", "build"])
+def test_an_mcp_that_cannot_be_built_leaves_the_api_alone(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture, failure: str
+) -> None:
+    """R-01: uvicorn gets the API without /api/v1/mcp, and the logs say why."""
+    if failure == "sdk_import":  # `from hi_mcp.server import …` raises ImportError
+        monkeypatch.setitem(sys.modules, "hi_mcp.server", None)
+    else:
+        monkeypatch.setattr(http, "build_http_server", _build_fails)
+    app = http.serve()
+    assert app is api_app
+    assert "MCP server not built" in caplog.text
+    with TestClient(app, base_url=LOCAL) as client:
+        assert client.get("/api/v1/health").status_code == 200
+        assert client.post(MCP_PATH, json=TOOLS_LIST, headers=ACCEPT).status_code == 404
+
+
+def _run_fails() -> None:
+    raise RuntimeError("the session manager could not start")
+
+
+def test_a_session_manager_that_does_not_start_leaves_the_api_up(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """R-01: the lifespan goes on with the API's own; the MCP answers 503 instead of a 500."""
+    server = build_server(_never_connects)
+    app = create_app(server)
+    monkeypatch.setattr(server.session_manager, "run", _run_fails)
+    health, mcp = _send(
+        [("GET", "/api/v1/health", None, {}), ("POST", MCP_PATH, TOOLS_LIST, ACCEPT)], app=app
+    )
+    assert health.status_code == 200
+    assert mcp.status_code == 503
+    assert "MCP session manager did not start" in caplog.text

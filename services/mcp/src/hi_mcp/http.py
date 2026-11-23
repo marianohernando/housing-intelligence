@@ -8,11 +8,15 @@ with the same engine and the same read-only database role (DATABASE_URL); none r
 Catastro or another upstream (the parcel search, and its guard, stay in the API).
 
 - Stateless, with JSON answers: the platform may send each POST to another instance, so there is
-  no session to keep (no Mcp-Session-Id) and no SSE stream. Only POST: a GET (the stream) or a
-  DELETE (the end of a session) is a 405, the spec's answer when the server offers neither.
+  no session to keep (no Mcp-Session-Id) and no SSE stream. Only POST: a GET (the stream), a
+  DELETE (the end of a session) or an OPTIONS is a 405, the spec's answer when the server offers
+  neither (so browser clients, which need a CORS preflight, cannot use it).
 - The SDK's DNS-rebinding protection stays on, with our hosts: another Host header is a 421, and
   an Origin header from elsewhere a 403 (MCP_ALLOWED_HOSTS and MCP_ALLOWED_ORIGINS change them).
 - No authentication: public data, read-only, as the API.
+- The MCP never takes the API down: if it cannot be built (the SDK fails to import, say), `app` is
+  the API alone; if its session manager does not start, the API starts and /api/v1/mcp is a 503.
+  Either way the reason is in the logs.
 
 Usage and client configuration: docs/04_technical_architecture/32_mcp_server.md.
 """
@@ -20,11 +24,10 @@ Usage and client configuration: docs/04_technical_architecture/32_mcp_server.md.
 import logging
 import sys
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
+from typing import TYPE_CHECKING
 
 from fastapi import FastAPI
-from mcp.server.mcpserver import MCPServer
-from mcp.server.transport_security import TransportSecuritySettings
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from starlette.applications import Starlette
 from starlette.responses import PlainTextResponse
@@ -33,7 +36,10 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from hi_api.logs import FORMAT
 from hi_api.main import app as api_app
-from hi_mcp.server import build_server
+
+if TYPE_CHECKING:  # imported when the app is built, so a broken SDK cannot stop the API
+    from mcp.server.mcpserver import MCPServer
+    from mcp.server.transport_security import TransportSecuritySettings
 
 MCP_PATH = "/api/v1/mcp"
 PUBLIC_HOSTS = ("vidafacil-madrid.vercel.app", "vida-facil-eight.vercel.app")
@@ -47,6 +53,8 @@ ORIGINS = (
     *(f"http://{host}" for host in LOCAL_HOSTS),
 )
 
+log = logging.getLogger("hi_mcp.http")
+
 
 class HttpSettings(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="MCP_", env_file=None, extra="ignore")
@@ -55,7 +63,9 @@ class HttpSettings(BaseSettings):
     allowed_origins: list[str] = list(ORIGINS)
 
 
-def transport_security(settings: HttpSettings) -> TransportSecuritySettings:
+def transport_security(settings: HttpSettings) -> "TransportSecuritySettings":
+    from mcp.server.transport_security import TransportSecuritySettings
+
     return TransportSecuritySettings(
         enable_dns_rebinding_protection=True,
         allowed_hosts=settings.allowed_hosts,
@@ -63,61 +73,90 @@ def transport_security(settings: HttpSettings) -> TransportSecuritySettings:
     )
 
 
-class PostOnly:
-    """In stateless mode the SDK still answers a GET with an SSE stream that stays open, with
-    nothing to send, until the client or the platform drops it."""
+class McpEndpoint:
+    """Only POST: in stateless mode the SDK still answers a GET with an SSE stream that stays
+    open, with nothing to send, until the client or the platform drops it. And a 503 until the
+    session manager runs, instead of the SDK's 500."""
 
     def __init__(self, app: ASGIApp) -> None:
         self.app = app
+        self.running = False
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         if scope["method"] != "POST":
             response = PlainTextResponse("Method Not Allowed", 405, headers={"Allow": "POST"})
-            await response(scope, receive, send)
+        elif not self.running:
+            response = PlainTextResponse("MCP server unavailable", 503)
+        else:
+            await self.app(scope, receive, send)
             return
-        await self.app(scope, receive, send)
+        await response(scope, receive, send)
 
 
-def build_http_server() -> MCPServer:
+def log_tools_to_stdout() -> None:
+    """The tools' own lines (name and time, never the arguments) go to stdout, as the API's do
+    (hi_api.logs)."""
+    tools_log = logging.getLogger("hi_mcp")
+    tools_log.setLevel(logging.INFO)
+    if not tools_log.handlers:
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(logging.Formatter(FORMAT))
+        tools_log.addHandler(handler)
+
+
+def build_http_server() -> "MCPServer":
     """build_server() without the logging the SDK sets up for stdio (the root logger at INFO,
     to stderr): in the API container it would print every API line twice and library lines
-    that are dropped today. The tools' own lines (name and time, never the arguments) go to
-    stdout, as the API's do (hi_api.logs)."""
+    that are dropped today."""
+    from hi_mcp.server import build_server
+
     root = logging.getLogger()
     handlers, level = root.handlers[:], root.level
     server = build_server()
     root.handlers[:] = handlers
     root.setLevel(level)
-    log = logging.getLogger("hi_mcp")
-    log.setLevel(logging.INFO)
-    if not log.handlers:
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter(FORMAT))
-        log.addHandler(handler)
     return server
 
 
-def create_app(server: MCPServer | None = None, api: FastAPI = api_app) -> Starlette:
+def create_app(server: "MCPServer | None" = None, api: FastAPI = api_app) -> Starlette:
     """The API, unchanged, and the MCP route in front of it. Each call builds its own session
     manager, which runs once: inside this app's lifespan, around the API's own."""
     server = server or build_http_server()
-    # Sets up the session manager; the app it returns is one Route, rebuilt here behind PostOnly
+    # Sets up the session manager; the app it returns is one Route, rebuilt here behind McpEndpoint
     server.streamable_http_app(
         streamable_http_path=MCP_PATH,
         stateless_http=True,
         json_response=True,
         transport_security=transport_security(HttpSettings()),
     )
-    mcp = Route(MCP_PATH, endpoint=PostOnly(server.session_manager.handle_request))
+    endpoint = McpEndpoint(server.session_manager.handle_request)
 
     @asynccontextmanager
     async def lifespan(_: Starlette) -> AsyncIterator[None]:
         # A mounted app's lifespan does not run by itself (the API keeps no lifespan state)
-        async with api.router.lifespan_context(api), server.session_manager.run():
+        async with api.router.lifespan_context(api), AsyncExitStack() as mcp_running:
+            try:
+                await mcp_running.enter_async_context(server.session_manager.run())
+            except Exception:
+                log.exception("MCP session manager did not start: %s answers 503", MCP_PATH)
+            else:
+                endpoint.running = True
             yield
 
     # A Route, not a Mount: /api/v1/mcp without a redirect to /api/v1/mcp/
-    return Starlette(routes=[mcp, Mount("", app=api)], lifespan=lifespan)
+    return Starlette(
+        routes=[Route(MCP_PATH, endpoint=endpoint), Mount("", app=api)], lifespan=lifespan
+    )
 
 
-app = create_app()
+def serve() -> Starlette:
+    """What uvicorn runs: the API with the MCP or, if the MCP cannot be built, the API alone."""
+    log_tools_to_stdout()
+    try:
+        return create_app()
+    except Exception:
+        log.exception("MCP server not built: serving the API alone, without %s", MCP_PATH)
+        return api_app
+
+
+app = serve()
