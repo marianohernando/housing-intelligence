@@ -396,7 +396,7 @@ export function catalogText(building: ProtectedBuilding | null | undefined, unre
   return `${protection}${number}${level}`;
 }
 
-// The finished states of an area's works: the domain's (hi_domain.parcels.DONE_PHASES), generated
+// The finished states of an area's phases: the domain's (hi_domain.parcels.DONE_PHASES), generated
 const DONE_WORKS = new Set<string>(INVESTOR_METHOD.doneWorks);
 
 /** D-253 (audit D1): services and supplies. Legal texts read at their source (BOE, BOCM, CNMC, Comunidad de Madrid). */
@@ -406,8 +406,11 @@ export const SERVICES_TEXT = {
   zonal:
     "Norma zonal: suelo urbano común o consolidado, ordenado de modo directo por el Plan General (Normas Urbanísticas, arts. 3.1.4 y 3.2.2). Aun así, la acometida y la potencia hay que pedirlas a cada compañía.",
   works: (code: string, state: string) => `Obras de urbanización del ${code}: ${state.toLowerCase()}, según el Ayuntamiento.`,
+  /** Only when the area's planning and management are finished: what is left is its urbanization */
   worksPending:
     "Mientras no estén terminadas, la parcela no es solar. La ley permite pedir licencia con la urbanización a la vez y una garantía que cubra su coste (Ley 9/2001, arts. 19.3, 20.3 y 23.1).",
+  /** The area's planning or management is not finished (Almería 1, APR.04.09): no licence with the works yet */
+  planningFirst: "Antes de pedir licencia, el ámbito necesita su planeamiento y su gestión.",
   untracked: "El Ayuntamiento no publica el estado de este ámbito: no sabemos si su urbanización está terminada.",
   portal: (stage: string): string | null =>
     stage === "urbanizado"
@@ -459,15 +462,24 @@ export const SERVICES_TEXT = {
   ],
 } as const;
 
-/** The planning's signal about services: a norma zonal, the area's works, or nothing said. */
+// The phases before the urbanization (PHASE_LABELS of hi_domain.parcels): both finished before a licence with the works
+const PLANNING_PHASES = ["Planeamiento", "Gestión"] as const;
+
+/**
+ * The planning's signal about services: a norma zonal, the area's works, or nothing said. Works not
+ * finished: a licence with the urbanization at once only when planning and management are finished.
+ */
 export function servicesSignal(planning: PlanningBlock | null | undefined): string[] {
   if (!planning) return [];
   if (planning.norma_zonal || planning.kind === "norma_zonal") return [SERVICES_TEXT.zonal];
   const ambit = planning.ambit;
   if (!ambit) return [];
   if (!ambit.tracked) return [SERVICES_TEXT.untracked];
-  const works = (ambit.phases ?? []).find((p) => p.label === "Obras de urbanización");
+  const phases = ambit.phases ?? [];
+  const finished = (label: string) => phases.some((p) => p.label === label && DONE_WORKS.has(p.state.toLowerCase()));
+  const works = phases.find((p) => p.label === "Obras de urbanización");
   if (!works) return [];
-  const done = DONE_WORKS.has(works.state.toLowerCase());
-  return done ? [SERVICES_TEXT.works(ambit.code, works.state)] : [SERVICES_TEXT.works(ambit.code, works.state), SERVICES_TEXT.worksPending];
+  const line = SERVICES_TEXT.works(ambit.code, works.state);
+  if (finished(works.label)) return [line];
+  return [line, PLANNING_PHASES.every(finished) ? SERVICES_TEXT.worksPending : SERVICES_TEXT.planningFirst];
 }

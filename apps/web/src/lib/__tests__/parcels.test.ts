@@ -240,11 +240,12 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     const phases = ["Planeamiento", "Gestión", "Proyecto de urbanización", "Obras de urbanización"].map((label) => ({ label, state: "Sin Iniciar" }));
     const ambit = { code: "APR.04.09", tracked: true, pending: true, phases, as_of: "2026-07-01", url: "https://datos.madrid.es/" };
     const area = planning({ code: "APR.04.09", kind: "APR", norma_zonal: null, ambit });
+    // Almería 1: everything «sin iniciar», so no licence with the urbanization at once yet
     expect(servicesSignal(area)).toEqual([
       "Obras de urbanización del APR.04.09: sin iniciar, según el Ayuntamiento.",
-      SERVICES_TEXT.worksPending,
+      SERVICES_TEXT.planningFirst,
     ]);
-    const done = { ...ambit, pending: false, phases: phases.map((p) => ({ ...p, state: "Finalizado" })) };
+    const done ={ ...ambit, pending: false, phases: phases.map((p) => ({ ...p, state: "Finalizado" })) };
     expect(servicesSignal(planning({ ...area, ambit: done }))).toEqual(["Obras de urbanización del APR.04.09: finalizado, según el Ayuntamiento."]);
     const unneeded = { ...done, phases: phases.map((p) => ({ ...p, state: "No necesita" })) };
     expect(servicesSignal(planning({ ...area, ambit: unneeded }))).toHaveLength(1);
@@ -252,6 +253,33 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     expect(servicesSignal(null)).toEqual([]);
     expect(SERVICES_TEXT.portal("urbanizado")).toBe("El Portal del Suelo dice que esta parcela está urbanizada.");
     expect(SERVICES_TEXT.portal("en_gestion")).toBeNull();
+  });
+
+  it("says a licence with the urbanization at once only when planning and management are finished", () => {
+    const phase = (label: string, state: string) => ({ label, state });
+    const ambit = (planeamiento: string, gestion: string) => ({
+      code: "APR.02.06",
+      tracked: true,
+      pending: true,
+      phases: [
+        phase("Planeamiento", planeamiento),
+        phase("Gestión", gestion),
+        phase("Proyecto de urbanización", "Finalizado"),
+        phase("Obras de urbanización", "En Ejecución"),
+      ],
+      as_of: "2026-07-01",
+      url: "https://datos.madrid.es/",
+    });
+    const area = (a: ReturnType<typeof ambit>) => planning({ code: "APR.02.06", kind: "APR", norma_zonal: null, ambit: a });
+    const works = "Obras de urbanización del APR.02.06: en ejecución, según el Ayuntamiento.";
+    // Only the urbanization is left: the law allows the licence with it at once
+    expect(servicesSignal(area(ambit("Finalizado", "Finalizado")))).toEqual([works, SERVICES_TEXT.worksPending]);
+    expect(servicesSignal(area(ambit("PGOUM-97", "No Necesita")))).toEqual([works, SERVICES_TEXT.worksPending]);
+    // Planning or management not finished: first them, in plain words and without articles
+    expect(servicesSignal(area(ambit("Sin Iniciar", "Finalizado")))).toEqual([works, SERVICES_TEXT.planningFirst]);
+    expect(servicesSignal(area(ambit("Finalizado", "En Tramitación")))).toEqual([works, SERVICES_TEXT.planningFirst]);
+    expect(SERVICES_TEXT.planningFirst).toBe("Antes de pedir licencia, el ámbito necesita su planeamiento y su gestión.");
+    expect(SERVICES_TEXT.planningFirst).not.toMatch(/art\.|Ley/);
   });
 
   it("says the power as an assumption from the rule, and only links the CNMC's map", () => {

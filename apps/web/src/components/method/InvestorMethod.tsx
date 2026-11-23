@@ -278,7 +278,8 @@ export default function InvestorMethod() {
         <li>
           <strong>Señal del planeamiento.</strong> En una norma zonal: {lower(SERVICES_TEXT.zonal.replace(/^Norma zonal: /, ""))} En
           un ámbito, el estado de sus obras de urbanización según el Ayuntamiento (el estado de desarrollo de los ámbitos); si no están
-          terminadas: {lower(SERVICES_TEXT.worksPending)} Si es suelo del Portal del Suelo, si lo da por urbanizado.
+          terminadas y el planeamiento y la gestión del ámbito sí: {lower(SERVICES_TEXT.worksPending)} Si el planeamiento o la
+          gestión no lo están: {lower(SERVICES_TEXT.planningFirst)} Si es suelo del Portal del Suelo, si lo da por urbanizado.
         </li>
         <li>
           <strong>Potencia (supuesto).</strong> Las viviendas, como los m² edificables de partida entre {n(M.homeM2)} m² (la vivienda
