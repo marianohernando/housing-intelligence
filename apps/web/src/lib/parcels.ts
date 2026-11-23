@@ -495,10 +495,13 @@ export const SERVICES_TEXT = {
 
 // The phases before the urbanization (PHASE_LABELS of hi_domain.parcels): both finished before a licence with the works
 const PLANNING_PHASES = ["Planeamiento", "Gestión"] as const;
+// VEDA's situations of an area not finished: the domain's (hi_domain.parcels.PENDING_STAGES), generated (review R-03)
+const PENDING_STAGES = new Set<string>(INVESTOR_METHOD.pendingStages);
 
 /**
  * The planning's signal about services: a norma zonal, the area's works, or nothing said. Works not
- * finished: a licence with the urbanization at once only when planning and management are finished.
+ * finished: a licence with the urbanization at once only when planning and management are finished,
+ * by their phases and by VEDA (a pending situation there means not finished, as AmbitState.pending).
  */
 export function servicesSignal(planning: PlanningBlock | null | undefined): string[] {
   if (!planning) return [];
@@ -512,5 +515,7 @@ export function servicesSignal(planning: PlanningBlock | null | undefined): stri
   if (!works) return [];
   const line = SERVICES_TEXT.works(ambit.code, works.state);
   if (finished(works.label)) return [line];
-  return [line, PLANNING_PHASES.every(finished) ? SERVICES_TEXT.worksPending : SERVICES_TEXT.planningFirst];
+  const vedaPending = ambit.veda_stage != null && PENDING_STAGES.has(ambit.veda_stage);
+  const planned = PLANNING_PHASES.every(finished) && !vedaPending;
+  return [line, planned ? SERVICES_TEXT.worksPending : SERVICES_TEXT.planningFirst];
 }

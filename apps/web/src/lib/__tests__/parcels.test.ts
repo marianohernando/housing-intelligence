@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import type { ParcelBlock, PlanningBlock, UseFigure } from "@/contracts/parcel_sheet_response";
+import type { ParcelBlock, PlanningBlock, UseFigure, VedaStage } from "@/contracts/parcel_sheet_response";
 import { ApiError, createApi, parcelPath } from "@/lib/api";
+import { INVESTOR_METHOD } from "@/lib/investorMethod";
 import {
   ambitText,
   areaText,
@@ -282,6 +283,27 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     expect(servicesSignal(area(ambit("Finalizado", "En Tramitación")))).toEqual([works, SERVICES_TEXT.planningFirst]);
     expect(SERVICES_TEXT.planningFirst).toBe("Antes de pedir licencia, el ámbito necesita su planeamiento y su gestión.");
     expect(SERVICES_TEXT.planningFirst).not.toMatch(/art\.|Ley/);
+  });
+
+  it("counts VEDA too: a pending situation there is not finished, whatever the phases say (review R-03)", () => {
+    const finished = ["Planeamiento", "Gestión", "Proyecto de urbanización"].map((label) => ({ label, state: "Finalizado" }));
+    const ambit = (veda_stage: VedaStage) => ({
+      code: "APR.02.06",
+      tracked: true,
+      pending: true,
+      phases: [...finished, { label: "Obras de urbanización", state: "En Ejecución" }],
+      veda_stage,
+      as_of: "2026-07-01",
+      url: "https://datos.madrid.es/",
+    });
+    const signal = (veda_stage: VedaStage) =>
+      servicesSignal(planning({ code: "APR.02.06", kind: "APR", norma_zonal: null, ambit: ambit(veda_stage) }))[1];
+    // The domain's pending situations (AmbitState.pending), generated: the phases finished and VEDA pending → not yet
+    expect([...INVESTOR_METHOD.pendingStages].sort()).toEqual(["gestion_urbanizacion", "pendiente_planeamiento", "pendiente_sectorizacion"]);
+    for (const stage of INVESTOR_METHOD.pendingStages) expect(signal(stage)).toBe(SERVICES_TEXT.planningFirst);
+    // The phases and VEDA finished (or VEDA silent): only the urbanization is left
+    expect(signal("edificacion")).toBe(SERVICES_TEXT.worksPending);
+    expect(signal(null)).toBe(SERVICES_TEXT.worksPending);
   });
 
   it("says the power as an assumption from the rule, and only links the CNMC's map", () => {
