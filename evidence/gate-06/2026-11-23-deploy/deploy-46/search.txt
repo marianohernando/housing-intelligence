@@ -1,0 +1,69 @@
+The API before the deploy (dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6, 861f94f0, 2026-11-23 11:13:21-11:13:58 UTC) and after it
+(dpl_GyEfen16H6Kxbcng13cABR124UY6, 542283b8, 11:19:39-11:20:06 UTC): deploy-45's 62 requests with the same bodies, compared without `meta`.
+The set before this deploy was also identical to deploy-45's after its deploy (no data change since).
+
+file | before -> after the deploy | bytes before / after
+buy400 | identical | 129718 / 129718
+couple1500-madrid | identical | 100229 / 100229
+couple1500-pueblos | identical | 111047 / 111047
+couple1500 | identical | 137187 / 137187
+datasets | identical | 37865 / 37865
+example | identical | 160402 / 160402
+feat-ambitos_residenciales_en_desarrollo-distrito | identical | 11964 / 11964
+feat-compraventas_obra_nueva_pct-municipio | identical | 49663 / 49663
+feat-list-barrio | identical | 949 / 949
+feat-list-distrito | identical | 9394 / 9394
+feat-list-municipio | identical | 47662 / 47662
+feat-plan_vive_viviendas-distrito | identical | 6231 / 6231
+feat-plan_vive_viviendas-municipio | identical | 49472 / 49472
+feat-suelo_publico_vivienda_m2-distrito | identical | 20312 / 20312
+feat-suelo_publico_vivienda_m2-municipio | identical | 155511 / 155511
+gapmap-escuela_infantil-municipio | identical | 74326 / 74326
+gapmap-vivienda-distrito | identical | 10423 / 10423
+gapmap-vivienda-municipio | identical | 57259 / 57259
+gaps-distrito-2807901 | identical | 34473 / 34473
+gaps-distrito-2807902 | identical | 34396 / 34396
+gaps-distrito-2807903 | identical | 34465 / 34465
+gaps-distrito-2807904 | identical | 34385 / 34385
+gaps-distrito-2807905 | identical | 34391 / 34391
+gaps-distrito-2807906 | identical | 34466 / 34466
+gaps-distrito-2807907 | identical | 34477 / 34477
+gaps-distrito-2807908 | identical | 34477 / 34477
+gaps-distrito-2807909 | identical | 34472 / 34472
+gaps-distrito-2807910 | identical | 34462 / 34462
+gaps-distrito-2807911 | identical | 34394 / 34394
+gaps-distrito-2807912 | identical | 34393 / 34393
+gaps-distrito-2807913 | identical | 34485 / 34485
+gaps-distrito-2807914 | identical | 34624 / 34624
+gaps-distrito-2807915 | identical | 34478 / 34478
+gaps-distrito-2807916 | identical | 34473 / 34473
+gaps-distrito-2807917 | identical | 34479 / 34479
+gaps-distrito-2807918 | identical | 34481 / 34481
+gaps-distrito-2807919 | identical | 34472 / 34472
+gaps-distrito-2807920 | identical | 34485 / 34485
+gaps-distrito-2807921 | identical | 34773 / 34773
+gaps-impact | identical | 13272 / 13272
+gaps-municipio-28001 | identical | 36284 / 36284
+gaps-municipio-28005 | identical | 35934 / 35934
+gaps-municipio-28006 | identical | 35919 / 35919
+gaps-municipio-28049 | identical | 36163 / 36163
+gaps-municipio-28074 | identical | 35916 / 35916
+gaps-municipio-28079 | identical | 35920 / 35920
+gaps-municipio-28092 | identical | 35830 / 35830
+gaps-municipio-28106 | identical | 35822 / 35822
+gaps-municipio-28148 | identical | 35848 / 35848
+gaps-municipio-28161 | identical | 36137 / 36137
+gaps-municipio-28165 | identical | 37188 / 37188
+gaps-municipio-28180 | identical | 37007 / 37007
+inv-via | identical | 3312 / 3312
+inv-zone164 | identical | 60613 / 60613
+inv-zones | identical | 76089 / 76089
+openapi | identical | 104683 / 104683
+pueblos | identical | 136152 / 136152
+rent10k | identical | 132164 / 132164
+retired-noflag | identical | 118786 / 118786
+retired | identical | 118783 / 118783
+student | identical | 144348 / 144348
+telework | identical | 158347 / 158347
+
+62 of 62 identical, /api/v1/openapi.json included: the remote MCP (#123) is not in the OpenAPI and changes no API route.
