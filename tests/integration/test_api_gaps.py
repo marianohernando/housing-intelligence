@@ -308,7 +308,7 @@ def test_rows_compare_with_municipios_of_the_same_type(
     assert housing.reference == pytest.approx(per_rate * rate, rel=1e-3)
     assert housing.regional_reference is not None
     assert "en toda la Comunidad" in housing.explanation
-    assert body.data.method.version == "gap-0.3"
+    assert body.data.method.version == "gap-0.4"
     assert body.data.method.confidence_level == 0.95
 
 
@@ -361,10 +361,9 @@ def test_impact_ranks_every_falta_zone_by_the_people_affected(client: TestClient
     assert response.status_code == 200
     body = GapImpactResponse.model_validate(response.json())
     assert body.meta.methodology_version == body.data.version == "impact-0.1"
-    assert body.data.method.version == "gap-0.3"
+    assert body.data.method.version == "gap-0.4"
     rows = {r.row.value: r for r in body.data.rows}
-    assert set(rows) == {k.value for k in GapRowKey}
-    assert rows["vivienda"].madrid_level.value == "municipio"  # no housing tables by district
+    assert set(rows) == {k.value for k in GapRowKey} - {"vivienda"}  # context (D-254)
     assert rows["colegio"].madrid_level.value == "distrito"
     assert body.data.datasets
     for key, impact in rows.items():
@@ -387,15 +386,13 @@ def test_impact_ranks_every_falta_zone_by_the_people_affected(client: TestClient
 
 
 def test_small_zones_say_why_they_cannot_be_compared(client: TestClient) -> None:
-    """Fase de mejora (zonas pequeñas): La Acebeda has 1 household of 4 or more and 0 children
-    of 0 to 4. Housing is not comparable (its denominator is a count below the 3,69 floor of
-    D-213), and the nursery row says nobody of that age lives there, not «no data»."""
+    """Fase de mejora (zonas pequeñas): La Acebeda has 0 children of 0 to 4, so the nursery row
+    says nobody of that age lives there, not «no data». Its housing row (1 household of 4 or
+    more) is context since gap-0.4 (D-254): shown, never compared."""
     body = ZoneGapListResponse.model_validate(client.get("/api/v1/gaps/municipio/28001").json())
     rows = {r.row.value: r for r in body.data.rows}
     housing = rows["vivienda"]
-    assert housing.reliable is False and housing.status.value != "FALTA"
-    assert housing.comparison_group is None
-    assert housing.explanation.startswith("No comparable: aquí viven muy pocos hogares")
+    assert housing.status.value == "CONTEXTO" and housing.comparison_group is None
     nursery = rows["escuela_infantil"]
     assert nursery.status.value == "SIN_DATOS"
     assert nursery.indicator.null_reason is not None
@@ -405,6 +402,38 @@ def test_small_zones_say_why_they_cannot_be_compared(client: TestClient) -> None
     without_streets = next(r for r in ajalvir.data.rows if r.row.value == "escuela_infantil")
     assert without_streets.indicator.null_reason is not None
     assert without_streets.indicator.null_reason.value == "SOURCE_NO_COVERAGE"  # people, no streets
+
+
+def test_the_housing_row_is_context_never_a_verdict(client: TestClient) -> None:
+    """gap-0.4 (D-254): second homes inflate the stock of the villages, so the housing row shows
+    its value and reference, never FALTA, JUSTO or CUBIERTO, and stays out of /gaps/impact."""
+    label = "Viviendas grandes por cada 100 hogares grandes (contexto)"
+    for level in ("municipio", "distrito"):
+        housing = GapRowMapResponse.model_validate(
+            client.get("/api/v1/gaps", params={"level": level, "row": "vivienda"}).json()
+        ).data
+        assert housing.zones and housing.label == label
+        assert housing.method.context_rows == [GapRowKey.VIVIENDA]
+        assert {z.status.value for z in housing.zones} <= {"CONTEXTO", "SIN_DATOS"}
+        assert housing.counts.falta == housing.counts.justo == housing.counts.cubierto == 0
+        assert all(
+            z.ratio_to_reference is None and z.comparison_group is None for z in housing.zones
+        )
+        # The value with its reference (no district values: the CM publishes none)
+        known = [z for z in housing.zones if z.value is not None]
+        assert all(z.reference is not None and z.status.value == "CONTEXTO" for z in known)
+        assert bool(known) == (level == "municipio")
+    for code in ("28079", "28001", "28002"):
+        listed = ZoneGapListResponse.model_validate(
+            client.get(f"/api/v1/gaps/municipio/{code}").json()
+        ).data
+        row = next(r for r in listed.rows if r.row.value == "vivienda")
+        assert row.label == label and row.status.value == "CONTEXTO"
+        assert row.indicator.value is not None and row.reference is not None
+        assert row.ratio_to_reference is None and row.reliable
+        assert "dato de contexto" in row.explanation
+    impact = GapImpactResponse.model_validate(client.get("/api/v1/gaps/impact").json()).data
+    assert "vivienda" not in {r.row.value for r in impact.rows}
 
 
 def test_every_dataset_says_where_it_is_published(client: TestClient) -> None:

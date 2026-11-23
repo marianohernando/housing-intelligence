@@ -5,7 +5,8 @@ the rate of the municipios of the same type in the Comunidad de Madrid (rural or
 legal definition of Ley 45/2007), because the rate of several rows depends on the type of
 territory (e.g. a village has its own consultorio). FALTA needs a material shortfall (below
 the four-fifths cut-off) that is also statistically significant for the size of the zone
-(exact Poisson interval of its count). An unknown value is never classified.
+(exact Poisson interval of its count). An unknown value is never classified. A context row
+(gap-0.4, D-254) shows its value and reference and is never classified either.
 """
 
 from collections.abc import Callable, Mapping, Sequence
@@ -14,19 +15,40 @@ from typing import Literal, NamedTuple
 
 from scipy.stats import chi2
 
+from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import GapMethod, GapStatus
 
+
+class ContextRow(NamedTuple):
+    """A row shown as context (gap-0.4, D-254): its name and what it is not."""
+
+    label: str
+    note: str
+
+
+# D-254: in rural municipios second homes inflate the housing stock, so large homes per large
+# household cannot say that housing is missing: the row is shown, never judged.
+CONTEXT_ROWS: dict[GapRowKey, ContextRow] = {
+    GapRowKey.VIVIENDA: ContextRow(
+        "Viviendas grandes por cada 100 hogares grandes (contexto)",
+        "Es un dato de contexto, no un veredicto: el parque incluye segundas residencias, así "
+        "que no dice si falta vivienda",
+    ),
+}
+JUDGED_ROWS = [row for row in GapRowKey if row not in CONTEXT_ROWS]
+
 GAP_METHOD = GapMethod(
-    version="gap-0.3",
+    version="gap-0.4",
     reference=(
         "Municipios del mismo tipo de la Comunidad de Madrid (rural o urbano, Ley 45/2007): "
         "la oferta al alcance a pie de su población (2SFCA, 15 min) dividida por su población. "
         "Un municipio demasiado pequeño se compara junto con sus vecinos más cercanos del mismo "
-        "tipo (D-217)"
+        "tipo (D-217). La vivienda es solo contexto (D-254)"
     ),
     falta_below=0.8,
     cubierto_from=1.0,
     confidence_level=0.95,
+    context_rows=list(CONTEXT_ROWS),
 )
 Direction = Literal["higher_is_better", "lower_is_better"]
 
@@ -105,6 +127,17 @@ def min_expected(method: GapMethod = GAP_METHOD) -> float | None:
     if method.confidence_level is None:
         return None
     return poisson_upper(0, method.confidence_level)
+
+
+def row_label(row: GapRowKey, bound_label: str) -> str:
+    """The row's name: a context row's own (gap-0.4), else the Feature Dictionary's."""
+    context = CONTEXT_ROWS.get(row)
+    return bound_label if context is None else context.label
+
+
+def context_status(value: float | None) -> GapStatus:
+    """A context row is never judged (D-254): CONTEXTO, or SIN_DATOS when unknown."""
+    return GapStatus.SIN_DATOS if value is None else GapStatus.CONTEXTO
 
 
 def classify(

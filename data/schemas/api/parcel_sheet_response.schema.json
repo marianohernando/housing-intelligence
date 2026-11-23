@@ -620,7 +620,7 @@
             }
           ],
           "default": null,
-          "description": "Oriented so that above 1 is better than the reference",
+          "description": "Oriented so that above 1 is better than the reference; None when the value is unknown, and always in a context row (gap-0.4)",
           "title": "Ratio To Reference"
         },
         "reference": {
@@ -700,7 +700,8 @@
         "FALTA",
         "JUSTO",
         "CUBIERTO",
-        "SIN_DATOS"
+        "SIN_DATOS",
+        "CONTEXTO"
       ],
       "title": "GapStatus",
       "type": "string"

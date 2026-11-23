@@ -6,6 +6,7 @@ import type { GapRowKey, GapStatus, IndicatorValue, ZoneGapList } from "@/contra
 
 import {
   comparisonText,
+  CONTEXT_ROWS,
   fitsButShortText,
   GAP_STATUS,
   gapFigures,
@@ -16,6 +17,7 @@ import {
   hospitalText,
   hospitalWalking,
   inGroup,
+  isContextRow,
   isSmallZone,
   listNames,
   nearButShort,
@@ -45,9 +47,22 @@ const ROW_KEYS = ["centro_salud", "colegio", "escuela_infantil", "farmacia", "ma
 
 describe("gap statuses (pitch/textos_web.md, estado.*)", () => {
   it("has a text label for every status, never colour alone", () => {
-    expect(Object.keys(GAP_STATUS).sort()).toEqual(["CUBIERTO", "FALTA", "JUSTO", "SIN_DATOS"]);
+    expect(Object.keys(GAP_STATUS).sort()).toEqual(["CONTEXTO", "CUBIERTO", "FALTA", "JUSTO", "SIN_DATOS"]);
     expect(GAP_STATUS.SIN_DATOS.label).toBe("SIN DATOS");
     for (const meta of Object.values(GAP_STATUS)) expect(meta.help.length).toBeGreaterThan(10);
+  });
+
+  it("shows the housing row as context, with an honest name (gap-0.4, D-254)", () => {
+    expect(CONTEXT_ROWS).toEqual(["vivienda"]);
+    expect(isContextRow("vivienda")).toBe(true);
+    expect(isContextRow("farmacia")).toBe(false);
+    expect(ROW_NAME.vivienda).toBe("Viviendas grandes por cada 100 hogares grandes (contexto)");
+    expect(GAP_STATUS.CONTEXTO.label).toBe("CONTEXTO");
+    expect(GAP_STATUS.CONTEXTO.help).toContain("no un veredicto");
+    // No comparison and no people affected: only a FALTA row says who it leaves short
+    const context = { row: "vivienda" as const, status: "CONTEXTO" as const, ratio_to_reference: null, people: { count: 120, label: "hogares" } };
+    expect(rowComparison(context)).toBeNull();
+    expect(peopleAffectedText(context)).toBeNull();
   });
 });
 
@@ -198,8 +213,8 @@ describe("sortRows and topRows", () => {
     expect(sortRows([...small]).map((r) => r.row)).toEqual(["mayores", "colegio"]);
   });
 
-  it("keeps at most three rows for the zone card", () => {
-    expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "vivienda", "centro_salud"]);
+  it("keeps at most three rows for the zone card, never a context row (gap-0.4, D-254)", () => {
+    expect(topRows([...rows]).map((r) => r.row)).toEqual(["colegio", "centro_salud", "farmacia"]);
   });
 
   // Review of PR #79: «lo que le falta que le afecte», the household's rows first for every home
@@ -285,12 +300,12 @@ describe("fitsButShortText (encaje.aviso_*: a zone that fits, short of something
       row("colegio", "JUSTO"),
       row("centro_salud", "FALTA"),
       row("farmacia", "JUSTO"),
-      row("mayores", "CUBIERTO"),
-      row("vivienda", "JUSTO"),
+      row("mayores", "JUSTO"),
+      row("vivienda", "CONTEXTO"),
     ];
     expect(topRows(rows)).toHaveLength(3);
     expect(fitsButShortText(rows)).toBe(
-      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y viviendas grandes para familias.",
+      "Tiene lo que pides. Aun así, comparado con municipios parecidos, aquí faltan centros de salud y van justos de escuelas infantiles, colegios, farmacias y centros de mayores.",
     );
   });
 
@@ -441,8 +456,8 @@ describe("the summary over the rows (falta.resumen.*)", () => {
   const group = { codes: ["28004", "28096"] as [string, string], names: ["El Álamo", "Navalcarnero"] as [string, string], ratio_to_reference: 0.6 };
 
   it("starts with what is missing, then what is tight and what has no data (Puente de Vallecas)", () => {
-    const rows = [row("escuela_infantil", "FALTA"), row("colegio", "CUBIERTO"), row("centro_salud", "CUBIERTO"), row("vivienda", "SIN_DATOS")];
-    expect(gapSummary(rows)).toEqual({ lead: "Aquí falta: escuelas infantiles.", rest: ["Sin datos: viviendas grandes para familias."] });
+    const rows = [row("escuela_infantil", "FALTA"), row("colegio", "CUBIERTO"), row("centro_salud", "CUBIERTO"), row("mayores", "SIN_DATOS")];
+    expect(gapSummary(rows)).toEqual({ lead: "Aquí falta: escuelas infantiles.", rest: ["Sin datos: centros de mayores."] });
   });
 
   it("says nothing is clearly missing when only some are tight (Fuencarral-El Pardo)", () => {
@@ -459,8 +474,18 @@ describe("the summary over the rows (falta.resumen.*)", () => {
     expect(gapSummary(rows)).toEqual({ lead: "Aquí falta: colegios.", rest: ["Zona muy pequeña para comparar: farmacias."] });
   });
 
+  // gap-0.4 (D-254): the housing row is context, never something missing, tight or without data
+  it("never names a context row, whatever its status", () => {
+    const rows = [row("escuela_infantil", "FALTA"), row("vivienda", "CONTEXTO")];
+    expect(gapSummary(rows)).toEqual({ lead: "Aquí falta: escuelas infantiles.", rest: [] });
+    expect(gapSummary([row("vivienda", "SIN_DATOS")])).toEqual({ lead: null, rest: [] });
+    expect(fitsButShortText([row("farmacia", "CUBIERTO"), row("vivienda", "CONTEXTO")])).toBeNull();
+    expect(topRows([row("vivienda", "CONTEXTO"), row("farmacia", "CUBIERTO")]).map((r) => r.row)).toEqual(["farmacia"]);
+    expect(topRows([row("vivienda", "SIN_DATOS"), row("farmacia", "JUSTO")], 3, {}).map((r) => r.row)).toEqual(["farmacia"]);
+  });
+
   it("has no verdict in bold when no row can be compared", () => {
-    expect(gapSummary([row("vivienda", "SIN_DATOS")])).toEqual({ lead: null, rest: ["Sin datos: viviendas grandes para familias."] });
+    expect(gapSummary([row("mayores", "SIN_DATOS")])).toEqual({ lead: null, rest: ["Sin datos: centros de mayores."] });
     expect(gapSummary([row("farmacia", "JUSTO", { reliable: false })])).toEqual({ lead: null, rest: ["Zona muy pequeña para comparar: farmacias."] });
     expect(gapSummary([])).toEqual({ lead: null, rest: [] });
   });

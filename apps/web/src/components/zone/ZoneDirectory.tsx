@@ -45,7 +45,10 @@ const TEXT = {
  */
 function StatusesHelp({ row }: { row: GapRowKey }) {
   const lines: [string, string][] = [
-    ...Object.values(GAP_STATUS).map((s) => [s.label, s.help] as [string, string]),
+    // A list by row is never of a context row (gap-0.4): CONTEXTO is not one of its statuses
+    ...Object.values(GAP_STATUS)
+      .filter((s) => s !== GAP_STATUS.CONTEXTO)
+      .map((s) => [s.label, s.help] as [string, string]),
     [SMALL_ZONE.label, notComparableHelp(row)],
     [GROUP.label, GROUP.help],
   ];

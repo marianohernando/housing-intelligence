@@ -140,7 +140,7 @@ export type Count = number;
 export type Label3 = string;
 export type ProxyNote = string | null;
 /**
- * Oriented so that above 1 is better than the reference
+ * Oriented so that above 1 is better than the reference; None when the value is unknown, and always in a context row (gap-0.4)
  */
 export type RatioToReference1 = number | null;
 /**
@@ -161,7 +161,7 @@ export type Reliable = boolean;
  */
 export type GapRowKey =
   "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
-export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS";
+export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS" | "CONTEXTO";
 export type Rows = GapRow[];
 export type Warnings = string[];
 export type ZoneName = string;

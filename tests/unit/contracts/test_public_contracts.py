@@ -280,6 +280,38 @@ def test_impact_fixture_adds_up_and_ranks_by_people() -> None:
         assert all(z.p_value is None or z.p_value < 0.025 for z in row.ranking)
 
 
+def _context_method(payload: dict[str, Any]) -> dict[str, Any]:
+    """The fixture's method with the housing row as context (gap-0.4, D-254)."""
+    return payload["method"] | {"version": "gap-0.4", "context_rows": ["vivienda"]}
+
+
+def test_a_context_row_is_never_judged_and_only_it_is_contexto() -> None:
+    """gap-0.4 (D-254): the housing row says CONTEXTO (or SIN_DATOS), never FALTA, JUSTO or
+    CUBIERTO; no other row says CONTEXTO."""
+    payload = json.loads((FIXTURES / "zone_gap_list.madrid.fixture.json").read_text())
+    rows = {r["row"]: r for r in payload["rows"]}
+    method = _context_method(payload)
+    judged = payload | {"method": method}
+    with pytest.raises(ValidationError, match="context row"):
+        ZoneGapList.model_validate(judged)  # its housing row is JUSTO (gap-0.3)
+    housing = rows["vivienda"] | {"status": "CONTEXTO", "ratio_to_reference": None}
+    shown = [housing if r["row"] == "vivienda" else r for r in payload["rows"]]
+    listed = ZoneGapList.model_validate(judged | {"rows": shown})
+    assert {r.row.value: r.status.value for r in listed.rows}["vivienda"] == "CONTEXTO"
+    wrong = [r | {"status": "CONTEXTO"} if r["row"] == "colegio" else r for r in shown]
+    with pytest.raises(ValidationError, match="context row"):
+        ZoneGapList.model_validate(judged | {"rows": wrong})
+
+
+def test_a_context_row_has_no_impact() -> None:
+    payload = json.loads((FIXTURES / "gap_impact.comunidad.fixture.json").read_text())
+    assert "vivienda" in {r["row"] for r in payload["rows"]}  # gap-0.3 judged it
+    with pytest.raises(ValidationError, match="no impact"):
+        GapImpact.model_validate(payload | {"method": _context_method(payload)})
+    judged = [r for r in payload["rows"] if r["row"] != "vivienda"]
+    GapImpact.model_validate(payload | {"method": _context_method(payload), "rows": judged})
+
+
 def test_impact_row_rejects_an_unsorted_or_inconsistent_ranking() -> None:
     zone = {
         "admin_unit_id": "ES.28.MUN.28092",
