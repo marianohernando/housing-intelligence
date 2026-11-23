@@ -177,6 +177,29 @@ def test_each_dataset_carries_its_landing_page_publisher_and_licence() -> None:
     assert cm_licences == {f"{EU}/licence/CC_BY_4_0", "https://www.crtm.es/licencia-de-uso"}
 
 
+def test_the_licence_texts_say_what_they_cover_and_where_the_version_comes_from() -> None:
+    """R-03 and R-01 of #124: the catalogue's licence covers its metadata; «cc-by» has no version
+    on the portal, so the 4.0 is the source registry's, and every such dataset says so."""
+    ctx, module = context(), exporter()
+    [catalog] = of_type("dcat:Catalog")
+    assert module.CATALOG_LICENCE_SCOPE in catalog["dct:description"]["@value"]
+    by_id = {n["dct:identifier"]: n for n in of_type("dcat:Dataset")}
+    entities = {e["id"]: e for e in read(DATOS / "sdm" / "datasets.json")["entities"]}
+    from_portal = [
+        d for d in ctx.used if ctx.portal.get(d.dataset_id, {}).get("license_id") == "cc-by"
+    ]
+    assert len(from_portal) == 29
+    for dataset in from_portal:
+        note = "la versión 4.0 es la que declara el registro de fuentes del portal"
+        assert note in by_id[dataset.dataset_id]["dct:description"]["@value"]
+        assert (
+            note
+            in entities[f"urn:ngsi-ld:Dataset:vidafacil:{dataset.dataset_id}"]["description"]["es"]
+        )
+    pharmacies = read(DATOS / "sdm" / "farmacias.json")["source"]["license"]
+    assert "registro de fuentes del portal" in pharmacies["note"]
+
+
 def test_the_controlled_vocabularies_are_the_eu_ones() -> None:
     for node in nodes(catalogue()["@graph"]):
         for key, prefix in (
@@ -203,6 +226,11 @@ def test_only_the_high_value_datasets_of_the_register_carry_an_hvd_category() ->
         category = hvd["categories"][hvd["datasets"][dataset_id]["category"]]["uri"]
         assert node["dcatap:hvdCategory"]["@id"] == category
         assert node["dcatap:applicableLegislation"]["@id"] == HVD_LEGISLATION
+        # R-02 of #124: Vida Fácil's reading of the Regulation, not the publisher's declaration
+        comment = node["rdfs:comment"]["@value"]
+        assert comment.startswith("Marcado como HVD por Vida Fácil: datos de la Directiva")
+        assert hvd["datasets"][dataset_id]["reason"] in comment
+        assert comment.endswith("el publicador no lo declara.")
         for distribution in node["dcat:distribution"]:
             assert distribution["dcatap:applicableLegislation"]["@id"] == HVD_LEGISLATION
 

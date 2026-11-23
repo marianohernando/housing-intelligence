@@ -156,6 +156,11 @@ MODE_ES = {
     "autobus_interurbano": "autobuses interurbanos",
 }
 PLACES_COLUMNS = ["id", "name", "lon", "lat", "municipio", "seccion", "coordinates"]
+# R-03 of #124: the CC BY 4.0 of the dcat:Catalog is the licence of its metadata only
+CATALOG_LICENCE_SCOPE = (
+    "La licencia de este catálogo cubre sus metadatos; cada distribución lleva la licencia de su "
+    "fuente."
+)
 GEOCODED_NOTE = (
     "Coordenadas geocodificadas por Vida Fácil: el registro no las traía o estaban fuera de sitio."
 )
@@ -166,6 +171,7 @@ class Licence:
     uri: str
     label: str | None  # the registry's name, for a licence with no EU code
     eu_code: str | None
+    note: str | None = None  # where the version comes from, when the portal does not give it
 
 
 @dataclass(frozen=True)
@@ -345,17 +351,30 @@ def uses(catalog: Catalog, dataset: DatasetSpec) -> list[str]:
     return shown
 
 
-def description(catalog: Catalog, dataset: DatasetSpec) -> str:
-    fed = uses(catalog, dataset)
+def description(ctx: Context, dataset: DatasetSpec) -> str:
+    fed = uses(ctx.catalog, dataset)
     what = f"sirve para: {'; '.join(fed)}." if fed else "es un dato de apoyo."
-    return f"Publica: {dataset.owner}. En Vida Fácil {what}"
+    licence = dataset_licence(ctx, dataset)
+    note = f" {licence.note}" if licence and licence.note else ""
+    return f"Publica: {dataset.owner}. En Vida Fácil {what}{note}"
+
+
+def portal_licence_note(portal: dict[str, Any], source: SourceSpec) -> str:
+    """R-01 of #124: the CKAN id has no version; the one we publish is the source registry's."""
+    return (
+        f"Licencia: el portal declara «{portal['license_id']}» ({portal['license_title']}), sin "
+        f"versión; la versión 4.0 es la que declara el registro de fuentes del portal "
+        f"({source.license_url})."
+    )
 
 
 def licence_of(source: SourceSpec, portal: dict[str, Any] | None) -> Licence | None:
     """The portal's licence of a CM dataset, else the registry's; None when neither has one."""
     code = PORTAL_LICENCES.get(str(portal.get("license_id"))) if portal else None
+    if portal and code:
+        return Licence(f"{EU}/licence/{code}", None, code, portal_licence_note(portal, source))
     name = portal["license_title"] if portal else source.license_name
-    code = code or next((c for words, c in NAMED_LICENCES if name and words in name), None)
+    code = next((c for words, c in NAMED_LICENCES if name and words in name), None)
     if code:
         return Licence(f"{EU}/licence/{code}", None, code)
     if source.license_url is None:
@@ -452,7 +471,7 @@ def dataset_node(ctx: Context, dataset: DatasetSpec) -> dict[str, Any]:
         "@type": "dcat:Dataset",
         "dct:identifier": dataset.dataset_id,
         "dct:title": es(title(ctx, dataset)),
-        "dct:description": es(description(ctx.catalog, dataset)),
+        "dct:description": es(description(ctx, dataset)),
         "dct:publisher": ref(agent_iri(dataset.owner)),
         "dcat:distribution": distribution_nodes(ctx, dataset),
     }
@@ -473,7 +492,16 @@ def dataset_node(ctx: Context, dataset: DatasetSpec) -> dict[str, Any]:
         category = ctx.hvd["categories"][hvd["category"]]
         node["dcatap:hvdCategory"] = concept(category["uri"], category["label"])
         node["dcatap:applicableLegislation"] = typed(ctx.hvd["legislation"], "eli:LegalResource")
+        node["rdfs:comment"] = es(hvd_note(hvd["reason"]))
     return node
+
+
+def hvd_note(reason: str) -> str:
+    """R-02 of #124: the HVD mark is Vida Fácil's reading of the Regulation, not the publisher's."""
+    return (
+        f"Marcado como HVD por Vida Fácil: {reason} (Reglamento de Ejecución (UE) 2023/138, "
+        "anexo); el publicador no lo declara."
+    )
 
 
 def own_dataset(key: str, title_text: str, text: str, **extra: Any) -> dict[str, Any]:
@@ -613,7 +641,8 @@ def catalog_node(datasets: list[dict[str, Any]]) -> dict[str, Any]:
         "dct:description": es(
             "Los conjuntos de datos abiertos que usa Vida Fácil, sobre todo del Portal de Datos "
             "Abiertos de la Comunidad de Madrid, con su licencia, su frecuencia y su tema, y lo "
-            "que Vida Fácil publica con ellos: la API y los ficheros en Smart Data Models."
+            "que Vida Fácil publica con ellos: la API y los ficheros en Smart Data Models. "
+            f"{CATALOG_LICENCE_SCOPE}"
         ),
         "dct:publisher": ref(agent_iri(PUBLISHER)),
         "foaf:homepage": {"@id": SITE_URL, "@type": "foaf:Document"},
@@ -658,7 +687,7 @@ def sdm_dataset(ctx: Context, dataset: DatasetSpec) -> dict[str, Any]:
         "id": f"urn:ngsi-ld:Dataset:vidafacil:{dataset.dataset_id}",
         "type": "Dataset",
         "title": {"es": title(ctx, dataset)},
-        "description": {"es": description(ctx.catalog, dataset)},
+        "description": {"es": description(ctx, dataset)},
         "publisher": dataset.owner,
         "landingPage": [portal_url(dataset)],
         "distribution": [str(r.url) for r in distribution_resources(dataset)],
@@ -768,6 +797,7 @@ def places_document(ctx: Context) -> tuple[dict[str, Any], list[dict[str, Any]]]
             "license": {
                 "name": portal["license_title"] if portal else source.license_name,
                 "url": licence.uri if licence else None,
+                **({"note": licence.note} if licence and licence.note else {}),
             },
             "attribution": source.attribution_text,
         },

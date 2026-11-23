@@ -6,6 +6,9 @@
 # observation and environment»), lists. The portals do not mark any of them as HVD today; the rest
 # of the datasets we use (municipal statistics, GTFS timetables, facility registers) are not in its
 # scope, so they carry no category.
+#
+# Each `reason` goes into the dataset's rdfs:comment as «Marcado como HVD por Vida Fácil: {reason}
+# (Reglamento de Ejecución (UE) 2023/138, anexo); el publicador no lo declara.» (R-02 of #124).
 legislation: http://data.europa.eu/eli/reg_impl/2023/138/oj
 # HVD category vocabulary of the Publications Office (scheme http://data.europa.eu/bna/asd487ae75),
 # read with its SPARQL endpoint on 2026-11-23
@@ -19,19 +22,19 @@ categories:
 datasets:
   cm_calidad_aire_estaciones:
     category: air
-    reason: Red de Calidad del Aire de la Comunidad de Madrid (Directiva 2008/50/CE)
+    reason: datos de la Directiva 2008/50/CE, estaciones de la Red de Calidad del Aire de la Comunidad de Madrid
   cm_calidad_aire_horario_2025:
     category: air
-    reason: Red de Calidad del Aire de la Comunidad de Madrid (Directiva 2008/50/CE)
+    reason: datos de la Directiva 2008/50/CE, mediciones de la Red de Calidad del Aire de la Comunidad de Madrid
   cm_calidad_aire_zonas:
     category: air
-    reason: Zonas de evaluación de la calidad del aire (Directiva 2008/50/CE, art. 4)
+    reason: datos de la Directiva 2008/50/CE, zonas de evaluación de la calidad del aire (art. 4)
   ayto_calidad_aire_estaciones:
     category: air
-    reason: Red de vigilancia de la calidad del aire del Ayuntamiento de Madrid (Directiva 2008/50/CE)
+    reason: datos de la Directiva 2008/50/CE, estaciones de la red de vigilancia del Ayuntamiento de Madrid
   ayto_calidad_aire_horario:
     category: air
-    reason: Red de vigilancia de la calidad del aire del Ayuntamiento de Madrid (Directiva 2008/50/CE)
+    reason: datos de la Directiva 2008/50/CE, mediciones de la red de vigilancia del Ayuntamiento de Madrid
   ayto_mapa_estrategico_ruido_2021:
     category: noise
-    reason: Mapa estratégico de ruido de una aglomeración (Directiva 2002/49/CE)
+    reason: datos de la Directiva 2002/49/CE, mapa estratégico de ruido de la aglomeración de Madrid

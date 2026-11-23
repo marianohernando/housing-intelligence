@@ -12,7 +12,8 @@
     "url": "https://datos.comunidad.madrid/dataset/oficinas_farmacia",
     "license": {
       "name": "Creative Commons Attribution",
-      "url": "http://publications.europa.eu/resource/authority/licence/CC_BY_4_0"
+      "url": "http://publications.europa.eu/resource/authority/licence/CC_BY_4_0",
+      "note": "Licencia: el portal declara «cc-by» (Creative Commons Attribution), sin versión; la versión 4.0 es la que declara el registro de fuentes del portal (https://creativecommons.org/licenses/by/4.0/legalcode.es)."
     },
     "attribution": "Fuente: Comunidad de Madrid — Portal de Datos Abiertos (datos.comunidad.madrid), CC BY 4.0."
   },
