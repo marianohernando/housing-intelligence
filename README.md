@@ -46,9 +46,14 @@ Cómo se calcula cada cosa, con sus límites: pestaña **«Cómo lo calculamos»
 
 ## Para agentes de IA (MCP)
 
-Un servidor MCP local deja que un asistente (Claude Desktop, Claude Code u otro cliente MCP) pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Tiene 7 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre, listar las fuentes y, para inversores, la ficha de un barrio y la viabilidad de una promoción. Nunca ejecuta SQL. Se arranca con `make mcp` y funciona solo en tu ordenador, contra tu base local; no está desplegado. Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225, D-249).
+Un servidor MCP deja que un asistente compatible con MCP pregunte a Vida Fácil lo mismo que la web y obtenga las mismas cifras y fuentes. Es una capa fina sobre la API pública. Tiene 7 herramientas de solo lectura: buscar zonas, qué falta en una zona, explicar una zona con sus fuentes, encontrar una zona por su nombre, listar las fuentes y, para inversores, la ficha de un barrio y la viabilidad de una promoción. Nunca ejecuta SQL.
 
-La API pública es abierta y gratuita, sin clave, y el MCP es de código abierto. Rutas, ejemplos con `curl` y cómo conectar el MCP: [vidafacil-madrid.vercel.app/desarrolladores](https://vidafacil-madrid.vercel.app/desarrolladores).
+- **En remoto, gratis y sin clave,** desde el 23 nov: `https://vidafacil-madrid.vercel.app/api/v1/mcp`. No hay que instalar nada (D-255).
+- **En local,** con `make mcp`, contra tu propia base.
+
+Uso y configuración: [`docs/04_technical_architecture/32_mcp_server.md`](docs/04_technical_architecture/32_mcp_server.md) (D-225, D-249 y D-255).
+
+La API pública y el MCP son abiertos y gratuitos, sin clave, y el código es abierto. Rutas, ejemplos con `curl` y cómo conectar el MCP: [vidafacil-madrid.vercel.app/desarrolladores](https://vidafacil-madrid.vercel.app/desarrolladores).
 
 ## Arráncalo en tu ordenador
 
