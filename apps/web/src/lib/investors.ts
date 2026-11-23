@@ -6,7 +6,7 @@
 import type { InvestorZoneSummary } from "@/contracts/investor_zone_list_response";
 import type { DatasetRef, LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 import type { ViabilityRequest } from "@/contracts/viability_request";
-import type { BreakEven, Verdict } from "@/contracts/viability_response";
+import type { BreakEven, ScenarioOutcome, Verdict } from "@/contracts/viability_response";
 import { formatEuros, formatNumber } from "@/lib/format";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
@@ -428,6 +428,8 @@ export const CALCULATOR_TEXT = {
   priceProtected:
     "Precio libre del barrio: no vale para vivienda con protección pública, que tiene un precio máximo legal. Pon el de su régimen.",
   excludedLink: "Qué no incluye esta cuenta",
+  // F14 (jury A1): the parts of the cost are the PEM × coefficient (its parts) and the sales costs; none of these four
+  residualLeavesOut: "La cuenta no incluye sótanos, urbanización, financiación ni IVA.",
   costReset: "Volver a nuestros supuestos de coste",
   costScopeTitle: "Qué incluye el coste y qué no",
   costIncludes: (parts: string[]) =>
@@ -549,6 +551,18 @@ function costReferenceLines(permits?: SourcedValue | null): { text: string; href
       link: "Ver la noticia",
     },
   ];
+}
+
+/**
+ * F14 (jury A1): the residual land value with what it weighs, per m² buildable and as a share of
+ * the sales: «unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por
+ * ventas)». Without a positive figure, no share.
+ */
+export function residualText(scenario: Pick<ScenarioOutcome, "residual_land_value" | "residual_land_value_m2" | "revenue">): string {
+  const value = scenario.residual_land_value;
+  const perM2 = `${roughMoney(scenario.residual_land_value_m2)} por m² edificable`;
+  if (value <= 0 || scenario.revenue <= 0) return `${roughMoney(value)} (${perM2})`;
+  return `${roughMoney(value)} (${perM2}; el ${percent((100 * value) / scenario.revenue, 0)} de los ingresos por ventas)`;
 }
 
 /** «unos 67 millones de €», «unos 900.000 €»: an estimate on assumptions never says its cents (D-252, D7). */

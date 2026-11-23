@@ -238,7 +238,7 @@ export default function InvestorMethod() {
         <li>
           <strong>Lo máximo que se puede pagar por el suelo</strong> (el valor residual: lo que queda para el suelo tras pagar la
           construcción, los gastos y el margen objetivo), redondeado a tres cifras y antes de financiación, impuestos de compra del
-          suelo, urbanización y derribo.
+          suelo, urbanización y derribo. Al lado, lo mismo por m² edificable y en % de los ingresos por ventas.
         </li>
         <li>
           <strong>Hasta cuánto puede costar la construcción</strong> (el punto de equilibrio): el coste por m² construido (PEM ×

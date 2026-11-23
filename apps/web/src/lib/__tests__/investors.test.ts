@@ -33,6 +33,7 @@ import {
   parcelsLine,
   parseNumber,
   rentRange,
+  residualText,
   viabilityRequest,
   withoutMark,
 } from "../investors";
@@ -284,6 +285,20 @@ describe("the cost and its break-even (D-252)", () => {
     expect(roughMoney(900_091)).toBe("unos 900.000 €");
     expect(roughMoney(4297.4)).toBe("unos 4.300 €");
     expect(roughMoney(1_002_000)).toBe("alrededor de 1 millón de €"); // review of #109, R-10
+  });
+
+  it("says the residual per m² buildable and as a share of the sales, and what the account leaves out (F14)", () => {
+    // Méndez Álvaro as the jury read it: 61,2 M€ on 13.121 m² and 109,4 M€ of sales
+    const mendez = { residual_land_value: 61_234_000, residual_land_value_m2: 4_666.9, revenue: 109_400_000 };
+    expect(residualText(mendez)).toBe("unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por ventas)");
+    // Not even free land reaches the target margin: no share of a negative figure
+    const none = { residual_land_value: -200_000, residual_land_value_m2: -150, revenue: 1_000_000 };
+    expect(residualText(none)).toBe("unos -200.000 € (unos -150 € por m² edificable)");
+    // The four parts it names are not in the cost: the PEM goes on the buildable m² above ground, and the coefficient's and
+    // the sales costs' parts are others
+    expect(CALCULATOR_TEXT.residualLeavesOut).toBe("La cuenta no incluye sótanos, urbanización, financiación ni IVA.");
+    const parts = [...M.costParts, ...M.salesCostParts].map((p) => p.label.toLowerCase()).join(" · ");
+    for (const left of ["sótano", "urbaniza", "financia", "iva"]) expect(parts).not.toContain(left);
   });
 
   it("gives the semaphore and the scenarios from the code's figures (D-252, D8)", () => {
