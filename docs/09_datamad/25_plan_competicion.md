@@ -50,12 +50,12 @@ Reglas de honestidad:
 
 Perfiles según las bases. Lo que valoran es una inferencia a partir de su trayectoria pública.
 
-| Miembro | Perfil | Le importará | Respuesta preparada |
+| Rol | Perfil | Le importará | Respuesta preparada |
 |---|---|---|---|
-| Alberto Abella | Gaia-X España | Interoperabilidad, APIs, espacios de datos | API versionada + MCP; catálogo machine-readable; datos con fuente y versión |
-| Olga Quirós | ASEDIE (sector infomediario) | Negocio y valor de reutilizar datos públicos | Pagan las empresas por análisis agregados y API; gratis para personas |
-| Loren Escot | UCM, Estudios Estadísticos | Rigor de los indicadores | Ratio por población frente a la referencia regional, umbrales declarados, confidence en municipios pequeños |
-| Ricardo Curto | Universidad de Oviedo (datos abiertos) | Calidad, licencias y cita de fuentes | Datasets enlazados, licencias por fuente, lineage y Quality Gates |
+| Interoperabilidad y espacios de datos (Gaia-X) | Gaia-X España | Interoperabilidad, APIs, espacios de datos | API versionada + MCP; catálogo machine-readable; datos con fuente y versión |
+| Sector infomediario (ASEDIE) | ASEDIE (sector infomediario) | Negocio y valor de reutilizar datos públicos | Pagan las empresas por análisis agregados y API; gratis para personas |
+| Estadística (UCM) | UCM, Estudios Estadísticos | Rigor de los indicadores | Ratio por población frente a la referencia regional, umbrales declarados, confidence en municipios pequeños |
+| Portales autonómicos (Universidad de Oviedo) | Universidad de Oviedo (datos abiertos) | Calidad, licencias y cita de fuentes | Datasets enlazados, licencias por fuente, lineage y Quality Gates |
 
 ## 5. Calendario y responsables
 

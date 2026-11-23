@@ -68,7 +68,7 @@ Solo cuenta como «dataset CM» lo que tiene ficha en el portal (`hi_ingestion.c
 | Geolocalización | 3 | 6 | 3: 2 · 2: 9 · 1: 24 · -1: 4 | 1,05 |
 | Frecuencia de actualización | 5 | 15 | 1: 39 | 1,00 |
 
-La puntuación y los niveles son los que da la API del Monitorizador, sin recalcular: el total pondera cada dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). El Monitorizador puntúa seis dimensiones (D1–D6); MELODA 5 tiene ocho, con difusión y reputación (Alberto Abella, formación de DATAMAD del 5 nov, diapositiva 43: github.com/albertoabellagarcia/DATAMAD2026). La puntuación se calcula solo con los metadatos públicos de la ficha del portal, no con el contenido del dataset. Un nivel fuera del rango que documenta la API (como −1 en geolocalización) se deja como viene.
+La puntuación y los niveles son los que da la API del Monitorizador, sin recalcular: el total pondera cada dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). El Monitorizador puntúa seis dimensiones (D1–D6); MELODA 5 tiene ocho, con difusión y reputación (presentación de la formación de DATAMAD del 5 nov, diapositiva 43). La puntuación se calcula solo con los metadatos públicos de la ficha del portal, no con el contenido del dataset. Un nivel fuera del rango que documenta la API (como −1 en geolocalización) se deja como viene.
 
 ## 1. Portal CM: publicados por la Comunidad de Madrid (29)
 
