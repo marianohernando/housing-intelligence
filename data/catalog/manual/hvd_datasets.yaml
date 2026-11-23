@@ -1,0 +1,37 @@
+# High-value datasets (Implementing Regulation (EU) 2023/138) among the datasets Vida Fácil uses.
+#
+# scripts/export_dcat_sdm.py marks them in apps/web/public/datos/catalogo.dcat.jsonld with
+# dcatap:hvdCategory and dcatap:applicableLegislation (DCAT-AP 3.0.1). Only where the Regulation
+# applies: the publisher holds the data under one of the acts that its Annex, point 2 («Earth
+# observation and environment»), lists. The portals do not mark any of them as HVD today; the rest
+# of the datasets we use (municipal statistics, GTFS timetables, facility registers) are not in its
+# scope, so they carry no category.
+legislation: http://data.europa.eu/eli/reg_impl/2023/138/oj
+# HVD category vocabulary of the Publications Office (scheme http://data.europa.eu/bna/asd487ae75),
+# read with its SPARQL endpoint on 2026-11-23
+categories:
+  air:
+    uri: http://data.europa.eu/bna/c_63b37dd4
+    label: Aire  # its prefLabel in Spanish; parent: Earth observation and environment
+  noise:
+    uri: http://data.europa.eu/bna/c_e4358335
+    label: Ruido  # its prefLabel in Spanish; parent: Earth observation and environment
+datasets:
+  cm_calidad_aire_estaciones:
+    category: air
+    reason: Red de Calidad del Aire de la Comunidad de Madrid (Directiva 2008/50/CE)
+  cm_calidad_aire_horario_2025:
+    category: air
+    reason: Red de Calidad del Aire de la Comunidad de Madrid (Directiva 2008/50/CE)
+  cm_calidad_aire_zonas:
+    category: air
+    reason: Zonas de evaluación de la calidad del aire (Directiva 2008/50/CE, art. 4)
+  ayto_calidad_aire_estaciones:
+    category: air
+    reason: Red de vigilancia de la calidad del aire del Ayuntamiento de Madrid (Directiva 2008/50/CE)
+  ayto_calidad_aire_horario:
+    category: air
+    reason: Red de vigilancia de la calidad del aire del Ayuntamiento de Madrid (Directiva 2008/50/CE)
+  ayto_mapa_estrategico_ruido_2021:
+    category: noise
+    reason: Mapa estratégico de ruido de una aglomeración (Directiva 2002/49/CE)

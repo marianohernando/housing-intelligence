@@ -1,0 +1,1150 @@
+{
+  "title": "Los 39 conjuntos de datos de la Comunidad de Madrid que usa Vida Fácil, con su MELODA",
+  "description": "Entidades Dataset de Smart Data Models (DCAT-AP 3.0.0) con los niveles MELODA que el modelo prevé: accessMechanism (D2, acceso) y standardization (D4, estandarización). dissemination y reputation no se incluyen: el Monitorizador no las mide. license es el identificador SPDX de la licencia del portal: falta donde no tiene uno (la licencia de datos abiertos del CRTM). El resto de la puntuación está en la API del Monitorizador (isReferencedBy).",
+  "dataModel": {
+    "name": "dataModel.DCAT-AP/Dataset",
+    "schema": "https://smart-data-models.github.io/dataModel.DCAT-AP/Dataset/schema.json",
+    "schemaVersion": "3.0.0"
+  },
+  "meloda": {
+    "source": "spain.meloda.org",
+    "method": "Monitorizador spain.meloda.org (MELODA 5): 6 dimensiones D1–D6, de 0 a 49",
+    "readOn": "2026-11-20",
+    "license": "CC BY 4.0",
+    "attribution": "Fuente: spain.meloda.org"
+  },
+  "license": {
+    "name": "CC BY 4.0",
+    "url": "https://creativecommons.org/licenses/by/4.0/"
+  },
+  "catalog": "https://vidafacil-madrid.vercel.app/datos/catalogo.dcat.jsonld",
+  "generatedBy": "scripts/export_dcat_sdm.py",
+  "count": 39,
+  "entities": [
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_alquiler_m2_codigo_postal_madrid",
+      "type": "Dataset",
+      "title": {
+        "es": "Alquiler del metro cuadrado medio mensual de viviendas habituales arrendadas por código postal para el municipio de Madrid"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/1934259"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/70c3f1f8-534d-41bc-b4ba-6125cdf10628/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-p.csv",
+        "https://datos.comunidad.madrid/dataset/7b1e0527-da4c-4c93-8a58-a53879f9c6b8/resource/ba4f7189-9cea-4907-93d6-ff759e3ce98c/download/alquiler-del-metro-cuadrado-medio-mensual-de-viviendas-habituales-arrendadas-por-codigo-postal-.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210628"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_alquiler_m2_municipios",
+      "type": "Dataset",
+      "title": {
+        "es": "Alquiler del metro cuadrado mensual de viviendas arrendadas con valor catastral para municipios de más de 20.000 habitantes por tipo de vivienda. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales); Alquiler por metro cuadrado de un contrato nuevo, referencia del Ministerio de Vivienda (donde la Comunidad no lo publica)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/alquiler_metro_cuadrado_mensual_viviendas_arrendadas_valor_catastral_municipios_mas_20000"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/244448f3-7df9-4318-8603-92fb550fc865/resource/eb71efce-a7de-46d2-8447-dbf2c8d196b6/download/alquiler-del-metro-cuadrado-mensual-de-viviendas-arrendadas-con-valor-catastral-para-municipios-.csv",
+        "https://datos.comunidad.madrid/dataset/244448f3-7df9-4318-8603-92fb550fc865/resource/90844776-1343-4d4c-9b0a-ed34f347137d/download/alquiler-del-metro-cuadrado-mensual-de-viviendas-arrendadas-con-valor-catastral-para-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211754"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_calidad_aire_estaciones",
+      "type": "Dataset",
+      "title": {
+        "es": "Red de Calidad del Aire. Estaciones"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire; los puntos del mapa (estación de calidad del aire)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/calidad_aire_estaciones"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/4cd076a3-e602-48da-b834-58de39d3125c/resource/c05f6436-783e-4b04-b0d2-47848daea984/download/calidad_aire_estaciones.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212108"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/ENVI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_calidad_aire_horario_2025",
+      "type": "Dataset",
+      "title": {
+        "es": "Red de Calidad del Aire. Datos horarios desde 2005"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/calidad_aire_datos_historico"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/f18aa765-7432-4b39-8b6e-c41799c1c3e0/resource/3887b64f-5140-40eb-b4ba-afc20581ccd5/download/2025.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212109"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/ENVI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_calidad_aire_zonas",
+      "type": "Dataset",
+      "title": {
+        "es": "Red de Calidad del Aire. Municipios por zonas"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: NO₂ medio del año en la estación de calidad del aire de la zona o la más cercana de su misma zona de calidad del aire."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/calidad_aire_zonas"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/fe4acdb6-84e2-4977-b431-29bdce73ff55/resource/face3eca-6ca9-46f9-ae77-aef9015cb529/download/calidad_aire_zonas.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212148"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/ENVI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_catastro_inmuebles_distrito_uso",
+      "type": "Dataset",
+      "title": {
+        "es": "Catastro Inmobiliario. Inmuebles por distrito y uso"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística de la Comunidad de Madrid. En Vida Fácil sirve para: Unidades urbanas de uso comercial del Catastro por cada 1.000 habitantes."
+      },
+      "publisher": "Instituto de Estadística de la Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/catastro_inmuebles_por_distrito_y_uso"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/bfe645b6-79c7-487e-8615-e9c95eb556da/resource/da59a208-17ef-4eeb-bef9-0403e967c278/download/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.csv",
+        "https://datos.comunidad.madrid/dataset/bfe645b6-79c7-487e-8615-e9c95eb556da/resource/dbcd252b-875c-463f-b502-214f1d51c9b7/download/catastro-inmobiliario.-inmuebles-por-distrito-y-uso.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211768"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/REGI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_catastro_unidades_urbanas_uso",
+      "type": "Dataset",
+      "title": {
+        "es": "Catastro Inmobiliario. Unidades urbanas por uso. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística de la Comunidad de Madrid. En Vida Fácil sirve para: Unidades urbanas de suelo vacante del Catastro; Unidades urbanas de uso comercial del Catastro por cada 1.000 habitantes."
+      },
+      "publisher": "Instituto de Estadística de la Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/unidades_urbanas_por_uso"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/01d38f5f-2277-491b-a2b2-ee6b64c44fbd/resource/73066586-6e8c-4fb8-ac64-3e04885cdc39/download/catastro-inmobiliario.-unidades-urbanas-por-uso.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/01d38f5f-2277-491b-a2b2-ee6b64c44fbd/resource/8743bb9b-0fab-4b09-89d2-e2011e35957c/download/catastro-inmobiliario.-unidades-urbanas-por-uso.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211965"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/REGI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_centros_atencion_social",
+      "type": "Dataset",
+      "title": {
+        "es": "Registro de centros de atención social"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 10 minutos a pie o menos de un centro de mayores; Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales); Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más; Minutos a pie hasta el centro de mayores más cercano (mediana de las calles de la zona); Plazas en hogares, clubes y centros de día al alcance a pie por cada 100 personas de 65 años o más; Plazas en residencias de mayores por cada 100 personas de 65 años o más; los puntos del mapa (mayores y atención social)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/atencion_social_registro_centros"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/0d815439-396e-4975-983e-5bb421f617a0/download/atencion_social_registro_centros.csv",
+        "https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/fb98d116-eb79-4100-8cd4-d5ce2e2c439b/download/atencion_social_registro_centros.json",
+        "https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/154afcc2-ba9b-4121-a4b1-e8f140f8702f/download/atencion_social_registro_centros_historico.zip",
+        "https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/1df4036b-b5cb-4c57-a6a0-e91296801639/download/servicios_sociales_registro_centros.json",
+        "https://datos.comunidad.madrid/dataset/b8cdb7f7-3185-4938-800a-fefda72333f5/resource/253e3c3a-9ce1-4d13-a555-4f6ac5cffb93/download/servicios_sociales_registro_centros.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212137"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/MONTHLY",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_centros_educativos",
+      "type": "Dataset",
+      "title": {
+        "es": "Centros educativos de la comunidad de Madrid"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 10 minutos a pie o menos de un colegio de primaria; % de las calles de la zona a 10 minutos a pie o menos de una escuela infantil; Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales); Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años; Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años; Escuelas infantiles al alcance a pie por cada 1.000 niños de 0 a 4 años; 3 indicadores más; los puntos del mapa (centros educativos)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/centros_educativos"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/28d60557-1d73-4281-ab08-6cfd3b2f5f83/download/centros_educativos.csv",
+        "https://datos.comunidad.madrid/dataset/c750856d-3166-4dac-8e80-d1b824c968b5/resource/be2264df-c720-4619-ab79-aebad9b248e0/download/centros_educativos.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212176"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/EDUC"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_centros_sanitarios",
+      "type": "Dataset",
+      "title": {
+        "es": "Centros, servicios y establecimientos sanitarios"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 15 minutos a pie o menos de un centro de salud; Alquiler por metro cuadrado de un contrato nuevo (viviendas habituales); Centros de atención primaria por cada 10.000 habitantes; Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; Minutos a pie hasta el centro de salud más cercano (mediana de las calles de la zona); Minutos a pie hasta el hospital general más cercano (mediana de las calles de la zona); los puntos del mapa (centros de salud y hospitales)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/centros_servicios_establecimientos_sanitarios"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/2948b4da-8b39-42b7-b667-779a5284f39d/download/centros_servicios_establecimientos_sanitarios.csv",
+        "https://datos.comunidad.madrid/dataset/d8a0a444-adf5-4c04-8999-0eac3de52cb7/resource/94090084-2276-4a07-87b4-cd028ea6b46d/download/centros_servicios_establecimientos_sanitarios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210113"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/DAILY",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/HEAL"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_dotacion_camas",
+      "type": "Dataset",
+      "title": {
+        "es": "Dotación de camas por dependencia"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Camas de hospital instaladas por cada 1.000 habitantes (Comunidad de Madrid)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/1912720"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/1324a4c3-aa6c-4209-83c8-9f291adba4e2/resource/884673f6-ce91-4006-8d1b-a357bf7b31a9/download/dotacion-de-camas-por-dependencia.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211388"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/HEAL"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_farmacias_municipios",
+      "type": "Dataset",
+      "title": {
+        "es": "Recursos sanitarios. Farmacias. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Farmacias por cada 10.000 habitantes según la Comunidad de Madrid (ratio oficial)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/farmacias"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/b5e80c83-8e90-4bb5-8648-9f107174fd56/resource/b1187273-5f62-4938-82a3-69d736c3ab0b/download/recursos-sanitarios.-farmacias.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/b5e80c83-8e90-4bb5-8648-9f107174fd56/resource/fdcd465c-4ae2-49e2-8b08-a5da610bb6cc/download/recursos-sanitarios.-farmacias.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210089"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/HEAL"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_hogares_tamano_censo_2021",
+      "type": "Dataset",
+      "title": {
+        "es": "Hogares por tamaño del hogar. Censo 2021. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Porcentaje de hogares de cinco o más personas; Porcentaje de hogares de una persona; Tamaño medio del hogar (aproximado); Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/censo_2021_hogares_por_tamanyo"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/da87c72e-dc76-41f4-a677-2d0b51fe58e4/resource/f3610af6-0aca-44e7-811b-6dfc0538c081/download/hogares-por-tamano-del-hogar.-censo-2021.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/da87c72e-dc76-41f4-a677-2d0b51fe58e4/resource/856d9b72-3102-478e-bb2c-65bbba331cc9/download/hogares-por-tamano-del-hogar.-censo-2021.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212076"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_hospitales_datos_asistenciales",
+      "type": "Dataset",
+      "title": {
+        "es": "Hospitales y datos asistenciales"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Hospitales con régimen de internado (Comunidad de Madrid)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/1912744"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/ab7c4a85-8e40-4f3b-acd0-effd4711759d/resource/2d0910bc-ad3e-4de3-abd3-88aa14d949d7/download/hospitales-y-datos-asistenciales.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211387"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/HEAL"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_infracciones_penales_municipios",
+      "type": "Dataset",
+      "title": {
+        "es": "Hechos conocidos de infracciones penales por tipología en municipios mayores de 20.000 habitantes por municipio"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Infracciones penales conocidas (sin cibercriminalidad) por cada 1.000 habitantes."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/hechos_conocidos_penales_por_tipologia_municipios_mayores_20000_por_municipio"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/2c852cf6-2c61-41f3-8d94-c87edad8b18b/resource/1fb7f93a-d9f1-4269-8487-a2a7acb5dd25/download/hechos-conocidos-de-infracciones-penales-por-tipologia-en-municipios-mayores-de-20.000-habitante.csv",
+        "https://datos.comunidad.madrid/dataset/2c852cf6-2c61-41f3-8d94-c87edad8b18b/resource/f33381ac-953f-48e1-9615-f0f8e2d65b22/download/hechos-conocidos-de-infracciones-penales-por-tipologia-en-municipios-mayores-de-20.000-habitant.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210033"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/JUST"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_nacidos_vivos_municipios",
+      "type": "Dataset",
+      "title": {
+        "es": "Nacidos vivos por lugar de residencia de la madre y sexo. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Nacimientos por cada 1.000 habitantes (último año publicado)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/mnp_nacidos_vivos_por_residencia_y_sexo"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/12b40587-add2-4467-b2a0-205b8b99af7d/resource/00a2fcf4-671f-4ea8-8cde-ac56d2dd352f/download/nacidos-vivos-por-lugar-de-residencia-de-la-madre-y-sexo.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/12b40587-add2-4467-b2a0-205b8b99af7d/resource/ff4065a9-09a7-48c7-b12f-55ad5fde484e/download/nacidos-vivos-por-lugar-de-residencia-de-la-madre-y-sexo.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212051"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_oficinas_farmacia",
+      "type": "Dataset",
+      "title": {
+        "es": "Oficinas de farmacia"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 10 minutos a pie o menos de una farmacia; Farmacias al alcance a pie por cada 10.000 habitantes; Farmacias por cada 10.000 habitantes; Minutos a pie hasta la farmacia más cercana (mediana de las calles de la zona); los puntos del mapa (farmacia)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/oficinas_farmacia"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/2d682b1d-e2e8-4c6f-b902-7a3f108e2fb9/resource/904a161b-f339-4296-be61-1ae914494c89/download/oficinas_farmacia.csv",
+        "https://datos.comunidad.madrid/dataset/2d682b1d-e2e8-4c6f-b902-7a3f108e2fb9/resource/6f1a2274-740c-47b5-a06d-2ab6ffb30685/download/oficinas_farmacia.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210347"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/WEEKLY",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/HEAL"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_parcelas_portal_suelo",
+      "type": "Dataset",
+      "title": {
+        "es": "Parcelas publicadas en el Portal del Suelo 4.0"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: Suelo público para vivienda en el Portal del Suelo (m² edificables)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/parcelas_portal_suelo"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/32af1c4e-1e19-4c22-87c9-df1c5b656f56/download/parcelas_portal_suelo.csv",
+        "https://datos.comunidad.madrid/dataset/7e4e0874-a9bb-4271-a2f3-24651fc6b3af/resource/f853f1c6-76f5-438d-97db-579738048435/download/parcelas_portal_suelo.json",
+        "https://idem.comunidad.madrid/geoidem/UsoDelSuelo/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=UsoDelSuelo:IDEM_V_SUELO_PARCELA&outputFormat=application/json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210102"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/DAILY",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/REGI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_poblacion_edad_nacionalidad_sexo",
+      "type": "Dataset",
+      "title": {
+        "es": "Población censada por edad, nacionalidad y sexo. Censo anual. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Aulas de educación infantil por cada 1.000 niños de 0 a 4 años; Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años; Centros de atención primaria por cada 10.000 habitantes; Centros de mayores (hogares, clubes y centros de día) por cada 1.000 personas de 65 años o más; Centros de salud del SERMAS al alcance a pie por cada 10.000 habitantes; Colegios con primaria públicos o concertados por cada 1.000 menores de 15 años; 12 indicadores más."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/poblacion_censada_por_edad_nacionalidad_y_sexo"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/0a14fbfe-783e-4de3-81b1-ff3792bfd402/resource/bab16922-8df1-49b5-9791-aed4edf8ced1/download/poblacion-censada-por-edad-nacionalidad-y-sexo.-censo-anual.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/0a14fbfe-783e-4de3-81b1-ff3792bfd402/resource/b30133ad-58c4-4532-b7cc-d63ca3f50e7a/download/poblacion-censada-por-edad-nacionalidad-y-sexo.-censo-anual.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212094"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_renta_disponible_municipal",
+      "type": "Dataset",
+      "title": {
+        "es": "Indicador de Renta Disponible Bruta Municipal. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Renta disponible bruta per cápita."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/irpf_indicador_renta"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/1715068e-0527-4632-aba1-37da355b346f/resource/fc9d4336-3c4a-4dd3-8f8f-dac0a4e29033/download/indicador-de-renta-disponible-bruta-municipal.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/1715068e-0527-4632-aba1-37da355b346f/resource/8cff9569-2cc0-438e-af6b-ad0487874ff8/download/indicador-de-renta-disponible-bruta-municipal.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212032"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/ECON"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_secciones_censales",
+      "type": "Dataset",
+      "title": {
+        "es": "Secciones censales"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: la geografía de las zonas del mapa; Superficie de la unidad administrativa (km²)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/secciones_censales"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/b53b766c-e013-444c-b3b0-0992c4a0dbfc/download/558.zip",
+        "https://datos.comunidad.madrid/dataset/2c176a23-a6cd-4c18-b5df-b32a3a3a1219/resource/d96741f3-f789-41df-a58b-e263dc57dd8a/download/secciones_censales.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212239"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/REGI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_transacciones_nueva_usada",
+      "type": "Dataset",
+      "title": {
+        "es": "Transacciones inmobiliarias de vivienda nueva y de segunda mano, por municipio. Comunidad de Madrid"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Compraventas de vivienda de obra nueva en el último año."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/transacciones_vivienda_nueva_usada_municipio"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/55469ce8-f90d-4cf7-b113-12c3449f89e8/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comun.csv",
+        "https://datos.comunidad.madrid/dataset/54fc5b7b-167e-43f3-9d94-d21a7b9bee76/resource/4b0d85d3-7c2a-487c-bdde-c8c8c768bd81/download/extraccionestransacciones-inmobiliarias-de-vivienda-nueva-y-de-segunda-mano-por-municipio.-comu.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210408"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/QUARTERLY",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_unidades_escolares",
+      "type": "Dataset",
+      "title": {
+        "es": "Unidades escolares en centros no universitarios del régimen general por tipo de centro y enseñanza que imparten. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Aulas de educación infantil por cada 1.000 niños de 0 a 4 años; Aulas de primaria (públicas y concertadas) al alcance a pie por cada 1.000 niños de 5 a 14 años."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/unidades_centros_no_universitarios_general_por_tipo_y_ensenanza"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/2487b8a6-52c0-4332-85a6-bfe61d378e27/resource/d40cf2d7-b2f6-4820-8c1b-7e8f582f37a0/download/unidades-escolares-en-centros-no-universitarios-del-regimen-general-por-tipo-de-centro-y-ensenan.csv",
+        "https://datos.comunidad.madrid/dataset/2487b8a6-52c0-4332-85a6-bfe61d378e27/resource/1d7a4942-2118-4299-894d-626744c9cdc5/download/unidades-escolares-en-centros-no-universitarios-del-regimen-general-por-tipo-de-centro-y-ensena.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210295"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/EDUC"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_valor_tasado_vivienda_antiguedad",
+      "type": "Dataset",
+      "title": {
+        "es": "Valor tasado vivienda libre en municipios de más de 25.000 habitantes por antigüedad (euros/m2). Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Valor tasado medio de la vivienda libre de hasta 5 años por metro cuadrado; Valor tasado medio de la vivienda libre de más de 5 años por metro cuadrado."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/valor_tasado_por_antiguedad"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/d52ffa6f-b1e7-4511-8b25-23c4b1e193ca/resource/9946f275-020c-41f9-9d3f-c6ada055c315/download/valor-tasado-vivienda-libre-en-municipios-de-mas-de-25.000-habitantes-por-antiguedad-eurosm2.-mu.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211962"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_valor_tasado_vivienda_municipios",
+      "type": "Dataset",
+      "title": {
+        "es": "Valor tasado de la vivienda libre por municipios de más de 25.000 habitantes. Total (Base 2005). Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Precio de compra estimado por metro cuadrado (valor tasado de la ciudad repartido según el valor catastral); Valor tasado medio de la vivienda libre por metro cuadrado."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/1004050"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/8cb70b8c-c1e2-43f7-826a-1a22c573a743/resource/ef4a2c7a-4273-4116-9ff2-d5f77020ca04/download/valor-tasado-de-la-vivienda-libre-por-municipios-de-mas-de-25.000-habitantes.-total-base-2005.-m.csv",
+        "https://datos.comunidad.madrid/dataset/8cb70b8c-c1e2-43f7-826a-1a22c573a743/resource/a6e14d32-9771-4331-abb4-3f2ac763ee51/download/valor-tasado-de-la-vivienda-libre-por-municipios-de-mas-de-25.000-habitantes.-total-base-2005.-.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211577"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_visados_presupuesto_obra",
+      "type": "Dataset",
+      "title": {
+        "es": "Visados, superficie y presupuesto de dirección de obra de edificios por tipo de obra y características de los edificios"
+      },
+      "description": {
+        "es": "Publica: Comunidad de Madrid. En Vida Fácil sirve para: Presupuesto de ejecución material por m² de los visados de obra nueva de viviendas en bloque (Comunidad de Madrid)."
+      },
+      "publisher": "Comunidad de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/1006022"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/6f917bba-b8cd-448b-997a-c3710b96480c/resource/073b9a57-8d89-4e5f-b496-4db418e8af09/download/visados-superficie-y-presupuesto-de-direccion-de-obra-de-edificios-por-tipo-de-obra-y-caracteris.csv"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5210233"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_viviendas_antiguedad",
+      "type": "Dataset",
+      "title": {
+        "es": "Censo anual Comunidad de Madrid. Viviendas por año de antigüedad. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Porcentaje de viviendas construidas desde 2001."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_antiguedad"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/f6e02fad-70c0-40ee-a030-12f77cd59ad7/resource/64da5fc9-41f1-403b-a675-74580018c26e/download/censo-anual-comunidad-de-madrid.-viviendas-por-ano-de-antiguedad.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/f6e02fad-70c0-40ee-a030-12f77cd59ad7/resource/b3051293-7ae0-4ba8-9e49-79d7c2aadfc0/download/censo-anual-comunidad-de-madrid.-viviendas-por-ano-de-antiguedad.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211749"
+      ],
+      "license": "CC-BY-4.0",
+      "accuralPeriodicity": "http://publications.europa.eu/resource/authority/frequency/ANNUAL",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_viviendas_superficie",
+      "type": "Dataset",
+      "title": {
+        "es": "Censo anual Comunidad de Madrid. Viviendas por superficie agregada. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Porcentaje de viviendas de menos de 60 m²; Viviendas de más de 90 m² por cada 100 hogares de 4 o más personas."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/censo_anual_vivienda_por_superficie_agregada"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/11c43ccd-c06d-4abe-ae60-10e7726fbb55/resource/60404ea4-6df2-4b64-b2da-11794475e014/download/censo-anual-comunidad-de-madrid.-viviendas-por-superficie-agregada.-municipios.csv",
+        "https://datos.comunidad.madrid/dataset/11c43ccd-c06d-4abe-ae60-10e7726fbb55/resource/7ee02f38-3149-4381-8a53-98a67c2da4b1/download/censo-anual-comunidad-de-madrid.-viviendas-por-superficie-agregada.-municipios.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211748"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:cm_viviendas_tenencia_censo_2021",
+      "type": "Dataset",
+      "title": {
+        "es": "Censo de vivienda y locales 2021. Viviendas familiares principales por régimen de tenencia. Municipios"
+      },
+      "description": {
+        "es": "Publica: Instituto de Estadística. En Vida Fácil sirve para: Viviendas principales en alquiler (%)."
+      },
+      "publisher": "Instituto de Estadística",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/censo_2021_viviendas_familiares_por_tenencia"
+      ],
+      "distribution": [
+        "https://datos.comunidad.madrid/dataset/e50045e7-5f31-4bfc-bccd-7f502ed7c95e/resource/9c9e2b00-a74d-461c-af49-82b1c168b23a/download/censo-de-vivienda-y-locales-2021.-viviendas-familiares-principales-por-regimen-de-tenencia.-muni.csv",
+        "https://datos.comunidad.madrid/dataset/e50045e7-5f31-4bfc-bccd-7f502ed7c95e/resource/e80037f0-ec48-4f95-973a-265bb9e679f9/download/censo-de-vivienda-y-locales-2021.-viviendas-familiares-principales-por-regimen-de-tenencia.-mun.json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": false,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5211956"
+      ],
+      "license": "CC-BY-4.0",
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/SOCI"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_aparcamientos_disuasion",
+      "type": "Dataset",
+      "title": {
+        "es": "Aparcamientos de disuasión ligados al transporte público en la Comunidad de Madrid"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: Minutos a pie hasta el aparcamiento público más cercano de los publicados en abierto (mediana de las calles de la zona); los puntos del mapa (aparcamiento disuasorio)."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/aparcamientos_disuasion"
+      ],
+      "distribution": [
+        "https://opendata.arcgis.com/api/v3/datasets/2a2b8fcbd4fc4115a57519ef1587b011_0/downloads/data?format=csv&spatialRefId=4326"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212207"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_gtfs_autobuses_urbanos",
+      "type": "Dataset",
+      "title": {
+        "es": "Oferta planificada de la Red de Autobuses Urbanos del resto de municipios de la Comunidad de Madrid"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público; Minutos a pie hasta la parada de autobús más cercana (EMT, interurbanos y urbanos; mediana de las calles de la zona); Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona); las paradas de autobuses urbanos del resto de municipios con su frecuencia de paso."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_resto_municipios_horarios_topologia"
+      ],
+      "distribution": [
+        "https://www.arcgis.com/sharing/rest/content/items/357e63c2904f43aeb5d8a267a64346d8/data"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212211"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_gtfs_cercanias",
+      "type": "Dataset",
+      "title": {
+        "es": "Oferta planificada de la Red de Cercanías Madrid"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público; Minutos a pie hasta la estación de Metro, Metro Ligero o Cercanías más cercana (mediana de las calles de la zona); Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona); Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona); las paradas de Cercanías con su frecuencia de paso."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_cercanias_oferta_planificada_horarios_topologia"
+      ],
+      "distribution": [
+        "https://www.arcgis.com/sharing/rest/content/items/1a25440bf66f499bae2657ec7fb40144/data"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212214"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_gtfs_emt",
+      "type": "Dataset",
+      "title": {
+        "es": "Oferta planificada de la Red de Autobuses Urbanos de Madrid - EMT"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público; Minutos a pie hasta la parada de autobús más cercana (EMT, interurbanos y urbanos; mediana de las calles de la zona); Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona); las paradas de autobuses EMT de Madrid con su frecuencia de paso."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_autobuses_urbanos_emt_horarios_topologia"
+      ],
+      "distribution": [
+        "https://www.arcgis.com/sharing/rest/content/items/868df0e58fca47e79b942902dffd7da0/data"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212212"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_gtfs_interurbanos",
+      "type": "Dataset",
+      "title": {
+        "es": "Oferta planificada de la Red de Autobuses Interurbanos"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público; Minutos a pie hasta la parada de autobús más cercana (EMT, interurbanos y urbanos; mediana de las calles de la zona); Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona); las paradas de autobuses interurbanos con su frecuencia de paso."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_autobuses_interurbanos_horarios_topologia"
+      ],
+      "distribution": [
+        "https://www.arcgis.com/sharing/rest/content/items/885399f83408473c8d815e40c5e702b7/data"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212209"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_gtfs_metro",
+      "type": "Dataset",
+      "title": {
+        "es": "Oferta planificada de la Red de Metro"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público; Minutos a pie hasta la estación de Metro, Metro Ligero o Cercanías más cercana (mediana de las calles de la zona); Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona); Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona); las paradas de metro con su frecuencia de paso."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_metro_oferta_planificada_horarios_topologia"
+      ],
+      "distribution": [
+        "https://www.arcgis.com/sharing/rest/content/items/5c7f2951962540d69ffe8f640d94c246/data"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212218"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_gtfs_metro_ligero",
+      "type": "Dataset",
+      "title": {
+        "es": "Oferta planificada de la Red de Metro Ligero"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: % de las calles de la zona a 5 minutos a pie o menos de una parada de transporte público; Minutos a pie hasta la estación de Metro, Metro Ligero o Cercanías más cercana (mediana de las calles de la zona); Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona); Minutos a pie hasta la parada de transporte público más cercana (mediana de las calles de la zona); las paradas de metro ligero con su frecuencia de paso."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_oferta_planificada_horarios_topologia"
+      ],
+      "distribution": [
+        "https://www.arcgis.com/sharing/rest/content/items/aaed26cc0ff64b0c947ac0bc3e033196/data"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212216"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_topologia_cercanias",
+      "type": "Dataset",
+      "title": {
+        "es": "Topología de la Red de Cercanías Madrid"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona)."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_cercanias_lineas_estaciones_accesos_vestibulos_andenes"
+      ],
+      "distribution": [
+        "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M5_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212215"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_topologia_metro",
+      "type": "Dataset",
+      "title": {
+        "es": "Topología de la Red de Metro"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona)."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_metro_lineas_estaciones_accesos_vestibulos_andenes"
+      ],
+      "distribution": [
+        "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M4_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212219"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    },
+    {
+      "id": "urn:ngsi-ld:Dataset:vidafacil:crtm_topologia_metro_ligero",
+      "type": "Dataset",
+      "title": {
+        "es": "Topología de la Red de Metro Ligero / Tranvía"
+      },
+      "description": {
+        "es": "Publica: Consorcio Regional de Transportes de Madrid. En Vida Fácil sirve para: Minutos a pie hasta la estación de metro, Metro Ligero o Cercanías accesible (sin escaleras) más cercana (mediana de las calles de la zona)."
+      },
+      "publisher": "Consorcio Regional de Transportes de Madrid",
+      "landingPage": [
+        "https://datos.comunidad.madrid/dataset/red_de_metro_ligero_tranvia_lineas_estaciones_accesos_vestibulos_andenes"
+      ],
+      "distribution": [
+        "https://services5.arcgis.com/UxADft6QPcvFyDU1/arcgis/rest/services/M10_Red/FeatureServer/0/query?where=1%3D1&outFields=IDESTACION%2CCODIGOEMPRESA%2CDENOMINACION%2CGRADOACCESIBILIDAD&orderByFields=IDESTACION&returnGeometry=false&f=json"
+      ],
+      "belongsToCatalogue": "https://datos.comunidad.madrid",
+      "geolocation": true,
+      "accessMechanism": "Level1AccessMechanism",
+      "standardization": "Level2Standardization",
+      "isReferencedBy": [
+        "https://spain.meloda.org/api/v1/datasets/5212217"
+      ],
+      "theme": [
+        "http://publications.europa.eu/resource/authority/data-theme/TRAN"
+      ]
+    }
+  ]
+}
