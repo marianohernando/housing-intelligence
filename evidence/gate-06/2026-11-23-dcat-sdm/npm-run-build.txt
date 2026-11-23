@@ -1,0 +1,47 @@
+
+> @hi/web@0.0.1 prebuild
+> node scripts/copy-maplibre-worker.mjs
+
+maplibre worker copied to <workspace>/hi-f14d/apps/web/public/maplibre
+
+> @hi/web@0.0.1 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+✓ Running next.config.ts took 55ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 524ms
+  Running TypeScript ...
+⚠ Your version of Next.js is affected by a known security vulnerability. This command is continuing after the upgrade reminder.
+Reference: https://registry.npmjs.org/-/npm/v1/security/advisories/bulk
+  Finished TypeScript in 1326ms ...
+  Collecting page data using 9 workers ...
+  Generating static pages using 9 workers (0/14) ...
+  Generating static pages using 9 workers (3/14) 
+  Generating static pages using 9 workers (6/14) 
+  Generating static pages using 9 workers (10/14) 
+✓ Generating static pages using 9 workers (14/14) in 247ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/health
+├ ○ /apple-icon.png
+├ ○ /como-lo-calculamos
+├ ○ /desarrolladores
+├ ○ /icon.png
+├ ○ /inversores
+├ ƒ /inversores/[barrio]
+├ ƒ /inversores/parcela/[rc]
+├ ○ /map
+├ ○ /opengraph-image.png
+├ ƒ /que-falta
+├ ƒ /zona/[level]/[code]
+└ ƒ /zonas
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
