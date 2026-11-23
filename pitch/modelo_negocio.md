@@ -56,9 +56,9 @@
 - Las entrevistas de disposición a pagar con inversores y promotores, y también con consultoras e inmobiliarias.
 
 ## Qué se dice en el pitch
-- **Slide 3, columna «Viabilidad»:** «Gratis siempre: datos, zonas, «Qué falta», cada ficha de parcela y la API.», «Pagarán las empresas: plan empresarial e informes a medida.», «API y MCP abiertos y gratuitos, sin clave.» y, al pie, «Ninguna cifra la genera una IA: salen de cálculos deterministas sobre datos oficiales, cada una con su fuente.».
+- **Slide 3, columna «Viabilidad»:** «Gratis siempre: datos, zonas, «Qué falta», cada ficha de parcela y la API.», «Pagarán las empresas: plan empresarial e informes a medida.», «API y MCP abiertos y gratuitos, sin clave.» y, al pie, «Ninguna cifra la genera una IA, y las comprobamos: en Parla, 2,03 farmacias por 10.000 habitantes; la estadística oficial, 2,04.».
 - **Slide 3, columna «Utilidad»:** «Inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.».
-- **Guion, bloque 5:** «¿Quién paga? Gratis siempre: los datos, las zonas, qué falta, cada ficha de parcela y la API. Pagarán las empresas un plan con carteras de parcelas y avisos de suelo nuevo, e informes a medida.».
+- **Guion, bloque 5** (desde la tarde del 23 nov, más corto): «¿Quién paga? Gratis siempre: datos, zonas, qué falta, cada parcela y la API; pagarán las empresas carteras de parcelas, avisos de suelo nuevo e informes a medida.».
 - **«Pagarán», no «pagan»:** hoy no se cobra nada.
 - **«API y MCP abiertos y gratuitos, sin clave»** desde el 23 nov por la tarde: el MCP ya funciona en remoto (D-255). Por la mañana decía «API abierta y gratuita; MCP de código abierto», porque el MCP solo funcionaba en local.
 - **No se dice «de dónde vivir a dónde construir»** como algo hecho (revisión del #98): hoy ninguna parcela se cruza con la vivienda que le falta a su zona. Es el paso siguiente (pregunta 60).
@@ -70,7 +70,7 @@
 ## Lo que decía el 19 nov (sustituido el 23 nov)
 - Personas y ayuntamientos, gratis; pagarían los inversores y los promotores por su versión, con un plan Inversor (unos 99–199 €/mes), un plan Equipo (unos 399 €/mes) y el estudio a medida (490–1.500 €).
 - La API y el MCP, gratis para todos. En la slide 3, «Gratis para personas y ayuntamientos. Pagarán inversores y promotores.» y «Código abierto, y API y MCP gratis.».
-- Por qué cambia: el jurado simulado vio que lo que se quería cobrar ya era gratis en la API, y que «API y MCP gratis» prometía un MCP que solo funciona en local.
+- Por qué cambia: el jurado simulado vio que lo que se quería cobrar ya era gratis en la API, y que «API y MCP gratis» prometía un MCP que entonces solo funcionaba en local (desde el deploy-46 también funciona en remoto, D-255).
 
 ## Lo que decía el 12 nov (sustituido)
 - En el pitch, los ayuntamientos pagaban un informe de «Qué falta» de 990–1.500 €, por contrato menor.

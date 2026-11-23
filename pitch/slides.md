@@ -2,7 +2,7 @@
 
 ## Qué es este fichero
 Las 4 slides que piden las bases (§8, resumen en `docs/09_datamad/24_bases_oficiales_2026.md`), en su orden.
-- **Entrega:** PDF (y PPTX de respaldo) antes de las 14:00 del 26 nov. Se sube como tarde a las 13:30 (`docs/09_datamad/25_plan_competicion.md` §9).
+- **Entrega:** PDF (y PPTX de respaldo) el jueves 26 nov, hasta las 16:00, según el último correo de la organización (antes, «antes de las 14:00»; `docs/09_datamad/25_plan_competicion.md` §9). Entre las 16:00 y las 17:00 el jurado elige a los 12 mirando solo lo entregado, así que el deck tiene que entenderse sin la voz.
 - **24 nov:** solo maquetar con capturas reales de la demo desplegada.
 - **Estado:** borrador del 11 nov. Lo marcado «pendiente de A/B/C» se cierra en el freeze del 23 nov.
 - **Reordenación del 23 nov** (decisión de Mariano sobre el informe del jurado simulado del 21 nov). En la formación del 5 nov se describió al ganador de 2024 como un buscador de pisos con el ambulatorio y el metro cerca y un perfil ponderado, hecho con scraping, y se le llamó «calderilla». Por eso el pitch abre con lo que eso no hacía:
@@ -107,7 +107,7 @@ Tres tarjetas de cristal en fila y, debajo, una banda con los enlaces.
    - «**Personas:** en 179 municipios, sin scraping, con el trayecto al trabajo y lo que le falta a cada zona.» (revisión del #122, R-06: la slide no nombra al ganador de 2024, que puede estar en la sala y del que no hay fuente pública; el guion lo cita como algo contado en la formación);
    - la cita de la segunda ronda, «Ha mejorado un montón… ahora sí que te arroja cosas interesantes.», firmada «P6, segunda prueba con usuarios, 23 nov», sin nombre (A4, del jurado simulado, vio flojas las del 14 nov);
    - las miniaturas C2 y C3. **C3 se RECAPTURA tras el despliegue del 23 nov**; la ruta no cambia hasta entonces.
-3. **«Viabilidad» → «Se sostiene»:** «Gratis siempre: datos, zonas, «Qué falta», cada ficha de parcela y la API.», «Pagarán las empresas: plan empresarial e informes a medida.», «Solo zonas, nunca datos de personas.», «Coste de infraestructura: 0 € hoy; unos 45 $/mes para poder cobrar.» (revisión del #122, R-08) y «API y MCP abiertos y gratuitos, sin clave.». Al pie, con el borde violeta: «**Ninguna cifra la genera una IA:** salen de cálculos deterministas sobre datos oficiales, cada una con su fuente.».
+3. **«Viabilidad» → «Se sostiene»:** «Gratis siempre: datos, zonas, «Qué falta», cada ficha de parcela y la API.», «Pagarán las empresas: plan empresarial e informes a medida.», «Solo zonas, nunca datos de personas.», «Coste de infraestructura: 0 € hoy; unos 45 $/mes para poder cobrar.» (revisión del #122, R-08) y «API y MCP abiertos y gratuitos, sin clave.». Al pie, con el borde violeta, desde la tarde del 23 nov: «**Ninguna cifra la genera una IA,** y las comprobamos: en Parla, 2,03 farmacias por 10.000 habitantes; la estadística oficial, 2,04.» (mejora 1 del jurado simulado del formador del 6 nov; pregunta 32). Antes: «Ninguna cifra la genera una IA: salen de cálculos deterministas sobre datos oficiales, cada una con su fuente.».
 - **Pie:** «Demo pública con datos reales (datos del 19 nov). Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid.» (antes, «(12 nov)»; la API está en `data_version 2026-11-19`).
 - **Medido el 23 nov a 1920 × 1080** (`build.py` en borrador sin fallos, vista previa a 100 ppp): para que quepan las tres columnas, la letra de las viñetas y de la línea del pie de «Viabilidad» baja de 26 a 24 px (`pitch/deck/deck.css`), por encima del mínimo de 22 px que comprueba el build. Las tres tarjetas acaban encima de la banda de enlaces, y en «Utilidad» las miniaturas quedan justo bajo la cita.
 
@@ -234,6 +234,7 @@ Versión con buscador (la que vale):
 
 ### Banda de enlaces (con QR)
 - Demo: https://vidafacil-madrid.vercel.app (verificada el 11 nov con el buscador encendido: smoke 7/7, `evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11).
+  - **Desde la tarde del 23 nov, bajo la URL de la demo:** «MCP, sin clave: vidafacil-madrid.vercel.app/api/v1/mcp», a 22 px. Es la dirección que cita el bloque 5 del guion («con esta dirección»): el MCP remoto, en producción desde el deploy-46 (D-255). **Medido a 1920 × 1080** (23 nov por la tarde, `build.py` en borrador sin fallos): cabe en una línea dentro de la tarjeta, y las tres columnas acaban por encima de la banda.
 - Código: https://github.com/marianohernando/housing-intelligence
 
 ---
