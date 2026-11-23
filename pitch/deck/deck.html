@@ -4,7 +4,7 @@
   ({{…}}) y escribe pitch/deck/build/index.html y el PDF. Contenido: pitch/slides.md.
   Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero (capturas/ o evidence/), relativa a
   esta plantilla. build.py la vuelve a resolver al construir: gana pitch/capturas/Cn.png si existe
-  (C1, C2, C3 y C6 están ahí y versionadas: las hizo D en producción) y, si no, la de
+  (C1, C2, C3, C5 y C6 están ahí y versionadas: las hizo D en producción) y, si no, la de
   EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
 -->
 <html lang="es">
@@ -32,7 +32,7 @@
     </div>
     <div class="glass visual">
       <figure class="shot" data-shot="C5">
-        <img src="../../evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png" alt="Chamartín en 3D con su contorno violeta, etiquetas de estación, metro, centro de salud y colegio, y la tarjeta «Qué falta aquí»">
+        <img src="../capturas/C5.png" alt="Chamartín en 3D con su contorno violeta, etiquetas de estación, metro, centro de salud y colegio, la pestaña «Inversores» y la tarjeta «Lo que le falta a esta zona»">
         <figcaption class="ph">C5 · Zona en 3D (1440 px)</figcaption>
       </figure>
     </div>
@@ -134,7 +134,7 @@
         <li>Pagarán las empresas: plan empresarial e informes a medida.</li>
         <li>Solo zonas, nunca datos de personas.</li>
         <li>Coste de infraestructura: 0 € hoy; unos 45 $/mes para poder cobrar.</li>
-        <!-- 23 nov: el MCP solo funciona en local; antes, «Código abierto, y API y MCP gratis.» -->
+        <!-- 23 nov: el MCP ya funciona también en remoto, sin clave (D-255, deploy-46); antes, «Código abierto, y API y MCP gratis.» -->
         <li>API y MCP abiertos y gratuitos, sin clave.</li>
       </ul>
       <!-- 23 nov: la línea de inversores pasa a la columna de utilidad; aquí, la de la IA (formación del 5 nov: «yo necesito el número») -->
