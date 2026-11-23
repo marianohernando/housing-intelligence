@@ -1,0 +1,50 @@
+deploy-45's specific API checks against production (dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6, 861f94f0), 2026-11-23 10:28-10:31 UTC; before = dpl_5udnLokddKKNCueMzPiwnPsrvQXX (a6690573), 10:25 UTC.
+
+1. GET /api/v1/gaps/municipio/28165 (Valdilecha), the housing row
+   before: status FALTA · ratio 0.5981 · label «Vivienda para familias» · method gap-0.3
+   after:  status CONTEXTO · ratio null · label «Viviendas grandes por cada 100 hogares grandes (contexto)» · method gap-0.4 · context_rows ["vivienda"]
+   value and references kept: 262.1 viviendas/100 hogares; reference 438.2 («Otros municipios rurales de la Comunidad de Madrid»); Comunidad 177.6
+   explanation: «262,1 viviendas de más de 90 m² por cada 100 hogares de 4 o más personas; en los demás municipios rurales de la Comunidad de Madrid, 438,2 (en toda la Comunidad, 177,6). Es un dato de contexto, no un veredicto: el parque incluye segundas residencias, así que no dice si falta vivienda»
+   no p: the row has no p field, and Valdilecha is no longer in /gaps/impact, where before it had p_value 3.59E-59 in the housing row
+   the other 5 rows of Valdilecha: identical (status, ratio and text)
+
+2. GET /api/v1/gaps/impact
+   before: escuela_infantil 3 zones/25551 · colegio 0 zones/0 · centro_salud 0 zones/0 · mayores 6 zones/54581 · farmacia 5 zones/667172 · vivienda 25 zones/99483
+   after:  escuela_infantil 3 zones/25551 · colegio 0 zones/0 · centro_salud 0 zones/0 · mayores 6 zones/54581 · farmacia 5 zones/667172
+   no housing row: 0 rows; escuela infantil: 25551 niños de 0 a 4 años in 3 zones
+   the 5 judged rows are identical before and after; the housing datasets cm_hogares_tamano_censo_2021 and cm_viviendas_superficie leave the list
+
+3. The housing row's maps (GET /api/v1/gaps?row=vivienda)
+   municipio before: {"CUBIERTO":134,"FALTA":25,"JUSTO":20} · after: {"CONTEXTO":179}; ratio null in all after: 0 with a ratio
+   distrito before: {"SIN_DATOS":21} · after: {"SIN_DATOS":21}
+
+4. GET /api/v1/openapi.json, info (the repo URL written as <REPO_URL>)
+   {
+     "title": "Vida Fácil API",
+     "description": "API pública y gratuita, de solo lectura, sobre datos abiertos de la Comunidad de Madrid: dónde vivir, qué falta en cada zona y la ficha de un barrio o una parcela. Cada cifra lleva su fuente y su licencia (campos `datasets` y `attribution_text`). El código es Apache-2.0; los datos llevan la licencia de cada fuente (CC BY 4.0 en el portal de datos abiertos de la Comunidad de Madrid).",
+     "contact": {
+       "name": "Vida Fácil",
+       "url": "<REPO_URL>"
+     },
+     "license": {
+       "name": "Apache-2.0",
+       "identifier": "Apache-2.0"
+     },
+     "version": "0.0.1"
+   }
+   [
+     {
+       "url": "https://vidafacil-madrid.vercel.app",
+       "description": "Demo pública"
+     }
+   ]
+   before: {"title":"Housing Intelligence API","version":"0.0.1"}
+
+5. The four demo parcel sheets (GET /api/v1/investors/parcels?rc=, the warm-up answers)
+   2122202VK4722A: degraded 0 · warnings 0 · sale_price_m2.mark estimacion (defaults) and estimacion (context.sheet.defaults) · ICIO: «vigente en 2025» 0 times
+   3959601VK4735H: degraded 0 · warnings 0 · sale_price_m2.mark estimacion (defaults) and estimacion (context.sheet.defaults) · ICIO: «vigente en 2025» 0 times
+   0390314VK4709A: degraded 0 · warnings 0 · sale_price_m2.mark estimacion (defaults) and estimacion (context.sheet.defaults) · ICIO: «vigente en 2025» 0 times
+   9943003VK3794D: degraded 0 · warnings 0 · sale_price_m2.mark estimacion (defaults) and estimacion (context.sheet.defaults) · ICIO: «vigente en 2025» 0 times
+   the ICIO's text on all four: «ICIO de Madrid, 3,75 % del presupuesto (ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154), y la tasa de la licencia y otros tributos, alrededor de un 1 % (supuesto)»
+
+6. GET /api/v1/investors/zones/ES.28.BAR.28079164 (Pinar del Rey): mark «estimacion» on data.prices.sale_m2, data.prices.new_build_sale_m2, data.defaults.sale_price_m2 (before: dato)
