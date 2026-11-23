@@ -2299,3 +2299,8 @@ Punto 1 de P7 (inversor) («los suministros son súper importantes»; en Madrid 
    - Los estados terminados de las obras de un ámbito salen del dominio (`DONE_PHASES`, en `investorMethod.ts`), no de una copia en la web.
    - «Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.»
    - La ordenanza del ICIO se cita sin número (punto 10): el número que se le daba no se ha podido comprobar.
+
+## D-254 — La fila de vivienda de «Qué falta» pasa a ser contexto (`gap-0.4`, 2026-11-23)
+Jurado simulado (§3.3, C4): la fila «Vivienda para familias» salía FALTA en 25 municipios, y 23 de ellos tienen más viviendas de más de 90 m² que hogares de 4 o más personas (Navas del Rey, 342 por cada 100 frente a 436 en los demás rurales). La referencia rural está inflada por las segundas residencias, así que la cifra no dice si falta vivienda y publicaba p = 0 y 4,65·10⁻²⁵⁶ por eso.
+Desde `gap-0.4` es una fila de contexto: estado `CONTEXTO` (o `SIN_DATOS`), con su valor, su referencia y la explicación, sin ratio ni p, fuera de `GET /gaps/impact`, del mapa, de la tarjeta, del resumen y de las filas destacadas de la búsqueda. Se llama «Viviendas grandes por cada 100 hogares grandes (contexto)». El contrato lo dice en `method.context_rows` y lo valida: una fila de contexto nunca es FALTA, JUSTO ni CUBIERTO.
+El nombre sale del dominio (`CONTEXT_ROWS`) y del catálogo a la vez, así que basta con desplegar: no hace falta sincronizar el registro. **Cómo volver atrás:** revertir el PR.
