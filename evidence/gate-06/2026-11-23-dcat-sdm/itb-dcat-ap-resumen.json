@@ -1,0 +1,358 @@
+{
+  "validator": "https://www.itb.ec.europa.eu/shacl/dcat-ap/api/validate (REST API del validador SHACL de DCAT-AP de la Comisión Europea, ITB)",
+  "date": "2026-11-23",
+  "file": "apps/web/public/datos/catalogo.dcat.jsonld",
+  "sha256": "ebe80b829f48f9bbeab51875f966749dfd3f2cac4194e233b26aea39ffff9c16",
+  "background_check": "Un catálogo mínimo de 2 nodos (dcat:Catalog + foaf:Agent) da las mismas 5 violaciones foaf:name en 'base': están en nodos en blanco del conocimiento de fondo del validador, no en nuestro fichero. Igual con las 6 dct:title de 'full', sobre los esquemas ADMS (purl.org/adms/*).",
+  "runs": {
+    "dcatap.3_0_1_base": {
+      "conforms": "false",
+      "results": 5,
+      "background": 5,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 0,
+      "by_message": []
+    },
+    "dcatap.3_0_1_base0": {
+      "conforms": "true",
+      "results": 0,
+      "background": 0,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 0,
+      "by_message": []
+    },
+    "dcatap.3_0_1_codelists": {
+      "conforms": "true",
+      "results": 109,
+      "background": 0,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 109,
+      "by_message": [
+        {
+          "severity": "Warning",
+          "path": "dct:publisher",
+          "message": "Value does not have shape <http://data.europa.eu/r5r#CorporateBodyRestriction>",
+          "count": 65
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:spatial",
+          "message": "Value does not have shape _:fc74ade3e6f9a2cc367363a0404ea47c",
+          "count": 43
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:spatial",
+          "message": "Value does not have shape _:9f446d0221f14c161c410847b44c58a0",
+          "count": 1
+        }
+      ]
+    },
+    "dcatap.3_0_1_full": {
+      "conforms": "false",
+      "results": 484,
+      "background": 16,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 468,
+      "by_message": [
+        {
+          "severity": "Warning",
+          "path": "dcatap:availability",
+          "message": "Property needs to have at least 1 value",
+          "count": 112
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:description",
+          "message": "Property needs to have at least 1 value",
+          "count": 112
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:keyword",
+          "message": "Property needs to have at least 1 value",
+          "count": 64
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:temporal",
+          "message": "Property needs to have at least 1 value",
+          "count": 63
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:contactPoint",
+          "message": "Property needs to have at least 1 value",
+          "count": 60
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:spatial",
+          "message": "Property needs to have at least 1 value",
+          "count": 20
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:type",
+          "message": "Property needs to have at least 1 value",
+          "count": 19
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:format",
+          "message": "Property needs to have at least 1 value",
+          "count": 9
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:theme",
+          "message": "Property needs to have at least 1 value",
+          "count": 3
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:distribution",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:modified",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:issued",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:license",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:centroid",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:bbox",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        }
+      ]
+    },
+    "dcatap.3_0_1_range": {
+      "conforms": "true",
+      "results": 0,
+      "background": 0,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 0,
+      "by_message": []
+    },
+    "dcatap.3_0_1_range0": {
+      "conforms": "true",
+      "results": 0,
+      "background": 0,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 0,
+      "by_message": []
+    },
+    "dcatap.3_0_1_rec": {
+      "conforms": "true",
+      "results": 473,
+      "background": 5,
+      "violations_in_our_file": 0,
+      "warnings_in_our_file": 468,
+      "by_message": [
+        {
+          "severity": "Warning",
+          "path": "dcatap:availability",
+          "message": "Property needs to have at least 1 value",
+          "count": 112
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:description",
+          "message": "Property needs to have at least 1 value",
+          "count": 112
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:keyword",
+          "message": "Property needs to have at least 1 value",
+          "count": 64
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:temporal",
+          "message": "Property needs to have at least 1 value",
+          "count": 63
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:contactPoint",
+          "message": "Property needs to have at least 1 value",
+          "count": 60
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:spatial",
+          "message": "Property needs to have at least 1 value",
+          "count": 20
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:type",
+          "message": "Property needs to have at least 1 value",
+          "count": 19
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:format",
+          "message": "Property needs to have at least 1 value",
+          "count": 9
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:theme",
+          "message": "Property needs to have at least 1 value",
+          "count": 3
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:modified",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:issued",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dct:license",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:centroid",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:bbox",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Warning",
+          "path": "dcat:distribution",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        }
+      ]
+    },
+    "dcatap_hvd.3_0_0_full": {
+      "conforms": "false",
+      "results": 568,
+      "background": 0,
+      "violations_in_our_file": 561,
+      "warnings_in_our_file": 7,
+      "by_message": [
+        {
+          "severity": "Violation",
+          "path": "dcatap:applicableLegislation",
+          "message": "Property needs to have at least 1 value",
+          "count": 163
+        },
+        {
+          "severity": "Violation",
+          "path": "dcatap:applicableLegislation",
+          "message": "Does not have value <http://data.europa.eu/eli/reg_impl/2023/138/oj>",
+          "count": 163
+        },
+        {
+          "severity": "Violation",
+          "path": "dcat:accessURL",
+          "message": "Value must be an instance of rdfs:Resource",
+          "count": 112
+        },
+        {
+          "severity": "Violation",
+          "path": "(ruta compuesta)",
+          "message": "Property needs to have at least 1 value",
+          "count": 61
+        },
+        {
+          "severity": "Violation",
+          "path": "dcatap:hvdCategory",
+          "message": "Property needs to have at least 1 value",
+          "count": 57
+        },
+        {
+          "severity": "Warning",
+          "path": null,
+          "message": "Value must have at least one of the following shapes: _:e67268af60eae33270094a41bbda8297, _:6fefaab7a570c76ebfbe63fa7d5f2250, _:b7d50a8e50f41d00fea8fd6860caae59, _:8207ff6bc680279a7a19a629e6cb344d, _:45761e0d12812ee1b9adb9f71bb5a6a9, _:011268a4953abfcbe67026d61579445a",
+          "count": 7
+        },
+        {
+          "severity": "Violation",
+          "path": "vcard:hasURL",
+          "message": "Value must be an instance of rdfs:Resource",
+          "count": 1
+        },
+        {
+          "severity": "Violation",
+          "path": null,
+          "message": "Value must have at least one of the following shapes: _:fe42accf7db7f8323ab3f9d418f97e2e, _:9208d8aaa9ba91c5b4b753c6a829dd06",
+          "count": 1
+        },
+        {
+          "severity": "Violation",
+          "path": "foaf:page",
+          "message": "Property needs to have at least 1 value",
+          "count": 1
+        },
+        {
+          "severity": "Violation",
+          "path": "dcat:endpointDescription",
+          "message": "Value must be an instance of rdfs:Resource",
+          "count": 1
+        },
+        {
+          "severity": "Violation",
+          "path": "dcat:endpointURL",
+          "message": "Value must be an instance of rdfs:Resource",
+          "count": 1
+        }
+      ],
+      "note": "El perfil HVD trata todos los datasets del fichero como de alto valor: casi todas sus violaciones son que los 56 conjuntos que no son HVD no llevan hvdCategory ni applicableLegislation. En los 6 marcados como HVD quedan 12: 6 de la regla de API (un dataset HVD debe servirse por un dcat:DataService; ni la Comunidad ni el Ayuntamiento declaran uno para ellos, y no lo inventamos) y 6 de rango sobre dcat:accessURL (rdfs:Resource), que el validador no infiere sin razonador.",
+      "on_the_6_hvd_datasets": [
+        {
+          "severity": "Violation",
+          "path": "dcat:distribution/dcat:accessService o ^dcat:servesDataset",
+          "message": "Property needs to have at least 1 value",
+          "shape": "dcat:DatasetShape/API",
+          "count": 6
+        },
+        {
+          "severity": "Violation",
+          "path": "dcat:accessURL",
+          "message": "Value must be an instance of rdfs:Resource",
+          "shape": "dcat:DistributionShape/653804840386e3352",
+          "count": 6
+        }
+      ]
+    }
+  }
+}

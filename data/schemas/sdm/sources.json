@@ -1,0 +1,21 @@
+{
+  "about": "Copias de los esquemas oficiales de Smart Data Models para validar sin red las entidades de apps/web/public/datos/sdm/ (scripts/export_dcat_sdm.py y tests/unit/catalog/test_dcat_sdm_export.py). No se editan a mano: cada fichero está en la misma ruta que en base_url, y sha256 es el del original descargado.",
+  "base_url": "https://smart-data-models.github.io/",
+  "retrieved_at": "2026-11-23",
+  "files": {
+    "data-models/common-schema.json": {
+      "sha256": "fdeb3bd55b8fe0a13ca57a5565fb6595f20ae3a658cc7247cc365d6868dc0075"
+    },
+    "dataModel.DCAT-AP/Dataset/schema.json": {
+      "schemaVersion": "3.0.0",
+      "sha256": "02901d3c6a8daf79fa00d91c7489fe788b4315f6a23658399b506befe6782786",
+      "spec": "https://github.com/smart-data-models/dataModel.DCAT-AP/blob/master/Dataset/doc/spec.md"
+    },
+    "dataModel.PointOfInterest/PointOfInterest/schema.json": {
+      "note": "El original no acaba en salto de línea: la copia lleva uno al final (end-of-file-fixer).",
+      "schemaVersion": "0.3.1",
+      "sha256": "3d9bf647b63f6a022ef2725c5be41c08d8f335ecc486c900c583269e5aaa8a1e",
+      "spec": "https://github.com/smart-data-models/dataModel.PointOfInterest/blob/master/PointOfInterest/doc/spec.md"
+    }
+  }
+}

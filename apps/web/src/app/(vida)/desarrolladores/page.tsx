@@ -17,6 +17,8 @@ import {
   MCP_CLAUDE_DESKTOP,
   MCP_SETUP,
   MCP_TOOLS,
+  OPEN_DATA_FILES,
+  OPEN_DATA_TEXT,
   PLANNED,
   REPO_URL,
   repoFile,
@@ -179,6 +181,19 @@ export default function DesarrolladoresPage() {
               ))}
             </section>
           ))}
+          <section className={styles.group} aria-labelledby="grupo-ficheros">
+            <h3 id="grupo-ficheros" className={styles.subhead}>
+              {OPEN_DATA_TEXT.title}
+            </h3>
+            <p>{OPEN_DATA_TEXT.intro}</p>
+            <ul className={styles.list}>
+              {OPEN_DATA_FILES.map((file) => (
+                <li key={file.path}>
+                  <a href={file.path}>{file.title}</a> (<code>{file.path}</code>): {file.text}
+                </li>
+              ))}
+            </ul>
+          </section>
         </Section>
 
         <Section id="mcp" badge={TEXT.local}>

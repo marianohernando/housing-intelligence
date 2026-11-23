@@ -1,0 +1,175 @@
+{
+    "@graph": [
+        {
+            "@id": "_:1aa474f7-3ba5-4aef-8ecf-9a92a46b492a",
+            "sh:resultMessage": "Property needs to have at least 1 value",
+            "sh:resultPath": {
+                "@id": "foaf:name"
+            },
+            "sh:focusNode": {
+                "@id": "_:1ef88eb45391a6b18baefaafb804bfdc"
+            },
+            "sh:sourceShape": {
+                "@id": "_:f756f8e315fb0653f0cbdf5776fa2321"
+            },
+            "sh:sourceConstraintComponent": {
+                "@id": "sh:MinCountConstraintComponent"
+            },
+            "sh:resultSeverity": {
+                "@id": "sh:Violation"
+            },
+            "@type": "sh:ValidationResult"
+        },
+        {
+            "@id": "_:d3d24394-e183-4747-8245-3b2731d8b3fa",
+            "sh:resultMessage": "Property needs to have at least 1 value",
+            "sh:resultPath": {
+                "@id": "foaf:name"
+            },
+            "sh:focusNode": {
+                "@id": "_:4662d0846af6f577a30012f322c2fd94"
+            },
+            "sh:sourceShape": {
+                "@id": "_:f756f8e315fb0653f0cbdf5776fa2321"
+            },
+            "sh:sourceConstraintComponent": {
+                "@id": "sh:MinCountConstraintComponent"
+            },
+            "sh:resultSeverity": {
+                "@id": "sh:Violation"
+            },
+            "@type": "sh:ValidationResult"
+        },
+        {
+            "@id": "_:082879a4-9279-4f6d-87d1-14a01b565102",
+            "sh:resultMessage": "Property needs to have at least 1 value",
+            "sh:resultPath": {
+                "@id": "foaf:name"
+            },
+            "sh:focusNode": {
+                "@id": "_:e289477605237d5bea0ff9400459e0a0"
+            },
+            "sh:sourceShape": {
+                "@id": "_:f756f8e315fb0653f0cbdf5776fa2321"
+            },
+            "sh:sourceConstraintComponent": {
+                "@id": "sh:MinCountConstraintComponent"
+            },
+            "sh:resultSeverity": {
+                "@id": "sh:Violation"
+            },
+            "@type": "sh:ValidationResult"
+        },
+        {
+            "@id": "_:c32b2a98-a9cd-4e1d-ae52-a682548f179c",
+            "sh:resultMessage": "Property needs to have at least 1 value",
+            "sh:resultPath": {
+                "@id": "foaf:name"
+            },
+            "sh:focusNode": {
+                "@id": "_:ab04be4a0b168b906529b5961b561245"
+            },
+            "sh:sourceShape": {
+                "@id": "_:f756f8e315fb0653f0cbdf5776fa2321"
+            },
+            "sh:sourceConstraintComponent": {
+                "@id": "sh:MinCountConstraintComponent"
+            },
+            "sh:resultSeverity": {
+                "@id": "sh:Violation"
+            },
+            "@type": "sh:ValidationResult"
+        },
+        {
+            "@id": "_:601dd2e1-5766-46e7-b8c9-ccac7910fc44",
+            "sh:resultMessage": "Property needs to have at least 1 value",
+            "sh:resultPath": {
+                "@id": "foaf:name"
+            },
+            "sh:focusNode": {
+                "@id": "_:05c62764a8d8062782ae064827edc10e"
+            },
+            "sh:sourceShape": {
+                "@id": "_:f756f8e315fb0653f0cbdf5776fa2321"
+            },
+            "sh:sourceConstraintComponent": {
+                "@id": "sh:MinCountConstraintComponent"
+            },
+            "sh:resultSeverity": {
+                "@id": "sh:Violation"
+            },
+            "@type": "sh:ValidationResult"
+        },
+        {
+            "@id": "_:ec109944-83a7-4b11-823c-e808bd2e61b3",
+            "sh:conforms": {
+                "@value": "false",
+                "@type": "xsd:boolean"
+            },
+            "sh:result": [
+                {
+                    "@id": "_:1aa474f7-3ba5-4aef-8ecf-9a92a46b492a"
+                },
+                {
+                    "@id": "_:d3d24394-e183-4747-8245-3b2731d8b3fa"
+                },
+                {
+                    "@id": "_:082879a4-9279-4f6d-87d1-14a01b565102"
+                },
+                {
+                    "@id": "_:c32b2a98-a9cd-4e1d-ae52-a682548f179c"
+                },
+                {
+                    "@id": "_:601dd2e1-5766-46e7-b8c9-ccac7910fc44"
+                }
+            ],
+            "@type": "sh:ValidationReport"
+        }
+    ],
+    "@context": {
+        "schema": "http://schema.org/",
+        "spdx": "http://spdx.org/rdf/terms#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "gsp": "http://www.opengis.net/ont/geosparql#",
+        "ns": "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+        "dcam": "http://purl.org/dc/dcam/",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "skos": "http://www.w3.org/2004/02/skos/core#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "geo": "http://www.w3.org/2003/01/geo/wgs84_pos#",
+        "rec": "http://www.w3.org/2001/02pd/rec54#",
+        "sf": "http://www.opengis.net/ont/sf#",
+        "dct": "http://purl.org/dc/terms/",
+        "sh": "http://www.w3.org/ns/shacl#",
+        "doap": "http://usefulinc.com/ns/doap#",
+        "xml": "http://www.w3.org/XML/1998/namespace",
+        "dcterms": "http://purl.org/dc/terms/",
+        "wdsr": "http://www.w3.org/2007/05/powder-s#",
+        "dcat": "http://www.w3.org/ns/dcat#",
+        "locn": "http://www.w3.org/ns/locn#",
+        "vann": "http://purl.org/vocab/vann/",
+        "graphql": "http://datashapes.org/graphql#",
+        "prov": "http://www.w3.org/ns/prov#",
+        "foaf": "http://xmlns.com/foaf/0.1/",
+        "sioc": "http://rdfs.org/sioc/ns#",
+        "cc": "http://creativecommons.org/ns#",
+        "eli": "http://data.europa.eu/eli/ontology#",
+        "dcatap": "http://data.europa.eu/r5r/",
+        "lcon": "http://www.w3.org/ns/locn#",
+        "adms": "http://www.w3.org/ns/adms#",
+        "org": "http://www.w3.org/ns/org#",
+        "tosh": "http://topbraid.org/tosh#",
+        "voaf": "http://purl.org/vocommons/voaf#",
+        "vcard": "http://www.w3.org/2006/vcard/ns#",
+        "dc11": "http://purl.org/dc/elements/1.1/",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "dctype": "http://purl.org/dc/dcmitype/",
+        "time": "http://www.w3.org/2006/time#",
+        "odrl": "http://www.w3.org/ns/odrl/2/",
+        "dash": "http://datashapes.org/dash#",
+        "swa": "http://topbraid.org/swa#",
+        "vs": "http://www.w3.org/2003/06/sw-vocab-status/ns#",
+        "sdo": "http://schema.org/",
+        "@vocab": "http://www.w3.org/ns/prov#"
+    }
+}
