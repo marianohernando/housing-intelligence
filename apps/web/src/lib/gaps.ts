@@ -253,13 +253,17 @@ export interface HouseholdLike {
 const INFANT_MAX_AGE = 2;
 /** The rows about children: they never stand in for another row in a home without children. */
 const CHILD_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio"];
+/** Rows a home sees only when the person marks them (F14, user test and review R-02): never as a filler. */
+const MARKED_ONLY: readonly GapRowKey[] = ["farmacia"];
 
 /**
  * The rows of «Qué falta» that matter to this household, in the card's order (D-244 and review of
- * PR #79: «lo que le falta que le afecte»): the same rule as highlight_rows of hi_domain/search.py,
- * which feeds `gap_highlights`, without the housing row. Escuela infantil with a child of 0 to 2
- * (or ages not given), colegio with any child, the health centre and the pharmacy always, and the
- * centres for older people with «Somos mayores» or someone older looked after.
+ * PR #79: «lo que le falta que le afecte»): the rule of highlight_rows of hi_domain/search.py,
+ * which feeds `gap_highlights`, without the housing row nor the pharmacy. Escuela infantil with a
+ * child of 0 to 2 (or ages not given), colegio with any child, the health centre always, and the
+ * centres for older people with «Somos mayores» or someone older looked after. The pharmacy only
+ * when the person marks it (F14, user test: «siempre hay una cerca de casa»): `marked` of topRows
+ * and markedRows of lib/essentials.ts. «Qué falta» of the whole zone keeps it.
  */
 export function householdRows(household: HouseholdLike | null | undefined): GapRowKey[] {
   const minors = household?.minors ?? 0;
@@ -267,7 +271,7 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
   const rows: GapRowKey[] = [];
   if (minors > 0 && (ages.length === 0 || Math.min(...ages) <= INFANT_MAX_AGE)) rows.push("escuela_infantil");
   if (minors > 0) rows.push("colegio");
-  rows.push("centro_salud", "farmacia");
+  rows.push("centro_salud");
   if (household?.seniors === true || (household?.seniors_in_care ?? 0) > 0) rows.push("mayores");
   return rows;
 }
@@ -277,7 +281,8 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
  * the API order). With one, what matters to it first (householdRows), whatever its status, a «No
  * comparable» one included: among them, what is short (FALTA, then JUSTO) and then the household's
  * order. Other rows only fill in when fewer than three of the household's have data, by status;
- * those about children never do in a home without children. The household's rows without data go last.
+ * those about children never do in a home without children, and the pharmacy never does (only when
+ * marked). The household's rows without data go last. Without a household, every row, the pharmacy too.
  * A context row (gap-0.4) never: it says nothing about what is missing.
  */
 export function topRows<T extends Classified & { row?: GapRowKey }>(
@@ -292,7 +297,7 @@ export function topRows<T extends Classified & { row?: GapRowKey }>(
   const mine = [...new Set([...householdRows(household), ...marked])];
   const children = (household.minors ?? 0) > 0;
   const ownRank = (r: T) => (r.row === undefined ? -1 : mine.indexOf(r.row));
-  const fills = (r: T) => children || r.row === undefined || !CHILD_ROWS.includes(r.row);
+  const fills = (r: T) => r.row === undefined || ((children || !CHILD_ROWS.includes(r.row)) && !MARKED_ONLY.includes(r.row));
   const known = (r: T) => r.status !== "SIN_DATOS";
   // 0: the household's with data · 1: others with data · 2: the household's without · 3: others without
   const group = (r: T) => (ownRank(r) >= 0 ? (known(r) ? 0 : 2) : known(r) ? 1 : 3);

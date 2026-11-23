@@ -146,9 +146,12 @@ describe("what the zone lacks that matters to the home (zona.esencial.falta)", (
   it("never tells a retired couple about the colegio, and says what nobody can compare", () => {
     const gaps = householdGaps([...barajasGaps], home({ seniors: true }));
     expect(gaps.short).toEqual([]);
-    // The pharmacies have enough, but two rows cannot be compared: no green «No le falta nada» (review R-01 of PR #81)
-    expect(gaps.covered).toBe(true);
+    // Their two rows cannot be compared: no green «No le falta nada» (review R-01 of PR #81); the pharmacies, which have
+    // enough, are not theirs unless they mark them (F14)
+    expect(gaps.covered).toBe(false);
     expect(gaps.unknown).toEqual(["centro_salud", "mayores"]);
+    const marked = householdGaps([...barajasGaps], { ...home({ seniors: true }), nearby: [{ need: "farmacia", max_walk_minutes: 10, required: false }] });
+    expect(marked.covered).toBe(true);
     expect(comparableFineText()).toBe("De lo que podemos comparar, no le falta nada.");
     expect(unknownRowsText(gaps.unknown)).toBe("No sabemos si le faltan centros de salud o centros de mayores.");
     expect(unknownRowsText([])).toBeNull();
@@ -179,10 +182,25 @@ describe("what the zone lacks that matters to the home (zona.esencial.falta)", (
     ]);
     expect(pertinentRows({ household: { adults: 2 }, priorities: ["colegios"], nearby: [{ need: "escuela_infantil", max_walk_minutes: 10, required: true }] })).toEqual([
       "centro_salud",
-      "farmacia",
       "colegio",
       "escuela_infantil",
     ]);
+  });
+
+  it("never tells the home about the pharmacies unless the person marks them (F14, user test)", () => {
+    // Usera as the person saw it: «hay pocas farmacias», which tells nobody anything: «siempre hay una cerca de casa»
+    const rows = [
+      { row: "centro_salud", status: "CUBIERTO" },
+      { row: "farmacia", status: "FALTA" },
+    ] as const;
+    for (const household of [{ adults: 2 }, { minors: 1, minor_ages: [1] }, { seniors: true }]) {
+      expect(pertinentRows(home(household))).not.toContain("farmacia");
+      expect(householdGaps([...rows], home(household), "Usera").short).toEqual([]);
+    }
+    // Marked in «Lo quiero a un paseo», it is said
+    const walk = { household: { adults: 2 }, priorities: [], nearby: [{ need: "farmacia" as const, max_walk_minutes: 10, required: false }] };
+    expect(pertinentRows(walk)).toEqual(["centro_salud", "farmacia"]);
+    expect(householdGaps([...rows], walk, "Usera").short.map((s) => s.text)).toEqual(["Farmacias en Usera: hay pocas para tanta gente."]);
   });
 
   it("says what is short of the home's, FALTA first, in plain words", () => {
@@ -201,8 +219,8 @@ describe("what the zone lacks that matters to the home (zona.esencial.falta)", (
   });
 
   it("says where for a barrio, whose rows are its district's", () => {
-    const rows = [{ row: "farmacia", status: "JUSTO" }] as const;
-    expect(householdGaps([...rows], home({ adults: 2 }), "Barajas").short[0]?.text).toBe("Farmacias en Barajas: van justas para tanta gente.");
+    const rows = [{ row: "centro_salud", status: "JUSTO" }] as const;
+    expect(householdGaps([...rows], home({ adults: 2 }), "Barajas").short[0]?.text).toBe("Centros de salud en Barajas: van justos para tanta gente.");
   });
 
   it("never counts a row too small to compare as short, nor as fine", () => {
@@ -212,8 +230,8 @@ describe("what the zone lacks that matters to the home (zona.esencial.falta)", (
     expect(householdGaps([], home({ seniors: true })).covered).toBe(false);
     expect(householdGaps([{ row: "colegio", status: "CUBIERTO" }], home({ seniors: true })).covered).toBe(false);
     // Compared together with its neighbours it has a status: the group's
-    const grouped = [{ row: "farmacia", status: "FALTA", reliable: false, comparison_group: { names: ["A", "B"], ratio_to_reference: 0.4 } }];
-    expect(householdGaps(grouped as never, home({})).short.map((s) => s.row)).toEqual(["farmacia"]);
+    const grouped = [{ row: "centro_salud", status: "FALTA", reliable: false, comparison_group: { names: ["A", "B"], ratio_to_reference: 0.4 } }];
+    expect(householdGaps(grouped as never, home({})).short.map((s) => s.row)).toEqual(["centro_salud"]);
   });
 });
 
