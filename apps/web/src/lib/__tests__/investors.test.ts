@@ -6,6 +6,12 @@ import { describe, expect, it } from "vitest";
 import type { LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 
 import {
+  breakEvenFreeText,
+  roughMoney,
+  breakEvenText,
+  breakEvenValue,
+  CALCULATOR_TEXT,
+  costNowValue,
   adminUnitId,
   areaFacts,
   defaultLand,
@@ -22,14 +28,17 @@ import {
   initialFields,
   isoInWords,
   landName,
+  MARK_TEXT,
   missingFields,
   money,
   parcelsLine,
   parseNumber,
   rentRange,
+  residualText,
   viabilityRequest,
   withoutMark,
 } from "../investors";
+import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
 // Test fixture: figures shaped as GET /api/v1/investors/zones/{id} gives them (Pinar del Rey, 19 nov)
 function value(v: number | null, unit: string, mark: SourcedValue["mark"] = "dato"): SourcedValue {
@@ -58,6 +67,11 @@ const defaults: ViabilityDefaults = {
 const parcel = (code: string, m2: number | null): LandItem => ({ kind: "parcela", code, name: `Calle ${code}`, parcel: null, buildable_m2: m2 });
 
 describe("figures in words", () => {
+  it("names the barrio's estimated price «Estimación», never «Dato» (D-234)", () => {
+    expect(MARK_TEXT.estimacion).toBe("Estimación");
+    expect(new Set(Object.values(MARK_TEXT)).size).toBe(Object.keys(MARK_TEXT).length);
+  });
+
   it("says the unknown as such, never 0", () => {
     expect(figure(value(null, "%"))).toBe("Sin dato");
     expect(figure(value(0, "%"))).toBe("0 %");
@@ -85,6 +99,22 @@ describe("figures in words", () => {
     expect(withoutMark("supuesto: un piso de 2 o 3 dormitorios")).toBe("Un piso de 2 o 3 dormitorios");
     expect(withoutMark("Ley 12/2023")).toBe("Ley 12/2023");
   });
+
+  it("names the method by the version the API serves, never «viabilidad v0 (D-248)» (F14)", () => {
+    expect(SHEET_TEXT.version("2026-11-19", "viability-0.2")).toBe("Datos calculados el 19 de noviembre de 2026. Método: viability-0.2.");
+    expect(SHEET_TEXT.version(null, "parcels-0.1")).toBe("Método: parcels-0.1.");
+    expect(SHEET_TEXT.version("2026-11-19", null)).toBe("Datos calculados el 19 de noviembre de 2026.");
+    expect(SHEET_TEXT.version(null, null)).toBe("");
+    expect(CALCULATOR_TEXT.method("viability-0.2")).toBe("Método de la cuenta: viability-0.2.");
+    expect(JSON.stringify(SHEET_TEXT.version("2026-11-19", "viability-0.2"))).not.toContain("D-248");
+  });
+
+  it("says the zone the vacant land figure is of: 13.813 is all of Madrid, not the barrio (F14)", () => {
+    expect(SHEET_TEXT.vacant("municipio")).toBe("Suelo vacante de toda la ciudad (Catastro)");
+    expect(SHEET_TEXT.vacant("distrito")).toBe("Suelo vacante del distrito (Catastro)");
+    expect(SHEET_TEXT.vacant("barrio")).toBe("Suelo vacante del barrio (Catastro)");
+    expect(SHEET_TEXT.vacant(null)).toBe("Suelo vacante (Catastro)");
+  });
 });
 
 describe("the list of barrios", () => {
@@ -109,7 +139,11 @@ describe("the list of barrios", () => {
 
   it("says a planning area's situation and type of home in words", () => {
     const area = { kind: "ambito", code: "APR.16.04", name: "UVA de Hortaleza", buildable_m2: 26322, stage: "edificacion", use: "colectiva" };
-    expect(areaFacts(area)).toEqual(["En fase de edificación: se puede construir ya", "vivienda colectiva"]);
+    // D-252 (audit B10): never «se puede construir ya»
+    expect(areaFacts(area)).toEqual([
+      "En fase de edificación, según el Ayuntamiento: no quiere decir que se pueda construir ya (hace falta licencia)",
+      "vivienda colectiva",
+    ]);
     expect(areaFacts({ ...area, stage: "otra", use: null })).toEqual([]);
     expect(areaFacts(parcel("x", 1))).toEqual([]);
   });
@@ -232,5 +266,83 @@ describe("the calculator", () => {
     expect(missingFields(fields)).toEqual(["buildable_m2"]);
     expect(viabilityRequest(fields)).toBeNull();
     expect(viabilityRequest({ ...fields, buildable_m2: "0" })).toBeNull();
+  });
+});
+
+describe("the cost and its break-even (D-252)", () => {
+  const free = { construction_m2: 2800, pem_m2: 1866.67, coefficient: 4.6667, current_construction_m2: 875.84, land_counted: false, reachable: true };
+
+  it("says up to what construction cost the target margin holds, as PEM and as coefficient", () => {
+    expect(breakEvenText(free)).toBe(
+      "Sin pagar nada por el suelo, la promoción llega al margen objetivo mientras la construcción cueste menos de 2.800 €/m² construido (PEM × coeficiente). Es un PEM de hasta 1.867 €/m² con tu coeficiente, o un coeficiente de hasta 4,67 sobre tu PEM.",
+    );
+    const withLand = { ...free, construction_m2: 600, pem_m2: 400, coefficient: 1, land_counted: true };
+    expect(breakEvenText(withLand)).toMatch(/^Con el precio del suelo que has puesto, la promoción llega al margen objetivo mientras la construcción cueste menos de 600 €\/m² construido/);
+    expect(breakEvenFreeText(free)).toBe("Con el suelo gratis, hasta 2.800 €/m² construido.");
+    expect(costNowValue(free)).toBe("876 €/m² construido (PEM × coeficiente)");
+  });
+
+  it("says when not even free construction reaches the target margin", () => {
+    const none = { ...free, construction_m2: -1200, land_counted: true, reachable: false };
+    expect(breakEvenValue(none)).toBe("Ni gratis");
+    expect(breakEvenText(none)).toBe("Con el precio del suelo que has puesto, ni con la construcción gratis llega la promoción al margen objetivo.");
+    expect(breakEvenFreeText({ ...none, land_counted: false })).toBe("Ni con el suelo gratis llega al margen objetivo.");
+    // Review of #109, R-04: never «un coeficiente de hasta 0,8»
+    const tight = { ...free, construction_m2: 700, pem_m2: 515.65, coefficient: 0.79, land_counted: true };
+    expect(breakEvenText(tight)).toMatch(/\(PEM × coeficiente\)\. Con tu PEM, ni con el PEM solo \(coeficiente 1\) llega\.$/);
+  });
+
+  it("says what the cost counts and what it leaves out, and that the calculator is for housing", () => {
+    expect(CALCULATOR_TEXT.intro).toMatch(/^Calcula solo vivienda/);
+    expect(CALCULATOR_TEXT.costIncludes(["honorarios"])).toContain("con el coeficiente, honorarios.");
+    for (const left of ["El suelo", "La urbanización", "El derribo", "Los sótanos", "La financiación", "El IVA", "imprevistos"]) {
+      expect(CALCULATOR_TEXT.costExcludes.some((line) => line.includes(left))).toBe(true);
+    }
+  });
+
+  it("says the residual with three figures, never cents on assumptions (D-252, D7)", () => {
+    expect(roughMoney(66_958_000)).toBe("unos 67 millones de €");
+    expect(roughMoney(140_490_000)).toBe("unos 140 millones de €");
+    expect(roughMoney(1_234_567)).toBe("unos 1,23 millones de €");
+    expect(roughMoney(900_091)).toBe("unos 900.000 €");
+    expect(roughMoney(4297.4)).toBe("unos 4.300 €");
+    expect(roughMoney(1_002_000)).toBe("alrededor de 1 millón de €"); // review of #109, R-10
+  });
+
+  it("says the residual per m² buildable and as a share of the sales, and what the account leaves out (F14)", () => {
+    // Méndez Álvaro as the jury read it: 61,2 M€ on 13.121 m² and 109,4 M€ of sales
+    const mendez = { residual_land_value: 61_234_000, residual_land_value_m2: 4_666.9, revenue: 109_400_000 };
+    expect(residualText(mendez)).toBe("unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por ventas)");
+    // Not even free land reaches the target margin: no share of a negative figure
+    const none = { residual_land_value: -200_000, residual_land_value_m2: -150, revenue: 1_000_000 };
+    expect(residualText(none)).toBe("unos -200.000 € (unos -150 € por m² edificable)");
+    // The four parts it names are not in the cost: the PEM goes on the buildable m² above ground, and the coefficient's and
+    // the sales costs' parts are others
+    expect(CALCULATOR_TEXT.residualLeavesOut).toBe("La cuenta no incluye sótanos, urbanización, financiación ni IVA.");
+    const parts = [...M.costParts, ...M.salesCostParts].map((p) => p.label.toLowerCase()).join(" · ");
+    for (const left of ["sótano", "urbaniza", "financia", "iva"]) expect(parts).not.toContain(left);
+  });
+
+  it("gives the semaphore and the scenarios from the code's figures (D-252, D8)", () => {
+    expect(CALCULATOR_TEXT.thresholds).toContain(`«Ajustar» entre el ${M.adjustFloorPct} % y el objetivo`);
+    expect(CALCULATOR_TEXT.thresholds).toContain("pesimista: −10 % y +15 %");
+    expect(CALCULATOR_TEXT.thresholds).toContain("Orden ECO/805/2003, disposición adicional sexta");
+    expect(CALCULATOR_TEXT.thresholds).toContain(`al menos un ${M.appraisalMinMarginPct} %`);
+  });
+
+  it("says where the cost comes from and how much it varies, without «mínimo oficial» (D-252, D4)", () => {
+    const [permits, crg, st] = CALCULATOR_TEXT.costReferences();
+    expect(permits?.text).toContain(`${M.pem.eurM2} €/m²`);
+    expect(crg?.text).toContain("bloque abierto, 871–1.064 €/m²");
+    expect(crg?.text).toContain(`punto medio del bloque abierto: ${M.costReferences.crg.defaultPem} €/m² (supuesto)`);
+    expect(st?.text).toContain("1.360 €/m²");
+    expect(st?.text).toContain("según la prensa");
+    expect(st?.text).toContain("No sabemos si incluye gastos generales y beneficio"); // R-03
+    expect(JSON.stringify(CALCULATOR_TEXT)).not.toContain("Mínimo oficial");
+    // The permits' PEM as the API reads it from the CM dataset, with its source
+    const [fromApi] = CALCULATOR_TEXT.costReferences(value(644, "€/m²"));
+    expect(fromApi?.text).toContain("(2025): 644 €/m²");
+    expect(fromApi?.text).toContain("Fuente: Fuente de prueba.");
+    expect(fromApi?.mark).toBe("dato");
   });
 });

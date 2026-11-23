@@ -4,7 +4,7 @@
   ({{…}}) y escribe pitch/deck/build/index.html y el PDF. Contenido: pitch/slides.md.
   Capturas: cada <figure data-shot="Cn"> lleva aquí la ruta de su fichero (capturas/ o evidence/), relativa a
   esta plantilla. build.py la vuelve a resolver al construir: gana pitch/capturas/Cn.png si existe
-  (C1, C2, C3 y C6 están ahí y versionadas: las hizo D en producción) y, si no, la de
+  (C1, C2, C3, C5 y C6 están ahí y versionadas: las hizo D en producción) y, si no, la de
   EVIDENCE_CAPTURES en build.py. Las dos listas tienen que coincidir.
 -->
 <html lang="es">
@@ -24,13 +24,15 @@
     <div>
       <p class="kicker">DATAMAD 2026 · Datos abiertos</p>
       <h1 class="name">Vida Fácil</h1>
-      <p class="lema">Encuentra tu sitio en Madrid</p>
-      <p class="desc">El mapa de lo que falta en cada zona de la Comunidad de Madrid: para elegir dónde vivir y para decidir dónde invertir.</p>
+      <!-- 23 nov: lema nuevo (decisión de Mariano), en lugar del de D-199. La descripción abre
+           con lo que no hacía el ganador de 2024 (pitch/slides.md, slide 1) -->
+      <p class="lema">La zona que te conviene,<br>y lo que le falta</p>
+      <p class="desc">Para ayuntamientos, qué le falta a cada zona de la Comunidad de Madrid. Para inversores, la ficha de una parcela exacta. Para todos, una API abierta. Con datos abiertos descargados de sus portales, sin scraping.</p>
       <p class="team">Equipo<strong{{INTEGRANTES_PENDING}}>{{INTEGRANTES}}</strong></p>
     </div>
     <div class="glass visual">
       <figure class="shot" data-shot="C5">
-        <img src="../../evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png" alt="Chamartín en 3D con su contorno violeta, etiquetas de estación, metro, centro de salud y colegio, y la tarjeta «Qué falta aquí»">
+        <img src="../capturas/C5.png" alt="Chamartín en 3D con su contorno violeta, etiquetas de estación, metro, centro de salud y colegio, la pestaña «Inversores» y la tarjeta «Lo que le falta a esta zona»">
         <figcaption class="ph">C5 · Zona en 3D (1440 px)</figcaption>
       </figure>
     </div>
@@ -44,18 +46,19 @@
   <p class="brand">Vida Fácil<span>.</span></p>
   <h2 class="title">Nadie te dice qué le falta a cada zona</h2>
   <div class="grid">
+    <!-- 23 nov: el orden del pitch (ayuntamientos, inversores, personas) -->
     <div class="glass problem">
-      <div>
-        <p class="who">Personas</p>
-        <p class="what">El precio en una web, los colegios en otra y el transporte en otra. Nadie les dice qué zona va con su vida.</p>
-      </div>
       <div>
         <p class="who">Ayuntamientos</p>
         <p class="what">Datos sueltos: ¿dónde falta una escuela infantil o un centro de salud frente al resto de la región?</p>
       </div>
       <div>
-        <p class="who">Empresas</p>
-        <p class="what">Abren por intuición, sin saber qué hace falta en la zona.</p>
+        <p class="who">Promotores e inversores</p>
+        <p class="what">Eligen suelo sin ver la demanda.</p>
+      </div>
+      <div>
+        <p class="who">Personas</p>
+        <p class="what">El precio en una web, los colegios en otra y el transporte en otra. Nadie les dice qué zona va con su vida.</p>
       </div>
       <p class="punch">Otros te enseñan lo que hay. Nosotros, <span>lo que falta</span>.</p>
     </div>
@@ -68,6 +71,8 @@
         {{DATASET_ROWS}}
       </table>
       <p class="complement">Apoyo (no CM): OpenStreetMap, Ayuntamiento, Sanidad, Vivienda y Hacienda.</p>
+      <!-- 23 nov (P6 del informe del jurado simulado): cifras de pitch/datasets_cm.md, «Reutilización según MELODA» -->
+      <p class="meloda"><a href="https://spain.meloda.org">MELODA</a>: 16 sobre 49 de media; 1 de 5 en actualización. Las 10 fichas del Consorcio sacan 8 en este portal, frente a 24,7 de media en el portal del Consorcio (281 conjuntos).</p>
     </div>
   </div>
   <p class="sources">Lista completa con enlaces, licencias y control de calidad: <a href="https://github.com/marianohernando/housing-intelligence/blob/claude/sprint-1-public/pitch/datasets_cm.md">github.com/marianohernando/housing-intelligence → pitch/datasets_cm.md</a></p>
@@ -78,17 +83,35 @@
 <section class="slide s3">
   <p class="brand">Vida Fácil<span>.</span></p>
   <h2 class="title">Resultados</h2>
+  <!-- 23 nov: columnas en el orden del pitch. Primero ayuntamientos («Qué falta»); después inversores (la parcela)
+       y personas (la base); al final, viabilidad -->
   <div class="cols">
     <div class="glass col">
-      <p class="kicker">Utilidad · personas</p>
-      <h3>Encuentra la zona que te conviene</h3>
+      <p class="kicker">Impacto · ayuntamientos</p>
+      <h3>Qué falta en cada zona</h3>
+      <div class="states">
+        <span class="state falta"><span class="icon" aria-hidden="true">!</span>FALTA</span>
+        <span class="state justo"><span class="icon" aria-hidden="true">–</span>JUSTO</span>
+        <span class="state cubierto"><span class="icon" aria-hidden="true">✓</span>CUBIERTO</span>
+        <span class="state sin-datos"><span class="icon" aria-hidden="true">?</span>SIN DATOS</span>
+      </div>
+      <!-- 23 nov: «viven en 3 distritos donde faltan…», para que no se oiga como «niños sin escuela». Es una señal:
+           con Holm sobre los 21 distritos solo aguanta Puente de Vallecas (pregunta 46) -->
+      <p class="impact"><strong>25.551</strong> niños de 0 a 4 años viven en 3 distritos donde faltan escuelas infantiles.</p>
+      <p class="example"><strong>Dónde invertir primero:</strong> Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde.</p>
+      <p class="example">Cada falta, con su fuente y su probabilidad.</p>
+    </div>
+    <div class="glass col">
+      <p class="kicker">Utilidad</p>
+      <h3>La parcela exacta y la zona que te conviene</h3>
       <ul>
-        <li>Cada zona, en palabras y con su %, con hechos que se pueden comprobar y su fiabilidad.</li>
+        <li><strong>Inversores:</strong> busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.</li>
+        <li><strong>Personas:</strong> en 179 municipios, sin scraping, con el trayecto al trabajo y lo que le falta a cada zona.</li>
       </ul>
+      <!-- 23 nov: cita de la segunda ronda (P6, 23 nov), sin nombre. Sustituye a las del 14 nov -->
       <blockquote class="quote">
-        <p>«Se valora mucho la cercanía al puesto de trabajo.»</p>
-        <p>«Muy chula la web, funciona bien.»</p>
-        <footer>Prueba con usuarios, 14 nov</footer>
+        <p>«Ha mejorado un montón… ahora sí que te arroja cosas interesantes.»</p>
+        <footer>P6, segunda prueba con usuarios, 23 nov</footer>
       </blockquote>
       <div class="shots">
         <figure class="shot" data-shot="C2">
@@ -102,39 +125,20 @@
       </div>
     </div>
     <div class="glass col">
-      <p class="kicker">Impacto · ayuntamientos</p>
-      <h3>Qué falta en cada zona</h3>
-      <div class="states">
-        <span class="state falta"><span class="icon" aria-hidden="true">!</span>FALTA</span>
-        <span class="state justo"><span class="icon" aria-hidden="true">–</span>JUSTO</span>
-        <span class="state cubierto"><span class="icon" aria-hidden="true">✓</span>CUBIERTO</span>
-        <span class="state sin-datos"><span class="icon" aria-hidden="true">?</span>SIN DATOS</span>
-      </div>
-      <p class="impact"><strong>25.551</strong> niños de 0 a 4 años viven donde faltan escuelas infantiles.</p>
-      <p class="example"><strong>Dónde invertir primero:</strong> Puente de Vallecas (57 por cada 100 de los municipios parecidos), Carabanchel y Villaverde.</p>
-    </div>
-    <div class="glass col">
       <p class="kicker">Viabilidad</p>
       <h3>Se sostiene</h3>
       <ul>
-        <!-- 19 nov: modelo de Mariano, que sustituye al del 12 nov (pitch/modelo_negocio.md). Sin precios en la slide.
-             «Pagarán»: hoy no se cobra; la versión para inversores es de acceso libre durante el concurso (D-248) -->
-        <li>Gratis para personas y ayuntamientos. Pagarán inversores y promotores.</li>
+        <!-- 23 nov: quién paga, decisión de Mariano (pitch/modelo_negocio.md). Sin precios en la slide.
+             «Pagarán»: hoy no se cobra nada -->
+        <li>Gratis siempre: datos, zonas, «Qué falta», cada ficha de parcela y la API.</li>
+        <li>Pagarán las empresas: plan empresarial e informes a medida.</li>
         <li>Solo zonas, nunca datos de personas.</li>
-        <li>0 € hoy; unos 45 $/mes para uso comercial.</li>
-        <!-- 19 nov: decisión de Mariano (datamad-10). Antes, «Código abierto: cualquiera puede repetir los cálculos.».
-             La misma idea que la frase del bloque 4 del guion: «La API y el MCP para agentes de IA son gratis para todos.» -->
-        <li>Código abierto, y API y MCP gratis.</li>
+        <li>Coste de infraestructura: 0 € hoy; unos 45 $/mes para poder cobrar.</li>
+        <!-- 23 nov: el MCP ya funciona también en remoto, sin clave (D-255, deploy-46); antes, «Código abierto, y API y MCP gratis.» -->
+        <li>API y MCP abiertos y gratuitos, sin clave.</li>
       </ul>
-      <!-- 18 nov: esta línea ocupa el sitio de la miniatura C7 («Cómo lo calculamos»), que no cabía con ella y
-           queda de reserva (pitch/slides.md, «Capturas necesarias»). 19 nov: ya no es un siguiente paso; la
-           versión para inversores está en producción (D-248, despliegue de 396d8f6, evidencia de C en el PR #96).
-           19 nov por la tarde: con la búsqueda por parcela en producción (D-250), Mariano aprobó esta línea, que sustituye
-           a «Ya está, para inversores (piloto en Madrid): viabilidad sobre una parcela, con el contexto de su barrio.».
-           «Madrid capital»: la búsqueda llega a toda la ciudad; el contexto completo del barrio es el del piloto de la
-           M-40 (D-247). «Calcula si sale»: el semáforo necesita el precio del suelo (revisión del #103). Dice lo mismo que
-           el bloque 4 del guion. Tres líneas como máximo: con cuatro, la tarjeta queda muy justa sobre la banda (858) -->
-      <p class="next"><strong>Ya está</strong>, para inversores: busca tu parcela en Madrid capital y calcula si sale, con la demanda de su zona.</p>
+      <!-- 23 nov: la línea de inversores pasa a la columna de utilidad; aquí, la de la IA (formación del 5 nov: «yo necesito el número») -->
+      <p class="next"><strong>Ninguna cifra la genera una IA:</strong> salen de cálculos deterministas sobre datos oficiales, cada una con su fuente.</p>
     </div>
   </div>
   <div class="band">
@@ -153,7 +157,7 @@
       </div>
     </div>
   </div>
-  <p class="sources">Demo pública con datos reales (12 nov). Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid.</p>
+  <p class="sources">Demo pública con datos reales (datos del 19 nov). Niños de 0 a 4 años: padrón del Ayuntamiento de Madrid.</p>
   <p class="pageno">3 / 4</p>
 </section>
 
@@ -182,9 +186,10 @@
       <li><span class="num">2</span>Mira las zonas que te convienen y por qué</li>
       <li><span class="num">3</span>Entra en una zona y mira qué le falta, con su fuente</li>
     </ol>
+    <!-- 23 nov: 8 = las 7 que buscan casa (P1 a P6 y una persona mayor, 13–15 nov) y el inversor (P7, 19 nov) -->
     <div class="tested">
-      <p class="who">Probada con 7 personas</p>
-      <p>Lo que pidieron, ya en la web: buscar por barrios y un límite de tiempo al trabajo. Y, para una persona mayor, más sencilla en el móvil.</p>
+      <p class="who">Probada con 8 personas</p>
+      <p>Siete que buscan casa, una de ellas mayor, y un inversor. Se hizo lo que pidieron: barrios, un límite de tiempo al trabajo, letra y botones más grandes en el móvil y los servicios de la parcela.</p>
     </div>
   </div>
   <p class="live">Demo en vivo: <a href="{{DEMO_URL}}">{{DEMO_HOST}}</a></p>

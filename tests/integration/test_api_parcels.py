@@ -125,3 +125,6 @@ def test_a_point_in_no_barrio_has_no_context_and_a_warning(
     assert body.data.context is None and body.data.barrio is None
     assert "OUT_OF_COVERAGE: the point is in no barrio" in body.warnings
     assert body.data.defaults.pem_m2.value is not None
+    # D-252: the parcel's sheet also carries the CM permits' PEM as the low reference
+    permits = body.data.defaults.pem_permits_m2
+    assert permits is not None and permits.value is not None

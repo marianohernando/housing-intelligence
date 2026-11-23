@@ -2,7 +2,9 @@ import type { ReactNode } from "react";
 
 import GlassCard from "@/components/ui/GlassCard";
 import { formatNumber } from "@/lib/format";
+import { CALCULATOR_TEXT } from "@/lib/investors";
 import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
+import { SERVICES_TEXT, SHEET_TEXT, USE_TEXT } from "@/lib/parcels";
 
 import styles from "../../app/(vida)/section.module.css";
 
@@ -15,7 +17,7 @@ import styles from "../../app/(vida)/section.module.css";
 
 /** «1,36», «0,875», «2», «1.109»: Spanish, without trailing zeros after the comma. */
 export const n = (value: number) =>
-  formatNumber(value, Number.isInteger(value) ? 0 : value < 1 ? 3 : 2)
+  formatNumber(value, Number.isInteger(value) ? 0 : 4)
     .replace(/(,\d*?)0+$/, "$1")
     .replace(/,$/, "");
 const pct = (value: number) => `${n(value)} %`;
@@ -24,6 +26,13 @@ const grado = (g: number) => `${g}º`;
 export const listed = (items: readonly (string | number)[]) =>
   items.length < 2 ? items.join("") : `${items.slice(0, -1).join(", ")} y ${items.at(-1)}`;
 const lower = (label: string) => label.charAt(0).toLowerCase() + label.slice(1);
+/** «574 de uso residencial, 51 de uso terciario y 484 de uso industrial» */
+const byUse = (counts: Partial<Record<keyof typeof USE_TEXT, number>>) =>
+  listed(
+    (Object.entries(counts) as [keyof typeof USE_TEXT, number][]).map(([kind, count]) =>
+      kind === "otro" ? `${n(count)} de otros usos` : `${n(count)} de uso ${USE_TEXT[kind].label.toLowerCase()}`,
+    ),
+  );
 
 function External({ href, children }: { href: string; children: ReactNode }) {
   return (
@@ -65,9 +74,10 @@ function Coefficients() {
 
 export default function InvestorMethod() {
   const nz1Grados = M.nz1.factors.map((f) => grado(f.grado));
-  const [, optimistic] = M.scenarios;
-  const swing = optimistic ? Math.abs(optimistic.pricePct) : 0;
-  const costSwing = optimistic ? Math.abs(optimistic.costPct) : 0;
+  const best = M.scenarios.find((s) => s.key === "optimista");
+  const worst = M.scenarios.find((s) => s.key === "pesimista");
+  const crg = M.costReferences.crg;
+  const block = crg.types.find((t) => t.key === "bloque_abierto");
   return (
     <GlassCard as="section" aria-labelledby="inversores" className={styles.card}>
       <h2 id="inversores">Cómo calculamos la ficha para inversores</h2>
@@ -80,7 +90,7 @@ export default function InvestorMethod() {
       <h3>1. De dónde sale cada dato de la parcela</h3>
       <ul className={styles.text}>
         <li>
-          <strong>La parcela</strong> (su superficie, su uso, lo que hay construido, el año, si es un solar y, en un edificio con varios
+          <strong>La parcela</strong> (su superficie, su uso, lo que hay construido, el año, si está sin edificar según su uso en el Catastro y, en un edificio con varios
           pisos o locales, cuántos hay de cada uso): datos elaborados por Vida Fácil a partir de los de la Dirección General del
           Catastro (Sede Electrónica del Catastro), con la fecha en que los consultamos. Nunca enseñamos los pisos uno a uno.
         </li>
@@ -103,12 +113,16 @@ export default function InvestorMethod() {
           <strong>Dato oficial de la parcela,</strong> si lo hay: el del visor de edificabilidad (VEDA) del Ayuntamiento (
           {n(M.vedaParcels)} parcelas, de vivienda y de otros usos) y, si no, el del Portal del Suelo de la Comunidad de Madrid (
           {M.portalParcels} parcelas de Madrid capital). Va primero la cifra de vivienda; si solo hay de otros usos (industrial o
-          terciario), la enseñamos como referencia y no la usamos para la vivienda.
+          terciario), la enseñamos como referencia y no la usamos para la vivienda. Si la parcela está en un ámbito que el
+          Ayuntamiento no da por terminado (planeamiento, gestión o urbanización sin acabar, según el estado de desarrollo de los
+          ámbitos o según VEDA), la cifra oficial también es una referencia y la de partida queda «sin dato».
         </li>
         <li>
           <strong>Supuesto con su norma zonal</strong> (la regla del Plan General que dice qué y cuánto se construye en cada zona de la
           ciudad ya hecha): en las que fijan cuántos m² se pueden construir por cada m² de parcela, multiplicamos esa cifra por la
-          superficie de la parcela. Es un supuesto: la norma lo aplica a la parcela edificable, que puede ser menor.
+          superficie de la parcela. Es un supuesto: la norma lo aplica a la parcela edificable, que puede ser menor. Si el plan le da a
+          la parcela otro uso que vivienda (por ejemplo, industrial en la norma zonal 9, de actividades económicas), esos m² son de ese
+          uso: los enseñamos como referencia y la de partida queda «sin dato».
           <Coefficients />
         </li>
         <li>
@@ -119,6 +133,41 @@ export default function InvestorMethod() {
           tú.
         </li>
       </ol>
+      <p className={styles.para}>
+        <strong>Por uso, según el plan.</strong> El Ayuntamiento publica, para muchas parcelas urbanísticas (la parcela que dibuja el
+        plan), los m² de su uso principal y de sus otros usos, en m² o en m² por m² de parcela; en m² por m², los multiplicamos por la
+        superficie de la parcela urbanística y lo marcamos como supuesto. Es lo que el plan permite en total, no lo que queda por
+        construir, y la parcela urbanística puede no coincidir con la catastral. Cuando no la publica, lo decimos. Salvo excepciones,
+        los usos asociados y complementarios no pueden pasar del 50 % de lo edificado, ni del 25 % en una parcela dotacional (Normas Urbanísticas, art.
+        7.2.8). Público o privado solo existe en el dotacional: el básico y el singular son de titularidad pública, y el privado, de
+        titularidad privada (art. 7.7.2). El terciario no se divide así (art. 7.6.1): un «terciario público» no existe en el plan, y los
+        servicios de la Administración son dotacionales.
+      </p>
+      <p className={styles.para}>
+        <strong>Por uso, según cada fuente de la parcela catastral.</strong> VEDA y el Portal del Suelo publican una sola cifra por
+        parcela, con un solo uso: de las {n(M.vedaParcels)} de VEDA, {byUse(M.vedaByUse)}; de las {M.portalParcels} del Portal del
+        Suelo, {byUse(M.portalByUse)}. En la ficha enseñamos cada cifra con su uso y su fuente, y nunca la repartimos entre usos.
+      </p>
+      <p className={styles.para}>
+        <strong>La calculadora calcula solo vivienda,</strong> porque sus precios y alquileres son de vivienda: parte de la cifra
+        residencial. Si solo hay cifra de otros usos, o la parcela no está lista (un ámbito sin terminar, un uso del plan que no es
+        vivienda), la edificabilidad de partida queda «sin dato» y pones tú los m² de vivienda que quieras estudiar.
+      </p>
+      <p className={styles.para}>Y antes de las cifras, la ficha avisa:</p>
+      <ul className={styles.text}>
+        <li>si el plan da a la parcela otro uso que vivienda;</li>
+        <li>
+          si el ámbito no está terminado: si es suelo urbano no consolidado o urbanizable, la ley pide ceder gratis al Ayuntamiento el
+          suelo para el 10 % de la edificabilidad del ámbito y costear las obras de urbanización (Ley 9/2001 del Suelo de la Comunidad
+          de Madrid, arts. 18.2.c, 18.2.d y 21.1), y nada de eso entra en la cuenta;
+        </li>
+        <li>
+          si es vivienda con protección pública: tiene un precio máximo legal de venta por m² útil que fija la Comunidad por orden
+          (Decreto 74/2009, art. 12), así que el precio libre del barrio no vale;
+        </li>
+        <li>si es vivienda unifamiliar: el coste de partida es el de un bloque de pisos y el precio, el de la vivienda del barrio en general;</li>
+        <li>y, si es suelo público del Portal del Suelo, quién lo ofrece, en qué régimen y si está urbanizado según el Portal.</li>
+      </ul>
       <p className={styles.para}>
         <strong>Puedes cambiar la edificabilidad siempre.</strong> «Sin dato» no es 0. Al lado enseñamos lo construido hoy, que es lo
         que hay, no lo que se puede construir. Las normas: {M.nnuuCitation}.
@@ -133,14 +182,13 @@ export default function InvestorMethod() {
           valor tasado de la vivienda libre de hasta 5 años frente al de toda la vivienda libre.
         </li>
         <li>
-          <strong>Coste de construcción:</strong> los m² por el presupuesto de ejecución material (PEM, lo que cuesta la obra en sí) de
-          los visados de obra nueva de viviendas en bloque de la Comunidad de Madrid (
-          <External href={M.pem.url}>
-            {n(M.pem.eurM2)} €/m², {M.pem.year}
-          </External>
-          ) y por un coeficiente de {n(M.costCoefficient)}: el PEM más, sobre el PEM,{" "}
-          {M.costParts.map((p) => `un ${pct(p.pct)} de ${lower(p.label)}`).join("; ")} (supuesto). El presupuesto de los visados suele
-          declararse a la baja: ajusta el coeficiente si tienes otro.
+          <strong>Coste de construcción:</strong> los m² por un presupuesto de ejecución material (PEM, lo que cuesta la obra en sí) de{" "}
+          {n(crg.defaultPem)} €/m², el punto medio del bloque abierto en Madrid ({block ? `${n(block.low)}–${n(block.high)}` : ""} €/m²)
+          de los{" "}
+          <External href={crg.url}>Costes de Referencia General de la Comunidad de Madrid</External>, actualizados al año {crg.year}{" "}
+          (supuesto: los costes han subido desde entonces). Por un coeficiente de {n(M.costCoefficient)}: el PEM más, sobre el PEM,{" "}
+          {M.costParts.map((p) => `un ${pct(p.pct)} de ${lower(p.label)}`).join("; ")} (supuesto; el ICIO de Madrid es del{" "}
+          {pct(M.icioPct)}: ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154).
         </li>
         <li>
           <strong>Comercialización y otros gastos:</strong> un {pct(M.salesCostsPct)} de las ventas (supuesto:{" "}
@@ -157,6 +205,25 @@ export default function InvestorMethod() {
           impuestos.
         </li>
       </ul>
+      <p className={styles.para} id="inversores-coste">
+        <strong>{CALCULATOR_TEXT.costReferencesTitle}.</strong> El coste de construcción es el dato que más cambia la cuenta:
+      </p>
+      <ul className={styles.text}>
+        {CALCULATOR_TEXT.costReferences().map((ref) => (
+          <li key={ref.href}>
+            {ref.text} <External href={ref.href}>{ref.link}</External>
+          </li>
+        ))}
+      </ul>
+      <p className={styles.para}>
+        <strong>{CALCULATOR_TEXT.costScopeTitle}.</strong> {CALCULATOR_TEXT.costIncludes(M.costParts.map((p) => lower(p.label)))}{" "}
+        {CALCULATOR_TEXT.costExcludesTitle}
+      </p>
+      <ul className={styles.text}>
+        {CALCULATOR_TEXT.costExcludes.map((line) => (
+          <li key={line}>{line}</li>
+        ))}
+      </ul>
       <p className={styles.para}>
         En la calculadora puedes cambiar los m², el precio, la prima, el alquiler, el PEM, el coeficiente, los gastos, el suelo, el
         margen objetivo y los datos de la comprobación de demanda. No se cambian el suelo del «Ajustar» ({pct(M.adjustFloorPct)}), la
@@ -170,7 +237,15 @@ export default function InvestorMethod() {
         </li>
         <li>
           <strong>Lo máximo que se puede pagar por el suelo</strong> (el valor residual: lo que queda para el suelo tras pagar la
-          construcción, los gastos y el margen objetivo).
+          construcción, los gastos y el margen objetivo), redondeado a tres cifras y antes de financiación, impuestos de compra del
+          suelo, urbanización y derribo. Al lado, lo mismo por m² edificable y en % de los ingresos por ventas.
+        </li>
+        <li>
+          <strong>Hasta cuánto puede costar la construcción</strong> (el punto de equilibrio): el coste por m² construido (PEM ×
+          coeficiente) con el que la promoción llega justo al margen objetivo. Es lo que queda de los ingresos tras quitar el margen
+          objetivo, los gastos de la venta y el suelo, entre los m², y en cada escenario con su subida o bajada del coste. Con el
+          precio del suelo que pones y, si lo pones, también con el suelo gratis. Te lo damos también como PEM, con tu coeficiente, y
+          como coeficiente, sobre tu PEM: si el presupuesto de tu obra queda por debajo, la promoción llega al margen objetivo.
         </li>
         <li>
           <strong>La rentabilidad bruta si se alquila:</strong> el alquiler de un año (el de referencia de un contrato nuevo del barrio
@@ -179,9 +254,13 @@ export default function InvestorMethod() {
         </li>
       </ul>
       <p className={styles.para}>
-        En tres escenarios: el base; el optimista, con un {pct(swing)} más de precio de venta y de alquiler y un {pct(costSwing)} menos
-        de coste; y el pesimista, al revés. <strong>Semáforo (supuesto), solo si pones el precio del suelo:</strong> «Sale» si llega al
-        margen objetivo; «Ajustar» entre el {pct(M.adjustFloorPct)} y el objetivo; «No sale» por debajo del {pct(M.adjustFloorPct)}. Si
+        En tres escenarios: el base; el optimista, con un {pct(Math.abs(best?.pricePct ?? 0))} más de precio de venta y de alquiler y
+        un {pct(Math.abs(best?.costPct ?? 0))} menos de coste; y el pesimista, con un {pct(Math.abs(worst?.pricePct ?? 0))} menos de
+        precio y un {pct(Math.abs(worst?.costPct ?? 0))} más de coste, porque las referencias de coste se separan un 15 % o más.{" "}
+        <strong>Semáforo (supuesto), solo si pones el precio del suelo:</strong> «Sale» si llega al
+        margen objetivo; «Ajustar» entre el {pct(M.adjustFloorPct)} y el objetivo; «No sale» por debajo del {pct(M.adjustFloorPct)}. La
+        tasación hipotecaria pide al promotor un margen mínimo del {pct(M.appraisalMinMarginPct)} en vivienda de primera residencia,
+        sin financiación ni Impuesto sobre Sociedades (Orden ECO/805/2003, disposición adicional sexta). Si
         pones un margen objetivo por debajo del {pct(M.adjustFloorPct)}, no hay franja de «Ajustar»: sale o no sale. Sin precio del
         suelo no hay veredicto: solo lo máximo que podrías pagar por él.
       </p>
@@ -193,9 +272,51 @@ export default function InvestorMethod() {
         no dice cuántos hogares ganan más o menos.
       </p>
 
-      <h3>4. Lo que no te dice</h3>
+      <h3 id="inversores-servicios">4. Servicios y suministros</h3>
+      <p className={styles.para}>{SERVICES_TEXT.solar}</p>
       <ul className={styles.text}>
-        <li>No es una tasación ni un informe vinculante ni una garantía de rentabilidad.</li>
+        <li>
+          <strong>Señal del planeamiento.</strong> En una norma zonal: {lower(SERVICES_TEXT.zonal.replace(/^Norma zonal: /, ""))} En
+          un ámbito, el estado de sus obras de urbanización según el Ayuntamiento (el estado de desarrollo de los ámbitos); si no están
+          terminadas y el planeamiento y la gestión del ámbito sí: {lower(SERVICES_TEXT.worksPending)} Si el planeamiento o la
+          gestión no lo están, o VEDA da el ámbito por pendiente: {lower(SERVICES_TEXT.planningFirst)} Si es suelo del Portal del
+          Suelo, si lo da por urbanizado.
+        </li>
+        <li>
+          <strong>Potencia (supuesto).</strong> Las viviendas, como los m² edificables de partida entre {n(M.homeM2)} m² (la vivienda
+          tipo); la potencia, {n(M.supplies.kwPerHome)} kW por vivienda (electrificación básica) por el coeficiente de simultaneidad de
+          la tabla 1 de la ITC-BT-10 del Reglamento de Baja Tensión: de {n(M.supplies.simultaneityOne)} con una vivienda a{" "}
+          {n(M.supplies.simultaneityMax)} con {M.supplies.tableHomes}, y {n(M.supplies.stepPastTable)} más por cada una a partir de
+          ahí. Sin servicios comunes ni garaje, que se suman aparte, así que es un mínimo. Por encima de {n(M.supplies.transformerKw)}{" "}
+          kW: {lower(SERVICES_TEXT.transformer.replace(/^Por encima de 100 kW, /, ""))}
+        </li>
+        <li>
+          <strong>Capacidad de la red.</strong> {SERVICES_TEXT.capacity} {SERVICES_TEXT.cnmc} Solo enlazamos su mapa: no copiamos sus
+          cifras.
+        </li>
+        <li>
+          <strong>Agua.</strong> {SERVICES_TEXT.canal}
+        </li>
+        <li>
+          <strong>Edificio catalogado.</strong> Leemos el catálogo de edificios protegidos del Plan General en el punto de la parcela
+          (Ayuntamiento de Madrid, datos abiertos). En los niveles 1 y 2 (singular, integral, estructural y volumétrico) el edificio
+          está protegido en su conjunto y ni siquiera en ruina puede tener orden o licencia de demolición; en el nivel 3 (parcial y
+          ambiental), en ruina se puede rehabilitar o derribar, pero la licencia puede obligar a mantener los elementos protegidos
+          (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). En los dos casos, la cuenta de obra nueva no vale tal cual: en un edificio
+          catalogado, la calculadora empieza sin superficie («Sin dato») y avisa de que hace falta un estudio de rehabilitación.
+        </li>
+        <li>
+          <strong>Lo que hay construido.</strong> Si el Catastro dice que hay un edificio, la ficha lo recuerda: la calculadora es de
+          obra nueva sobre suelo libre y no cuenta el derribo, el desalojo ni la compra a los propietarios.
+        </li>
+      </ul>
+
+      <h3>5. Lo que no te dice</h3>
+      <ul className={styles.text}>
+        <li>No es una tasación ni un informe vinculante ni una garantía de rentabilidad. {SHEET_TEXT.firstFilter}</li>
+        <li>
+          {SHEET_TEXT.sections.study}: {SHEET_TEXT.studyItems.map((item) => lower(item).replace(/\.$/, "")).join("; ")}. {SHEET_TEXT.takeIt}
+        </li>
         <li>
           No decimos qué se puede construir con toda la normativa (alturas, ocupación, retranqueos, usos o cargas): solo una
           edificabilidad de partida, con su fuente, para hacer números.
@@ -223,8 +344,21 @@ export default function InvestorMethod() {
         <li>
           <strong>Ámbito:</strong> una zona de la ciudad con su propio plan, que fija lo que se construye en ella.
         </li>
+        {(Object.keys(USE_TEXT) as (keyof typeof USE_TEXT)[]).map((kind) => (
+          <li key={kind}>
+            <strong>{USE_TEXT[kind].label}:</strong> {lower(USE_TEXT[kind].plain)}
+          </li>
+        ))}
+        {SERVICES_TEXT.words.map((w) => (
+          <li key={w.term}>
+            <strong>{w.term}:</strong> {lower(w.text)}
+          </li>
+        ))}
         <li>
-          <strong>Dotacional:</strong> suelo para equipamientos, zonas verdes o servicios públicos, no para vivienda.
+          <strong>Parcela urbanística:</strong> la parcela que dibuja el plan; puede no coincidir con la del Catastro.
+        </li>
+        <li>
+          <strong>Punto de equilibrio:</strong> el coste de construcción con el que la promoción llega justo al margen objetivo.
         </li>
         <li>
           <strong>Valor residual del suelo:</strong> lo máximo que se puede pagar por el suelo para que la promoción llegue al margen

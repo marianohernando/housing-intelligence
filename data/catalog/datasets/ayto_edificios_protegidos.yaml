@@ -1,0 +1,38 @@
+dataset_id: ayto_edificios_protegidos
+source_id: ayuntamiento_madrid_urbanismo_sigma
+name: Catálogo de edificios protegidos
+domain: urbanism
+owner: Ayuntamiento de Madrid (Dirección General de Planeamiento)
+format: ArcGIS REST (JSON)
+geography: polygon
+geo:
+  resolution: parcela
+  crs_expected: EPSG:25830
+temporal_resolution: null
+refresh_policy: continuo
+landing_url: https://datos.madrid.es/dataset/300158-0-edificios-protegidos
+resources:
+- name: Edificios protegidos (capa 5 de EDIFICIOS_PROTEGIDOS), consulta por punto
+  format: JSON
+  url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/EDIFICIOS_PROTEGIDOS/MapServer/5/query
+license_status: CLEAR
+status: REVIEWED
+priority: P2
+scorecard:
+  datamad_relevance: 1
+  product_impact: 4
+  geographic_granularity: 5
+  freshness: 5
+  license_clarity: 5
+  ingestion_ease: 4
+  notes: >-
+    D-253. Ayuntamiento de Madrid, datos.madrid.es 300158, CC BY 4.0 (comprobado el 19 nov):
+    «Edificios catalogados, nivel, grado de protección y número de catálogo». La búsqueda por
+    parcela lo lee en vivo, por el punto de la parcela, y no lo carga en la base: número de
+    catálogo, nombre, protección actual y enlace. Los niveles y lo que permiten, en las Normas
+    Urbanísticas del Plan General, título 4 (arts. 4.3.4 y 4.3.7).
+  reviewed_by: claude-code
+  reviewed_at: '2026-11-19T22:00:00+00:00'
+notes: >-
+  Complementario, no es dataset CM (D-205): solo Madrid capital. Contexto de la ficha de
+  parcela para inversores (D-253); no puntúa.

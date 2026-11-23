@@ -33,6 +33,33 @@ export type ArticleUrl = string | null;
  * The norm's assumption when an official figure wins
  */
 export type AssumedM2 = number | null;
+export type DatasetId = string;
+/**
+ * Whether the calculator can use it (housing only)
+ */
+export type Residential = boolean;
+export type Source = string;
+/**
+ * As the source writes it
+ */
+export type Use = string;
+/**
+ * D-252: a use as the person reads it, from the planning's or a source's words.
+ */
+export type UseClass =
+  | "residencial"
+  | "terciario"
+  | "industrial"
+  | "dotacional"
+  | "zona_verde"
+  | "infraestructura"
+  | "sin_uso"
+  | "otro";
+export type ValueM2 = number;
+/**
+ * D-252: every official figure of the parcel with its use and source
+ */
+export type ByUse = UseFigure[];
 /**
  * m² per m² of parcel
  */
@@ -48,15 +75,31 @@ export type Note = string | null;
 /**
  * In words, with its date or its article
  */
-export type Source = string;
-export type ValueM2 = number | null;
+export type Source1 = string;
+export type ValueM21 = number | null;
+/**
+ * D-252: what keeps the sheet's figures from passing for free housing ready to build.
+ */
+export type ParcelCautionKey =
+  | "otro_uso"
+  | "ambito_pendiente"
+  | "vivienda_protegida"
+  | "unifamiliar"
+  | "ambito_sin_estado"
+  | "edificio_catalogado"
+  | "edificio_existente";
+export type Text = string;
+/**
+ * D-252: shown before the figures
+ */
+export type Cautions = ParcelCaution[];
 export type InPilot = boolean;
 export type Note1 = string | null;
 /**
  * What the licence asks to show next to the data (source, date, geocoder)
  */
 export type AttributionText = string | null;
-export type DatasetId = string;
+export type DatasetId1 = string;
 /**
  * Published in the Comunidad de Madrid open data portal (counts for DATAMAD)
  */
@@ -84,7 +127,7 @@ export type Confidence = number | null;
 export type FeatureId = string | null;
 export type High = number | null;
 export type Low = number | null;
-export type ValueMark = "dato" | "supuesto" | "usuario";
+export type ValueMark = "dato" | "estimacion" | "supuesto" | "usuario";
 export type NullReason =
   | "NOT_APPLICABLE"
   | "SOURCE_NO_COVERAGE"
@@ -100,7 +143,7 @@ export type Period = string | null;
 /**
  * In words, with its date
  */
-export type Text = string;
+export type Text1 = string;
 /**
  * Where to open the source
  */
@@ -110,7 +153,7 @@ export type Value = number | null;
 export type Key = string;
 export type Label = string;
 export type Pct = number;
-export type Source1 = string;
+export type Source2 = string;
 export type CostParts = AssumptionPart[];
 export type SalesCostParts = AssumptionPart[];
 export type Commerce = SourcedValue[];
@@ -165,7 +208,7 @@ export type Count = number;
 export type Label3 = string;
 export type ProxyNote = string | null;
 /**
- * Oriented so that above 1 is better than the reference
+ * Oriented so that above 1 is better than the reference; None when the value is unknown, and always in a context row (gap-0.4)
  */
 export type RatioToReference1 = number | null;
 /**
@@ -186,7 +229,7 @@ export type Reliable = boolean;
  */
 export type GapRowKey =
   "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
-export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS";
+export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS" | "CONTEXTO";
 export type Rows = GapRow[];
 export type Warnings = string[];
 export type ZoneName = string;
@@ -218,14 +261,16 @@ export type Url2 = string | null;
 /**
  * Line A's planning areas: their use, as the source writes it
  */
-export type Use = string | null;
+export type Use1 = string | null;
 export type Parcels = LandItem[];
 export type Remaining = LandItem[];
 export type Notices = string[];
 /**
  * The parts that could not be read now
  */
-export type Degraded = ("catastro" | "planning" | "buildability" | "context")[];
+export type Degraded = (
+  "catastro" | "planning" | "buildability" | "context" | "plan_uses" | "catalog"
+)[];
 /**
  * Served from the saved demo sheet because a source failed
  */
@@ -247,7 +292,7 @@ export type BuiltM2 = number | null;
 export type CurrentUse = string | null;
 export type HorizontalDivision = boolean;
 /**
- * A plot with nothing built (solar); null unknown
+ * Parcela sin edificar según su uso en el Catastro; no implica solar (a legal condition with services). null unknown
  */
 export type IsVacant = boolean | null;
 export type Lat = number | null;
@@ -268,15 +313,35 @@ export type Rc14 = string;
 export type Rustic = boolean | null;
 export type BuiltM21 = number | null;
 export type Count1 = number;
-export type Use1 = string;
-export type ByUse = UnitUse[];
+export type Use2 = string;
+export type ByUse1 = UnitUse[];
 export type Total = number;
 export type YearBuilt = number | null;
+export type AsOf = string;
+/**
+ * The code in the Ayuntamiento's list
+ */
 export type Code2 = string;
+/**
+ * Planning, management or urbanization not finished
+ */
+export type Pending = boolean;
+export type Label4 = string;
+export type State = string;
+export type Phases = AmbitPhase[];
+/**
+ * False: the Ayuntamiento does not publish its state
+ */
+export type Tracked = boolean;
+export type Url3 = string;
+export type VedaStage =
+  | ("pendiente_sectorizacion" | "pendiente_planeamiento" | "gestion_urbanizacion" | "edificacion")
+  | null;
+export type Code3 = string;
 export type Figure = string | null;
 export type FileNumber = string | null;
 export type Name3 = string | null;
-export type Url3 = string | null;
+export type Url4 = string | null;
 /**
  * What the planning code is: a norma zonal or a planning area (ámbito) of the PGOUM.
  */
@@ -292,25 +357,75 @@ export type Nivel = string | null;
 export type Nz = number;
 export type Notice = string;
 export type ObservedAt1 = string;
+/**
+ * D-252c: table 4's principal use of the urban parcel when the plan gives it no figure (it can be «SIN USO PORMENORIZADO»)
+ */
+export type PlanUseWithoutFigure = string | null;
+/**
+ * D-252: what the plan allows by use on the urban parcel; [] when it publishes nothing, null when it could not be read
+ */
+export type PlanUses = PlanUseFigure[] | null;
+/**
+ * value_m2 computed from the coefficient
+ */
+export type Assumed = boolean;
+/**
+ * m²/m² when the plan gives it so
+ */
+export type Coefficient1 = number | null;
+/**
+ * Table 4, «uso cualificado principal»; else table 5
+ */
+export type Principal = boolean;
+export type Use3 = string;
+export type UseOwnership = "publico" | "privado";
+/**
+ * m²; with a coefficient, coefficient × urban parcel area
+ */
+export type ValueM22 = number | null;
+/**
+ * D-252c: the date of the snapshot of tables 4 and 5
+ */
+export type PlanUsesAsOf = string | null;
+/**
+ * NNUU art. 4.3.4
+ */
+export type Level = number | null;
+export type Name6 = string | null;
+export type CatalogNumber = string | null;
+export type Protection = string | null;
+export type Url5 = string | null;
 export type SheetLabel = string | null;
 /**
  * The official record: the instrument's, or the article of the Normas Urbanísticas for a norma zonal
  */
 export type SheetUrl = string | null;
 export type UrbanParcel = string | null;
-export type Use2 = string | null;
+/**
+ * D-252: the area of the urban parcel's polygon in the plan
+ */
+export type UrbanParcelAreaM2 = number | null;
+export type Use4 = string | null;
 /**
  * The Geoportal viewer, centred on the parcel
  */
 export type ViewerUrl = string;
+export type Homes = number;
+export type Kw = number;
+export type KwPerHome = number;
+/**
+ * Above 100 kW (RD 1048/2013, art. 26.1)
+ */
+export type OverTransformerThreshold = boolean;
+export type Simultaneity = number;
 export type AccessedAt = string | null;
 export type Attribution = string;
 export type License1 = string;
 export type LicenseUrl = string | null;
-export type Name6 = string;
+export type Name7 = string;
 export type Publisher1 = string;
 export type SourceId = string;
-export type Url4 = string | null;
+export type Url6 = string | null;
 export type Sources = ParcelSource[];
 export type ApiVersion = string;
 export type DataVersion = string | null;
@@ -333,6 +448,7 @@ export interface ParcelSheetResponse {
 export interface ParcelSheet {
   barrio: ZoneRef | null;
   buildability: Buildability;
+  cautions?: Cautions;
   /**
    * null when the barrio is unknown
    */
@@ -348,6 +464,14 @@ export interface ParcelSheet {
    * null when the Ayuntamiento fails
    */
   planning: PlanningBlock | null;
+  /**
+   * D-253: from the starting buildable m²; null without them
+   */
+  power?: PowerEstimate | null;
+  /**
+   * D-252: the parcel as public land of the Portal del Suelo in its barrio (owner, regime, urbanization), when the barrio's sheet lists it
+   */
+  public_land?: LandItem | null;
   sources: Sources;
 }
 /**
@@ -371,14 +495,31 @@ export interface Buildability {
   article?: Article;
   article_url?: ArticleUrl;
   assumed_m2?: AssumedM2;
+  by_use?: ByUse;
   coefficient?: Coefficient;
   dataset_ids?: DatasetIds;
   editable?: Editable;
   formula?: Formula;
   kind: BuildabilityKind;
   note?: Note;
+  source: Source1;
+  value_m2: ValueM21;
+}
+/**
+ * One source's buildable m² for a parcel, with the use that source gives it. A source that
+ * gives one figure is never split by use.
+ */
+export interface UseFigure {
+  dataset_id: DatasetId;
+  residential: Residential;
   source: Source;
+  use: Use;
+  use_class: UseClass;
   value_m2: ValueM2;
+}
+export interface ParcelCaution {
+  key: ParcelCautionKey;
+  text: Text;
 }
 /**
  * The barrio around the parcel: the whole investor sheet in a pilot barrio (D-248); outside
@@ -409,7 +550,7 @@ export interface InvestorZone {
  */
 export interface DatasetRef {
   attribution_text?: AttributionText;
-  dataset_id: DatasetId;
+  dataset_id: DatasetId1;
   is_cm_open_data: IsCmOpenData;
   license?: License;
   name: Name1;
@@ -432,7 +573,11 @@ export interface ViabilityDefaults {
   loan_years: SourcedValue;
   ltv_pct: SourcedValue;
   new_build_premium_pct: SourcedValue;
-  pem_m2: SourcedValue;
+  pem_m2: SourcedValue1;
+  /**
+   * D-252: the PEM the building permits declare (CM dataset cm_visados_presupuesto_obra, from the Feature Store): the low reference
+   */
+  pem_permits_m2?: SourcedValue | null;
   rent_m2_month: SourcedValue;
   sale_price_m2: SourcedValue;
   sales_cost_parts: SalesCostParts;
@@ -466,7 +611,7 @@ export interface FieldSource {
    */
   level?: TerritoryLevel | null;
   period?: Period;
-  text: Text;
+  text: Text1;
   url?: Url1;
 }
 /**
@@ -476,7 +621,24 @@ export interface AssumptionPart {
   key: Key;
   label: Label;
   pct: Pct;
-  source: Source1;
+  source: Source2;
+}
+/**
+ * A figure with its unit, mark and source; `low` and `high` when the source gives a range.
+ */
+export interface SourcedValue1 {
+  confidence?: Confidence;
+  feature_id?: FeatureId;
+  high?: High;
+  low?: Low;
+  mark: ValueMark;
+  /**
+   * Why value is missing; never 0 for unknown
+   */
+  null_reason?: NullReason | null;
+  source: FieldSource;
+  unit: Unit;
+  value: Value;
 }
 /**
  * Who lives there. Each figure at the finest level published (its `source.level`).
@@ -580,7 +742,7 @@ export interface LandItem {
   regime?: Regime;
   stage?: Stage;
   url?: Url2;
-  use?: Use;
+  use?: Use1;
 }
 export interface PricesBlock {
   new_build_premium_pct: SourcedValue;
@@ -616,7 +778,7 @@ export interface ParcelBlock {
  * A building in horizontal division, summarised: units by use (no list of units).
  */
 export interface ParcelUnits {
-  by_use: ByUse;
+  by_use: ByUse1;
   total: Total;
 }
 /**
@@ -625,24 +787,60 @@ export interface ParcelUnits {
 export interface UnitUse {
   built_m2: BuiltM21;
   count: Count1;
-  use: Use1;
+  use: Use2;
 }
 /**
  * «Planeamiento»: the Ayuntamiento's planning at the parcel's reference point.
  */
 export interface PlanningBlock {
-  code: Code2;
+  /**
+   * D-252: the state of the planning area; null for a norma zonal
+   */
+  ambit?: AmbitStatus | null;
+  code: Code3;
   instrument: PlanningInstrument | null;
   kind: PlanningKind;
   name: Name4;
   norma_zonal: NormaZonal | null;
   notice: Notice;
   observed_at: ObservedAt1;
+  plan_use_without_figure?: PlanUseWithoutFigure;
+  plan_uses?: PlanUses;
+  plan_uses_as_of?: PlanUsesAsOf;
+  /**
+   * D-253: the building in the catalogue at the parcel's point
+   */
+  protected_building?: ProtectedBuilding | null;
   sheet_label: SheetLabel;
   sheet_url: SheetUrl;
   urban_parcel: UrbanParcel;
-  use: Use2;
+  urban_parcel_area_m2?: UrbanParcelAreaM2;
+  use: Use4;
+  /**
+   * D-252: the use, classified
+   */
+  use_class?: UseClass | null;
+  /**
+   * D-252: dotacional público or privado, when the plan says it
+   */
+  use_ownership?: UseOwnership | null;
   viewer_url: ViewerUrl;
+}
+/**
+ * D-252: the state of the planning area, as the Ayuntamiento publishes it.
+ */
+export interface AmbitStatus {
+  as_of: AsOf;
+  code: Code2;
+  pending: Pending;
+  phases?: Phases;
+  tracked: Tracked;
+  url: Url3;
+  veda_stage?: VedaStage;
+}
+export interface AmbitPhase {
+  label: Label4;
+  state: State;
 }
 /**
  * The planning instrument in force at the point, with its official record.
@@ -651,13 +849,48 @@ export interface PlanningInstrument {
   figure: Figure;
   file_number: FileNumber;
   name: Name3;
-  url: Url3;
+  url: Url4;
 }
 export interface NormaZonal {
   grado?: Grado;
   name?: Name5;
   nivel?: Nivel;
   nz: Nz;
+}
+/**
+ * D-252: what the plan allows of one use on the urban parcel (USOS_SUELO, table 4 for the
+ * principal use and table 5 for the others). The total the plan allows, not what is left; the
+ * urban parcel may not be the cadastral one.
+ */
+export interface PlanUseFigure {
+  assumed?: Assumed;
+  coefficient?: Coefficient1;
+  principal: Principal;
+  use: Use3;
+  use_class: UseClass;
+  use_ownership?: UseOwnership | null;
+  value_m2?: ValueM22;
+}
+/**
+ * D-253: the Plan General's catalogue of protected buildings (datos.madrid.es 300158).
+ */
+export interface ProtectedBuilding {
+  level?: Level;
+  name: Name6;
+  number: CatalogNumber;
+  protection: Protection;
+  url?: Url5;
+}
+/**
+ * D-253: the least power the homes of the starting buildable m² need (ITC-BT-10), an
+ * assumption: homes ≈ m² / 80, 5,75 kW each, times the coefficient of simultaneity.
+ */
+export interface PowerEstimate {
+  homes: Homes;
+  kw: Kw;
+  kw_per_home: KwPerHome;
+  over_transformer_threshold: OverTransformerThreshold;
+  simultaneity: Simultaneity;
 }
 /**
  * Who the sheet's data comes from, its licence and how it asks to be cited.
@@ -667,10 +900,10 @@ export interface ParcelSource {
   attribution: Attribution;
   license: License1;
   license_url?: LicenseUrl;
-  name: Name6;
+  name: Name7;
   publisher: Publisher1;
   source_id: SourceId;
-  url?: Url4;
+  url?: Url6;
 }
 export interface Meta {
   api_version?: ApiVersion;

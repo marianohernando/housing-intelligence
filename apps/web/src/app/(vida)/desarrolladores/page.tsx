@@ -14,9 +14,14 @@ import {
   DEV_TEXT as TEXT,
   ENVELOPE_EXAMPLE,
   MCP_CLAUDE_CODE,
+  MCP_CLAUDE_CODE_REMOTE,
   MCP_CLAUDE_DESKTOP,
+  MCP_REMOTE_URL,
   MCP_SETUP,
+  MCP_STDIO_BRIDGE,
   MCP_TOOLS,
+  OPEN_DATA_FILES,
+  OPEN_DATA_TEXT,
   PLANNED,
   REPO_URL,
   repoFile,
@@ -99,7 +104,7 @@ export default function DesarrolladoresPage() {
             </li>
             <li>
               <code>meta.methodology_version</code>: la versión del método que calcula las cifras, por ejemplo{" "}
-              <code>fit-0.9</code> para el encaje, <code>gap-0.3</code> para «Qué falta» o <code>viability-0.1</code> para la
+              <code>fit-0.9</code> para el encaje, <code>gap-0.4</code> para «Qué falta» o <code>viability-0.2</code> para la
               viabilidad. Si cambia el método, cambia la versión.
             </li>
             <li>
@@ -179,18 +184,52 @@ export default function DesarrolladoresPage() {
               ))}
             </section>
           ))}
+          <section className={styles.group} aria-labelledby="grupo-ficheros">
+            <h3 id="grupo-ficheros" className={styles.subhead}>
+              {OPEN_DATA_TEXT.title}
+            </h3>
+            <p>{OPEN_DATA_TEXT.intro}</p>
+            <ul className={styles.list}>
+              {OPEN_DATA_FILES.map((file) => (
+                <li key={file.path}>
+                  <a href={file.path}>{file.title}</a> (<code>{file.path}</code>): {file.text}
+                </li>
+              ))}
+            </ul>
+          </section>
         </Section>
 
-        <Section id="mcp" badge={TEXT.local}>
+        <Section id="mcp" badge={TEXT.works}>
           <p>
-            El MCP (Model Context Protocol) deja que un asistente de IA, como Claude Desktop o Claude Code, pregunte a Vida
-            Fácil lo mismo que la API y reciba las mismas cifras y las mismas fuentes. Sus herramientas son de solo lectura,
-            llaman a las mismas funciones que la API y nunca ejecutan SQL.
+            El MCP (Model Context Protocol) deja que un asistente de IA, como Claude, pregunte a Vida Fácil lo mismo que la
+            API y reciba las mismas cifras y las mismas fuentes. Sus herramientas son de solo lectura, llaman a las mismas
+            funciones que la API y nunca ejecutan SQL.
           </p>
-          <p className={styles.notice}>
-            <strong>Hoy funciona en tu ordenador, no en remoto.</strong> El servidor se arranca en local y habla con tu
-            asistente por stdio. Necesita una copia del repositorio y una base de datos Postgres con los datos cargados.
+          <h3 className={styles.subhead}>En remoto, sin instalar nada</h3>
+          <p>
+            Esta es la dirección del servidor. Habla Streamable HTTP, sin estado y sin clave, como la API:
           </p>
+          <CodeBlock code={MCP_REMOTE_URL} caption="URL del MCP" label="Dirección del MCP en remoto" />
+          <ol className={styles.steps}>
+            <li>
+              <p>
+                <strong>Claude (web o escritorio):</strong> en Ajustes, Conectores, añade un conector personalizado con
+                esta dirección.
+              </p>
+            </li>
+            <li>
+              <p>
+                <strong>Claude Code:</strong>
+              </p>
+              <CodeBlock code={MCP_CLAUDE_CODE_REMOTE} caption="Terminal" label="Añadir el MCP remoto a Claude Code" />
+            </li>
+            <li>
+              <p>
+                <strong>Un cliente que solo habla stdio:</strong> el puente <code>mcp-remote</code>.
+              </p>
+              <CodeBlock code={MCP_STDIO_BRIDGE} caption="Terminal" label="Puente stdio al MCP remoto" />
+            </li>
+          </ol>
           <h3 className={styles.subhead}>Sus {MCP_TOOLS.length} herramientas</h3>
           <ul className={styles.tools}>
             {MCP_TOOLS.map((tool) => (
@@ -200,7 +239,11 @@ export default function DesarrolladoresPage() {
               </li>
             ))}
           </ul>
-          <h3 className={styles.subhead}>Cómo conectarlo</h3>
+          <h3 className={styles.subhead}>También en tu ordenador</h3>
+          <p>
+            Si prefieres tu propia copia, el mismo servidor se arranca en local y habla con tu asistente por stdio. Necesita
+            el repositorio y una base de datos Postgres con los datos cargados.
+          </p>
           <ol className={styles.steps}>
             <li>
               <p>

@@ -1,0 +1,85 @@
+vercel logs, deployment dpl_9DWhMMGTHhzAoBiATNMPvd98tJbV, from 2026-11-19T23:26:00Z to 2026-11-19T23:32:04.163Z (UTC)
+runtime log lines: 151, more pages: false, levels:  151 info 
+  "fit bindings ignored"     0
+  "ignored"                  0
+  "WARNING"                  0
+  "EMAXCONNSESSION"          0
+  "prepared statement"       0
+  "password authentication"  0
+  "OperationalError"         0
+  "Traceback"                0
+  "ValueError"               0
+  "ValidationError"          0
+instances started ("Application startup complete"): 7
+
+CDN request records: 277, the whole window (1 page of the listing, 2026-11-19T23:27:32.260Z to 2026-11-19T23:30:36.263Z); every one from dpl_9DWhMMGTHhzAoBiATNMPvd98tJbV
+WAF action: allow × 277
+the parcel routes (path as the CDN records it, status, cache, client):
+     4 GET /api/v1/investors/parcels 200 MISS · vida-facil-smoke/warm-c4ea
+     3 GET /api/v1/investors/parcels 200 HIT · vida-facil-smoke/probe-d252b
+     1 GET /api/v1/investors/parcels 422 MISS · vida-facil-smoke/check-422
+by status: 200 × 273 · 304 × 3 · 422 × 1
+API by path and status:
+    25 POST /api/v1/search 200
+     8 GET /api/v1/datasets 200
+     7 GET /api/v1/investors/parcels 200
+     5 GET /api/v1/geo/admin-units 200
+     3 GET /api/v1/features 200
+     2 POST /api/v1/search/barrios 200
+     2 GET /api/v1/places 200
+     2 GET /api/v1/features/suelo_publico_vivienda_m2/values 200
+     2 GET /api/v1/features/plan_vive_viviendas/values 200
+     1 POST /api/v1/investors/viability 200
+     1 GET /api/v1/investors/zones/ES.28.BAR.28079164 200
+     1 GET /api/v1/investors/zones 200
+     1 GET /api/v1/investors/parcels 422
+     1 GET /api/v1/health/ready 200
+     1 GET /api/v1/health 200
+     1 GET /api/v1/gaps/municipio/28180 200
+     1 GET /api/v1/gaps/municipio/28161 200
+     1 GET /api/v1/gaps/municipio/28148 200
+     1 GET /api/v1/gaps/municipio/28106 200
+     1 GET /api/v1/gaps/municipio/28092 200
+     1 GET /api/v1/gaps/municipio/28079 200
+     1 GET /api/v1/gaps/municipio/28074 200
+     1 GET /api/v1/gaps/municipio/28049 200
+     1 GET /api/v1/gaps/municipio/28006 200
+     1 GET /api/v1/gaps/municipio/28005 200
+     1 GET /api/v1/gaps/municipio/28001 200
+     1 GET /api/v1/gaps/distrito/2807921 200
+     1 GET /api/v1/gaps/distrito/2807920 200
+     1 GET /api/v1/gaps/distrito/2807919 200
+     1 GET /api/v1/gaps/distrito/2807918 200
+     1 GET /api/v1/gaps/distrito/2807917 200
+     1 GET /api/v1/gaps/distrito/2807916 200
+     1 GET /api/v1/gaps/distrito/2807915 200
+     1 GET /api/v1/gaps/distrito/2807914 200
+     1 GET /api/v1/gaps/distrito/2807913 200
+     1 GET /api/v1/gaps/distrito/2807912 200
+     1 GET /api/v1/gaps/distrito/2807911 200
+     1 GET /api/v1/gaps/distrito/2807910 200
+     1 GET /api/v1/gaps/distrito/2807909 200
+     1 GET /api/v1/gaps/distrito/2807908 200
+     1 GET /api/v1/gaps/distrito/2807907 200
+     1 GET /api/v1/gaps/distrito/2807906 200
+     1 GET /api/v1/gaps/distrito/2807905 200
+     1 GET /api/v1/gaps/distrito/2807904 200
+     1 GET /api/v1/gaps/distrito/2807903 200
+     1 GET /api/v1/gaps/distrito/2807902 200
+     1 GET /api/v1/gaps/distrito/2807901 200
+     1 GET /api/v1/features/compraventas_obra_nueva_pct/values 200
+     1 GET /api/v1/features/ambitos_residenciales_en_desarrollo/values 200
+every 4xx/5xx:
+  2026-11-19T23:30:21.185Z 422 GET /api/v1/investors/parcels · vida-facil-smoke/check-422
+
+D-252b's timing line (`hi_api.services.parcel_sheet`, INFO, to stdout), every one of this window:
+  2026-11-19T23:28:22.582Z parcel input=rc rc14=2122202VK4722A fallback=False degraded=plan_uses ms=14737 upstream_ms=14472 parts=plan_uses:TimeoutError:6557
+  2026-11-19T23:28:36.242Z parcel input=rc rc14=3959601VK4735H fallback=False degraded=- ms=13411 upstream_ms=13293 parts=-
+  2026-11-19T23:28:51.105Z parcel input=rc rc14=0390314VK4709A fallback=False degraded=plan_uses ms=14623 upstream_ms=14501 parts=plan_uses:TimeoutError:4648
+  2026-11-19T23:29:06.017Z parcel input=rc rc14=9943003VK3794D fallback=False degraded=plan_uses ms=14617 upstream_ms=14500 parts=plan_uses:TimeoutError:7017
+
+hi_api lines in all: 4 (the 4 above).
+Lines with «lat=» or «lon=»: 0.
+Lines with «address=» or «q=»: 1: the 422 of privacidad-422.txt, as «address=[redactado]».
+Lines with the typed text («prueba»): 0.
+Visitors: no request from a browser other than this run's (Web Analytics page views: 0).

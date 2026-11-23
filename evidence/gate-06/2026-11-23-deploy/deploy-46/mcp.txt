@@ -1,0 +1,54 @@
+The remote MCP (#123, D-255) in production: https://vidafacil-madrid.vercel.app/api/v1/mcp, dpl_GyEfen16H6Kxbcng13cABR124UY6 (542283b8), 2026-11-23 UTC.
+
+1. The smoke (make deploy-demo, both rounds): mcp-init «vida-facil 0.0.1, protocol 2025-06-18» (1,739 B, 0.14-0.27 s) and mcp-tools «7 tools» (95,074 B, 0.17-0.18 s).
+
+2. The curls of docs/04_technical_architecture/32_mcp_server.md (POST, Content-Type application/json, Accept «application/json, text/event-stream»), 11:20 UTC
+   initialize: HTTP 200 1739 B, content-type application/json, no Mcp-Session-Id; {"serverInfo":{"name":"vida-facil","title":"Vida Fácil","version":"0.0.1"},"protocolVersion":"2025-06-18","tools":true,"instructions_chars":1432}
+   tools/list: HTTP 200 95074 B, 7 tools, all readOnlyHint true and openWorldHint false:
+     buscar_zonas
+     que_falta
+     explicar_zona
+     encontrar_zona
+     fuentes_de_datos
+     ficha_inversor
+     viabilidad
+   tools/call fuentes_de_datos {cm_only: true}: HTTP 200 52826 B, isError false, {"total":39,"cm_open_data_count":39}; hi_mcp logged «fuentes_de_datos answered in 0.04 s»
+   tools/call encontrar_zona {name: Chamartín}: HTTP 200, isError false, ["Chamartín distrito 2807905"]; 0.02 s
+   tools/call que_falta {level: distrito, code: 2807905}: HTTP 200 71316 B, isError false, method gap-0.4, rows ["escuela_infantil:JUSTO","colegio:CUBIERTO","centro_salud:CUBIERTO","mayores:JUSTO","farmacia:CUBIERTO","vivienda:SIN_DATOS"]; 0.09 s
+     its structuredContent is identical, without meta, to GET /api/v1/gaps/distrito/2807905 of the same minute
+
+3. Hosts, origins and methods (tools/list unless said)
+   vidafacil-madrid.vercel.app: 200 · vida-facil-eight.vercel.app: 200, 7 tools
+   Origin https://claude.ai: 200, 7 tools · Origin https://evil.example: 403 «Invalid Origin header»
+   GET: 405, Allow: POST · OPTIONS: 405 · a notification (notifications/initialized): 202, empty
+   ping, prompts/list, resources/list, resources/templates/list: 200 in 0.18-0.49 s (empty lists)
+   Host evil.example (sent to the public domain): 404 from Vercel's edge, x-vercel-error DEPLOYMENT_NOT_FOUND.
+     Vercel routes by Host, so a Host that is not one of the project's domains never reaches the container: the 421 cannot be
+     produced in production. X-Forwarded-Host evil.example is not checked (200), as the SDK checks Host only.
+   The 421 on this same commit, locally (uvicorn hi_mcp.http:app on 127.0.0.1, no database needed for tools/list):
+     Host vidafacil-madrid.vercel.app: 200
+     Host vida-facil-eight.vercel.app: 200
+     Host evil.example: 421 «Invalid Host header», logged as «Invalid Host header: evil.example»
+     Host vidafacil-madrid.vercel.app.evil.example: 421 «Invalid Host header», logged as «Invalid Host header: vidafacil-madrid.vercel.app.evil.example»
+   tests/unit/mcp/test_http.py on 542283b8: 18 passed.
+   Production received the public Host, so MCP_ALLOWED_HOSTS was not needed and not set.
+
+4. Claude Code (2.1.326) as a real client
+   claude mcp add --scope project --transport http vida-facil https://vidafacil-madrid.vercel.app/api/v1/mcp, in a temporary folder:
+     written to that folder's .mcp.json; «claude mcp list» shows it «Pending approval» (a project server needs an interactive approval).
+   The same server by --mcp-config (no approval, nothing written to the user's configuration), claude -p with haiku, asked for the tool
+   names without calling any: the 7 tools, mcp__vida-facil__buscar_zonas, encontrar_zona, explicar_zona, ficha_inversor,
+   fuentes_de_datos, que_falta, viabilidad. The temporary folder was deleted.
+
+5. Finding: Claude Code keeps one request open until Vercel's 300 s limit
+   Claude Code 2.1.326 speaks protocol 2026-07-28. It sends 5 POSTs: server/discover, subscriptions/listen, prompts/list,
+   resources/list and tools/list. The server (mcp 2.3.0) answers subscriptions/listen with a text/event-stream («notifications/
+   subscriptions/acknowledged», toolsListChanged, promptsListChanged, resourcesListChanged) and keeps it open for list-changed
+   notifications; the other four are JSON and close at once.
+   In production that POST (11:21:41.594 UTC) stayed open until 11:26:41.646, exactly 300 s, Vercel's maximum duration, although
+   claude -p had exited within seconds. While open, Vercel's runtime log attributes every line of that instance to it as well
+   (251 lines), so lines appear twice in «vercel logs».
+   Reproduced locally with a logging wrapper: the listen POST's body goes out with more_body=True and only completes at the
+   client's disconnect. A plain curl client (initialize, tools/list, tools/call) never opens it.
+   Impact: the MCP works; each Claude Code session (and any client that subscribes) holds one container request for up to 5 min
+   (the instance keeps serving other requests meanwhile) and doubles the log lines of that instance. Not critical for the demo.

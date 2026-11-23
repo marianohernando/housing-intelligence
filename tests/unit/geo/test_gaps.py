@@ -1,22 +1,33 @@
 """GAP-001 classification: oriented ratio, declared cut-offs, unknown never classified."""
 
+from pathlib import Path
+
 import pytest
+import yaml
 from hypothesis import given
 from hypothesis import strategies as st
 
+from hi_contracts.catalog.enums import GapRowKey
 from hi_contracts.public import GapStatus
 from hi_domain.gaps import (
+    CONTEXT_ROWS,
     GAP_METHOD,
+    JUDGED_ROWS,
     TerritoryType,
     UnclassifiableError,
     classify,
+    context_status,
     es_number,
     explanation,
     oriented_ratio,
     poisson_upper,
+    row_label,
     significant_shortfall,
     territory_type,
 )
+
+FEATURES = Path(__file__).resolve().parents[3] / "data" / "catalog" / "features"
+HOUSING_FEATURE = FEATURES / "viviendas_grandes_por_100_hogares_grandes.yaml"
 
 
 @pytest.mark.parametrize(
@@ -122,3 +133,23 @@ def test_falta_needs_a_material_and_significant_shortfall() -> None:
 def test_a_count_never_reads_as_short_of_itself(observed: int, extra: float) -> None:
     assert significant_shortfall(observed, observed) is False
     assert significant_shortfall(observed + extra, observed) is False
+
+
+def test_the_housing_row_is_context_from_gap_0_4() -> None:
+    """D-254: second homes inflate the stock of the villages, so the housing row is shown with
+    its reference and never judged; every other row still is."""
+    assert GAP_METHOD.version == "gap-0.4"
+    assert GAP_METHOD.context_rows == [GapRowKey.VIVIENDA] == list(CONTEXT_ROWS)
+    assert [row for row in GapRowKey if row is not GapRowKey.VIVIENDA] == JUDGED_ROWS
+    label = "Viviendas grandes por cada 100 hogares grandes (contexto)"
+    assert row_label(GapRowKey.VIVIENDA, "Vivienda para familias") == label
+    assert row_label(GapRowKey.FARMACIA, "Farmacias") == "Farmacias"
+    # The catalog says the same, so a sync of the Feature Dictionary changes nothing
+    assert yaml.safe_load(HOUSING_FEATURE.read_text())["gap_row"]["label"] == label
+
+
+@given(st.one_of(st.none(), st.floats(min_value=0, allow_nan=False, allow_infinity=False)))
+def test_a_context_value_is_never_judged(value: float | None) -> None:
+    status = context_status(value)
+    assert status is (GapStatus.SIN_DATOS if value is None else GapStatus.CONTEXTO)
+    assert status not in {GapStatus.FALTA, GapStatus.JUSTO, GapStatus.CUBIERTO}

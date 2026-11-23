@@ -36,7 +36,6 @@ import {
   factAsShown,
   factsTitle,
   nearMissLine,
-  PRICE_HINT,
   RENT_2024_NOTICE,
   RENT_LIST_NOTICE,
   speaksToMany,
@@ -314,9 +313,9 @@ async function checkGapsLine(run, journey, card, gaps, result, top) {
 }
 
 /**
- * The card of the first zone (second delivery): its essentials say the name, the band in words and
- * «Precio orientativo», never the %; «Ver más sobre…» unfolds the % and every fact of the API, and
- * why the rent is orientative. «Volver a la lista» goes back to the list.
+ * The card of the first zone (second delivery): its essentials say the name, the band in words and,
+ * renting, that the price is of the 2024 leases (F14), never the %; «Ver más sobre…» unfolds the %
+ * and every fact of the API. «Volver a la lista» goes back to the list.
  */
 async function checkFirstZone(run, page, top, result) {
   const J = "J1 search";
@@ -326,8 +325,8 @@ async function checkFirstZone(run, page, top, result) {
   await card.getByRole("heading", { name, exact: true }).waitFor({ timeout: WAIT });
   const essentials = await checkGapsLine(run, J, card, gaps, result, top);
   run.check(J, "card name = API 1st zone", essentials.includes(name), name);
-  run.check(J, "card essentials: band in words and «Precio orientativo», no %",
-    essentials.includes(BAND_TEXT[top.match_band]) && essentials.includes(PRICE_HINT) && !/\d\s*%/.test(essentials), essentials.slice(0, 160));
+  run.check(J, "card essentials: band in words and the 2024 rent notice, no %",
+    essentials.includes(BAND_TEXT[top.match_band]) && essentials.includes(RENT_2024_NOTICE) && !/\d\s*%/.test(essentials), essentials.slice(0, 160));
   run.check(J, "card in the address (?zona=)", new URL(page.url()).searchParams.get("zona") === zoneKeyOf(top.zone), page.url());
   await card.locator("summary").filter({ hasText: /^Ver más sobre / }).first().click();
   const text = squash(await card.innerText());
@@ -339,7 +338,6 @@ async function checkFirstZone(run, page, top, result) {
   const missing = top.facts.filter((f) => !text.includes(squash(factAsShown(f))));
   run.check(J, "«Ver más»: card facts = API facts", shown === top.facts.length && missing.length === 0,
     `${shown} on screen, ${top.facts.length} in the API${missing.length ? `; missing: ${missing[0].text}` : ""}`);
-  run.check(J, "«Ver más»: why the rent is orientative", text.includes(RENT_2024_NOTICE));
   await run.shot(page, "j1-card");
   await card.getByRole("button", { name: "Volver a la lista" }).click();
   await page.getByRole("region", { name: RESULTS }).waitFor({ timeout: WAIT });
@@ -668,11 +666,11 @@ async function journeyDevelopers(run, page) {
     `${await routes.count()} routes, ${commands.length} commands`);
   run.check(J, "every example has its «Copiar»", (await api.getByRole("button", { name: /^Copiar/ }).count()) === DEV_ROUTES);
   const tools = squash(await section(/^El MCP/).innerText());
-  run.check(J, "the MCP: 7 tools, local", MCP_TOOLS.every((t) => tools.includes(t)) && tools.includes("Funciona en local") && tools.includes("hi-mcp"),
+  run.check(J, "the MCP: 7 tools, remote at /api/v1/mcp and local (D-255)", MCP_TOOLS.every((t) => tools.includes(t)) && tools.includes("Funciona hoy") && tools.includes("/api/v1/mcp") && tools.includes("hi-mcp"),
     MCP_TOOLS.filter((t) => !tools.includes(t)).join(", "));
   const planned = section(/^Planteado/).locator("li");
   const labels = await planned.filter({ hasText: "Aún no disponible" }).count();
-  run.check(J, "planned items say «Aún no disponible»", (await planned.count()) === 4 && labels === 4, `${labels}/${await planned.count()}`);
+  run.check(J, "planned items say «Aún no disponible»", (await planned.count()) === 3 && labels === 3, `${labels}/${await planned.count()}`);
   const footer = page.locator("footer").last().getByRole("link", { name: "API y MCP gratis, para desarrolladores" });
   run.check(J, "the footer links to /desarrolladores", (await footer.getAttribute("href")) === "/desarrolladores");
   await run.shot(page, "j8-developers");
@@ -703,7 +701,14 @@ async function checkParcelSheet(run, page, J, rc, response) {
   const b = sheet.buildability;
   run.check(J, `${rc}: buildability ${b.kind} with its word`, built.includes(MARK_WORD[b.kind]) && (b.value_m2 === null ? built.includes("Sin dato") : built.includes(m2Shown(b.value_m2))), `${b.kind} ${b.value_m2}`);
   const field = await page.getByLabel("Superficie edificable residencial").inputValue();
-  run.check(J, `${rc}: the calculator starts from the parcel's m²`, field === (b.value_m2 === null ? "" : String(Math.round(b.value_m2))), field);
+  // deploy-45: #120 (F14, jury A1/A2) starts the calculator of a catalogued building at «Sin dato», with its notice
+  const pb = sheet.planning?.protected_building;
+  const catalogued = Boolean(pb) && !["descatalogado", "demolicion total"].includes((pb.protection ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim());
+  run.check(J, `${rc}: the calculator starts from the parcel's m²${catalogued ? " (catalogued: empty, #120)" : ""}`, field === (b.value_m2 === null || catalogued ? "" : String(Math.round(b.value_m2))), field);
+  if (catalogued) {
+    const page_ = squash(await page.locator("main").innerText());
+    run.check(J, `${rc}: catalogued building: the rehabilitation notice (#120)`, page_.includes("Edificio catalogado: una cuenta de obra nueva no sirve; hace falta un estudio de rehabilitación."));
+  }
   const planning = squash(await section(page, "planeamiento").innerText());
   if (sheet.planning) {
     // A norma zonal in words («Norma zonal 1, grado 2º»), an area by its code («APR.02.06»)

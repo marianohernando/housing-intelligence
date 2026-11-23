@@ -74,8 +74,8 @@
   display: none;
 }
 
-/* On paper a link cannot be followed: its address is printed after it */
-.datasets .printOnly {
+/* On paper a link cannot be followed: its address is printed after it, and a long one wraps */
+.printOnly {
   overflow-wrap: anywhere;
 }
 
@@ -235,6 +235,13 @@
 
 .mark_dato {
   border-color: var(--violet-strong);
+  color: var(--violet-strong);
+}
+
+/* Computed from data, not published (the barrio's price): data's colour, an assumption's dashes */
+.mark_estimacion {
+  border-color: var(--violet-strong);
+  border-style: dashed;
   color: var(--violet-strong);
 }
 
@@ -454,6 +461,18 @@
   gap: var(--space-2);
   padding-left: 1.2em;
   color: var(--ink-soft);
+}
+
+/* D-252: the links of the cost references, a 44 px target like the sources'; in print their
+   address follows (review of #109, R-09) and wraps like the sources' list */
+.parts li {
+  overflow-wrap: anywhere;
+}
+
+.parts li a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target);
 }
 
 .results {

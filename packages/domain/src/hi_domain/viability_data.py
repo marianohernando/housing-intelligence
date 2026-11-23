@@ -17,3 +17,23 @@ PEM_DATASET_URL = "https://datos.comunidad.madrid/dataset/1006022"
 PEM_CONSULTED = "2026-11-19"
 PEM_UPDATED = "05-03-2026"
 PEM_SHA256 = "6dae676474fdffaf02ec87f7bea75870e14714e4b155a3909b176ce4af89160c"
+
+# D-252: public references of the construction cost (costes_referencia_construccion).
+# The calculator's PEM is the midpoint of the CRG of the Comunidad de Madrid for its
+# default type in area 1 (Madrid); the PEM of the permits above is the low reference.
+CRG_YEAR = 2022
+CRG_URL = "https://gestiona.comunidad.madrid/cred_inter/resources/pdf/Metodo_determinacion_costes_referencia_edificacion_2022.pdf"
+CRG_AREA = 1
+CRG_DEFAULT_TYPE = "bloque_abierto"
+CRG_BLOQUE_ABIERTO_LOW = 871
+CRG_BLOQUE_ABIERTO_HIGH = 1064
+CRG_MANZANA_CERRADA_LOW = 856
+CRG_MANZANA_CERRADA_HIGH = 1046
+CRG_GARAJE_BAJO_RASANTE_LOW = 482
+CRG_GARAJE_BAJO_RASANTE_HIGH = 590
+REFERENCE_PEM_EUR_M2 = 968
+ST_EUR_M2 = 1360
+ST_ABOVE_GROUND_EUR_M2 = 1273
+ST_BELOW_GROUND_EUR_M2 = 489
+ST_PERIOD = "diciembre de 2025"
+ST_URL = "https://www.idealista.com/news/inmobiliario/vivienda/2025/12/29/878102-el-precio-medio-de-la-vivienda-nueva-se-dispara-un-8-9-al-cierre-del-ano-y-alcanza"

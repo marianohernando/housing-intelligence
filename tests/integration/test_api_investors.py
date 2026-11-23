@@ -19,7 +19,7 @@ from hi_contracts.public.responses import (
     InvestorZoneListResponse,
     InvestorZoneResponse,
 )
-from hi_domain.viability_data import PEM_EUR_M2
+from hi_domain.viability_data import CRG_URL, PEM_EUR_M2, REFERENCE_PEM_EUR_M2
 from hi_ingestion.catalog.loader import load_catalog
 from hi_ingestion.pipelines.permits.run import run_permit_budget_pipeline
 
@@ -74,10 +74,17 @@ def test_a_barrio_sheet_says_where_each_figure_comes_from(client: TestClient) ->
     assert "ayto_edificabilidad_remanente_ambitos" in remaining.source.dataset_ids
     assert not any("not loaded" in w for w in body.warnings)
     # Defaults: data and assumptions marked as such
-    assert sheet.defaults.pem_m2.value == PEM_EUR_M2
-    assert sheet.defaults.pem_m2.mark is ValueMark.DATO
+    # D-252: the default PEM is the CRG's assumption; the CM permits' PEM stays as the low
+    # reference, a figure with its feature and dataset
+    assert sheet.defaults.pem_m2.value == REFERENCE_PEM_EUR_M2
+    assert sheet.defaults.pem_m2.mark is ValueMark.SUPUESTO
+    assert str(sheet.defaults.pem_m2.source.url) == CRG_URL
+    permits = sheet.defaults.pem_permits_m2
+    assert permits is not None and permits.value == PEM_EUR_M2
+    assert permits.mark is ValueMark.DATO
     assert sheet.defaults.cost_coefficient.mark is ValueMark.SUPUESTO
-    assert sum(p.pct for p in sheet.defaults.cost_parts) == pytest.approx(36)
+    assert sheet.defaults.sale_price_m2.mark is ValueMark.ESTIMACION  # D-234: shared out
+    assert sum(p.pct for p in sheet.defaults.cost_parts) == pytest.approx(35.75)
     assert sheet.notices[0].startswith("No es una tasación")
 
 
@@ -117,10 +124,12 @@ def test_the_pem_comes_from_its_cm_dataset_once_loaded(
     sheet = InvestorZoneResponse.model_validate(
         client.get("/api/v1/investors/zones/ES.28.BAR.28079011").json()
     ).data
-    pem = sheet.defaults.pem_m2
-    assert pem.value == PEM_EUR_M2
+    pem = sheet.defaults.pem_permits_m2  # D-252: the low reference, still the CM dataset
+    assert pem is not None and pem.value == PEM_EUR_M2
+    assert pem.feature_id == investors.PEM
     assert pem.source.dataset_ids == ["cm_visados_presupuesto_obra"]
     assert pem.source.level is TerritoryLevel.CCAA
+    assert sheet.defaults.pem_m2.value == REFERENCE_PEM_EUR_M2  # the calculator's default
     listed = DatasetListResponse.model_validate(client.get("/api/v1/datasets").json()).data
     visados = [d for d in listed.datasets if d.dataset_id == "cm_visados_presupuesto_obra"]
     assert len(visados) == 1 and visados[0].is_cm_open_data

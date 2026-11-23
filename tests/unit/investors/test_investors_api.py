@@ -47,10 +47,31 @@ def test_viability_land_per_m2_and_demand_in_percent() -> None:
     base = data.scenarios[0]
     assert base.land == pytest.approx(2_200_000)
     assert base.margin_pct == pytest.approx(12.5)
-    assert base.verdict is not None and base.verdict.value == "ajustar"
+    # D-252: under the 15 % floor (the appraisal asks 18 % for first homes)
+    assert base.verdict is not None and base.verdict.value == "no_sale"
     assert data.demand is not None
     assert data.demand.threshold_pct == pytest.approx(30)
     assert data.demand.monthly_rent == pytest.approx(80 * 15)
+
+
+def test_each_scenario_says_up_to_what_construction_cost_it_keeps_the_target() -> None:
+    free = ViabilityResponse.model_validate(
+        client.post("/api/v1/investors/viability", json=BODY).json()
+    ).data.scenarios[0]
+    assert free.break_even is not None and not free.break_even.land_counted
+    assert free.break_even.construction_m2 == pytest.approx(2800)
+    assert free.break_even.current_construction_m2 == pytest.approx(900)
+    with_land = ViabilityResponse.model_validate(
+        client.post("/api/v1/investors/viability", json=BODY | {"land_eur_m2": 2200}).json()
+    ).data.scenarios[0]
+    assert with_land.break_even is not None and with_land.break_even.land_counted
+    assert with_land.break_even.construction_m2 == pytest.approx(600)
+    assert with_land.break_even.pem_m2 == pytest.approx(400)
+    assert with_land.break_even.coefficient == pytest.approx(1.0)
+    assert with_land.break_even.reachable
+    assert free.break_even_free_land is None  # without land it already is the free land one
+    assert with_land.break_even_free_land is not None
+    assert with_land.break_even_free_land.construction_m2 == pytest.approx(2800)
 
 
 @pytest.mark.parametrize(
@@ -92,6 +113,8 @@ def test_request_defaults_are_the_domain_assumptions() -> None:
     assert request.sales_costs_pct == pytest.approx(v.SALES_COSTS_SHARE * 100)
     assert request.target_margin_pct == pytest.approx(v.TARGET_MARGIN * 100)
     assert request.adjust_floor_pct == pytest.approx(v.ADJUST_FLOOR * 100)
+    # Review of #109, R-08: the values D-252 pins, so a change in either side fails here
+    assert (request.cost_coefficient, request.adjust_floor_pct) == (1.3575, 15)
     demand = DemandRequest(household_income=30_000)
     assert demand.home_m2 == pytest.approx(v.HOME_M2)
     assert demand.ltv_pct == pytest.approx(v.LOAN_TO_VALUE * 100)

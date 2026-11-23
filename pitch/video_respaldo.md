@@ -1,9 +1,9 @@
 # Vídeo de respaldo de 2 minutos — Vida Fácil (PITCH-003)
 
 ## Para qué sirve
-Es el plan B de la final del 26 nov: si cae la wifi o la demo, se pone este vídeo en lugar de los bloques 2 y 3 del guion (`pitch/guion.md`, «Antes de empezar», punto 4). Cuenta el mismo recorrido que la demo en directo y se entiende solo, también sin sonido, gracias a los rótulos.
+Es el plan B de la final del 26 nov: si cae la wifi o la demo, se pone este vídeo en lugar de los bloques 2, 3 y 4 del guion, los de la demo (`pitch/guion.md`, «Antes de empezar», punto 4). Cuenta el mismo recorrido que la demo en directo y en el mismo orden que el pitch desde el 23 nov: primero «Qué falta», para ayuntamientos; después, la ficha de una parcela, para inversores; y, como base, la búsqueda para personas. Se entiende solo, también sin sonido, gracias a los rótulos.
 
-- **Cuándo se graba:** el 23 nov (freeze), sobre la demo desplegada y verificada (https://vidafacil-madrid.vercel.app). Así coincide con lo que verá el jurado. Antes no: hasta el freeze la web todavía puede cambiar.
+- **Cuándo se graba:** el 23 nov, sobre la demo desplegada y verificada (https://vidafacil-madrid.vercel.app; deploy-46, `542283b8`). Así coincide con lo que verá el jurado.
 - **Quién:** la voz es de Mariano; el montaje lo puede hacer la línea D con las tomas.
 - **Dónde se guarda:** **no se sube al repo** (es binario y pesa). Se guardan 3 copias:
   - en el escritorio del portátil de la final;
@@ -31,25 +31,23 @@ for p in 1 2 3 4 5 6 7 8; do printf "p$p "; awk -v p=$p '$0 ~ "^<!-- voz:p"p":fi
 
 | Plano | Tiempo | Duración | Palabras (máximo) | Locución a 130 ppm |
 |---|---|---|---|---|
-| 1 | 0:00–0:08 | 8 s | 14 (≤ 15) | 6 s |
-| 2 | 0:08–0:20 | 12 s | 24 (≤ 26) | 11 s |
-| 3 | 0:20–0:38 | 18 s | 31 (≤ 39) | 14 s |
-| 4 | 0:38–0:55 | 17 s | 26 (≤ 37) | 12 s |
-| 5 | 0:55–1:07 | 12 s | 24 (≤ 26) | 11 s |
-| 6 | 1:07–1:22 | 15 s | 21 (≤ 32) | 10 s |
-| 7 | 1:22–1:44 | 22 s | 35 (≤ 47) | 16 s |
-| 8 | 1:44–1:58 | 14 s | 24 (≤ 30) | 11 s |
-| **Total** | | **118 s** | **199** | **92 s de voz + pausas para mirar** |
+| 1 | 0:00–0:08 | 8 s | 16 (≤ 17) | 7 s |
+| 2 | 0:08–0:26 | 18 s | 35 (≤ 39) | 16 s |
+| 3 | 0:26–0:38 | 12 s | 24 (≤ 26) | 11 s |
+| 4 | 0:38–0:58 | 20 s | 36 (≤ 44) | 17 s |
+| 5 | 0:58–1:16 | 18 s | 30 (≤ 39) | 14 s |
+| 6 | 1:16–1:30 | 14 s | 21 (≤ 30) | 10 s |
+| 7 | 1:30–1:44 | 14 s | 20 (≤ 30) | 9 s |
+| 8 | 1:44–1:58 | 14 s | 29 (≤ 30) | 13 s |
+| **Total** | | **118 s** | **211** | **97 s de voz + pausas para mirar** |
 
-**Lo que va entre corchetes** (`[pct]`, `[N]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
+**Recuento del 23 nov**, con el orden nuevo del pitch (comando de arriba). Hasta el 22 nov el vídeo seguía el recorrido del 19 nov: la búsqueda de la familia, la fuente de un dato, la zona en 3D y «Qué falta» (199 palabras). El texto de entonces está en el historial de git de este fichero.
 
-**El buscador está encendido en producción desde el 11 nov** (`evidence/gate-06/2026-11-11-deploy/deploy-12-buscador.md`, PR #11), así que los planos 2, 3 y 4 se graban.
+**Lo que va entre corchetes** (`[N]`, `[opción]`, `[zona]`…) se lee en la pantalla el día de la grabación y se escribe igual en el rótulo. Nunca se pone una cifra de memoria.
 
-**Reserva: si el 23 nov la demo vuelve a enseñar «Muy pronto»** (C ha vuelto a una versión sin buscador), esos tres planos no se graban: nunca se graba una pantalla simulada. Sus 47 s se reparten así:
-- **Plano 6 entra desde el mapa:** clic en un distrito de la región (propuesta: Chamartín) y vuelo a 3D. Se alarga hasta 30 s y suma la tarjeta «Qué falta aquí» con «A pie: N min».
-- **Locución añadida:** «Y cuánto se tarda andando, por las calles de verdad: [N] minutos hasta el centro de salud más cercano».
-- **Plano 5:** pasa detrás del 6. Desde la zona, «Ver todo lo que falta» y la fuente de una fila.
-- **El resto:** pausas más largas en los planos 7 y 8.
+**Reserva: si la demo vuelve a enseñar «Muy pronto»** en lugar de la búsqueda, los planos 5 y 6 no se graban: nunca se graba una pantalla simulada. Sus 32 s se reparten así:
+- **Tras el plano 2, la zona en 3D (18 s):** desde Puente de Vallecas, «Ver la zona», y se deja volar la cámara. Locución: «Y la zona en tres dimensiones, con sus colegios, sus centros de salud y sus estaciones.».
+- **El resto:** pausas más largas en los planos 4 y 8.
 
 Se vuelve a contar con el comando de arriba.
 
@@ -58,89 +56,82 @@ Se vuelve a contar con el comando de arriba.
 ## Planos
 
 ### Plano 1 · 0:00–0:08 · Portada
-- **Pantalla:** portada de la demo con «Encuentra tu sitio en Madrid» y «Así funciona». Sin cursor en movimiento.
-- **Rótulo:** «Vida Fácil · Encuentra tu sitio en Madrid».
+- **Pantalla:** portada de la demo con el lema, «La zona que te conviene, y lo que le falta», y la pestaña «Inversores» en la cabecera. Sin cursor en movimiento.
+- **Rótulo:** «Vida Fácil · La zona que te conviene, y lo que le falta».
 
 <!-- voz:p1:inicio -->
-Vida Fácil te ayuda a encontrar tu sitio en Madrid con datos abiertos oficiales.
+Vida Fácil: qué le falta a cada zona de la Comunidad de Madrid, con datos abiertos.
 <!-- voz:p1:fin -->
 
-### Plano 2 · 0:08–0:20 · El caso de ejemplo
-- **Acción:** clic en «Ejemplo: pareja con 2 hijos que trabaja en la Castellana» (`textos_web.md`, `portada.ejemplo.boton`; así en producción el 18 nov). Rellena la búsqueda y la lanza.
-- **Se ve:** la tarjeta «Tu búsqueda» rellena con el caso. Se recorre con el cursor: «En pareja», «Con hijos» (2), «Colegios», «Transporte» y «Centro de salud», «Trabajo en» y «Hasta 1.500 € al mes». El colegio a 10 min va en «Más opciones», plegado.
-- **Rótulo:** «Pareja con 2 hijos · alquiler hasta 1.500 €/mes · trabajo en la Castellana».
-- **Fuente:** `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`. Si A cambia el caso precargado, se cambian la locución y el rótulo.
+### Plano 2 · 0:08–0:26 · Qué le falta a una zona (ayuntamientos)
+- **Acción:** pestaña «Qué falta». Señalar «Dónde invertir primero» y la tarjeta de escuelas infantiles; después, clic en Puente de Vallecas (o abrir `/que-falta?zona=distrito/2807913`) y recorrer sus filas despacio, de arriba abajo.
+- **Se ve:** en «Dónde invertir primero», la cifra de escuelas infantiles y «El 9,8 % de toda la Comunidad, en 3 zonas.»; en Puente de Vallecas, la fila de escuelas infantiles en FALTA con «Aquí hay 57 por cada 100 que hay en municipios parecidos.» y «Afecta a 9.433 niños de 0 a 4 años.», y alguna fila CUBIERTO (leído en producción el 23 nov, tras el deploy-46).
+- **Rótulo:** «[N] niños de 0 a 4 años viven donde faltan escuelas infantiles».
+- **Desde el 23 nov la vivienda no sale en «Dónde invertir primero»:** es contexto, no una falta (D-254, `gap-0.4`). En producción, el 23 nov, salen tres tarjetas: escuelas infantiles (9,8 %, en 3 zonas), farmacias (9,4 %, en 5) y centros de mayores (4,1 %, en 6).
 
 <!-- voz:p2:inicio -->
-Una pareja con dos hijos busca alquiler. Trabajan en la Castellana, pueden pagar hasta mil quinientos euros al mes y quieren un colegio cerca.
+Para un ayuntamiento: en toda la región, [N] niños de cero a cuatro años viven en [N] zonas donde faltan escuelas infantiles. En Puente de Vallecas hay [N] por cada cien que en municipios parecidos.
 <!-- voz:p2:fin -->
 
-### Plano 3 · 0:20–0:38 · Zonas que os convienen
-- **Acción:** señalar el mapa ya coloreado y la lista «Zonas que os convienen». Clic en la 1.ª y señalar su tarjeta con el cursor, despacio. Al final, clic en «Ver más sobre [zona]» y señalar la fiabilidad de un hecho.
-- **Se ve:**
-  - el mapa con la escala de violetas y su leyenda, «Zonas que os convienen», de «Os conviene menos» a «Os conviene más», con las zonas que cumplen todo, las que no y las que no tienen datos;
-  - la lista, con «Hemos encontrado [N] zonas para vosotros.» y, en cada fila, la zona, su banda en palabras, el % pequeño detrás (en escritorio) y «Unos … € al mes». La lista no dice «Empatan»;
-  - la tarjeta de la 1.ª, con lo esencial: «‹ Volver a la lista», «Distrito de Madrid · [banda]», «Unos … € al mes» con «Precio orientativo», lo que pide la familia con sus minutos y «No le falta nada de lo que buscáis.» (o lo que le falta);
-  - en «Ver más sobre [zona]», «[banda] · [pct] %», «La 1.ª que más os conviene», con quién empata («Igual de buena que [zona] ([pct] %).») y, en «Lo que tenéis aquí», cada hecho con su fiabilidad.
-- **Rótulo:** «[zona] · [banda]».
-- **Estado:** hecho en producción. Desde el 15 nov (`fit-0.9`, D-243, y la claridad en el móvil, D-244 y D-245, desplegada con `55651c2`) salen 42 zonas, y arriba Puente de Vallecas y Latina, las dos «Muy buena opción · 94 %». La tarjeta de Puente de Vallecas dice «Colegio con primaria a unos 4 min andando», «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00» y «No le falta nada de lo que buscáis.»; en «Ver más», «Igual de buena que Latina (94 %).» y «Dato aproximado» en los 41 min (`POST /api/v1/search` con el fixture y la web, comprobado por D el 18 nov). Se graba el 23 nov con lo que salga en pantalla.
-
-<!-- voz:p3:inicio -->
-La búsqueda sale sola. El mapa se colorea según cuánto le conviene cada zona a esta familia. La primera es una [muy buena opción], y vemos por qué, dato a dato.
-<!-- voz:p3:fin -->
-
-### Plano 4 · 0:38–0:55 · ¿Queréis ver más zonas?
-- **Acción:** «‹ Volver a la lista» y bajar hasta «¿Queréis ver más zonas?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Ver esas zonas» en la primera. El mapa se recalcula y sale «Ahora ves las zonas con: [opción]».
-- **Se ve:** «Hemos encontrado [N] zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa:» y las opciones con sus cifras de la API.
-- **Rótulo:** «Con vuestra búsqueda: [N] zonas · [opción]: [N] zonas».
-- **Estado:** hecho en producción. El 18 nov (`fit-0.9`, `55651c2`): «Hemos encontrado 42 zonas para vosotros» y dos opciones, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total» y «+150 €/mes · saldrían 3 más: 45 zonas en total», cada una con «Ver esas zonas» (`POST /api/v1/search` con el fixture y la web; captura C3).
-
-<!-- voz:p4:inicio -->
-¿Y si quieren más zonas? Hemos encontrado [N] para ellos. Si cambian una sola cosa, por ejemplo [opción], salen [N] más. Un toque y se aplica.
-<!-- voz:p4:fin -->
-
-### Plano 5 · 0:55–1:07 · De dónde sale cada dato
-- **Acción:** «Volver a mi búsqueda», abrir otra vez la tarjeta de la 1.ª zona, «Ver más sobre [zona]» y «Ver todo lo que falta» (comprobado en producción el 18 nov: lleva a `/que-falta?zona=distrito/2807913`). En una fila, «De dónde sale: [N] conjuntos de datos» y clic en uno. Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve. En el montaje se corta entre clics: en 12 s no cabe el recorrido entero.
+### Plano 3 · 0:26–0:38 · De dónde sale cada dato
+- **Acción:** en una fila de Puente de Vallecas, «De dónde sale: [N] conjuntos de datos» y clic en uno. Se abre la ficha del portal de datos de la Comunidad en una pestaña nueva; se ve 2 s y se vuelve. En el montaje se corta entre clics.
 - **Se ve:** los nombres de los conjuntos de datos de la fila, cada uno enlazado, y luego la ficha del portal CM con su licencia.
 - **Rótulo:** «Cada dato enlaza a su fuente oficial».
-- **Estado:** hecho en producción: la lista de «Qué falta» enlaza cada conjunto a su ficha (`evidence/map-004/2026-11-11/prod_c4_madrid_que_falta_desktop.png`, de Madrid capital y anterior a gap-0.3; el enlace a la ficha no cambia). La tarjeta del buscador no tiene enlace a la fuente: por eso se pasa por «Qué falta».
+
+<!-- voz:p3:inicio -->
+Cada dato dice de dónde sale. Aquí, la ficha oficial en el Portal de Datos Abiertos de la Comunidad de Madrid, con su licencia.
+<!-- voz:p3:fin -->
+
+### Plano 4 · 0:38–0:58 · La ficha de una parcela exacta (inversores)
+- **Acción:** pestaña «Inversores», «Busca tu parcela» con la referencia catastral 2122202VK4722A (Méndez Álvaro 47, una de las 4 parcelas de demostración), o abrir `/inversores/parcela/2122202VK4722A`, cargada antes: la primera consulta de una parcela tarda unos 11 s. Bajar despacio por el planeamiento, la edificabilidad, los servicios y «Quién vive en el barrio». Al final, señalar «¿Sale la promoción?» sin detenerse en sus cifras.
+- **Se ve:** el aviso del primer filtro, el planeamiento con el enlace a la ficha oficial, «13.121 m² edificables» de vivienda (VEDA del Ayuntamiento), la potencia eléctrica de partida para unas 164 viviendas (al menos 499,1 kW, marcada como supuesto) y el contexto de demanda de la zona (leído en producción el 23 nov, tras el deploy-46).
+- **Rótulo:** «Méndez Álvaro 47 · la ficha de la parcela».
+- **No se pone en el rótulo la cifra del suelo:** depende de supuestos que la ficha enseña uno a uno (pregunta 6 de `pitch/preguntas.md`). Se dice «datos de la parcela», nunca «información catastral».
+
+<!-- voz:p4:inicio -->
+Para un promotor: la ficha de una parcela exacta de Madrid capital. Su planeamiento con el enlace oficial, [N] metros edificables de vivienda, la potencia eléctrica que pediría y, al lado, la demanda de su zona.
+<!-- voz:p4:fin -->
+
+### Plano 5 · 0:58–1:16 · La base: la zona que te conviene (personas)
+- **Acción:** pestaña «Mapa» y clic en «Ejemplo: pareja con 2 hijos que trabaja en la Castellana». Señalar el mapa coloreado y la leyenda; clic en la 1.ª de «Zonas que os convienen» y señalar su tarjeta.
+- **Se ve:** «Hemos encontrado [N] zonas para vosotros.», la leyenda con las que cumplen todo, las que no y las que no tienen datos, y la tarjeta de la 1.ª con su banda, «Unos … € al mes» y la nota «Precio de los contratos de alquiler de 2024: un anuncio de hoy suele pedir más.», sus minutos a pie, el trayecto hasta la Castellana y «No le falta nada de lo que buscáis.».
+- **Rótulo:** «Pareja con 2 hijos · hasta 1.500 €/mes · trabajo en la Castellana».
+- **Estado, en producción el 23 nov** (deploy-46, leído al rehacer las capturas C1 y C3): 42 zonas cumplen todo, 157 no y 0 sin datos. La 1.ª es Puente de Vallecas: «Unos 1.129 € al mes», «Colegio con primaria a unos 4 min andando» y «41 min en transporte público hasta Paseo de la Castellana (Azca), llegando a las 9:00». Fuente del caso: `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`.
 
 <!-- voz:p5:inicio -->
-Cada dato dice de dónde sale. Aquí, la ficha oficial en el Portal de Datos Abiertos de la Comunidad de Madrid, con su licencia.
+Y, para quien busca casa, la base: una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana. Cumplen lo que piden [N] zonas de toda la Comunidad.
 <!-- voz:p5:fin -->
 
-### Plano 6 · 1:07–1:22 · La zona en 3D
-- **Acción:** en la misma lista de «Qué falta», clic en «Ver la zona». Dejar que la cámara vuele y se incline; no tocar nada durante el vuelo.
-- **Se ve:** la zona en 3D con contorno violeta y etiquetas de colegios, centros de salud y estaciones, y las migas «Madrid › [distrito]» o «Comunidad de Madrid › [municipio]».
-- **Rótulo:** «[zona] en 3D».
-- **Estado:** hecho en producción (`evidence/map-004/2026-11-11/prod_c5_chamartin_3d_desktop.png`, Chamartín). Si el 3D no carga el 23, se graba la vista 2D y se quita «en tres dimensiones».
+### Plano 6 · 1:16–1:30 · ¿Queréis ver más zonas?
+- **Acción:** «‹ Volver a la lista» y bajar hasta «¿Queréis ver más zonas?», que sale plegado a la opción que más zonas suma. Pulsar «Ver todas las opciones», señalarlas y pulsar «Ver esas zonas» en la primera. El mapa se recalcula.
+- **Se ve:** «Hemos encontrado [N] zonas para vosotros. Mirad cuántas salen si cambiáis una sola cosa:» y las opciones con sus cifras de la API.
+- **Rótulo:** «Con vuestra búsqueda: [N] zonas · [opción]: [N] zonas».
+- **Estado, en producción el 23 nov** (deploy-46, captura C3): «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en total» y «+150 €/mes · saldrían 3 más: 45 zonas en total».
 
 <!-- voz:p6:inicio -->
-Entramos en la zona en tres dimensiones: sus colegios, sus centros de salud y sus estaciones, sacados de los datos oficiales.
+¿Y si quieren más zonas? Si cambian una sola cosa, por ejemplo [opción], salen [N] más. Un toque y se aplica.
 <!-- voz:p6:fin -->
 
-### Plano 7 · 1:22–1:44 · Qué falta
-- **Acción:** pestaña «Qué falta» y elegir «Puente de Vallecas» en la lista de zonas, o abrir `/que-falta?zona=distrito/2807913`. Recorrer las filas con el cursor de arriba abajo, despacio.
-- **Se ve:** las 6 filas FALTA / JUSTO / CUBIERTO / SIN DATOS, cada una con su valor, la referencia de los municipios de su tipo, la fiabilidad, los minutos a pie y de dónde sale.
-- **Rótulo:** «Lo que tienes a 15 min andando, comparado con los municipios de su tipo».
-- **Zona:** la misma que en el bloque 3 del guion: Puente de Vallecas (`/que-falta?zona=distrito/2807913`). Con `gap-0.3` (D-217), escuelas infantiles sale FALTA (2,8 frente a 4,9) y farmacias CUBIERTO (4,5 frente a 3,1). Comprobado en producción el 12 nov con `GET /api/v1/gaps/distrito/2807913`. Madrid capital ya no vale: con gap-0.3 no tiene ninguna fila de servicios en FALTA.
-  - Tiene que tener al menos una fila FALTA y otra CUBIERTO.
+### Plano 7 · 1:30–1:44 · La API y el MCP
+- **Acción:** abrir `/desarrolladores` (enlace del pie, «API y MCP para desarrolladores») y bajar despacio por las rutas, un ejemplo con `curl` y cómo añadir el MCP.
+- **Se ve:** «sin clave · solo lectura», las rutas de la API con su ejemplo y el MCP, también en remoto, «sin instalar nada» (leído en producción el 23 nov, tras el deploy-46).
+- **Rótulo:** «API y MCP abiertos y gratuitos, sin clave».
 
 <!-- voz:p7:inicio -->
-Y lo que le falta. Medimos lo que la gente tiene a quince minutos andando y lo comparamos con municipios parecidos. [Fila]: falta. [Fila]: cubierto. Y cuando no tenemos un dato, lo decimos: sin datos.
+Y todo esto, también para programas y agentes de IA: una API y un MCP abiertos y gratuitos, sin clave.
 <!-- voz:p7:fin -->
 
 ### Plano 8 · 1:44–1:58 · Cierre
 - **Pantalla:** pie de la web con el contador de conjuntos de datos y, encima, el rótulo final a pantalla completa sobre fondo `--bg`.
 - **Rótulo final (4 s):**
-  - Vida Fácil · Encuentra tu sitio en Madrid
+  - Vida Fácil · La zona que te conviene, y lo que le falta
   - vidafacil-madrid.vercel.app
   - github.com/marianohernando/housing-intelligence · Código abierto (Apache-2.0)
   - [N] conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid
-- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`; 39 en producción desde el 19 nov, con el Catastro por uso y los visados de obra, D-247 y D-248, igual que `pitch/datasets_cm.md`).
+- **Fuente de [N]:** el contador del pie (`GET /api/v1/datasets`, `cm_open_data_count`): «Datos: 39 conjuntos de la Comunidad de Madrid…» en producción el 23 nov, igual que `pitch/datasets_cm.md`.
 
 <!-- voz:p8:inicio -->
-[N] conjuntos de datos abiertos de la Comunidad de Madrid, con control de calidad y código abierto. Vida Fácil: encuentra tu sitio en Madrid.
+[N] conjuntos de datos abiertos de la Comunidad de Madrid, descargados de sus portales y sin scraping. Vida Fácil: la zona que te conviene, y lo que le falta.
 <!-- voz:p8:fin -->
 
 ---
@@ -150,7 +141,7 @@ Y lo que le falta. Medimos lo que la gente tiene a quince minutos andando y lo c
 2. Quitar del texto las marcas «pendiente» de este fichero o adaptar el plano:
    - si falta una pieza, se quita el plano y se reparten sus segundos;
    - nunca se graba un mockup ni una pantalla simulada.
-3. Cargar la demo una vez para tener la caché caliente. Hacer el recorrido completo una vez sin grabar.
+3. Cargar la demo una vez para tener la caché caliente, también la ficha de Méndez Álvaro 47. Hacer el recorrido completo una vez sin grabar.
 4. Grabar cada plano 2 veces y quedarse con la mejor toma.
 5. Locución: leer con calma. Si un plano se pasa de su duración, recortar el texto y volver a contar con el comando de arriba.
 

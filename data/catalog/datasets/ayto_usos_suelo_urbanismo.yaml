@@ -15,6 +15,12 @@ resources:
 - name: Parcelas urbanísticas (capa 3 de USOS_SUELO), consulta por punto
   format: JSON
   url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/3/query
+- name: Uso cualificado principal (tabla 4 de USOS_SUELO), descargada entera (D-252c)
+  format: JSON
+  url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/4/query
+- name: Otros usos cualificados (tabla 5 de USOS_SUELO), descargada entera (D-252c)
+  format: JSON
+  url: https://sigma.madrid.es/hosted/rest/services/DESARROLLO_URBANO_ACTUALIZADO/USOS_SUELO/MapServer/5/query
 license_status: CLEAR
 status: REVIEWED
 priority: P2
@@ -31,7 +37,10 @@ scorecard:
     lo contemplado en el PGOUM y sus alteraciones posteriores»; su ficha dice que la
     información carece de valor jurídico. La búsqueda por parcela lo lee en vivo, por un punto,
     y no lo carga en la base: la norma zonal y su grado o el ámbito, el uso pormenorizado y la
-    parcela urbanística.
+    parcela urbanística. D-252c: las tablas 4 y 5 (USO, EDIFICABIL y UNIDAD por el CODIGO =
+    UBOV_ID de la parcela urbanística; 40.021 y 1.328 filas el 20 nov) se descargan enteras con
+    scripts/usos_suelo_tablas.py y se leen de hi_domain.plan_uses_data: en vivo, una consulta en
+    frío tarda 6,5–10 s en el servidor de sigma.
   reviewed_by: claude-code
   reviewed_at: '2026-11-19T20:00:00+00:00'
 notes: >-

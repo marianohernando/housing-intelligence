@@ -278,6 +278,38 @@ export const API_GROUPS: readonly ApiGroup[] = [
   },
 ];
 
+export interface OpenDataFile {
+  title: string;
+  /** Where the web serves it: a static file of public/, in this same domain */
+  path: string;
+  text: string;
+}
+
+/** F14: the files that scripts/export_dcat_sdm.py writes in apps/web/public/datos/ (desarrolladores.ficheros). */
+export const OPEN_DATA_TEXT = {
+  title: "Catálogo y Smart Data Models: ficheros para descargar",
+  intro:
+    "Ficheros estáticos en este mismo dominio, sin clave. Se generan desde el catálogo de datos del repositorio y se validan contra los esquemas oficiales.",
+} as const;
+
+export const OPEN_DATA_FILES: readonly OpenDataFile[] = [
+  {
+    title: "Catálogo DCAT-AP (europeo)",
+    path: "/datos/catalogo.dcat.jsonld",
+    text: "Los conjuntos de datos que usamos, la API y estos ficheros, en DCAT-AP 3.0.1 (JSON-LD), el perfil europeo: con su licencia, su frecuencia de actualización, su tema y, donde aplica, su categoría de alto valor.",
+  },
+  {
+    title: "Smart Data Models: Dataset con MELODA",
+    path: "/datos/sdm/datasets.json",
+    text: "Los conjuntos de datos de la Comunidad de Madrid que usamos, como entidades Dataset de dataModel.DCAT-AP, con su nivel MELODA de acceso y de estandarización (spain.meloda.org).",
+  },
+  {
+    title: "Smart Data Models: farmacias como PointOfInterest",
+    path: "/datos/sdm/farmacias.json",
+    text: "Las oficinas de farmacia del registro de la Comunidad de Madrid como entidades PointOfInterest, con la licencia y la cita de su fuente.",
+  },
+];
+
 export interface McpTool {
   name: string;
   text: string;
@@ -300,6 +332,14 @@ export const MCP_TOOLS: readonly McpTool[] = [
 
 const LOCAL_DATABASE_URL = "postgresql+psycopg://housing:housing@localhost:5440/housing";
 const CLONE_PATH = "/ruta/a/housing-intelligence";
+
+/** D-255: the MCP served over HTTP (Streamable HTTP, stateless, read-only) in front of the public API. */
+export const MCP_REMOTE_URL = `${SITE_URL}/api/v1/mcp`;
+
+export const MCP_CLAUDE_CODE_REMOTE = `claude mcp add --transport http vida-facil ${MCP_REMOTE_URL}`;
+
+/** For clients that only speak stdio: the mcp-remote bridge. */
+export const MCP_STDIO_BRIDGE = `npx -y mcp-remote ${MCP_REMOTE_URL}`;
 
 export const MCP_SETUP = `git clone ${REPO_URL}.git
 cd housing-intelligence
@@ -331,7 +371,7 @@ export const ENVELOPE_EXAMPLE = `{
     "request_id": "…",
     "generated_at": "2026-11-19T09:54:01Z",
     "api_version": "v1",
-    "methodology_version": "gap-0.3",
+    "methodology_version": "gap-0.4",
     "data_version": "2026-11-19"
   },
   "warnings": []
@@ -343,10 +383,6 @@ export interface PlannedItem {
 }
 
 export const PLANNED: readonly PlannedItem[] = [
-  {
-    title: "El MCP en remoto (HTTP), en este mismo dominio",
-    text: "Para conectar tu asistente sin instalar nada ni cargar una base de datos.",
-  },
   {
     title: "Avisos de suelo público nuevo",
     text: "Un aviso cuando aparezca una parcela para vivienda nueva en el Portal del Suelo de la Comunidad de Madrid.",

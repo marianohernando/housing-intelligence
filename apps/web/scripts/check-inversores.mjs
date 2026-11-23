@@ -1,4 +1,4 @@
-// «Para inversores» (D-248): the UX rules of D-244 and D-245 on its pages, at 390 and 1440 px:
+// «Para inversores» (D-248): the UX rules of D-244 and D-245 on its pages, at 360, 390 and 1440 px:
 // every text under 16 px and every touch target under 44 px, and axe (WCAG 2.2 AA) on the list, a
 // barrio's sheet with its calculator (without and with a land price) and the print view. With
 // --shots, the screenshots of the evidence (and the sheet saved as PDF, as «Guardar como PDF»).
@@ -30,6 +30,7 @@ const OUT = resolve(opts.out);
 mkdirSync(OUT, { recursive: true });
 const WAIT = 30_000;
 const PROFILES = {
+  360: { viewport: { width: 360, height: 780 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
   390: { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
   1440: { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
 };
@@ -112,7 +113,7 @@ async function run() {
     await page.getByRole("heading", { level: 1 }).waitFor({ timeout: WAIT });
     await page.getByRole("heading", { name: "Resultado: tres escenarios" }).waitFor({ timeout: WAIT });
     // Without a land price there is no verdict: the residual land value of each scenario
-    await page.getByText(/^Lo máximo que se puede pagar por el suelo:/).first().waitFor({ timeout: WAIT });
+    await page.getByText(/^Lo máximo que se puede pagar por el suelo, antes de/).first().waitFor({ timeout: WAIT });
     if ((await page.getByText(/^(Sale|Ajustar|No sale)$/).count()) > 0) throw new Error("a verdict without a land price");
     await check(page, `${width}-ficha`, report, true);
     if (opts.shots) {

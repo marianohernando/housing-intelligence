@@ -32,7 +32,7 @@ const WAIT = 45_000;
 // The four demo parcels (apps/web/src/lib/parcels.ts, DEMO_PARCELS) and what each must show
 const DEMOS = [
   { rc: "2122202VK4722A", name: "mendez-alvaro", mark: "Dato" },
-  { rc: "3959601VK4735H", name: "almeria", mark: "Dato" },
+  { rc: "3959601VK4735H", name: "almeria", mark: "Sin dato" }, // D-252: APR.04.09 not started
   { rc: "0390314VK4709A", name: "luis-misson", mark: "Sin dato" },
   { rc: "9943003VK3794D", name: "mayor", mark: "Supuesto" },
 ];
@@ -131,7 +131,7 @@ async function run() {
       await page.goto(`${BASE}/inversores/parcela/${demo.rc}`);
       await page.getByRole("heading", { level: 1 }).waitFor({ timeout: WAIT });
       await page.getByRole("heading", { name: "Resultado: tres escenarios" }).waitFor({ timeout: WAIT });
-      await page.getByText(/^Lo máximo que se puede pagar por el suelo:|^Ni con el suelo gratis|^Pon la superficie edificable/).first().waitFor({ timeout: WAIT });
+      await page.getByText(/^Lo máximo que se puede pagar por el suelo, antes de|^Ni con el suelo gratis|^Pon la superficie edificable/).first().waitFor({ timeout: WAIT });
       const mark = await section(page, "edificabilidad").getByText(demo.mark, { exact: true }).count();
       if (mark === 0) throw new Error(`${demo.rc}: the buildability is not marked «${demo.mark}»`);
       await check(page, `${width}-ficha-${demo.name}`, report, { shot: width !== "360", full: width === "1440" });

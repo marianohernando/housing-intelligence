@@ -128,7 +128,8 @@ interface Props {
 /**
  * One row of «Qué falta»: status (with «Zona pequeña para comparar»), «Aquí hay n por cada 100 que
  * hay en municipios parecidos», the people a FALTA leaves short, walking minutes, confidence, the
- * technical figure behind «Ver la cifra» and sources.
+ * technical figure behind «Ver la cifra» and sources. A context row says its figure and reference
+ * instead of the comparison, with no verdict (gap-0.4).
  */
 export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
   const reason = reasonOf(row);
@@ -153,6 +154,8 @@ export default function GapRowItem({ row, zoneName, zoneLevel }: Props) {
         </span>
       </div>
       {comparison && <p className={styles.comparison}>{comparison}</p>}
+      {/* A context row (gap-0.4, D-254) has no comparison: its figure and its reference, in the API's words */}
+      {row.status === "CONTEXTO" && <p className={styles.comparison}>{row.explanation}</p>}
       {affected && <p className={styles.affected}>{affected}</p>}
       {group && <p className={styles.group}>{groupText(zoneName, group)}</p>}
 

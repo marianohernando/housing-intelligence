@@ -1,0 +1,18 @@
+Logs of production from the deploy (10:26 UTC) to 10:38:56 UTC, 2026-11-23. IPs and parcel references of visitors are not shown.
+
+Runtime (npx vercel@65.12.1 logs --environment production): 731 lines
+  by deployment: 722 dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6 · 9 dpl_5udnLokddKKNCueMzPiwnPsrvQXX · 
+  by level: 731 info · 
+  lines with warning, error, traceback, pool, EMAXCONN or «password authentication»: 0
+  instances started (uvicorn «Started server process»): 10, all of the new deployment
+  the timing lines: the 4 «parcel input=rc» of the warm-up (parcelas-en-vivo.txt) and 3 «parcel candidates=5» (check-parcela's address boxes: ms=364, 0, 0)
+  no coordinates and no typed text: lines with lat=, lon= or the typed address: 0; the access lines say q=[redactado]
+
+CDN (npx vercel@65.12.1 logs requests --environment production): 3353 records, the whole window (2 pages of the listing: 2,000 + 1,353)
+  by deployment: 3347 dpl_5EoD1qfUSF3Ltud8ZEifSf7fPko6 · 6 dpl_5udnLokddKKNCueMzPiwnPsrvQXX · (the 6 of dpl_5udn… are 6 of the 13 requests of the deploy's smoke round 0)
+  by status: 200 × 3165 · 304 × 187 · 404 × 1 · 0 5xx
+  WAF: 3353 allow 
+  parcel sheets (/api/v1/investors/parcels): HIT 40 · MISS 4 · candidates: MISS 3
+  who: this run's tools (the smoke and curl with «vida-facil-smoke/<tag>» in the User-Agent, check-parcela, check-inversores and the e2e as HeadlessChrome) made 3352 of them
+  «Visitante sin identificar (Chrome/Android)»: 1 request at 10:35:48 UTC to /api/v1/mcp, which answered 404 (this deployment has no such route;
+    the remote MCP is not deployed). From a Swiss connection, no other request in the window. Who it was is not known.

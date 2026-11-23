@@ -2,18 +2,26 @@
 
 Which datasets, what each one feeds and its Gate 1 evidence come from data/catalog and
 evidence/gate-01, with no network. The official title and licence shown on the Comunidad de
-Madrid portal come from a dated snapshot of its CKAN API (pitch/portal_cm_snapshot.json).
+Madrid portal come from a dated snapshot of its CKAN API (pitch/portal_cm_snapshot.json). The
+MELODA reusability score of each CM dataset comes from a dated snapshot of the API of the
+spain.meloda.org Monitorizador (pitch/meloda_cm_snapshot.json; data under CC BY 4.0), matched by
+the exact URL of the dataset's page on the CM portal. The Monitorizador scores 6 dimensions
+(D1–D6, 0 to 49); MELODA 5 itself has 8.
 
 Usage:
     uv run python pitch/build_datasets_cm.py                   # offline, deterministic
     uv run python pitch/build_datasets_cm.py --refresh-portal  # re-read titles and licences
+    uv run python pitch/build_datasets_cm.py --refresh-meloda  # re-read MELODA (~25 requests)
 """
 
 import argparse
 import json
+import time
+from collections import Counter
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from statistics import mean
 from typing import Any
 
 import httpx
@@ -28,6 +36,28 @@ GATE1_DIR = ROOT / "evidence" / "gate-01"
 OUTPUT = ROOT / "pitch" / "datasets_cm.md"
 SNAPSHOT = ROOT / "pitch" / "portal_cm_snapshot.json"
 CKAN_PACKAGE_SHOW = "https://datos.comunidad.madrid/api/3/action/package_show"
+MELODA_SNAPSHOT = ROOT / "pitch" / "meloda_cm_snapshot.json"
+MELODA_API = "https://spain.meloda.org/api/v1"
+MELODA_CM_PORTAL = "comunidad_madrid"
+# The CRTM's own portal, where its datasets are downloaded from: only its portal-level figures
+MELODA_PORTALS = (MELODA_CM_PORTAL, "data_crtm_opendata_arcgis_com")
+MELODA_PAUSE_S = 2.5  # the API allows 60 requests a minute per IP
+MELODA_PAGE_SIZE = 100  # the API's maximum
+# (API field, label, top level the API gives, points in the 0–49 total: spain.meloda.org/sobre.php)
+MELODA_DIMENSIONS = [
+    ("d1_license", "licencia", 3, 6),
+    ("d2_access", "acceso", 3, 6),
+    ("d3_format", "formato", 3, 6),
+    ("d4_standard", "estandarización", 4, 10),
+    ("d5_geo", "geolocalización", 3, 6),
+    ("d6_frequency", "frecuencia de actualización", 5, 15),
+]
+REUSABILITY_ES = {
+    "optimum": "óptimo",
+    "good": "bueno",
+    "basic": "básico",
+    "deficient": "deficiente",
+}
 # D-226, D-235: features the zone view shows as context; they never score
 CONTEXT_LINE = "Dato de contexto en la vista de zona (no puntúa)"
 NOT_IN_LIST = (
@@ -176,8 +206,38 @@ def licence(catalog: Catalog, dataset: DatasetSpec, portal: dict[str, Any] | Non
     return f"[{title}]({source.license_url}) ({origin})"
 
 
+def meloda_key(url: str | None) -> str:
+    """The same dataset page with or without a trailing slash or capitals."""
+    return (url or "").strip().rstrip("/").lower()
+
+
+def meloda_score(entry: dict[str, Any]) -> str:
+    """«18/49, básico · licencia 3/3 · …», as the API gives it: the total is not the sum."""
+    level = REUSABILITY_ES.get(entry["reusability"], entry["reusability"])
+    parts = [f"{entry['total']}/49, {level}"]
+    for key, label, top, _ in MELODA_DIMENSIONS:
+        value = entry[key]
+        shown = f"{value}/{top}" if 0 <= value <= top else f"{value} (fuera de 0–{top})"
+        parts.append(f"{label} {shown}")
+    return " · ".join(parts)
+
+
+def meloda_cell(dataset: DatasetSpec, meloda_rows: dict[str, dict[str, Any]]) -> str | None:
+    """None when MELODA does not apply: not a CM dataset, or no MELODA snapshot yet."""
+    if not meloda_rows or not is_cm_open_data(dataset):
+        return None
+    entry = meloda_rows.get(dataset.dataset_id)
+    if entry is None:
+        return "no encontrado"
+    return f"{meloda_score(entry)} · [API]({MELODA_API}/datasets/{entry['meloda_id']})"
+
+
 def dataset_block(
-    catalog: Catalog, dataset: DatasetSpec, gate: Gate1, portal: dict[str, Any] | None
+    catalog: Catalog,
+    dataset: DatasetSpec,
+    gate: Gate1,
+    portal: dict[str, Any] | None,
+    meloda: str | None = None,
 ) -> list[str]:
     name = portal["title"] if portal else dataset.name
     url = portal_url(dataset)
@@ -205,20 +265,94 @@ def dataset_block(
     lines.append("- **Qué alimenta:**")
     lines.extend(f"  - {line}" for line in uses(catalog, dataset))
     lines.append(f"- **Quality Gate 1:** {' · '.join(p for p in gate_parts if p)}")
+    if meloda:
+        lines.append(f"- **MELODA (Monitorizador spain.meloda.org):** {meloda}")
     lines.append("")
     return lines
 
 
-def summary_table(rows: list[Row]) -> list[str]:
-    lines = ["| # | Dataset | Publica | Gate 1 |", "|---|---|---|---|"]
+def summary_table(rows: list[Row], meloda_rows: dict[str, dict[str, Any]]) -> list[str]:
+    lines = ["| # | Dataset | Publica | Gate 1 | MELODA |", "|---|---|---|---|---|"]
     for index, (dataset, gate, portal) in enumerate(rows, start=1):
         name = portal["title"] if portal else dataset.name
         status = "PASS" if gate.passed else "FAIL"
+        entry = meloda_rows.get(dataset.dataset_id)
+        level = f"{entry['total']}, {REUSABILITY_ES[entry['reusability']]}" if entry else "—"
         lines.append(
-            f"| {index} | [{name}]({portal_url(dataset)}) | {dataset.owner} | {status} {gate.day} |"
+            f"| {index} | [{name}]({portal_url(dataset)}) | {dataset.owner} | {status} {gate.day} "
+            f"| {level} |"
         )
     lines.append("")
     return lines
+
+
+def mean_text(values: list[int]) -> str:
+    return es_number(mean(values), 1) if values else "—"
+
+
+def levels_text(entries: list[dict[str, Any]]) -> str:
+    counts = Counter(entry["reusability"] for entry in entries)
+    parts = [f"{counts[key]} {label}" for key, label in REUSABILITY_ES.items() if counts[key]]
+    return ", ".join(parts[:-1]) + f" y {parts[-1]}" if len(parts) > 1 else "".join(parts)
+
+
+def dimension_rows(entries: list[dict[str, Any]], portal: dict[str, Any]) -> list[str]:
+    lines = [
+        f"| Dimensión | Nivel máximo | Puntos en el total | Los {len(entries)} que usamos: "
+        "cuántos con cada nivel | Media del portal CM |",
+        "|---|---|---|---|---|",
+    ]
+    for key, label, top, points in MELODA_DIMENSIONS:
+        counts = sorted(Counter(entry[key] for entry in entries).items(), reverse=True)
+        spread = " · ".join(f"{value}: {count}" for value, count in counts)
+        portal_mean = es_number(portal["dimension_means"][key], 2)
+        lines.append(f"| {label.capitalize()} | {top} | {points} | {spread} | {portal_mean} |")
+    return lines
+
+
+def meloda_section(cm_own: list[Row], cm_partner: list[Row], meloda: dict[str, Any]) -> list[str]:
+    """The reusability of the CM datasets we use, from the MELODA snapshot, with no network."""
+    rows: dict[str, dict[str, Any]] = meloda.get("datasets", {})
+    if not rows:
+        return []
+    own = [rows[d.dataset_id] for d, _, _ in cm_own if d.dataset_id in rows]
+    partner = [rows[d.dataset_id] for d, _, _ in cm_partner if d.dataset_id in rows]
+    used = own + partner
+    totals = [entry["total"] for entry in used]
+    cm_portal = meloda["portals"][MELODA_CM_PORTAL]
+    crtm_portal = meloda["portals"][MELODA_PORTALS[1]]
+    return [
+        "## Reutilización según MELODA",
+        "",
+        f"> Fuente: spain.meloda.org. {meloda['method']}; datos bajo {meloda['license']}. "
+        f"API leída el {meloda['fetched_at']}; cosecha del portal CM del "
+        f"{cm_portal['last_harvest'][:10]}. Instantánea: `pitch/meloda_cm_snapshot.json`. "
+        "Cada dataset se empareja por la URL exacta de su ficha en datos.comunidad.madrid: "
+        f"{len(used)} de {len(cm_own) + len(cm_partner)} encontrados.",
+        "",
+        f"- **Los {len(used)} datasets CM que usamos:** media de {mean_text(totals)} sobre 49 "
+        f"(de {min(totals)} a {max(totals)}): {levels_text(used)}.",
+        f"- **Publicados por la Comunidad ({len(own)}):** media de "
+        f"{mean_text([e['total'] for e in own])}. **Del CRTM con ficha en el portal CM "
+        f"({len(partner)}):** media de {mean_text([e['total'] for e in partner])}; MELODA puntúa "
+        "su ficha en el portal CM, y los datos se descargan del portal del CRTM.",
+        f"- **Todo el portal CM en MELODA:** {es_number(cm_portal['datasets_harvested'], 0)} "
+        f"datasets, media de {es_number(cm_portal['meloda']['avg_score'], 1)}. **El portal del "
+        f"CRTM:** {es_number(crtm_portal['datasets_harvested'], 0)} datasets, media de "
+        f"{es_number(crtm_portal['meloda']['avg_score'], 1)} (sus datasets no se emparejan uno a "
+        "uno).",
+        "",
+        *dimension_rows(used, cm_portal),
+        "",
+        "La puntuación y los niveles son los que da la API del Monitorizador, sin recalcular: el "
+        "total pondera cada dimensión con sus puntos (spain.meloda.org, «Sobre el proyecto»). El "
+        "Monitorizador puntúa seis dimensiones (D1–D6); MELODA 5 tiene ocho, con difusión y "
+        "reputación (presentación de la formación de DATAMAD del 5 nov, diapositiva 43). "
+        "La puntuación se calcula solo con los "
+        "metadatos públicos de la ficha del portal, no con el contenido del dataset. Un nivel "
+        "fuera del rango que documenta la API (como −1 en geolocalización) se deja como viene.",
+        "",
+    ]
 
 
 @dataclass(frozen=True)
@@ -247,8 +381,9 @@ def group_datasets(catalog: Catalog, portal_rows: dict[str, dict[str, Any]]) -> 
     return groups
 
 
-def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
+def render(catalog: Catalog, snapshot: dict[str, Any], meloda: dict[str, Any]) -> str:
     portal_rows: dict[str, dict[str, Any]] = snapshot.get("datasets", {})
+    meloda_rows: dict[str, dict[str, Any]] = meloda.get("datasets", {})
     groups = group_datasets(catalog, portal_rows)
     cm_own, cm_partner = groups.cm_own, groups.cm_partner
     complementary, not_ingested = groups.complementary, groups.not_ingested
@@ -261,7 +396,10 @@ def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
         "Se regenera con `uv run python pitch/build_datasets_cm.py`.",
         "> Qué datasets se usan, qué alimentan y su Quality Gate salen de `data/catalog/` y "
         "`evidence/gate-01/`. El nombre oficial y la licencia salen de la API CKAN del portal "
-        f"(`pitch/portal_cm_snapshot.json`, leída el {snapshot.get('fetched_at', '—')}).",
+        f"(`pitch/portal_cm_snapshot.json`, leída el {snapshot.get('fetched_at', '—')}). "
+        "La puntuación MELODA sale de la API de spain.meloda.org "
+        f"(`pitch/meloda_cm_snapshot.json`, leída el {meloda.get('fetched_at', '—')}; "
+        "Fuente: spain.meloda.org, CC BY 4.0).",
         "",
         f"**{len(cm_rows)} datasets del Portal de Datos Abiertos de la Comunidad de Madrid, "
         f"{cm_pass} con Quality Gate 1 en PASS:** {len(cm_own)} publicados por la Comunidad y "
@@ -273,16 +411,17 @@ def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
         "",
         "## Resumen",
         "",
-        *summary_table(cm_rows),
+        *summary_table(cm_rows, meloda_rows),
+        *meloda_section(cm_own, cm_partner, meloda),
         f"## 1. Portal CM: publicados por la Comunidad de Madrid ({len(cm_own)})",
         "",
     ]
     for dataset, gate, portal in cm_own:
-        out += dataset_block(catalog, dataset, gate, portal)
+        out += dataset_block(catalog, dataset, gate, portal, meloda_cell(dataset, meloda_rows))
     partner_title = "## 2. Portal CM: horarios y estaciones del CRTM con ficha en el portal"
     out += [f"{partner_title} ({len(cm_partner)})", ""]
     for dataset, gate, portal in cm_partner:
-        out += dataset_block(catalog, dataset, gate, portal)
+        out += dataset_block(catalog, dataset, gate, portal, meloda_cell(dataset, meloda_rows))
     out += [
         f"## 3. Fuentes complementarias en uso ({len(complementary)})",
         "",
@@ -297,14 +436,18 @@ def render(catalog: Catalog, snapshot: dict[str, Any]) -> str:
         "Revisados y con licencia clara, pero todavía sin control de calidad: no se citan como "
         "usados.",
         "",
-        "| Dataset | Publica | ¿Portal CM? | Ficha |",
-        "|---|---|---|---|",
+        "| Dataset | Publica | ¿Portal CM? | Ficha | MELODA |",
+        "|---|---|---|---|---|",
     ]
     for dataset in not_ingested:
         portal = portal_rows.get(dataset.dataset_id)
         name = portal["title"] if portal else dataset.name
         cm = "sí" if is_cm_open_data(dataset) else "no"
-        out.append(f"| {name} | {dataset.owner} | {cm} | {portal_url(dataset)} |")
+        entry = meloda_rows.get(dataset.dataset_id)
+        level = f"{entry['total']}, {REUSABILITY_ES[entry['reusability']]}" if entry else "—"
+        if entry is None and meloda_rows and is_cm_open_data(dataset):
+            level = "no encontrado"
+        out.append(f"| {name} | {dataset.owner} | {cm} | {portal_url(dataset)} | {level} |")
     out.append("")
     return "\n".join(out)
 
@@ -329,6 +472,80 @@ def refresh_snapshot(catalog: Catalog) -> dict[str, Any]:
     return {"fetched_at": date.today().isoformat(), "api": CKAN_PACKAGE_SHOW, "datasets": rows}
 
 
+def meloda_get(client: httpx.Client, path: str, params: dict[str, Any] | None = None) -> Any:
+    time.sleep(MELODA_PAUSE_S)
+    response = client.get(f"{MELODA_API}{path}", params=params)
+    response.raise_for_status()
+    return response.json()
+
+
+def fetch_meloda(client: httpx.Client) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """The portals list and every dataset of the CM portal: 1 + 23 requests on 20 Nov 2026."""
+    portals = meloda_get(client, "/portals")["data"]
+    rows: list[dict[str, Any]] = []
+    page, pages = 1, 1
+    while page <= pages:
+        params = {"page": page, "page_size": MELODA_PAGE_SIZE, "sort": "title"}
+        body = meloda_get(client, f"/portals/{MELODA_CM_PORTAL}/datasets", params)
+        rows += body["data"]
+        pages = body["meta"]["pages"]
+        page += 1
+    return portals, rows
+
+
+def meloda_snapshot(
+    catalog: Catalog, portals: list[dict[str, Any]], rows: list[dict[str, Any]], fetched_at: str
+) -> dict[str, Any]:
+    """Match each CM dataset by the exact URL of its CM portal page; never by title."""
+    wanted = {
+        meloda_key(portal_url(dataset)): dataset_id
+        for dataset_id, dataset in catalog.datasets.items()
+        if is_cm_open_data(dataset) and portal_url(dataset)
+    }
+    matched: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        dataset_id = wanted.get(meloda_key(row["url"]))
+        if dataset_id and row.get("meloda"):
+            keep = {"meloda_id": row["id"], "url": row["url"], "source_id": row["source_id"]}
+            matched[dataset_id] = {**keep, "harvested_at": row["harvested_at"], **row["meloda"]}
+    scored = [row["meloda"] for row in rows if row.get("meloda")]
+    kept = ("name", "url", "last_harvest", "datasets_harvested", "meloda")
+    portal_rows = {
+        p["id"]: {k: p.get(k) for k in kept} for p in portals if p["id"] in MELODA_PORTALS
+    }
+    portal_rows[MELODA_CM_PORTAL]["dimension_means"] = {
+        key: round(mean(score[key] for score in scored), 2) for key, _, _, _ in MELODA_DIMENSIONS
+    }
+    return {
+        "fetched_at": fetched_at,
+        "source": "spain.meloda.org",
+        "attribution": "Fuente: spain.meloda.org",
+        "license": "CC BY 4.0",
+        "license_url": "https://creativecommons.org/licenses/by/4.0/",
+        "method": "Monitorizador spain.meloda.org (MELODA 5): 6 dimensiones D1–D6, de 0 a 49",
+        "api": f"{MELODA_API}/portals/{MELODA_CM_PORTAL}/datasets",
+        "match": "URL exacta de la ficha del dataset en datos.comunidad.madrid",
+        "portals": portal_rows,
+        "datasets": matched,
+    }
+
+
+def refresh_meloda(catalog: Catalog) -> dict[str, Any]:
+    with httpx.Client(timeout=60) as client:
+        portals, rows = fetch_meloda(client)
+    return meloda_snapshot(catalog, portals, rows, date.today().isoformat())
+
+
+def write_json(path: Path, data: dict[str, Any]) -> None:
+    path.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+
+
+def read_json(path: Path) -> dict[str, Any]:
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Build pitch/datasets_cm.md")
     parser.add_argument(
@@ -336,16 +553,20 @@ def main() -> None:
         action="store_true",
         help="re-read official titles and licences from the CM portal CKAN API (network)",
     )
+    parser.add_argument(
+        "--refresh-meloda",
+        action="store_true",
+        help="re-read MELODA scores from the spain.meloda.org API (network, ~25 requests)",
+    )
     args = parser.parse_args()
     catalog = load_catalog(include_drafts=False)
     if args.refresh_portal:
-        snapshot = refresh_snapshot(catalog)
-        SNAPSHOT.write_text(
-            json.dumps(snapshot, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-    snapshot = json.loads(SNAPSHOT.read_text(encoding="utf-8")) if SNAPSHOT.exists() else {}
-    OUTPUT.write_text(render(catalog, snapshot), encoding="utf-8")
+        write_json(SNAPSHOT, refresh_snapshot(catalog))
+    if args.refresh_meloda:
+        write_json(MELODA_SNAPSHOT, refresh_meloda(catalog))
+    OUTPUT.write_text(
+        render(catalog, read_json(SNAPSHOT), read_json(MELODA_SNAPSHOT)), encoding="utf-8"
+    )
     print(f"Escrito {OUTPUT.relative_to(ROOT)}")
 
 

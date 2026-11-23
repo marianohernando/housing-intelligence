@@ -200,11 +200,11 @@ a {
   object-position: center;
 }
 
-/* C3 (18 nov, D, producción con 55651c2, pitch/capturas/C3.png a 1440 × 900): «¿Queréis ver más
-   zonas?» y su primera opción, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en
-   total» (x 1000–1370, y 100–372) */
+/* C3 (23 nov, P, producción con el deploy-46, 542283b8; pitch/capturas/C3.png a 1440 × 900): «¿Queréis
+   ver más zonas?» y su primera opción, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas
+   en total» (x 1010–1380, y 100–372: la tarjeta va 15 px más a la derecha que en la del 18 nov) */
 .shot[data-shot="C3"] img {
-  object-view-box: inset(11.1% 4.9% 58.7% 69.4%);
+  object-view-box: inset(11.1% 4.2% 58.7% 70.1%);
   object-fit: contain;
   object-position: center;
 }
@@ -216,8 +216,11 @@ a {
   object-position: center;
 }
 
+/* C5 (23 nov, P, producción con el deploy-46, 542283b8; pitch/capturas/C5.png a 1440 × 900): desde
+   x 525, a la derecha de la pestaña «Mapa», y desde arriba, para que se vean «Qué falta», «Cómo lo
+   calculamos» e «Inversores», el mapa 3D de Chamartín y «Lo que le falta a esta zona» */
 .shot[data-shot="C5"] img {
-  object-view-box: inset(8% 0 0 37%);
+  object-view-box: inset(0 0 0 36.5%);
 }
 
 .shot[data-shot="C7"] img {
@@ -349,8 +352,9 @@ a {
   color: var(--violet-strong);
 }
 
+/* 23 nov: 24 px arriba y abajo (antes 36) para que quepan las dos líneas de MELODA */
 .s2 .data {
-  padding: 36px 44px;
+  padding: 24px 44px;
 }
 
 .s2 .headline {
@@ -361,7 +365,7 @@ a {
 
 .s2 .headline .big {
   font-family: var(--font-title);
-  font-size: 120px;
+  font-size: 100px; /* 23 nov: 100 px (antes 120), por las dos líneas de MELODA */
   font-weight: 700;
   line-height: 1;
   color: var(--violet);
@@ -377,14 +381,14 @@ a {
 .s2 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 12px;
+  margin-top: 6px; /* 23 nov: 6 px (antes 12), por las líneas de MELODA */
 }
 
 .s2 th,
 .s2 td {
   text-align: left;
   vertical-align: top;
-  padding: 5px 0;
+  padding: 3px 0; /* 23 nov: 3 px (antes 5), por las líneas de MELODA */
   border-top: 2px solid rgba(20, 27, 61, 0.1);
   font-size: 24px;
   line-height: 1.3;
@@ -398,9 +402,18 @@ a {
 }
 
 .s2 .complement {
-  margin-top: 10px;
+  margin-top: 6px;
   font-size: 24px;
   color: var(--ink-soft);
+}
+
+/* 23 nov: dos líneas de MELODA bajo la de apoyo (P6 del informe del jurado simulado); 22 px, el mínimo
+   del build, para que quepan con «(281 conjuntos)» (revisión del #122, R-07) */
+.s2 .meloda {
+  margin-top: 4px;
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--ink);
 }
 
 /* ---------- Slide 3 ---------- */
@@ -438,10 +451,11 @@ a {
   padding-left: 30px;
 }
 
+/* 23 nov: 24 px (antes 26) para que quepan las columnas del nuevo orden: parcela y personas en una, y quién paga */
 .s3 li {
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.35;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .s3 .shots {
@@ -554,7 +568,7 @@ a {
   margin: auto 0 0;
   padding: 4px 0 4px 18px;
   border-left: 6px solid var(--violet);
-  font-size: 26px;
+  font-size: 24px;
   line-height: 1.3;
 }
 
@@ -670,13 +684,13 @@ a {
 }
 
 .s4 .m2 {
-  left: 692px;
+  left: 703px; /* 23 nov: C1 nueva, la tarjeta empieza en x 1005 (antes 990) */
   top: 136px;
 }
 
 .s4 .m3 {
-  left: 692px;
-  top: 428px;
+  left: 703px;
+  top: 458px; /* 23 nov: «No le falta nada…» baja a y 646 por la nota del precio de 2024 */
 }
 
 /* Móvil 390 × 844 superpuesto al escritorio */
@@ -737,7 +751,7 @@ a {
 
 .s4 .tested p {
   margin: 6px 0 0;
-  font-size: 26px;
+  font-size: 24px; /* 23 nov: 24 px (antes 26), para que «Se hizo lo que pidieron…» no suba sobre el paso 3 */
   line-height: 1.3;
 }
 

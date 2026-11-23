@@ -1,5 +1,51 @@
 {
   "$defs": {
+    "BreakEven": {
+      "additionalProperties": false,
+      "description": "D-252: the most the construction can cost for the operation to reach the target margin,\nthe other inputs as they are: per built m² (the PEM times the coefficient), and the same said\nas a PEM with the coefficient given or as a coefficient on the PEM given.",
+      "properties": {
+        "coefficient": {
+          "description": "The same, as a coefficient on the PEM given",
+          "title": "Coefficient",
+          "type": "number"
+        },
+        "construction_m2": {
+          "description": "€ per built m², PEM × coefficient",
+          "title": "Construction M2",
+          "type": "number"
+        },
+        "current_construction_m2": {
+          "description": "The inputs' PEM × coefficient",
+          "title": "Current Construction M2",
+          "type": "number"
+        },
+        "land_counted": {
+          "description": "With the land price given; without one, free land",
+          "title": "Land Counted",
+          "type": "boolean"
+        },
+        "pem_m2": {
+          "description": "The same, as a PEM with the coefficient given",
+          "title": "Pem M2",
+          "type": "number"
+        },
+        "reachable": {
+          "description": "False when not even free construction reaches it",
+          "title": "Reachable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "construction_m2",
+        "pem_m2",
+        "coefficient",
+        "current_construction_m2",
+        "land_counted",
+        "reachable"
+      ],
+      "title": "BreakEven",
+      "type": "object"
+    },
     "DemandOutcome": {
       "additionalProperties": false,
       "properties": {
@@ -150,6 +196,30 @@
             }
           ],
           "title": "Annual Rent"
+        },
+        "break_even": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BreakEven"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The most the construction can cost for the target margin"
+        },
+        "break_even_free_land": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BreakEven"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only with a land price: the same as if the land were free"
         },
         "construction": {
           "title": "Construction",

@@ -210,7 +210,11 @@ const ROW_CAPACITY: [string, string, string][] = [
   ],
   ["Mayores", "personas de 65 años o más", "plazas autorizadas en hogares, clubes y centros de día. Las residencias van aparte."],
   ["Farmacias", "todos los vecinos", "cada farmacia cuenta como una."],
-  ["Vivienda", "hogares de 4 o más personas", "no va a pie. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares."],
+  [
+    "Vivienda (solo contexto)",
+    "hogares de 4 o más personas",
+    "no va a pie y nunca sale FALTA. Contamos las viviendas de más de 90 m² por cada 100 de esos hogares y lo enseñamos como dato para conocer la zona, con la cifra de los municipios parecidos.",
+  ],
 ];
 
 function GapMethod() {
@@ -287,7 +291,7 @@ function GapMethod() {
       <p className={styles.para}>
         <strong>Ejemplo real.</strong> En Puente de Vallecas la escuela infantil más cercana está a unos 6 minutos andando,
         pero son pocas para tantos niños: 2,8 al alcance a pie por cada 1.000 niños de 0 a 4 años, frente a 4,9 en los demás
-        municipios urbanos. Con tantos niños, no es casualidad: sale <strong>FALTA</strong>. En Centro la cifra es parecida,
+        municipios urbanos. Con tantos niños, la diferencia es demasiado grande para explicarla por el tamaño de la zona: sale <strong>FALTA</strong>. En Centro la cifra es parecida,
         pero con menos niños la diferencia podría ser casualidad: sale <strong>JUSTO</strong>.
       </p>
       <p className={styles.para}>
@@ -399,8 +403,9 @@ function Limits() {
           transporte público.
         </li>
         <li>
-          <strong>Vivienda:</strong> comparamos las viviendas grandes con los hogares grandes, no el mercado. No sabemos
-          cuántas están libres ni a qué precio.
+          <strong>Vivienda:</strong> comparamos las viviendas grandes con los hogares grandes, no el mercado, y solo como
+          contexto: en muchos pueblos las segundas residencias hacen que haya más viviendas grandes que hogares grandes, así
+          que la cifra no dice si falta vivienda y no la juzgamos. No sabemos cuántas están libres ni a qué precio.
         </li>
         <li>
           <strong>Alquiler:</strong> la Comunidad publica el precio medio de 37 municipios (los de más de 20.000 habitantes

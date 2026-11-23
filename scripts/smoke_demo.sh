@@ -2,8 +2,8 @@
 # Smoke test of the public demo: web, API liveness and readiness, one zone, the map layers, one
 # search (POST /api/v1/search with the demo case, which also warms up the search before a pitch),
 # the same case with full telework (fit-0.8, D-240), barrio by barrio in one Madrid district
-# (POST /api/v1/search/barrios) and in each part of the region of «¿Dónde?» (`scope`: madrid,
-# alrededores, pueblos).
+# (POST /api/v1/search/barrios), in each part of the region of «¿Dónde?» (`scope`: madrid,
+# alrededores, pueblos), and the remote MCP (D-255: initialize and tools/list at /api/v1/mcp).
 #   scripts/smoke_demo.sh [BASE_URL]                       # default https://vidafacil-madrid.vercel.app
 #   SMOKE_API_ONLY=1 scripts/smoke_demo.sh http://localhost:8012   # API container, no web
 #   SMOKE_TAG=<id> scripts/smoke_demo.sh   # User-Agent vida-facil-smoke/<id>, to find the requests
@@ -37,13 +37,14 @@ trap 'rm -rf "$TMP"' EXIT
 total=0
 failures=0
 
-# check NAME PATH JQ_FILTER [JSON_BODY_FILE] [MAX]: HTTP 200 (a POST of the file when given), body
-# under MAX bytes (default MAX_BYTES) and, if given, a jq filter that prints a summary (no output or
-# false means the body is wrong).
+# check NAME PATH JQ_FILTER [JSON_BODY_FILE] [MAX] [ACCEPT]: HTTP 200 (a POST of the file when
+# given, with that Accept header when given), body under MAX bytes (default MAX_BYTES) and, if given,
+# a jq filter that prints a summary (no output or false means the body is wrong).
 check() {
   local name="$1" path="$2" filter="$3" body="${4:-}" max="${5:-$MAX_BYTES}" code secs bytes detail="" ok=1
-  local post=()
+  local accept="${6:-}" post=()
   [[ -n "$body" ]] && post=(-X POST -H "Content-Type: application/json" --data-binary "@$body")
+  [[ -n "$accept" ]] && post+=(-H "Accept: $accept")
   read -r code secs bytes < <(curl -sS -o "$TMP/$name" --max-time "$TIMEOUT" -A "$USER_AGENT" \
     ${post[@]+"${post[@]}"} -w '%{http_code} %{time_total} %{size_download}\n' "$BASE$path" 2>/dev/null ||
     echo "000 0 0")
@@ -113,6 +114,19 @@ for scope in madrid alrededores pueblos; do
      | \"\(.data.reality_check.zones_passing) of \(.data.reality_check.zones_evaluated) ${level}s, 1st \(.data.results[0].zone.name // \"none\")\"" \
     "$TMP/scope-$scope.json" "$SEARCH_MAX_BYTES"
 done
+# The remote MCP (D-255), as a client calls it: JSON-RPC by POST, stateless, so tools/list needs no
+# session. initialize answers with the server's name; tools/list gives the seven read-only tools.
+MCP_ACCEPT="application/json, text/event-stream"
+jq -n '{jsonrpc: "2.0", id: 1, method: "initialize", params: {protocolVersion: "2025-06-18",
+        capabilities: {}, clientInfo: {name: "vida-facil-smoke", version: "1"}}}' >"$TMP/mcp-init.json"
+jq -n '{jsonrpc: "2.0", id: 2, method: "tools/list"}' >"$TMP/mcp-tools.json"
+check mcp-init "/api/v1/mcp" \
+  'select(.result.serverInfo.name == "vida-facil")
+   | "\(.result.serverInfo.name) \(.result.serverInfo.version), protocol \(.result.protocolVersion)"' \
+  "$TMP/mcp-init.json" "$MAX_BYTES" "$MCP_ACCEPT"
+check mcp-tools "/api/v1/mcp" \
+  'select((.result.tools | length) == 7) | "\(.result.tools | length) tools"' \
+  "$TMP/mcp-tools.json" "$MAX_BYTES" "$MCP_ACCEPT"
 
 echo "smoke: $((total - failures))/$total OK"
 ((failures == 0))

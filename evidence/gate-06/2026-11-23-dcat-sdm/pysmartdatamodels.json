@@ -1,0 +1,38 @@
+{
+  "tool": "pysmartdatamodels 0.8.2.0",
+  "function": "validate_payload(datamodel, subject, payload)",
+  "files": [
+    {
+      "file": "apps/web/public/datos/sdm/datasets.json",
+      "datamodel": "Dataset",
+      "subject": "dataModel.DCAT-AP",
+      "schema": "https://raw.githubusercontent.com/smart-data-models/dataModel.DCAT-AP/master/Dataset/schema.json",
+      "entities": 39,
+      "valid": 39,
+      "invalid": 0,
+      "first_failures": [],
+      "details_of_valid": [
+        [
+          "payload is valid",
+          39
+        ]
+      ]
+    },
+    {
+      "file": "apps/web/public/datos/sdm/farmacias.json",
+      "datamodel": "PointOfInterest",
+      "subject": "dataModel.PointOfInterest",
+      "schema": "https://raw.githubusercontent.com/smart-data-models/dataModel.PointOfInterest/master/PointOfInterest/schema.json",
+      "entities": 2957,
+      "valid": 2957,
+      "invalid": 0,
+      "first_failures": [],
+      "details_of_valid": [
+        [
+          "payload is valid",
+          2957
+        ]
+      ]
+    }
+  ]
+}

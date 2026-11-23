@@ -159,6 +159,7 @@
           "$ref": "#/$defs/GapMethod"
         },
         "rows": {
+          "description": "The rows judged: never a context row (gap-0.4)",
           "items": {
             "$ref": "#/$defs/GapImpactRow"
           },
@@ -378,6 +379,14 @@
           "default": null,
           "description": "FALTA also needs a significant shortfall: the exact Poisson upper bound of the zone's count at this level below the count expected at the reference rate. None: the ratio alone decides",
           "title": "Confidence Level"
+        },
+        "context_rows": {
+          "description": "Rows shown as context (gap-0.4, D-254): value and reference with status CONTEXTO (SIN_DATOS when unknown), never FALTA, JUSTO or CUBIERTO, no ratio, no p and not in GET /gaps/impact",
+          "items": {
+            "$ref": "#/$defs/GapRowKey"
+          },
+          "title": "Context Rows",
+          "type": "array"
         },
         "cubierto_from": {
           "description": "ratio at or above this -> CUBIERTO",

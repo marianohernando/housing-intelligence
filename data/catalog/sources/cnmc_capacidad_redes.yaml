@@ -1,0 +1,24 @@
+source_id: cnmc_capacidad_redes
+name: CNMC · Información de acceso y conexión a las redes (mapa de capacidad de demanda)
+provider: Comisión Nacional de los Mercados y la Competencia (CNMC)
+source_type: official_web_page
+api_type: none
+base_url: https://www.cnmc.es/sectores-que-regulamos/energia/supervision-del-mercado-electrico/informe-acceso-y-conexion-redes
+license_name: Sin licencia de reutilización declarada («Reservados todos los derechos» en el pie de la web)
+license_status: RESTRICTED
+attribution_text: "Comisión Nacional de los Mercados y la Competencia (CNMC): mapa de capacidad de acceso de demanda."
+commercial_use: false
+redistribution_allowed: false
+trust_tier: A_OFFICIAL
+default_confidence: 0.8
+update_frequency: monthly
+geographic_scope: España
+terms_reviewed_at: 2026-11-19T00:00:00Z
+robots_status: link_only
+active: true
+notes: >-
+  D-253. Solo un enlace al mapa (https://experience.arcgis.com/experience/c7dc433cb2e44d53a908a8a467523f5a),
+  nunca sus cifras ni sus ficheros: la página no declara licencia de reutilización. La CNMC dice
+  que las capacidades «deben considerarse como informativas» y «no pueden computarse como
+  directamente sumables». Tampoco se usan los ficheros de UFD ni de REE (sus avisos legales lo
+  impiden sin autorización o con fin comercial).

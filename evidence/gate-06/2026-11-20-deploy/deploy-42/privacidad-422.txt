@@ -1,0 +1,15 @@
+A 422 of the parcel search with a typed address (D-252b, point 4 and review R-05), after the deploy of c4eaab1, 23:30:21 UTC.
+Request: GET /api/v1/investors/parcels?address=calle de prueba 1&rc=3959601VK4735H (address and rc together: rejected by validation,
+no source is called; «calle de prueba 1» is check-parcela's public test text).
+
+Response headers:
+  HTTP/2 422
+  cache-control: private, no-store
+  content-type: application/json
+  x-vercel-cache: MISS
+
+Body:
+  {"detail":[{"loc":["query"],"msg":"pass exactly one of rc, lat and lon (both), or address","type":"value_error"}]}
+
+The body has no `input` and no `url`, and does not contain the typed text («prueba»: 0).
+uvicorn's access line of it: GET /api/v1/investors/parcels?address=[redactado]&rc=3959601VK4735H 422 (the address redacted by privacy.py).

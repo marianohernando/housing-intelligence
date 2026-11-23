@@ -20,6 +20,7 @@ from hi_api.services.search import fill_detail
 from hi_contracts.catalog.enums import GapRowKey, NullReason, TerritoryLevel
 from hi_contracts.pro.investors import (
     AssumptionPart,
+    BreakEven,
     DemandBlock,
     DemandOutcome,
     DemandRequest,
@@ -45,7 +46,16 @@ from hi_domain import viability as v
 from hi_domain.gaps import es_number
 from hi_domain.geo.names import display_name
 from hi_domain.investors_pilot import PILOT_BARRIOS
-from hi_domain.viability_data import PEM_DATASET_URL, PEM_EUR_M2, PEM_YEAR
+from hi_domain.viability_data import (
+    CRG_BLOQUE_ABIERTO_HIGH,
+    CRG_BLOQUE_ABIERTO_LOW,
+    CRG_URL,
+    CRG_YEAR,
+    PEM_DATASET_URL,
+    PEM_EUR_M2,
+    PEM_YEAR,
+    REFERENCE_PEM_EUR_M2,
+)
 
 PILOT_TEXT = "Madrid capital dentro de la M-40"
 CITY = "28079"
@@ -266,14 +276,16 @@ def sourced(
     *,
     note: str | None = None,
     feature_id: str | None = None,
+    mark: ValueMark = ValueMark.DATO,
 ) -> SourcedValue:
-    """A data figure with its source; a missing row is SOURCE_NO_COVERAGE (not loaded)."""
+    """A data figure with its source; a missing row is SOURCE_NO_COVERAGE (not loaded). `mark`
+    is ESTIMACION for a figure computed from data, not published (the barrio's price)."""
     if row is None:
         return SourcedValue(
             feature_id=feature_id,
             value=None,
             unit=unit,
-            mark=ValueMark.DATO,
+            mark=mark,
             null_reason=NullReason.SOURCE_NO_COVERAGE,
             source=FieldSource(text=note or "Aún sin cargar"),
         )
@@ -285,7 +297,7 @@ def sourced(
         feature_id=row["feature_id"],
         value=None if row["value"] is None else float(row["value"]),
         unit=unit,
-        mark=ValueMark.DATO,
+        mark=mark,
         null_reason=row["null_reason"],
         confidence=float(row["confidence"]),
         source=FieldSource(
@@ -490,6 +502,7 @@ def prices_block(values: Values, place: Place, sources: Sources) -> PricesBlock:
         sources,
         "€/m²",
         note="Estimación: el valor tasado de la ciudad repartido por el valor catastral (D-234)",
+        mark=ValueMark.ESTIMACION,
     )
     extra = premium(values, sources)
     # From the rounded figures on screen, so the calculator (which starts from them) says the same
@@ -604,6 +617,30 @@ def pem_value(values: Values, sources: Sources) -> SourcedValue:
     )
 
 
+def reference_pem(permits: SourcedValue) -> SourcedValue:
+    """D-252: the calculator's PEM, an assumption: the midpoint of the CRG of the Comunidad de
+    Madrid (bloque abierto, area 1); the PEM the permits declare is the low reference."""
+    low = ""
+    if permits.value is not None:
+        year = permits.source.period or str(PEM_YEAR)
+        low = (
+            f" El PEM medio que declaran los visados de obra nueva de viviendas en bloque "
+            f"({year}), {es_number(permits.value, 0)} €/m², es la referencia baja."
+        )
+    return SourcedValue(
+        value=float(REFERENCE_PEM_EUR_M2),
+        unit="€/m²",
+        mark=ValueMark.SUPUESTO,
+        source=FieldSource(
+            text=f"Supuesto: referencia de la Comunidad de Madrid de {CRG_YEAR}; los costes han "
+            f"subido desde entonces (Costes de Referencia General, bloque abierto en Madrid: "
+            f"{CRG_BLOQUE_ABIERTO_LOW}–{es_number(CRG_BLOQUE_ABIERTO_HIGH, 0)} €/m², punto "
+            f"medio).{low}",
+            url=HttpUrl(CRG_URL),
+        ),
+    )
+
+
 def defaults_block(
     prices: PricesBlock, income: SourcedValue, pem: SourcedValue
 ) -> ViabilityDefaults:
@@ -612,11 +649,12 @@ def defaults_block(
         sale_price_m2=prices.sale_m2,
         new_build_premium_pct=prices.new_build_premium_pct,
         rent_m2_month=prices.rent_m2_month,
-        pem_m2=pem,
+        pem_m2=reference_pem(pem),
+        pem_permits_m2=pem,
         cost_coefficient=assumption(
             v.COST_COEFFICIENT,
             "×",
-            f"Supuesto: el PEM más un {round(coefficient * 100)} % (gastos generales y "
+            f"Supuesto: el PEM más un {es_number(coefficient * 100, 2)} % (gastos generales y "
             "beneficio, honorarios, licencia e ICIO, y otros; desglose debajo)",
         ),
         cost_parts=parts(v.COST_PARTS),
@@ -752,6 +790,21 @@ def outcome(s: v.ScenarioResult) -> ScenarioOutcome:
         yield_land=None if s.yield_land is None else s.yield_land.value,
         verdict=None if s.verdict is None else Verdict(s.verdict.value),
         headline=s.headline,
+        break_even=None if s.break_even is None else break_even(s.break_even),
+        break_even_free_land=None
+        if s.break_even_free_land is None
+        else break_even(s.break_even_free_land),
+    )
+
+
+def break_even(b: v.BreakEven) -> BreakEven:
+    return BreakEven(
+        construction_m2=b.construction_m2,
+        pem_m2=b.pem_m2,
+        coefficient=b.coefficient,
+        current_construction_m2=b.current_construction_m2,
+        land_counted=b.land_counted,
+        reachable=b.reachable,
     )
 
 

@@ -8,7 +8,14 @@ from typing import Any, NamedTuple
 
 from sqlalchemy import Connection, text
 
-from hi_api.services.gap_reference import Assessment, References, assess, judge, load_references
+from hi_api.services.gap_reference import (
+    Assessment,
+    References,
+    assess,
+    context_verdict,
+    judge,
+    load_references,
+)
 from hi_api.services.gaps import (
     REGION_CODE,
     REGION_LEVEL,
@@ -22,11 +29,13 @@ from hi_contracts.catalog.enums import GapRowKey, TerritoryLevel
 from hi_contracts.public import GapRowMap, GapStatus, GapStatusCounts, ZoneGapStatus
 from hi_domain.gap_impact import denominator_is_count
 from hi_domain.gaps import (
+    CONTEXT_ROWS,
     GAP_METHOD,
     REGION_TEXT,
     Direction,
     UnclassifiableError,
     oriented_ratio,
+    row_label,
 )
 from hi_domain.geo.names import display_name
 
@@ -67,6 +76,7 @@ class RowContext(NamedTuple):
     region: dict[str, Any] | None
     references: References
     denominator_is_count: bool  # households, not people per `per`: same floor (zonas pequeñas)
+    context_row: bool = False  # shown with its reference, never judged (gap-0.4, D-254)
 
 
 def _zone(row: dict[str, Any], context: RowContext) -> ZoneGapStatus:
@@ -79,7 +89,12 @@ def _zone(row: dict[str, Any], context: RowContext) -> ZoneGapStatus:
             raise UnclassifiableError(msg)
         ratio = oriented_ratio(value, ref.value, context.direction)
         judged = assess(row, ref, context.direction, context.denominator_is_count)
-    verdict = judge(ratio, judged, context.references, context.feature_id, row["territory_code"])
+    if context.context_row:
+        verdict, ratio = context_verdict(value), None
+    else:
+        verdict = judge(
+            ratio, judged, context.references, context.feature_id, row["territory_code"]
+        )
     return ZoneGapStatus(
         admin_unit_id=row["admin_unit_id"] or row["territory_code"],
         code=row["territory_code"],
@@ -148,7 +163,12 @@ def gap_row_map(
     region_row = None if region is None else dict(region)
     counted = denominator_is_count(feature["formula"] or {}, level.value)
     context = RowContext(
-        feature["feature_id"], feature["direction"], region_row, references, counted
+        feature["feature_id"],
+        feature["direction"],
+        region_row,
+        references,
+        counted,
+        row in CONTEXT_ROWS,
     )
     zones, warnings = _zones(values, context)
     if not values:  # not computed at this level yet: no zones, not SIN_DATOS
@@ -157,7 +177,7 @@ def gap_row_map(
     binding = feature["gap_row"]
     gap_map = GapRowMap(
         row=row,
-        label=binding["label"],
+        label=row_label(row, binding["label"]),
         level=level,
         indicator_label=feature["human_name"],
         unit=feature["unit"],

@@ -11,16 +11,28 @@ import { SLOW_TEXT, useSlow } from "@/components/ui/useSlow";
 import { errorMessage } from "@/lib/errors";
 import { INVESTOR_TEXT, isoInWords, SHEET_TEXT as BARRIO_TEXT, today, uniqueDatasets } from "@/lib/investors";
 import {
+  ambitText,
   areaText,
   buildabilityMark,
   buildableText,
+  byUseSource,
+  catalogText,
+  byUseText,
+  calculatorStart,
+  dayMonthYear,
   degradedLines,
   divisionText,
   instrumentText,
   LOOKUP_ERROR,
+  planUseSource,
+  planUseText,
+  publicLandText,
   qualificationText,
   sentence,
+  SERVICES_TEXT,
+  servicesSignal,
   SHEET_TEXT as TEXT,
+  landUseNote,
   vacantText,
 } from "@/lib/parcels";
 
@@ -108,9 +120,19 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
         <Fact label={TEXT.qualification} note={planning.norma_zonal?.name ?? null}>
           {qualificationText(planning)}
         </Fact>
-        <Fact label={TEXT.planningUse}>{sentence(planning.use) ?? "Sin dato"}</Fact>
+        <Fact label={TEXT.planningUse} note={landUseNote(planning)}>
+          {sentence(planning.use) ?? "Sin dato"}
+        </Fact>
         {planning.urban_parcel && <Fact label={TEXT.urbanParcel}>{planning.urban_parcel}</Fact>}
         {instrument && <Fact label={TEXT.instrument}>{instrument}</Fact>}
+        <Fact label={TEXT.catalog} note={planning.protected_building?.name ?? null}>
+          {catalogText(planning.protected_building, sheet.degraded?.includes("catalog"))}
+        </Fact>
+        {planning.ambit && (
+          <Fact label={TEXT.ambit} note={planning.ambit.tracked ? TEXT.ambitAsOf(planning.ambit.code, isoInWords(planning.ambit.as_of)) : null}>
+            {ambitText(planning.ambit)}
+          </Fact>
+        )}
       </dl>
       <p className={own.links}>
         {planning.sheet_url && (
@@ -126,6 +148,60 @@ function Planning({ sheet, retry }: { sheet: Sheet; retry: () => void }) {
       </p>
       {attribution && <p className={styles.source}>{attribution}</p>}
     </Section>
+  );
+}
+
+/** D-252 (audit D3): what the plan allows by use on the urban parcel (tables 4 and 5 of USOS_SUELO). */
+function PlanUses({ planning }: { planning: Sheet["planning"] }) {
+  if (!planning || planning.plan_uses === null || planning.plan_uses === undefined) return null;
+  const uses = planning.plan_uses;
+  const source = TEXT.planUsesSource(dayMonthYear(planning.plan_uses_as_of));
+  return (
+    <>
+      <h3 className={styles.subhead}>{TEXT.byUseTitle}</h3>
+      {uses.length === 0 ? (
+        <>
+          <p className={styles.note}>
+            {planning.plan_use_without_figure ? TEXT.planUsesWithoutFigure(planning.plan_use_without_figure) : TEXT.planUsesNone}
+          </p>
+          <p className={styles.source}>{source}</p>
+        </>
+      ) : (
+        <>
+          <p>{TEXT.planUsesTitle(planning.urban_parcel)}</p>
+          <ul className={styles.landList}>
+            {uses.map((u) => (
+              <li key={`${u.principal}-${u.use}`}>
+                <strong>{planUseText(u, planning.urban_parcel_area_m2)}</strong>
+                <span className={styles.note}>{planUseSource(u)}</span>
+              </li>
+            ))}
+          </ul>
+          <p className={styles.note}>{TEXT.planUsesCaveats}</p>
+          <p className={styles.source}>{source}</p>
+        </>
+      )}
+    </>
+  );
+}
+
+/** Each source's figure with the use it gives (D-252): never split, never added up. */
+function ByUse({ figures }: { figures: Sheet["buildability"]["by_use"] }) {
+  if (!figures || figures.length === 0) return <p className={styles.note}>{TEXT.byUseNone}</p>;
+  return (
+    <>
+      <h3 className={styles.subhead}>{TEXT.officialTitle}</h3>
+      <ul className={styles.landList}>
+        {figures.map((f) => (
+          <li key={`${f.dataset_id}-${f.use}`}>
+            <strong>{byUseText(f)}</strong>
+            <span className={styles.note}>{byUseSource(f)}</span>
+            {!f.residential && <span className={styles.note}>{TEXT.notHousing}</span>}
+          </li>
+        ))}
+      </ul>
+      <p className={styles.note}>{TEXT.byUseNote}</p>
+    </>
   );
 }
 
@@ -152,8 +228,80 @@ function BuildabilitySection({ sheet }: { sheet: Sheet }) {
         )}
       </dl>
       {b.article && b.article_url && <External href={b.article_url}>{TEXT.article(b.article)}</External>}
-      <p className={styles.note}>{TEXT.buildableEditable}</p>
+      <PlanUses planning={sheet.planning} />
+      <ByUse figures={b.by_use} />
+      {sheet.public_land && (
+        <p className={styles.caution}>
+          <Info size={18} aria-hidden="true" />
+          <span>{publicLandText(sheet.public_land)}</span>
+        </p>
+      )}
+      <p className={styles.note}>
+        {TEXT.housingOnly} {TEXT.buildableEditable}
+      </p>
       <MethodLink />
+    </Section>
+  );
+}
+
+/** D-253 (audit D1): what no open data says (the legal «solar», the network's capacity) and what can be said. */
+function Services({ sheet }: { sheet: Sheet }) {
+  const signal = servicesSignal(sheet.planning);
+  const stage = sheet.public_land?.stage;
+  const power = sheet.power;
+  return (
+    <Section id="servicios" title={TEXT.sections.services}>
+      <p>{SERVICES_TEXT.solar}</p>
+      {signal.map((line) => (
+        <p key={line} className={styles.note}>
+          {line}
+        </p>
+      ))}
+      {stage && SERVICES_TEXT.portal(stage) && <p className={styles.note}>{SERVICES_TEXT.portal(stage)}</p>}
+      <h3 className={styles.subhead}>{SERVICES_TEXT.electricity}</h3>
+      {power ? (
+        <p>
+          <MarkTag mark="supuesto" /> {SERVICES_TEXT.power(power)}
+        </p>
+      ) : (
+        <p className={styles.note}>{SERVICES_TEXT.powerNone}</p>
+      )}
+      {power && <p>{power.over_transformer_threshold ? SERVICES_TEXT.transformer : SERVICES_TEXT.belowTransformer}</p>}
+      <p className={styles.caution}>
+        <Info size={18} aria-hidden="true" />
+        <span>{SERVICES_TEXT.capacity}</span>
+      </p>
+      <p className={styles.note}>{SERVICES_TEXT.cnmc}</p>
+      <External href={SERVICES_TEXT.cnmcUrl}>{SERVICES_TEXT.cnmcLink}</External>
+      <span className={styles.printOnly}>{SERVICES_TEXT.cnmcUrl}</span>
+      <h3 className={styles.subhead}>{SERVICES_TEXT.water}</h3>
+      <p>{SERVICES_TEXT.canal}</p>
+      <External href={SERVICES_TEXT.canalUrl}>{SERVICES_TEXT.canalLink}</External>
+      <span className={styles.printOnly}>{SERVICES_TEXT.canalUrl}</span>
+      <details className={styles.parts}>
+        <summary>{SERVICES_TEXT.wordsTitle}</summary>
+        <ul>
+          {SERVICES_TEXT.words.map((w) => (
+            <li key={w.term}>
+              <strong>{w.term}:</strong> {w.text}
+            </li>
+          ))}
+        </ul>
+      </details>
+    </Section>
+  );
+}
+
+/** D-253 (audit D6): what a full study adds, for whoever takes the PDF to a consultancy. */
+function Study() {
+  return (
+    <Section id="estudio" title={TEXT.sections.study}>
+      <ul className={styles.notices}>
+        {TEXT.studyItems.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <p className={styles.note}>{TEXT.takeIt}</p>
     </Section>
   );
 }
@@ -185,7 +333,7 @@ function Context({ sheet }: { sheet: Sheet }) {
   );
 }
 
-function Sources({ sheet, version }: { sheet: Sheet; version: string | null }) {
+function Sources({ sheet, version, method }: { sheet: Sheet; version: string | null; method: string | null }) {
   const datasets = sheet.context ? uniqueDatasets(sheet.context.sheet.datasets) : [];
   return (
     <Section id="fuentes" title={TEXT.sections.sources}>
@@ -194,7 +342,7 @@ function Sources({ sheet, version }: { sheet: Sheet; version: string | null }) {
           <li key={notice}>{notice}</li>
         ))}
       </ul>
-      {version && <p className={styles.note}>{BARRIO_TEXT.version(version)}</p>}
+      {(version || method) && <p className={styles.note}>{BARRIO_TEXT.version(version, method)}</p>}
       <h3 className={styles.subhead}>{TEXT.sourcesTitle(sheet.sources.length)}</h3>
       <ul className={styles.datasets}>
         {sheet.sources.map((s) => (
@@ -251,13 +399,19 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
   const result = useParcel(rc14);
   const slow = useSlow(result.loading);
   const data = result.data?.data ?? null;
-  const start = useMemo<ParcelStart | undefined>(
-    () =>
-      data
-        ? { m2: data.buildability.value_m2 ?? null, mark: buildabilityMark(data.buildability.kind), help: TEXT.calculatorFrom(data.buildability.kind) }
-        : undefined,
-    [data],
-  );
+  const start = useMemo<ParcelStart | undefined>(() => {
+    if (!data) return undefined;
+    const { m2, mark, help, caution } = calculatorStart(data);
+    const cautions = (data.cautions ?? []).filter((c) => c.key === "vivienda_protegida" || c.key === "unifamiliar").map((c) => c.text);
+    if (data.public_land) cautions.push(publicLandText(data.public_land));
+    return {
+      m2,
+      mark,
+      help,
+      cautions: caution ? [caution, ...cautions] : cautions,
+      protectedHousing: (data.cautions ?? []).some((c) => c.key === "vivienda_protegida"),
+    };
+  }, [data]);
 
   useEffect(() => {
     const unfold = () => document.querySelectorAll("[data-print-page] details").forEach((d) => d.setAttribute("open", ""));
@@ -305,6 +459,10 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
         <p className={styles.eyebrow}>{TEXT.eyebrow(sheet.barrio?.name ?? null, sheet.district?.name ?? null)}</p>
         <h1 className={styles.title}>{sheet.parcel.address ?? TEXT.rcLine(sheet.parcel.rc14)}</h1>
         <p className={styles.lead}>{TEXT.rcLine(sheet.parcel.rc14)}</p>
+        <p className={styles.caution} data-first-filter>
+          <Info size={18} aria-hidden="true" />
+          <span>{TEXT.firstFilter}</span>
+        </p>
         <p className={styles.printOnly}>{INVESTOR_TEXT.generated(today(), version)}</p>
         <div className={`${styles.actions} no-print`}>
           <Button variant="secondary" onClick={() => window.print()}>
@@ -319,15 +477,23 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
             <span>{line}</span>
           </p>
         ))}
+        {(sheet.cautions ?? []).map((c) => (
+          <p key={c.key} className={styles.caution} data-caution={c.key}>
+            <Info size={18} aria-hidden="true" />
+            <span>{c.text}</span>
+          </p>
+        ))}
       </header>
       <ParcelData sheet={sheet} />
       <Planning sheet={sheet} retry={result.retry} />
       <BuildabilitySection sheet={sheet} />
+      <Services sheet={sheet} />
       <Context sheet={sheet} />
       <Section id="viabilidad" title={TEXT.sections.viability}>
         <Calculator defaults={sheet.defaults} parcels={[]} remaining={[]} parcel={start} methodLink={false} />
       </Section>
-      <Sources sheet={sheet} version={version} />
+      <Study />
+      <Sources sheet={sheet} version={version} method={result.data.meta?.methodology_version ?? null} />
       <p className={styles.printOnly}>{`Datos de la parcela consultados el ${isoInWords(sheet.parcel.observed_at)}.`}</p>
     </div>
   );

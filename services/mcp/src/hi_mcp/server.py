@@ -1,6 +1,6 @@
 """Vida Fácil MCP server (MCP-001, D-225, D-249): seven read-only tools over the domain services.
 
-Local only, by stdio, for the demo and the jury: `make mcp` or `uv run hi-mcp`. DATABASE_URL
+By stdio (`make mcp` or `uv run hi-mcp`), and over HTTP beside the API (hi_mcp.http). DATABASE_URL
 picks the database (the local one by default, as the API). Every tool reads through a
 read-only transaction and calls the same service as its API route; there is no SQL tool
 (CLAUDE.md §3). Usage and a client configuration: docs/04_technical_architecture/32_mcp_server.md.
@@ -36,6 +36,7 @@ from hi_contracts.public.responses import (
     ZoneGapListResponse,
     ZoneLookupResponse,
 )
+from hi_domain.viability import VIABILITY_VERSION
 from hi_mcp import tools
 
 log = logging.getLogger("hi_mcp")
@@ -136,9 +137,10 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
     "que_falta": (
         "Qué falta en una zona",
         "Lo que falta en una zona frente a los municipios de su mismo tipo (rural o urbano): "
-        "escuela infantil, colegio, centro de salud, mayores, farmacia y vivienda, cada fila "
-        "FALTA, JUSTO, CUBIERTO o SIN_DATOS con su indicador, referencia, explicación y "
-        "datasets. Lo mismo que GET /api/v1/gaps/{level}/{code}.",
+        "escuela infantil, colegio, centro de salud, mayores y farmacia, cada fila FALTA, "
+        "JUSTO, CUBIERTO o SIN_DATOS con su indicador, referencia, explicación y datasets. La "
+        "vivienda es solo contexto (CONTEXTO: su valor y su referencia, nunca un veredicto). "
+        "Lo mismo que GET /api/v1/gaps/{level}/{code}.",
     ),
     "explicar_zona": (
         "Explicar una zona con sus fuentes",
@@ -175,8 +177,8 @@ TOOL_TEXT: dict[str, tuple[str, str]] = {
     ),
     "viabilidad": (
         "Viabilidad de una promoción",
-        "El método residual (viability-0.1) sobre las cifras de request, el mismo cuerpo que "
-        "POST /api/v1/investors/viability: m² construidos (50 como mínimo), precio de venta, "
+        f"El método residual ({VIABILITY_VERSION}) sobre las cifras de request, el mismo cuerpo "
+        "que POST /api/v1/investors/viability: m² construidos (50 como mínimo), precio de venta, "
         "PEM y, si se quiere, alquiler, prima de la vivienda nueva, coeficiente sobre el PEM, "
         "comercialización, margen objetivo, precio del suelo (en total o por m² edificable, no "
         "los dos) y la comprobación de demanda. Los valores de partida de un barrio están en "

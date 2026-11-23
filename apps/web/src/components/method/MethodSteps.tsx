@@ -33,7 +33,7 @@ const STEPS: { icon: LucideIcon; title: string; text: ReactNode }[] = [
           <GapBadge status="JUSTO" />
           <GapBadge status="CUBIERTO" />
         </span>
-        FALTA solo si la diferencia es clara y no es casualidad.
+        FALTA solo si la diferencia es clara y demasiado grande para explicarla por el tamaño de la zona.
       </>
     ),
   },

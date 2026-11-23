@@ -35,6 +35,12 @@
   color: var(--sin-datos-ink);
 }
 
+/* A context row (gap-0.4, D-254): a figure to know the zone, never a verdict, so no state colour */
+.CONTEXTO {
+  border-color: var(--control-border);
+  color: var(--ink-soft);
+}
+
 /* fila.zona_pequena, next to the status (SmallZoneTag) */
 .small {
   border: 1px dashed var(--zona-pequena);

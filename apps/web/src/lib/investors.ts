@@ -6,8 +6,9 @@
 import type { InvestorZoneSummary } from "@/contracts/investor_zone_list_response";
 import type { DatasetRef, LandItem, SourcedValue, ViabilityDefaults } from "@/contracts/investor_zone_response";
 import type { ViabilityRequest } from "@/contracts/viability_request";
-import type { Verdict } from "@/contracts/viability_response";
+import type { BreakEven, ScenarioOutcome, Verdict } from "@/contracts/viability_response";
 import { formatEuros, formatNumber } from "@/lib/format";
+import { INVESTOR_METHOD as M } from "@/lib/investorMethod";
 
 export const INVESTOR_TEXT = {
   plan: "Plan Inversor (acceso libre durante el concurso)",
@@ -16,7 +17,7 @@ export const INVESTOR_TEXT = {
     "Qué le falta a cada barrio, dónde hay suelo y si una promoción sale. Con datos abiertos y la fuente de cada cifra.",
   pilot: "Piloto: los barrios de Madrid capital dentro de la M-40.",
   model:
-    "Las personas y los ayuntamientos usan Vida Fácil gratis. Inversores y promotores tendrán un plan de pago; durante el concurso, el acceso es libre y sin registro.",
+    "Las personas y los ayuntamientos usan Vida Fácil gratis. Para inversores y promotores habrá un plan empresarial e informes personalizados; durante el concurso, el acceso es libre y sin registro.",
   developers: "¿Integrarlo en tu sistema? API y MCP gratis", // inversores.desarrolladores (D-249)
   listTitle: "Explorar barrios", // inversores.lista.titulo (D-250: after «Busca tu parcela»)
   listIntro: "O empieza por un barrio del piloto: qué le falta, dónde hay suelo público y sus precios.",
@@ -56,6 +57,7 @@ export const METHOD_LINK = {
 /** «dato», «supuesto», «lo pones tú» next to a figure (never a colour alone). */
 export const MARK_TEXT: Record<SourcedValue["mark"] | "sin_dato", string> = {
   dato: "Dato",
+  estimacion: "Estimación",
   supuesto: "Supuesto",
   usuario: "Lo pones tú",
   sin_dato: "Sin dato",
@@ -147,7 +149,8 @@ export function landCaution(item: LandItem | null): string | null {
 
 /** The situation of a planning area of line A (D-247, VEDA), in words. */
 export const AREA_STAGE_TEXT: Record<string, string> = {
-  edificacion: "En fase de edificación: se puede construir ya",
+  // D-252 (B10): not «se puede construir ya»; it still takes a licence
+  edificacion: "En fase de edificación, según el Ayuntamiento: no quiere decir que se pueda construir ya (hace falta licencia)",
   gestion_urbanizacion: "En gestión o urbanización",
   pendiente_planeamiento: "Pendiente de planeamiento de desarrollo",
   pendiente_sectorizacion: "Pendiente de plan de sectorización",
@@ -206,7 +209,7 @@ export function initialFields(defaults: ViabilityDefaults, land: LandItem | null
     new_build_premium_pct: text(defaults.new_build_premium_pct.value, 1),
     rent_m2_month: text(defaults.rent_m2_month.value, 2),
     pem_m2: text(defaults.pem_m2.value, 0),
-    cost_coefficient: text(defaults.cost_coefficient.value, 2),
+    cost_coefficient: text(defaults.cost_coefficient.value, 4),
     land: "",
     land_unit: "total",
     sales_costs_pct: text(defaults.sales_costs_pct.value, 1),
@@ -383,7 +386,7 @@ export function gapsLine(zone: { gaps?: InvestorZoneSummary["gaps"]; district: {
 /** inversores.calculadora.* of pitch/textos_web.md */
 export const CALCULATOR_TEXT = {
   intro:
-    "Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar: cada cifra dice si es un dato, un supuesto nuestro o lo has puesto tú. Los m² son construidos, como los del precio y los del coste.",
+    "Calcula solo vivienda, con los precios y alquileres de vivienda del barrio: no oficinas, locales ni naves. Elige una parcela o un ámbito, o pon tú los m². Todo se puede cambiar: cada cifra dice si es un dato, un supuesto nuestro o lo has puesto tú. Los m² son construidos, como los del precio y los del coste.",
   landPick: "¿Sobre qué suelo?",
   parcel: "Parcela pública",
   area: "Ámbito con edificabilidad",
@@ -422,10 +425,36 @@ export const CALCULATOR_TEXT = {
   withLand: "Con el precio del suelo que has puesto: margen sobre ventas, antes de financiación e impuestos.",
   withoutLand:
     "Sin precio del suelo no hay veredicto: te decimos lo máximo que podrías pagar por él para llegar al margen objetivo (valor residual). Pon el precio del suelo para saber si sale. La rentabilidad del alquiler cuenta el suelo a ese valor máximo, así que sale igual en los tres escenarios: compara el alquiler con el precio de venta.",
-  thresholds:
-    "Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el 10 % y el objetivo; «No sale» por debajo del 10 %. Optimista: +10 % de precio y −5 % de coste; pesimista: −10 % y +5 %.",
+  thresholds: thresholdsText(),
+  priceProtected:
+    "Precio libre del barrio: no vale para vivienda con protección pública, que tiene un precio máximo legal. Pon el de su régimen.",
+  excludedLink: "Qué no incluye esta cuenta",
+  // F14 (jury A1): the parts of the cost are the PEM × coefficient (its parts) and the sales costs; none of these four
+  residualLeavesOut: "La cuenta no incluye sótanos, urbanización, financiación ni IVA.",
+  costReset: "Volver a nuestros supuestos de coste",
+  costScopeTitle: "Qué incluye el coste y qué no",
+  costIncludes: (parts: string[]) =>
+    `Incluye la obra en sí (el PEM: materiales, mano de obra, maquinaria e instalaciones) y, con el coeficiente, ${parts.join("; ")}. Los gastos de la venta van aparte, en «Comercialización y otros gastos».`,
+  costExcludesTitle: "No incluye:",
+  costExcludes: [
+    "El suelo: va aparte, en «Precio del suelo». Si quieres contar lo que cuesta comprarlo (impuestos, notaría), súmalo ahí.",
+    "La urbanización ni las cargas del ámbito (cesiones, cuotas de la junta de compensación), si las tiene.",
+    "El derribo de lo que haya construido ni la limpieza del suelo.",
+    "Los sótanos y garajes: el coste por m² se multiplica solo por la superficie edificable sobre rasante.",
+    "La financiación (intereses y comisiones del préstamo) ni los plazos de la obra y de la venta.",
+    "El IVA, que el PEM nunca lleva, ni los impuestos sobre el beneficio.",
+    "Un colchón para imprevistos.",
+  ],
+  breakEvenTitle: "Hasta cuánto puede costar la construcción",
+  breakEvenRow: "Construcción máxima para el margen objetivo",
+  breakEvenFreeRow: "Lo mismo, con el suelo gratis",
+  breakEvenNone: "Ni gratis",
+  costNow: "Coste de construcción que usamos ahora",
   costCaution:
-    "Mínimo oficial (PEM visado); el coste de mercado suele ser mayor: ajusta el coeficiente. Además, el PEM del visado se reparte entre toda la superficie a construir (probablemente con sótanos y garajes) y aquí se multiplica solo por la edificable sobre rasante.",
+    "El coste de construcción es el dato que más cambia la cuenta. Partimos de una referencia pública (supuesto) y la puedes cambiar: el PEM se multiplica solo por la superficie edificable sobre rasante.",
+  costReferencesTitle: "De dónde sale el coste y cuánto varía",
+  /** With the sheet's figure of the permits (the CM dataset, from the API) when there is one */
+  costReferences: (permits?: SourcedValue | null) => costReferenceLines(permits),
   revenue: "Ingresos por ventas",
   construction: "Construcción (PEM × coeficiente)",
   salesCosts: "Comercialización y otros",
@@ -439,7 +468,120 @@ export const CALCULATOR_TEXT = {
   noYield: "Rentabilidad bruta si se alquila: ni con el suelo gratis se llega al margen objetivo, así que no hay precio de suelo con el que calcularla",
   invalid: "Revisa los campos marcados: hay alguno fuera de su rango.",
   demandTitle: "¿Lo pueden pagar los hogares del barrio?",
+  method: (version: string) => `Método de la cuenta: ${version}.`,
 } as const;
+
+const eurM2 = (value: number) => `${formatNumber(Math.round(value), 0)} €/m²`;
+
+/** «2.800 €/m² construido», or «Ni gratis» when not even free construction keeps the margin. */
+export function breakEvenValue(be: BreakEven): string {
+  return be.reachable ? `${eurM2(be.construction_m2)} construido` : CALCULATOR_TEXT.breakEvenNone;
+}
+
+/** The break-even (D-252) in words: up to what construction cost the target margin holds. */
+export function breakEvenText(be: BreakEven): string {
+  const land = be.land_counted ? "Con el precio del suelo que has puesto" : "Sin pagar nada por el suelo";
+  if (!be.reachable) return `${land}, ni con la construcción gratis llega la promoción al margen objetivo.`;
+  const lead = `${land}, la promoción llega al margen objetivo mientras la construcción cueste menos de ${breakEvenValue(be)} (PEM × coeficiente).`;
+  // Review of #109, R-04: a coefficient under 1 is not a cost a builder can quote
+  if (be.coefficient < 1) return `${lead} Con tu PEM, ni con el PEM solo (coeficiente 1) llega.`;
+  return `${lead} Es un PEM de hasta ${eurM2(be.pem_m2)} con tu coeficiente, o un coeficiente de hasta ${formatNumber(be.coefficient, 2)} sobre tu PEM.`;
+}
+
+/** The same with free land, when a land price is given. */
+export function breakEvenFreeText(be: BreakEven): string {
+  return be.reachable
+    ? `Con el suelo gratis, hasta ${breakEvenValue(be)}.`
+    : "Ni con el suelo gratis llega al margen objetivo.";
+}
+
+/** «876 €/m² construido (PEM × coeficiente)»: what the scenarios count now. */
+export function costNowValue(be: BreakEven): string {
+  return `${eurM2(be.current_construction_m2)} construido (PEM × coeficiente)`;
+}
+
+/** «1.064», «1,3575»: Spanish, no trailing zeros. Declarations: CALCULATOR_TEXT, above, uses them. */
+function plain(value: number): string {
+  return formatNumber(value, Number.isInteger(value) ? 0 : 4).replace(/(,\d*?)0+$/, "$1").replace(/,$/, "");
+}
+function pctText(value: number): string {
+  return `${plain(value)} %`;
+}
+function signed(value: number): string {
+  return `${value > 0 ? "+" : "−"}${pctText(Math.abs(value))}`;
+}
+
+/** The semaphore and the scenarios in words, from the code's figures (D-252, D8). */
+function thresholdsText(): string {
+  const floor = pctText(M.adjustFloorPct);
+  const best = M.scenarios.find((s) => s.key === "optimista");
+  const worst = M.scenarios.find((s) => s.key === "pesimista");
+  const scenarios =
+    best && worst
+      ? ` Optimista: ${signed(best.pricePct)} de precio y ${signed(best.costPct)} de coste; pesimista: ${signed(worst.pricePct)} y ${signed(worst.costPct)}.`
+      : "";
+  return `Semáforo (supuesto), solo con precio del suelo: «Sale» si llega al margen objetivo; «Ajustar» entre el ${floor} y el objetivo; «No sale» por debajo del ${floor}. La tasación hipotecaria pide al menos un ${pctText(M.appraisalMinMarginPct)} en vivienda de primera residencia, sin financiación ni Impuesto sobre Sociedades (Orden ECO/805/2003, disposición adicional sexta).${scenarios}`;
+}
+
+/**
+ * D-252 (D4): the three public references of the construction cost. The permits' PEM is the
+ * CM dataset's figure as the API reads it from the Feature Store, with its source; without it,
+ * the same versioned figure. The others come from the versioned tables.
+ */
+function costReferenceLines(permits?: SourcedValue | null): { text: string; href: string; link: string; mark?: SourcedValue["mark"] }[] {
+  const { crg, st } = M.costReferences;
+  const types = crg.types.map((t) => `${t.label.charAt(0).toLowerCase()}${t.label.slice(1)}, ${plain(t.low)}–${plain(t.high)} €/m²`);
+  const known = permits?.value !== null && permits?.value !== undefined;
+  const value = known ? Math.round(permits?.value ?? 0) : M.pem.eurM2;
+  const year = (known && permits?.source.period) || String(M.pem.year);
+  const source = known && permits ? ` Fuente: ${permits.source.text}.` : "";
+  return [
+    {
+      text: `PEM medio de los visados de obra nueva de viviendas en bloque, Comunidad de Madrid (${year}): ${plain(value)} €/m². Es lo que declaran los proyectos al pedir el visado y suele quedarse corto: es la referencia baja.${source.replace(/\.\.$/, ".")}`,
+      href: M.pem.url,
+      link: "Ver los visados",
+      mark: "dato",
+    },
+    {
+      text: `Costes de Referencia General de la Comunidad de Madrid (actualizados al año ${crg.year}), en Madrid (área ${crg.area}): ${types.join("; ")}. Son PEM, sin gastos generales ni beneficio industrial, y los costes han subido desde entonces. La calculadora parte del punto medio del bloque abierto: ${plain(crg.defaultPem)} €/m² (supuesto).`,
+      href: crg.url,
+      link: "Ver los costes de referencia",
+    },
+    {
+      text: `Sociedad de Tasación, ${st.period}, media de España: ${plain(st.eurM2)} €/m² de coste de construcción de obra nueva (${plain(st.aboveGround)} sobre rasante y ${plain(st.belowGround)} bajo rasante), según la prensa. No sabemos si incluye gastos generales y beneficio: no hemos podido leer el informe original.`,
+      href: st.url,
+      link: "Ver la noticia",
+    },
+  ];
+}
+
+/**
+ * F14 (jury A1): the residual land value with what it weighs, per m² buildable and as a share of
+ * the sales: «unos 61,2 millones de € (unos 4.670 € por m² edificable; el 56 % de los ingresos por
+ * ventas)». Without a positive figure, no share.
+ */
+export function residualText(scenario: Pick<ScenarioOutcome, "residual_land_value" | "residual_land_value_m2" | "revenue">): string {
+  const value = scenario.residual_land_value;
+  const perM2 = `${roughMoney(scenario.residual_land_value_m2)} por m² edificable`;
+  if (value <= 0 || scenario.revenue <= 0) return `${roughMoney(value)} (${perM2})`;
+  return `${roughMoney(value)} (${perM2}; el ${percent((100 * value) / scenario.revenue, 0)} de los ingresos por ventas)`;
+}
+
+/** «unos 67 millones de €», «unos 900.000 €»: an estimate on assumptions never says its cents (D-252, D7). */
+export function roughMoney(amount: number): string {
+  if (amount === 0) return "0 €";
+  const digits = Math.abs(amount) >= 1 ? Math.floor(Math.log10(Math.abs(amount))) + 1 : 1;
+  const factor = 10 ** (digits - 3);
+  const rounded = Math.round(amount / factor) * factor;
+  if (Math.abs(rounded) >= MILLION) {
+    const millions = rounded / MILLION;
+    const decimals = Math.abs(millions) >= 100 ? 0 : Math.abs(millions) >= 10 ? 1 : 2;
+    const text = formatNumber(millions, decimals).replace(/(,\d*?)0+$/, "$1").replace(/,$/, "");
+    // Review of #109, R-10: never «unos 1 millones»
+    return text === "1" ? "alrededor de 1 millón de €" : `unos ${text} millones de €`;
+  }
+  return `unos ${formatEuros(rounded)}`;
+}
 
 /** inversores.ficha.* of pitch/textos_web.md */
 export const SHEET_TEXT = {
@@ -473,12 +615,15 @@ export const SHEET_TEXT = {
   remaining: "Edificabilidad residencial que queda en los ámbitos del Plan General",
   remainingUnknown: "Aún sin dato para este barrio.",
   noRemaining: "Ningún ámbito del barrio tiene edificabilidad residencial disponible.",
-  vacant: "Suelo vacante (Catastro)",
+  // F14 (jury A1): the figure is of the zone its source says (13.813 is all of Madrid), never of the barrio by default
+  vacant: (level: string | null | undefined) =>
+    level && LEVEL_TEXT[level] ? `Suelo vacante ${LEVEL_TEXT[level]} (Catastro)` : "Suelo vacante (Catastro)",
   viewer: "Ver en el visor de la Comunidad",
   record: "Ver la ficha oficial",
   notPilot: "Ese barrio no está en el piloto (Madrid capital dentro de la M-40).",
-  version: (version: string | null) =>
-    version ? `Datos calculados el ${isoInWords(version)}. Método: viabilidad v0 (D-248).` : "Método: viabilidad v0 (D-248).",
+  // F14: the method's version as the API serves it (meta.methodology_version), not a label of ours
+  version: (version: string | null, method: string | null) =>
+    [version ? `Datos calculados el ${isoInWords(version)}.` : null, method ? `Método: ${method}.` : null].filter(Boolean).join(" "),
   datasets: (n: number) => `Los ${n} conjuntos de datos de esta ficha`,
   open: "Ver la fuente",
   pemDataset:

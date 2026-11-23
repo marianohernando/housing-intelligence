@@ -178,7 +178,7 @@ export type Label2 = string;
  */
 export type GapRowKey =
   "escuela_infantil" | "colegio" | "centro_salud" | "mayores" | "farmacia" | "vivienda";
-export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS";
+export type GapStatus = "FALTA" | "JUSTO" | "CUBIERTO" | "SIN_DATOS" | "CONTEXTO";
 /**
  * @maxItems 3
  */
