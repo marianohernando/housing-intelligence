@@ -58,8 +58,8 @@ Se vuelve a contar con el comando de arriba.
 ## Planos
 
 ### Plano 1 · 0:00–0:08 · Portada
-- **Pantalla:** portada de la demo con «Encuentra tu sitio en Madrid» y «Así funciona». Sin cursor en movimiento.
-- **Rótulo:** «Vida Fácil · Encuentra tu sitio en Madrid».
+- **Pantalla:** portada de la demo con el lema, «La zona que te conviene, y lo que le falta» (desde el despliegue del 23 nov), y «Así funciona». Sin cursor en movimiento.
+- **Rótulo:** «Vida Fácil · La zona que te conviene, y lo que le falta».
 
 <!-- voz:p1:inicio -->
 Vida Fácil te ayuda a encontrar tu sitio en Madrid con datos abiertos oficiales.
@@ -133,7 +133,7 @@ Y lo que le falta. Medimos lo que la gente tiene a quince minutos andando y lo c
 ### Plano 8 · 1:44–1:58 · Cierre
 - **Pantalla:** pie de la web con el contador de conjuntos de datos y, encima, el rótulo final a pantalla completa sobre fondo `--bg`.
 - **Rótulo final (4 s):**
-  - Vida Fácil · Encuentra tu sitio en Madrid
+  - Vida Fácil · La zona que te conviene, y lo que le falta
   - vidafacil-madrid.vercel.app
   - github.com/marianohernando/housing-intelligence · Código abierto (Apache-2.0)
   - [N] conjuntos de datos del Portal de Datos Abiertos de la Comunidad de Madrid
