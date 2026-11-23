@@ -5,7 +5,7 @@ The zones are those of the search (D-215): the municipios, with Madrid capital s
 21 districts when the row has district values. Statuses come from the same cached maps as
 GET /gaps?level=&row=, so a zone counted here is FALTA on the map and in its list. People are
 the denominator each row's feature already keeps (D-213 §4): nothing is estimated. Parameterised
-SQL only.
+SQL only. A context row (gap-0.4, D-254) is never judged, so it is left out.
 """
 
 from typing import Any, NamedTuple
@@ -36,7 +36,7 @@ from hi_domain.gap_impact import (
     shown_p_value,
     zone_sentence,
 )
-from hi_domain.gaps import GAP_METHOD
+from hi_domain.gaps import GAP_METHOD, JUDGED_ROWS
 
 IMPACT_VERSION = "impact-0.1"
 MADRID = "28079"
@@ -190,7 +190,7 @@ def gap_impact(conn: Connection) -> tuple[GapImpact, list[str], str | None]:
     rows: list[GapImpactRow] = []
     datasets: dict[str, DatasetRef] = {}
     warnings: list[str] = []
-    for key in GapRowKey:
+    for key in JUDGED_ROWS:  # a context row is never judged, so it has no impact (D-254)
         built = _impact_row(conn, key, stamp, warnings)
         if built is None:
             continue

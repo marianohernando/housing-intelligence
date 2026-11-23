@@ -1,13 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import type { ParcelBlock, PlanningBlock, UseFigure } from "@/contracts/parcel_sheet_response";
+import type { ParcelBlock, PlanningBlock, UseFigure, VedaStage } from "@/contracts/parcel_sheet_response";
 import { ApiError, createApi, parcelPath } from "@/lib/api";
+import { INVESTOR_METHOD } from "@/lib/investorMethod";
 import {
   ambitText,
   areaText,
   buildabilityMark,
   buildableText,
   byUseSource,
+  calculatorStart,
   catalogText,
   byUseText,
   dayMonthYear,
@@ -15,6 +17,7 @@ import {
   degradedLines,
   divisionText,
   instrumentText,
+  isCatalogued,
   parcelHref,
   parcelRc,
   planUseSource,
@@ -240,11 +243,12 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     const phases = ["Planeamiento", "Gestión", "Proyecto de urbanización", "Obras de urbanización"].map((label) => ({ label, state: "Sin Iniciar" }));
     const ambit = { code: "APR.04.09", tracked: true, pending: true, phases, as_of: "2026-07-01", url: "https://datos.madrid.es/" };
     const area = planning({ code: "APR.04.09", kind: "APR", norma_zonal: null, ambit });
+    // Almería 1: everything «sin iniciar», so no licence with the urbanization at once yet
     expect(servicesSignal(area)).toEqual([
       "Obras de urbanización del APR.04.09: sin iniciar, según el Ayuntamiento.",
-      SERVICES_TEXT.worksPending,
+      SERVICES_TEXT.planningFirst,
     ]);
-    const done = { ...ambit, pending: false, phases: phases.map((p) => ({ ...p, state: "Finalizado" })) };
+    const done ={ ...ambit, pending: false, phases: phases.map((p) => ({ ...p, state: "Finalizado" })) };
     expect(servicesSignal(planning({ ...area, ambit: done }))).toEqual(["Obras de urbanización del APR.04.09: finalizado, según el Ayuntamiento."]);
     const unneeded = { ...done, phases: phases.map((p) => ({ ...p, state: "No necesita" })) };
     expect(servicesSignal(planning({ ...area, ambit: unneeded }))).toHaveLength(1);
@@ -252,6 +256,54 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     expect(servicesSignal(null)).toEqual([]);
     expect(SERVICES_TEXT.portal("urbanizado")).toBe("El Portal del Suelo dice que esta parcela está urbanizada.");
     expect(SERVICES_TEXT.portal("en_gestion")).toBeNull();
+  });
+
+  it("says a licence with the urbanization at once only when planning and management are finished", () => {
+    const phase = (label: string, state: string) => ({ label, state });
+    const ambit = (planeamiento: string, gestion: string) => ({
+      code: "APR.02.06",
+      tracked: true,
+      pending: true,
+      phases: [
+        phase("Planeamiento", planeamiento),
+        phase("Gestión", gestion),
+        phase("Proyecto de urbanización", "Finalizado"),
+        phase("Obras de urbanización", "En Ejecución"),
+      ],
+      as_of: "2026-07-01",
+      url: "https://datos.madrid.es/",
+    });
+    const area = (a: ReturnType<typeof ambit>) => planning({ code: "APR.02.06", kind: "APR", norma_zonal: null, ambit: a });
+    const works = "Obras de urbanización del APR.02.06: en ejecución, según el Ayuntamiento.";
+    // Only the urbanization is left: the law allows the licence with it at once
+    expect(servicesSignal(area(ambit("Finalizado", "Finalizado")))).toEqual([works, SERVICES_TEXT.worksPending]);
+    expect(servicesSignal(area(ambit("PGOUM-97", "No Necesita")))).toEqual([works, SERVICES_TEXT.worksPending]);
+    // Planning or management not finished: first them, in plain words and without articles
+    expect(servicesSignal(area(ambit("Sin Iniciar", "Finalizado")))).toEqual([works, SERVICES_TEXT.planningFirst]);
+    expect(servicesSignal(area(ambit("Finalizado", "En Tramitación")))).toEqual([works, SERVICES_TEXT.planningFirst]);
+    expect(SERVICES_TEXT.planningFirst).toBe("Antes de pedir licencia, el ámbito necesita su planeamiento y su gestión.");
+    expect(SERVICES_TEXT.planningFirst).not.toMatch(/art\.|Ley/);
+  });
+
+  it("counts VEDA too: a pending situation there is not finished, whatever the phases say (review R-03)", () => {
+    const finished = ["Planeamiento", "Gestión", "Proyecto de urbanización"].map((label) => ({ label, state: "Finalizado" }));
+    const ambit = (veda_stage: VedaStage) => ({
+      code: "APR.02.06",
+      tracked: true,
+      pending: true,
+      phases: [...finished, { label: "Obras de urbanización", state: "En Ejecución" }],
+      veda_stage,
+      as_of: "2026-07-01",
+      url: "https://datos.madrid.es/",
+    });
+    const signal = (veda_stage: VedaStage) =>
+      servicesSignal(planning({ code: "APR.02.06", kind: "APR", norma_zonal: null, ambit: ambit(veda_stage) }))[1];
+    // The domain's pending situations (AmbitState.pending), generated: the phases finished and VEDA pending → not yet
+    expect([...INVESTOR_METHOD.pendingStages].sort()).toEqual(["gestion_urbanizacion", "pendiente_planeamiento", "pendiente_sectorizacion"]);
+    for (const stage of INVESTOR_METHOD.pendingStages) expect(signal(stage)).toBe(SERVICES_TEXT.planningFirst);
+    // The phases and VEDA finished (or VEDA silent): only the urbanization is left
+    expect(signal("edificacion")).toBe(SERVICES_TEXT.worksPending);
+    expect(signal(null)).toBe(SERVICES_TEXT.worksPending);
   });
 
   it("says the power as an assumption from the rule, and only links the CNMC's map", () => {
@@ -269,5 +321,29 @@ describe("Servicios y suministros, catálogo y primer filtro (D-253)", () => {
     expect(catalogText({ number: "01234", name: null, protection: "Descatalogado", level: null })).toBe("Descatalogado, nº 01234");
     expect(SHEET_TEXT.firstFilter).toMatch(/^Esto es un primer filtro/);
     expect(SHEET_TEXT.studyItems).toHaveLength(8);
+  });
+
+  it("starts the calculator without a figure on a catalogued building, and says why (F14)", () => {
+    // Mayor 61: catálogo nº 02933, protección parcial; the sheet's 224 m² are «supuesto»
+    const buildability = { kind: "supuesto" as const, value_m2: 224.4, source: "x", editable: true as const };
+    const mayor = { number: "02933", name: null, protection: "Parcial", level: 3 };
+    expect(isCatalogued(mayor)).toBe(true);
+    expect(calculatorStart({ buildability, planning: planning({ protected_building: mayor }) })).toEqual({
+      m2: null,
+      mark: "sin_dato",
+      help: SHEET_TEXT.calculatorCatalogued,
+      caution: "Edificio catalogado: una cuenta de obra nueva no sirve; hace falta un estudio de rehabilitación.",
+    });
+    // Without a catalogued building, the sheet's figure with its own mark
+    const plain = { m2: 224.4, mark: "supuesto", help: SHEET_TEXT.calculatorFrom("supuesto"), caution: null };
+    expect(calculatorStart({ buildability, planning: planning({}) })).toEqual(plain);
+    expect(calculatorStart({ buildability, planning: null })).toEqual(plain);
+    // «Descatalogado» and «Demolición total» are not a protection: the account of a new building stands
+    for (const protection of ["Descatalogado", "Demolición total"]) {
+      const building = { ...mayor, protection, level: null };
+      expect(isCatalogued(building)).toBe(false);
+      expect(calculatorStart({ buildability, planning: planning({ protected_building: building }) }).m2).toBe(224.4);
+    }
+    expect(isCatalogued(null)).toBe(false);
   });
 });

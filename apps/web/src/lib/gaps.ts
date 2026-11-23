@@ -29,7 +29,24 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string; short:
     help: "No tenemos este dato para esta zona. No quiere decir que no haya.",
     short: "no tenemos el dato; no quiere decir que no haya.",
   },
+  // gap-0.4 (D-254): a context row, shown with its reference and never judged
+  CONTEXTO: {
+    label: "CONTEXTO",
+    help: "Es un dato para conocer la zona, no un veredicto: no decimos si falta o sobra.",
+    short: "es un dato para conocer la zona; no decimos si falta.",
+  },
 };
+
+/**
+ * Rows shown as context, never judged (gap-0.4, D-254; the API's `method.context_rows`): the housing
+ * row, because second homes inflate the stock of the villages. Not on the map, in the card or in the
+ * summary of «Qué falta»; in its list, last and with its figure in view.
+ */
+export const CONTEXT_ROWS: readonly GapRowKey[] = ["vivienda"];
+
+export function isContextRow(row: GapRowKey | undefined): boolean {
+  return row !== undefined && CONTEXT_ROWS.includes(row);
+}
 
 /**
  * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
@@ -128,7 +145,7 @@ export const ROW_NAME: Record<GapRowKey, string> = {
   centro_salud: "Centros de salud",
   mayores: "Centros de mayores",
   farmacia: "Farmacias",
-  vivienda: "Vivienda para familias",
+  vivienda: "Viviendas grandes por cada 100 hogares grandes (contexto)",
 };
 
 /** Row names inside a sentence (fila.lista.*): «Aquí falta: escuelas infantiles». */
@@ -210,7 +227,7 @@ export function pendingRows(warnings: readonly string[] | undefined): GapRowKey[
   return ROW_ORDER.filter((key) => keys.has(key));
 }
 
-const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3 };
+const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3, CONTEXTO: 4 };
 
 type Classified = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
 
@@ -236,13 +253,17 @@ export interface HouseholdLike {
 const INFANT_MAX_AGE = 2;
 /** The rows about children: they never stand in for another row in a home without children. */
 const CHILD_ROWS: readonly GapRowKey[] = ["escuela_infantil", "colegio"];
+/** Rows a home sees only when the person marks them (F14, user test and review R-02): never as a filler. */
+const MARKED_ONLY: readonly GapRowKey[] = ["farmacia"];
 
 /**
  * The rows of «Qué falta» that matter to this household, in the card's order (D-244 and review of
- * PR #79: «lo que le falta que le afecte»): the same rule as highlight_rows of hi_domain/search.py,
- * which feeds `gap_highlights`, without the housing row. Escuela infantil with a child of 0 to 2
- * (or ages not given), colegio with any child, the health centre and the pharmacy always, and the
- * centres for older people with «Somos mayores» or someone older looked after.
+ * PR #79: «lo que le falta que le afecte»): the rule of highlight_rows of hi_domain/search.py,
+ * which feeds `gap_highlights`, without the housing row nor the pharmacy. Escuela infantil with a
+ * child of 0 to 2 (or ages not given), colegio with any child, the health centre always, and the
+ * centres for older people with «Somos mayores» or someone older looked after. The pharmacy only
+ * when the person marks it (F14, user test: «siempre hay una cerca de casa»): `marked` of topRows
+ * and markedRows of lib/essentials.ts. «Qué falta» of the whole zone keeps it.
  */
 export function householdRows(household: HouseholdLike | null | undefined): GapRowKey[] {
   const minors = household?.minors ?? 0;
@@ -250,7 +271,7 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
   const rows: GapRowKey[] = [];
   if (minors > 0 && (ages.length === 0 || Math.min(...ages) <= INFANT_MAX_AGE)) rows.push("escuela_infantil");
   if (minors > 0) rows.push("colegio");
-  rows.push("centro_salud", "farmacia");
+  rows.push("centro_salud");
   if (household?.seniors === true || (household?.seniors_in_care ?? 0) > 0) rows.push("mayores");
   return rows;
 }
@@ -260,20 +281,23 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
  * the API order). With one, what matters to it first (householdRows), whatever its status, a «No
  * comparable» one included: among them, what is short (FALTA, then JUSTO) and then the household's
  * order. Other rows only fill in when fewer than three of the household's have data, by status;
- * those about children never do in a home without children. The household's rows without data go last.
+ * those about children never do in a home without children, and the pharmacy never does (only when
+ * marked). The household's rows without data go last. Without a household, every row, the pharmacy too.
+ * A context row (gap-0.4) never: it says nothing about what is missing.
  */
 export function topRows<T extends Classified & { row?: GapRowKey }>(
-  rows: readonly T[],
+  allRows: readonly T[],
   limit = 3,
   household?: HouseholdLike | null,
   marked: readonly GapRowKey[] = [],
 ): T[] {
+  const rows = allRows.filter((r) => !isContextRow(r.row));
   if (!household) return sortRows(rows).slice(0, limit);
   // The household's rows and then what the person marks (review R-02 of PR #81), as the essentials
   const mine = [...new Set([...householdRows(household), ...marked])];
   const children = (household.minors ?? 0) > 0;
   const ownRank = (r: T) => (r.row === undefined ? -1 : mine.indexOf(r.row));
-  const fills = (r: T) => children || r.row === undefined || !CHILD_ROWS.includes(r.row);
+  const fills = (r: T) => r.row === undefined || ((children || !CHILD_ROWS.includes(r.row)) && !MARKED_ONLY.includes(r.row));
   const known = (r: T) => r.status !== "SIN_DATOS";
   // 0: the household's with data · 1: others with data · 2: the household's without · 3: others without
   const group = (r: T) => (ownRank(r) >= 0 ? (known(r) ? 0 : 2) : known(r) ? 1 : 3);
@@ -302,9 +326,9 @@ export function notComparable(row: { status: GapStatus; reliable?: boolean; comp
 
 const cannotCompare = notComparable;
 
-/** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*). */
+/** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*); never a context row. */
 function rowsByStatus(rows: readonly SummaryRow[]) {
-  const names = (pick: (r: SummaryRow) => boolean) => rows.filter(pick).map((r) => ROW_IN_LIST[r.row]);
+  const names = (pick: (r: SummaryRow) => boolean) => rows.filter((r) => !isContextRow(r.row) && pick(r)).map((r) => ROW_IN_LIST[r.row]);
   const comparable = (status: GapStatus) => (r: SummaryRow) => r.status === status && !cannotCompare(r);
   return {
     falta: names(comparable("FALTA")),

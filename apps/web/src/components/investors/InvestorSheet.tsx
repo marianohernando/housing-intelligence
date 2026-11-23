@@ -155,13 +155,13 @@ export function Land({ sheet, title = TEXT.sections.land }: { sheet: InvestorZon
       )}
       {land.remaining.length > 0 && <p className={styles.source}>Fuente: {land.remaining_m2.source.text}</p>}
       <dl className={styles.figures}>
-        <Figure label={SHEET_TEXT.vacant} value={land.vacant_units} />
+        <Figure label={SHEET_TEXT.vacant(land.vacant_units.source.level)} value={land.vacant_units} />
       </dl>
     </Section>
   );
 }
 
-function Sources({ sheet, version }: { sheet: InvestorZone; version: string | null }) {
+function Sources({ sheet, version, method }: { sheet: InvestorZone; version: string | null; method: string | null }) {
   const datasets = uniqueDatasets(sheet.datasets);
   // The PEM's dataset is in the list once loaded; before, its versioned figure cites the portal page
   const pemFallback = (sheet.defaults.pem_m2.source.dataset_ids ?? []).length === 0 && Boolean(sheet.defaults.pem_m2.source.url);
@@ -172,7 +172,7 @@ function Sources({ sheet, version }: { sheet: InvestorZone; version: string | nu
           <li key={notice}>{notice}</li>
         ))}
       </ul>
-      <p className={styles.note}>{SHEET_TEXT.version(version)}</p>
+      <p className={styles.note}>{SHEET_TEXT.version(version, method)}</p>
       <details className={styles.parts} open>
         <summary>{SHEET_TEXT.datasets(datasets.length + (pemFallback ? 1 : 0))}</summary>
         <ul className={styles.datasets}>
@@ -273,7 +273,7 @@ export default function InvestorSheet({ adminUnitId }: { adminUnitId: string }) 
       <Section id="viabilidad" title={TEXT.sections.viability}>
         <Calculator defaults={sheet.defaults} parcels={sheet.land.parcels} remaining={sheet.land.remaining} />
       </Section>
-      <Sources sheet={sheet} version={version} />
+      <Sources sheet={sheet} version={version} method={zone.data.meta?.methodology_version ?? null} />
     </div>
   );
 }

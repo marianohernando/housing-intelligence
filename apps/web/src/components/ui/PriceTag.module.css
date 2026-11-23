@@ -5,7 +5,7 @@
   font-weight: 500;
 }
 
-/* The first of the card's essentials: the figure, and «Precio orientativo» under it */
+/* The first of the card's essentials: the figure, and under it the 2024 leases (renting) or «Precio orientativo» */
 .essential {
   display: grid;
   line-height: 1.3;

@@ -188,7 +188,7 @@ export default function InvestorMethod() {
           <External href={crg.url}>Costes de Referencia General de la Comunidad de Madrid</External>, actualizados al año {crg.year}{" "}
           (supuesto: los costes han subido desde entonces). Por un coeficiente de {n(M.costCoefficient)}: el PEM más, sobre el PEM,{" "}
           {M.costParts.map((p) => `un ${pct(p.pct)} de ${lower(p.label)}`).join("; ")} (supuesto; el ICIO de Madrid es del{" "}
-          {pct(M.icioPct)}: ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025).
+          {pct(M.icioPct)}: ordenanza fiscal del ICIO, art. 25, en el Libro de Ordenanzas Fiscales 2024, p. 154).
         </li>
         <li>
           <strong>Comercialización y otros gastos:</strong> un {pct(M.salesCostsPct)} de las ventas (supuesto:{" "}
@@ -238,7 +238,7 @@ export default function InvestorMethod() {
         <li>
           <strong>Lo máximo que se puede pagar por el suelo</strong> (el valor residual: lo que queda para el suelo tras pagar la
           construcción, los gastos y el margen objetivo), redondeado a tres cifras y antes de financiación, impuestos de compra del
-          suelo, urbanización y derribo.
+          suelo, urbanización y derribo. Al lado, lo mismo por m² edificable y en % de los ingresos por ventas.
         </li>
         <li>
           <strong>Hasta cuánto puede costar la construcción</strong> (el punto de equilibrio): el coste por m² construido (PEM ×
@@ -278,7 +278,9 @@ export default function InvestorMethod() {
         <li>
           <strong>Señal del planeamiento.</strong> En una norma zonal: {lower(SERVICES_TEXT.zonal.replace(/^Norma zonal: /, ""))} En
           un ámbito, el estado de sus obras de urbanización según el Ayuntamiento (el estado de desarrollo de los ámbitos); si no están
-          terminadas: {lower(SERVICES_TEXT.worksPending)} Si es suelo del Portal del Suelo, si lo da por urbanizado.
+          terminadas y el planeamiento y la gestión del ámbito sí: {lower(SERVICES_TEXT.worksPending)} Si el planeamiento o la
+          gestión no lo están, o VEDA da el ámbito por pendiente: {lower(SERVICES_TEXT.planningFirst)} Si es suelo del Portal del
+          Suelo, si lo da por urbanizado.
         </li>
         <li>
           <strong>Potencia (supuesto).</strong> Las viviendas, como los m² edificables de partida entre {n(M.homeM2)} m² (la vivienda
@@ -300,7 +302,8 @@ export default function InvestorMethod() {
           (Ayuntamiento de Madrid, datos abiertos). En los niveles 1 y 2 (singular, integral, estructural y volumétrico) el edificio
           está protegido en su conjunto y ni siquiera en ruina puede tener orden o licencia de demolición; en el nivel 3 (parcial y
           ambiental), en ruina se puede rehabilitar o derribar, pero la licencia puede obligar a mantener los elementos protegidos
-          (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). En los dos casos, la cuenta de obra nueva no vale tal cual.
+          (Normas Urbanísticas, arts. 4.3.4 y 4.3.7). En los dos casos, la cuenta de obra nueva no vale tal cual: en un edificio
+          catalogado, la calculadora empieza sin superficie («Sin dato») y avisa de que hace falta un estudio de rehabilitación.
         </li>
         <li>
           <strong>Lo que hay construido.</strong> Si el Catastro dice que hay un edificio, la ficha lo recuerda: la calculadora es de

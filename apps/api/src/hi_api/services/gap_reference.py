@@ -23,6 +23,7 @@ from hi_domain.gaps import (
     Pool,
     TerritoryType,
     classify,
+    context_status,
     min_expected,
     pool_with_neighbours,
     pooled_status,
@@ -234,6 +235,11 @@ def judge(
     if pool is None or len(pool.codes) < 2:
         return Verdict(classify(ratio, significant=judged.significant), False, None)
     return Verdict(pooled_status(pool), True, references.group(pool))
+
+
+def context_verdict(value: float | None) -> Verdict:
+    """A context row (gap-0.4, D-254): shown with its value, never judged nor grouped."""
+    return Verdict(context_status(value), True, None)
 
 
 def group_sentence(group: ComparisonGroup) -> str:

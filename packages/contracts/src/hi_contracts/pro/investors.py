@@ -72,6 +72,7 @@ RC14_PATTERN = r"^[0-9A-Z]{14}$"
 
 class ValueMark(StrEnum):
     DATO = "dato"
+    ESTIMACION = "estimacion"  # computed from data, not published (e.g. a price shared out)
     SUPUESTO = "supuesto"
     USUARIO = "usuario"
 

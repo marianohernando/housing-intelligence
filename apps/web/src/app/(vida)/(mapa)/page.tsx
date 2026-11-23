@@ -16,7 +16,7 @@ export default function MapaPage() {
       <div className={styles.main}>
         <section className={styles.hero} aria-labelledby="titulo">
           <h1 id="titulo" className={styles.title}>
-            Encuentra tu sitio <span className={styles.accent}>en Madrid</span>
+            La zona que te conviene, <span className={styles.accent}>y lo que le falta</span>
           </h1>
           <p className={styles.lead}>
             Te decimos en qué zonas de la Comunidad de Madrid puedes vivir con tu presupuesto y con lo que necesitas cerca.

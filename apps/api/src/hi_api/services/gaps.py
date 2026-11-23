@@ -20,6 +20,7 @@ from hi_api.services.gap_reference import (
     Assessment,
     References,
     assess,
+    context_verdict,
     group_sentence,
     judge,
     load_references,
@@ -42,11 +43,13 @@ from hi_domain.gap_impact import (
     people_in,
 )
 from hi_domain.gaps import (
+    CONTEXT_ROWS,
     GAP_METHOD,
     REGION_TEXT,
     UnclassifiableError,
     explanation,
     oriented_ratio,
+    row_label,
 )
 from hi_domain.geo.names import display_name
 
@@ -227,7 +230,13 @@ def _gap_row(
     versions = merged_versions(row, reference_row, [e.value for e in extras])
     if ref is not None and ref.regional is not None:  # the type comes from population and area
         versions = zone.references.versions | versions
-    verdict = judge(ratio, judged, zone.references, feature["feature_id"], zone.code)
+    context = CONTEXT_ROWS.get(key)
+    if context is None:
+        verdict = judge(ratio, judged, zone.references, feature["feature_id"], zone.code)
+    else:  # shown with its reference, never judged (gap-0.4, D-254)
+        verdict, ratio = context_verdict(indicator.value), None
+        if indicator.value is not None:
+            text_ += f". {context.note}"
     if verdict.group is not None:
         text_ += "; " + group_sentence(verdict.group)
     elif not verdict.reliable and indicator.value is not None:
@@ -235,7 +244,7 @@ def _gap_row(
         text_ = not_comparable_text(key, count, text_, counted_denominator=counted)
     return GapRow(
         row=binding["row"],
-        label=binding["label"],
+        label=row_label(key, binding["label"]),
         status=verdict.status,
         indicator=indicator,
         reference=None if ref is None else significant(ref.value),

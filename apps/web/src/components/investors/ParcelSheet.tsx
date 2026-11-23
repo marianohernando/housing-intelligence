@@ -18,6 +18,7 @@ import {
   byUseSource,
   catalogText,
   byUseText,
+  calculatorStart,
   dayMonthYear,
   degradedLines,
   divisionText,
@@ -332,7 +333,7 @@ function Context({ sheet }: { sheet: Sheet }) {
   );
 }
 
-function Sources({ sheet, version }: { sheet: Sheet; version: string | null }) {
+function Sources({ sheet, version, method }: { sheet: Sheet; version: string | null; method: string | null }) {
   const datasets = sheet.context ? uniqueDatasets(sheet.context.sheet.datasets) : [];
   return (
     <Section id="fuentes" title={TEXT.sections.sources}>
@@ -341,7 +342,7 @@ function Sources({ sheet, version }: { sheet: Sheet; version: string | null }) {
           <li key={notice}>{notice}</li>
         ))}
       </ul>
-      {version && <p className={styles.note}>{BARRIO_TEXT.version(version)}</p>}
+      {(version || method) && <p className={styles.note}>{BARRIO_TEXT.version(version, method)}</p>}
       <h3 className={styles.subhead}>{TEXT.sourcesTitle(sheet.sources.length)}</h3>
       <ul className={styles.datasets}>
         {sheet.sources.map((s) => (
@@ -400,13 +401,14 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
   const data = result.data?.data ?? null;
   const start = useMemo<ParcelStart | undefined>(() => {
     if (!data) return undefined;
+    const { m2, mark, help, caution } = calculatorStart(data);
     const cautions = (data.cautions ?? []).filter((c) => c.key === "vivienda_protegida" || c.key === "unifamiliar").map((c) => c.text);
     if (data.public_land) cautions.push(publicLandText(data.public_land));
     return {
-      m2: data.buildability.value_m2 ?? null,
-      mark: buildabilityMark(data.buildability.kind),
-      help: TEXT.calculatorFrom(data.buildability.kind),
-      cautions,
+      m2,
+      mark,
+      help,
+      cautions: caution ? [caution, ...cautions] : cautions,
       protectedHousing: (data.cautions ?? []).some((c) => c.key === "vivienda_protegida"),
     };
   }, [data]);
@@ -467,9 +469,7 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
             <Printer size={18} aria-hidden="true" />
             {INVESTOR_TEXT.print}
           </Button>
-          <span className={styles.note}>
-            {INVESTOR_TEXT.printHelp} {TEXT.takeIt}
-          </span>
+          <span className={styles.note}>{INVESTOR_TEXT.printHelp}</span>
         </div>
         {notes.map((line) => (
           <p key={line} className={styles.caution} role="status">
@@ -493,7 +493,7 @@ export default function ParcelSheetView({ rc14 }: { rc14: string }) {
         <Calculator defaults={sheet.defaults} parcels={[]} remaining={[]} parcel={start} methodLink={false} />
       </Section>
       <Study />
-      <Sources sheet={sheet} version={version} />
+      <Sources sheet={sheet} version={version} method={result.data.meta?.methodology_version ?? null} />
       <p className={styles.printOnly}>{`Datos de la parcela consultados el ${isoInWords(sheet.parcel.observed_at)}.`}</p>
     </div>
   );

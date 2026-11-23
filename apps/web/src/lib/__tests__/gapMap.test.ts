@@ -32,9 +32,10 @@ const municipios = {
 } as GapRowMap;
 
 describe("rows on the map", () => {
-  it("offers the six rows of /gaps in the API order", () => {
-    expect(MAP_ROWS).toEqual(["escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia", "vivienda"]);
+  it("offers the rows of /gaps in the API order, without the context row (gap-0.4, D-254)", () => {
+    expect(MAP_ROWS).toEqual(["escuela_infantil", "colegio", "centro_salud", "mayores", "farmacia"]);
     expect(isGapRow("centro_salud")).toBe(true);
+    expect(isGapRow("vivienda")).toBe(false);
     expect(isGapRow("parques")).toBe(false);
     expect(isGapRow(undefined)).toBe(false);
   });
@@ -68,7 +69,7 @@ describe("gapByZone and paintZones", () => {
 
   it("counts the zones of the map by status; a zone not carried is not SIN DATOS", () => {
     const counts = countByStatus(paintZones(map, byZone));
-    const expected: Record<string, number> = { FALTA: 1, JUSTO: 0, CUBIERTO: 0, ZONA_PEQUENA: 1, SIN_DATOS: 0, pending: 1 };
+    const expected: Record<string, number> = { FALTA: 1, JUSTO: 0, CUBIERTO: 0, ZONA_PEQUENA: 1, SIN_DATOS: 0, CONTEXTO: 0, pending: 1 };
     expected[centro.status] = (expected[centro.status] ?? 0) + 1;
     expect(counts).toEqual(expected);
   });

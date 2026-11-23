@@ -276,14 +276,16 @@ def sourced(
     *,
     note: str | None = None,
     feature_id: str | None = None,
+    mark: ValueMark = ValueMark.DATO,
 ) -> SourcedValue:
-    """A data figure with its source; a missing row is SOURCE_NO_COVERAGE (not loaded)."""
+    """A data figure with its source; a missing row is SOURCE_NO_COVERAGE (not loaded). `mark`
+    is ESTIMACION for a figure computed from data, not published (the barrio's price)."""
     if row is None:
         return SourcedValue(
             feature_id=feature_id,
             value=None,
             unit=unit,
-            mark=ValueMark.DATO,
+            mark=mark,
             null_reason=NullReason.SOURCE_NO_COVERAGE,
             source=FieldSource(text=note or "Aún sin cargar"),
         )
@@ -295,7 +297,7 @@ def sourced(
         feature_id=row["feature_id"],
         value=None if row["value"] is None else float(row["value"]),
         unit=unit,
-        mark=ValueMark.DATO,
+        mark=mark,
         null_reason=row["null_reason"],
         confidence=float(row["confidence"]),
         source=FieldSource(
@@ -500,6 +502,7 @@ def prices_block(values: Values, place: Place, sources: Sources) -> PricesBlock:
         sources,
         "€/m²",
         note="Estimación: el valor tasado de la ciudad repartido por el valor catastral (D-234)",
+        mark=ValueMark.ESTIMACION,
     )
     extra = premium(values, sources)
     # From the rounded figures on screen, so the calculator (which starts from them) says the same

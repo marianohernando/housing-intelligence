@@ -99,7 +99,7 @@ export default function DesarrolladoresPage() {
             </li>
             <li>
               <code>meta.methodology_version</code>: la versión del método que calcula las cifras, por ejemplo{" "}
-              <code>fit-0.9</code> para el encaje, <code>gap-0.3</code> para «Qué falta» o <code>viability-0.1</code> para la
+              <code>fit-0.9</code> para el encaje, <code>gap-0.4</code> para «Qué falta» o <code>viability-0.2</code> para la
               viabilidad. Si cambia el método, cambia la versión.
             </li>
             <li>

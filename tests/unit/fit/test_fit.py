@@ -311,6 +311,9 @@ def test_highlights_follow_the_household() -> None:
     assert highlight_rows(baby)[:2] == [GapRowKey.ESCUELA_INFANTIL, GapRowKey.COLEGIO]
     carer = family(household=Household(adults=1, seniors_in_care=1))
     assert highlight_rows(carer) == [GapRowKey.MAYORES, GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA]
+    # gap-0.4 (D-254): the housing row is context, never something a home is short of
+    adults = family(household=Household(adults=2))
+    assert highlight_rows(adults) == [GapRowKey.CENTRO_SALUD, GapRowKey.FARMACIA]
 
 
 def test_somos_mayores_brings_the_centres_for_older_people_forward() -> None:
