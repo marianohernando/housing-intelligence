@@ -4,14 +4,14 @@
 // PRICE_HINT, RENT_2024_NOTICE, RENT_LIST_NOTICE, passingText, speaksToMany, voice), apps/web/src/lib/shortfall.ts
 // (resultados.casi.*) and apps/web/src/lib/essentials.ts with lib/gaps.ts (householdGaps, householdRows).
 
-/** zona.precio.orientativo: by the price of the card's essentials (second delivery of the UX mobile audit). */
+/** zona.precio.orientativo: buying, by the price of the card's essentials (second delivery of the UX mobile audit). */
 export const PRICE_HINT = "Precio orientativo";
 
-/** zona.precio.aviso_2024: renting, why the price is orientative, behind «Ver más» of the card; never buying (F5 of fit-0.9). */
-export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024; los anuncios de hoy suelen pedir más.";
+/** zona.precio.aviso_2024: renting, by the price of the card's essentials instead of PRICE_HINT (F14); never buying (F5 of fit-0.9). */
+export const RENT_2024_NOTICE = "Precio de los contratos de alquiler de 2024: un anuncio de hoy suele pedir más.";
 
 /** resultados.aviso_2024: renting, once under the list; never buying. */
-export const RENT_LIST_NOTICE = "Precios orientativos: hoy pueden ser algo más caros.";
+export const RENT_LIST_NOTICE = "Precios de los contratos de alquiler de 2024: un anuncio de hoy suele pedir más.";
 
 /** resultados.aviso_compra: buying, once under the list (BUY_LIST_NOTICE of lib/fit.ts). */
 export const BUY_LIST_NOTICE = "Precios orientativos: son una estimación del precio de compra.";

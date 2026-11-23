@@ -36,7 +36,6 @@ import {
   factAsShown,
   factsTitle,
   nearMissLine,
-  PRICE_HINT,
   RENT_2024_NOTICE,
   RENT_LIST_NOTICE,
   speaksToMany,
@@ -314,9 +313,9 @@ async function checkGapsLine(run, journey, card, gaps, result, top) {
 }
 
 /**
- * The card of the first zone (second delivery): its essentials say the name, the band in words and
- * «Precio orientativo», never the %; «Ver más sobre…» unfolds the % and every fact of the API, and
- * why the rent is orientative. «Volver a la lista» goes back to the list.
+ * The card of the first zone (second delivery): its essentials say the name, the band in words and,
+ * renting, that the price is of the 2024 leases (F14), never the %; «Ver más sobre…» unfolds the %
+ * and every fact of the API. «Volver a la lista» goes back to the list.
  */
 async function checkFirstZone(run, page, top, result) {
   const J = "J1 search";
@@ -326,8 +325,8 @@ async function checkFirstZone(run, page, top, result) {
   await card.getByRole("heading", { name, exact: true }).waitFor({ timeout: WAIT });
   const essentials = await checkGapsLine(run, J, card, gaps, result, top);
   run.check(J, "card name = API 1st zone", essentials.includes(name), name);
-  run.check(J, "card essentials: band in words and «Precio orientativo», no %",
-    essentials.includes(BAND_TEXT[top.match_band]) && essentials.includes(PRICE_HINT) && !/\d\s*%/.test(essentials), essentials.slice(0, 160));
+  run.check(J, "card essentials: band in words and the 2024 rent notice, no %",
+    essentials.includes(BAND_TEXT[top.match_band]) && essentials.includes(RENT_2024_NOTICE) && !/\d\s*%/.test(essentials), essentials.slice(0, 160));
   run.check(J, "card in the address (?zona=)", new URL(page.url()).searchParams.get("zona") === zoneKeyOf(top.zone), page.url());
   await card.locator("summary").filter({ hasText: /^Ver más sobre / }).first().click();
   const text = squash(await card.innerText());
@@ -339,7 +338,6 @@ async function checkFirstZone(run, page, top, result) {
   const missing = top.facts.filter((f) => !text.includes(squash(factAsShown(f))));
   run.check(J, "«Ver más»: card facts = API facts", shown === top.facts.length && missing.length === 0,
     `${shown} on screen, ${top.facts.length} in the API${missing.length ? `; missing: ${missing[0].text}` : ""}`);
-  run.check(J, "«Ver más»: why the rent is orientative", text.includes(RENT_2024_NOTICE));
   await run.shot(page, "j1-card");
   await card.getByRole("button", { name: "Volver a la lista" }).click();
   await page.getByRole("region", { name: RESULTS }).waitFor({ timeout: WAIT });

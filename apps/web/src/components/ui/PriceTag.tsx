@@ -1,4 +1,4 @@
-import { forFloorArea, PRICE_HINT, type ZonePrice } from "@/lib/fit";
+import { forFloorArea, priceHint, type ZonePrice } from "@/lib/fit";
 
 import styles from "./PriceTag.module.css";
 
@@ -6,12 +6,13 @@ import styles from "./PriceTag.module.css";
  * The approximate price of a zone (D-234), in three places (second delivery of the UX mobile audit):
  * - `row`, in a row of the list: «Unos 1.129 € al mes», nothing else (the m² and the confidence
  *   words wait in the card);
- * - `essential`, the first of the card's essentials: the same words and «Precio orientativo»;
+ * - `essential`, the first of the card's essentials: the same words and, renting, that it is the
+ *   price of the 2024 leases and a listing today usually asks more (zona.precio.aviso_2024, F14);
+ *   buying, «Precio orientativo»;
  * - `breakdown`, behind «Ver más» of the card, without the figure again (review R-10 of PR #81: it
  *   was said three times, with the cost fact): what it is for («Para un piso de unos 77 m²»), the
  *   confidence words when it is not a reliable figure («Dato aproximado», explained with the card's
- *   facts), where half the leases fall and who publishes it (D-242) and, renting, why it is
- *   orientative (zona.precio.aviso_2024).
+ *   facts) and where half the leases fall and who publishes it (D-242).
  */
 export default function PriceTag({ price, variant }: { price: ZonePrice; variant: "row" | "essential" | "breakdown" }) {
   if (variant === "row") return <span className={styles.row}>{price.short}</span>;
@@ -19,7 +20,7 @@ export default function PriceTag({ price, variant }: { price: ZonePrice; variant
     return (
       <span className={styles.essential}>
         <span className={styles.amount}>{price.short}</span>
-        <small>{PRICE_HINT}</small>
+        <small>{priceHint(price)}</small>
       </span>
     );
   }
@@ -36,7 +37,6 @@ export default function PriceTag({ price, variant }: { price: ZonePrice; variant
           <span className="visually-hidden">{price.range.aria}</span>
         </small>
       )}
-      {price.notice && <small className={styles.notice}>{price.notice}</small>}
     </span>
   );
 }

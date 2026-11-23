@@ -104,9 +104,14 @@ export interface ZonePrice {
 
 /**
  * zona.precio.orientativo (second delivery of the UX mobile audit, decided by Mariano): one word by
- * the price of the card's essentials, renting or buying. Every price is an estimate.
+ * the price of the card's essentials when buying. Every price is an estimate.
  */
 export const PRICE_HINT = "Precio orientativo";
+
+/** By the price of the card's essentials: a rent says its 2024 leases (F14, jury A4), a purchase price PRICE_HINT. */
+export function priceHint(price: Pick<ZonePrice, "notice">): string {
+  return price.notice ?? PRICE_HINT;
+}
 
 /** zona.precio.desglose (review R-10 of PR #81): what the price is for, without the figure again. */
 export function forFloorArea(m2: number): string {
@@ -116,16 +121,16 @@ export function forFloorArea(m2: number): string {
 
 /**
  * zona.precio.aviso_2024 (F5 of fit-0.9): every rent is the leases of 2024, and today's listings
- * tend to ask more (16-33 % more in the formula's bench). Since the second delivery it is the
- * explanation behind «Ver más» of the card, by the full price; never buying.
+ * tend to ask more (16-33 % more in the formula's bench). Since F14 (jury A4) it goes by the price
+ * of the card's essentials instead of «Precio orientativo», and no longer behind «Ver más»; never buying.
  */
-export const RENT_2024_NOTICE = "Precio de contratos firmados en 2024; los anuncios de hoy suelen pedir más.";
+export const RENT_2024_NOTICE = "Precio de los contratos de alquiler de 2024: un anuncio de hoy suele pedir más.";
 
 /**
  * resultados.aviso_2024: once under the list when its prices are rents (the line over it only
- * says how many zones there are, second delivery); «Ver más» of each card says why.
+ * says how many zones there are, second delivery). F14 (jury A4): what the price is, not «algo más caros».
  */
-export const RENT_LIST_NOTICE = "Precios orientativos: hoy pueden ser algo más caros.";
+export const RENT_LIST_NOTICE = "Precios de los contratos de alquiler de 2024: un anuncio de hoy suele pedir más.";
 
 /** resultados.aviso_compra: buying, the same place under the list (review R-10 of PR #81): every purchase price is an estimate. */
 export const BUY_LIST_NOTICE = "Precios orientativos: son una estimación del precio de compra.";
