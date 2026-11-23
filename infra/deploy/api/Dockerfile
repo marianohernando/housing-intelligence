@@ -9,8 +9,9 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_PYTHON_DOWNLOADS=never \
     UV_PROJECT_ENVIRONMENT=/opt/venv
 WORKDIR /src
-# Every workspace member must be present for uv to read the lockfile; only hi-api's closure
-# (hi-contracts, hi-db, hi-domain and their dependencies) is installed.
+# Every workspace member must be present for uv to read the lockfile; only hi-mcp's closure
+# (hi-api, hi-contracts, hi-db, hi-domain, the mcp SDK and their dependencies) is installed:
+# the API and, beside it, the remote MCP server (D-255).
 COPY pyproject.toml uv.lock ./
 COPY apps/api apps/api
 COPY packages/contracts packages/contracts
@@ -19,7 +20,7 @@ COPY packages/domain packages/domain
 COPY services/features services/features
 COPY services/ingestion services/ingestion
 COPY services/mcp services/mcp
-RUN uv sync --frozen --no-dev --package hi-api --no-editable
+RUN uv sync --frozen --no-dev --package hi-mcp --no-editable
 
 FROM python:3.12-slim
 RUN useradd --system --uid 10001 --no-create-home api
@@ -29,5 +30,6 @@ ENV PATH=/opt/venv/bin:$PATH \
     PORT=8080
 USER api
 EXPOSE 8080
+# hi_mcp.http:app is hi_api.main:app, unchanged, plus POST /api/v1/mcp (D-255).
 # Only the platform proxy reaches the container, so its forwarded headers are trusted.
-CMD ["sh", "-c", "exec uvicorn hi_api.main:app --host 0.0.0.0 --port \"$PORT\" --proxy-headers --forwarded-allow-ips '*'"]
+CMD ["sh", "-c", "exec uvicorn hi_mcp.http:app --host 0.0.0.0 --port \"$PORT\" --proxy-headers --forwarded-allow-ips '*'"]

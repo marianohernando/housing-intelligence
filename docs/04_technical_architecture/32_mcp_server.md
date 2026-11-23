@@ -1,10 +1,10 @@
 # Servidor MCP de Vida Fácil (MCP-001)
 
-Servidor MCP local del producto DATA (D-225; desde D-249, 7 herramientas). Un agente (Claude Desktop, Claude Code o cualquier cliente MCP) pregunta a Vida Fácil lo mismo que la web y la API pública, con las mismas cifras y las mismas fuentes. **No se despliega:** funciona en local, por stdio. Como la API, es gratis para todos (decisión de Mariano del 19 nov); la página pública para desarrolladores es `/desarrolladores` (D-249), con la configuración de los clientes y lo que está planteado, como el MCP en remoto.
+Servidor MCP del producto DATA (D-225; desde D-249, 7 herramientas). Un agente (Claude Desktop, Claude Code o cualquier cliente MCP) pregunta a Vida Fácil lo mismo que la web y la API pública, con las mismas cifras y las mismas fuentes. Funciona en local, por stdio, y desde D-255 también en remoto, sin instalar nada: `https://vidafacil-madrid.vercel.app/api/v1/mcp` (ver «En remoto»). Como la API, es gratis para todos (decisión de Mariano del 19 nov); la página pública para desarrolladores es `/desarrolladores` (D-249), con la configuración de los clientes y lo que está planteado.
 
-- Código: `services/mcp/src/hi_mcp/` (`server.py` registra las herramientas y `tools.py` llama a los servicios).
+- Código: `services/mcp/src/hi_mcp/` (`server.py` registra las herramientas, `tools.py` llama a los servicios y `http.py` las sirve por HTTP junto a la API).
 - Servicios: los de `apps/api/src/hi_api/services/`. Dos son nuevos, sin ruta en la API: `explanation.py` (`explicar_zona`) y `zones.py` (`encontrar_zona`).
-- SDK: `mcp` 2.3.0, el SDK oficial de Python (`MCPServer`, transporte stdio), fijado en `uv.lock`.
+- SDK: `mcp` 2.3.0, el SDK oficial de Python (`MCPServer`, transportes stdio y Streamable HTTP), fijado en `uv.lock`.
 
 ## Reglas
 - **No hay SQL libre ni acceso a tablas** (CLAUDE.md §3). Cada herramienta llama a la misma función de servicio que su ruta de la API y devuelve el mismo sobre `{data, meta, warnings}`. Las entradas tienen tipo, incluidos el `ScenarioState` y el `ViabilityRequest` de la API. Los únicos textos libres son el nombre de `encontrar_zona` y el barrio de `ficha_inversor`, que se comparan en Python con los nombres oficiales o con la lista del piloto.
@@ -29,6 +29,49 @@ Notas:
 - Madrid capital se ordena por distritos (D-200): `explicar_zona` con el municipio 28079 da un error que lo explica. `que_falta` sí admite Madrid entera.
 - `viabilidad` recibe el cuerpo anidado en `request`, no los campos sueltos: el SDK genera el esquema de entrada a partir de la firma, y copiar los campos con sus límites duplicaría el contrato. Anidado es el mismo modelo, y un test compara su esquema con el de `ViabilityRequest`. Los valores de partida de un barrio están en `ficha_inversor` (`data.defaults`).
 - Los datasets de `explicar_zona` son los de todos sus indicadores (también los que el escenario no puntúa y los que están sin dato, porque se leen), los de las filas destacadas de «Qué falta» (tal como las cita `/gaps` para esa zona) y los GTFS de los trayectos al trabajo, si hay sitio de trabajo. Sus `warnings` son los de `/search` para el mismo escenario, salvo el recuento de zonas sin datos para puntuar, que es de la búsqueda entera.
+
+## En remoto (HTTP, D-255)
+**URL:** `https://vidafacil-madrid.vercel.app/api/v1/mcp` (también responde en `https://vida-facil-eight.vercel.app/api/v1/mcp`). Las mismas 7 herramientas, de solo lectura, sin clave y sin instalar nada.
+
+Cómo conectarlo:
+- **Clientes con MCP remoto:** se les da la URL. En Claude.ai, «Ajustes → Conectores → Añadir conector personalizado». En Claude Code, `claude mcp add --transport http vida-facil https://vidafacil-madrid.vercel.app/api/v1/mcp`.
+- **Clientes que solo hablan stdio** (por ejemplo, Claude Desktop con `claude_desktop_config.json`): el puente `mcp-remote`, que necesita Node.
+
+  ```json
+  {
+    "mcpServers": {
+      "vida-facil": {
+        "command": "npx",
+        "args": ["-y", "mcp-remote", "https://vidafacil-madrid.vercel.app/api/v1/mcp"]
+      }
+    }
+  }
+  ```
+- **Sin cliente**, para comprobar que responde (7 herramientas):
+
+  ```bash
+  curl -s https://vidafacil-madrid.vercel.app/api/v1/mcp \
+    -H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream' \
+    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | jq '.result.tools | length'
+  ```
+
+Cómo funciona (`services/mcp/src/hi_mcp/http.py`):
+- **Dónde vive.** El contenedor de la API arranca `hi_mcp.http:app` (`infra/deploy/api/Dockerfile`): la API de `hi_api.main:app` montada tal cual y, delante, una sola ruta, `/api/v1/mcp`. Tiene que estar bajo `/api/v1/` porque `vercel.json` solo envía eso al contenedor. No entra en `openapi.json` y ninguna ruta de la API cambia.
+- **Lo mismo que la API.** Las mismas herramientas (`build_server`), los mismos servicios, el mismo *engine* (`hi_api.deps.get_engine`, con su pool) y el mismo rol de solo lectura (`DATABASE_URL`), con una transacción `READ ONLY` por llamada. Ninguna herramienta llama al Catastro ni a otro servicio externo: la búsqueda por parcela, con su guarda y su caché (`upstream_guard.py`), sigue solo en la API.
+- **Sin estado y con respuestas JSON** (`stateless_http`, `json_response`). Vercel puede mandar cada POST a una instancia distinta, así que no hay `Mcp-Session-Id` ni flujo SSE. Solo acepta POST: GET, DELETE y OPTIONS dan 405, que es lo que pide la especificación cuando el servidor no abre flujo ni guarda sesiones. Sin estado, el SDK dejaría un GET abierto sin mandar nada.
+- **Solo clientes que no son de navegador.** Como OPTIONS da 405 y la ruta no lleva CORS, no hay *preflight*: un cliente MCP que llame desde el navegador (por ejemplo, el MCP Inspector cuando conecta directamente) no puede usarlo. Claude.ai, Claude Code y `mcp-remote` sí, porque llaman desde un servidor o desde la terminal.
+- **Si el MCP falla, la API sigue.**
+  - Si no se puede construir (por ejemplo, porque el SDK no se importa), `hi_mcp.http:app` es la API sola: `/api/v1/mcp` da 404 y el registro dice «MCP server not built».
+  - Si su gestor de sesiones no arranca, la API arranca igual y `/api/v1/mcp` da 503 («MCP session manager did not start»).
+  - El smoke (`make smoke-demo`) lo detecta en los dos casos, porque pide `initialize` y `tools/list`.
+- **Protección contra DNS rebinding: encendida y con nuestros hosts.** Por defecto el SDK solo admite localhost, y en producción respondería 421 a todo. Se le pasan los hosts admitidos: `vidafacil-madrid.vercel.app`, `vida-facil-eight.vercel.app`, y `127.0.0.1:*`, `localhost:*` y `[::1]:*` para local y tests.
+  - Otro `Host` da 421.
+  - Si la petición trae `Origin`, tiene que ser una de las dos webs, `https://claude.ai`, `https://claude.com` o localhost; si no, da 403.
+  - Sin `Origin` (curl, clientes de servidor, `mcp-remote`) no se comprueba.
+  - Se cambian sin tocar el código con `MCP_ALLOWED_HOSTS` y `MCP_ALLOWED_ORIGINS`. Las lee pydantic-settings, así que van como una lista JSON, igual que `CORS_ORIGINS`, y **sustituyen** a la lista por defecto: hay que repetir los hosts que se quieran conservar. Por ejemplo, `MCP_ALLOWED_HOSTS='["vidafacil-madrid.vercel.app","vida-facil-eight.vercel.app","localhost:*"]'`. En Vercel, como cualquier variable del servicio `api`, se aplican a partir del siguiente despliegue.
+- **Sin autenticación:** datos públicos y de solo lectura, como la API.
+- **Registros.** uvicorn anota cada `POST /api/v1/mcp`, y `hi_mcp` el nombre y el tiempo de cada herramienta (nunca sus argumentos), por stdout como la API. Un `Host` rechazado deja «Invalid Host header: …». El registro raíz no cambia: el SDK lo configura para stdio, pero aquí se deja como estaba.
+- **En local:** `uv run uvicorn hi_mcp.http:app --port 8010`, con la misma base que la API. El paquete offline (`make demo-offline`) construye la misma imagen, así que también lo sirve en `http://localhost:8012/api/v1/mcp`.
 
 ## Arrancarlo en local
 Necesita la base local con los datos cargados (`make up`; Postgres en el puerto 5440) o un `DATABASE_URL` que apunte a otra.
@@ -98,6 +141,13 @@ Claude Code avisa por encima de unos 10.000 tokens por resultado y corta en 25.0
   - el texto es el `structuredContent` compacto;
   - el arranque por stdio habla el protocolo y su stdout es solo JSON-RPC;
   - `encontrar_zona` avisa cuando no encuentra nada o deja coincidencias fuera.
+- `tests/unit/mcp/test_http.py` (D-255), sin base ni red, con el cliente ASGI de httpx:
+  - `initialize` responde JSON y sin sesión, y `tools/list` da las 7, de solo lectura;
+  - `tools/call` de `viabilidad` da lo mismo que su ruta, y la base caída es un error de herramienta, no un 500;
+  - los dos hosts públicos pasan; otro `Host` da 421 y otro `Origin`, 403;
+  - GET, DELETE y OPTIONS dan 405;
+  - si el MCP no se puede construir (el SDK no se importa o falla al construirse), la API arranca sola y `health` da 200; si su gestor de sesiones no arranca, la API arranca, `health` da 200 y el MCP da 503;
+  - `/api/v1/health`, `/api/v1/datasets`, `openapi.json` (sin la ruta del MCP) y un 404 responden igual que `hi_api.main:app`.
 - `tests/integration/test_mcp_tools.py`, con la base de fixtures:
   - cada herramienta devuelve lo mismo que su ruta (`data`, `warnings` y versiones), también `ficha_inversor` por nombre y por código, y su error fuera del piloto es el mensaje del 404;
   - `explicar_zona` coincide con las tarjetas de `/search` (resultados y alternativas) en tres escenarios: el caso demo, el vacío y un trabajo fuera de toda zona, avisos incluidos; y cita todos los datasets de sus indicadores, con el mismo `attribution_text` que `/datasets`;
@@ -106,6 +156,6 @@ Claude Code avisa por encima de unos 10.000 tokens por resultado y corta en 25.0
 - Evidencia: `evidence/gate-11/2026-11-12/` y, para las dos herramientas de inversores, `evidence/gate-06/2026-11-19-desarrolladores/`.
 
 ## Fuera de alcance
-- No se despliega ni tiene autenticación, límites de uso ni transporte HTTP: es local, por stdio, para una persona en su ordenador (`29_api_mcp_security_rate_limits.md` aplicará si algún día se publica).
+- En remoto no tiene autenticación ni límites de uso propios: los mismos que la API pública, que no los tiene salvo en la búsqueda por parcela, sin herramienta MCP (`29_api_mcp_security_rate_limits.md` aplicará si hacen falta).
 - No hay control del mapa ni capas dinámicas (CLAUDE.md §9): necesitarían que la web escuche un `MapState`.
 - No hay herramientas documentales (`03_api_openapi_mcp.md`). De las PRO, solo las dos de inversores (D-249), que leen lo mismo que `/inversores`.
