@@ -1,6 +1,6 @@
 """Vida Fácil MCP server (MCP-001, D-225, D-249): seven read-only tools over the domain services.
 
-Local only, by stdio, for the demo and the jury: `make mcp` or `uv run hi-mcp`. DATABASE_URL
+By stdio (`make mcp` or `uv run hi-mcp`), and over HTTP beside the API (hi_mcp.http). DATABASE_URL
 picks the database (the local one by default, as the API). Every tool reads through a
 read-only transaction and calls the same service as its API route; there is no SQL tool
 (CLAUDE.md §3). Usage and a client configuration: docs/04_technical_architecture/32_mcp_server.md.
