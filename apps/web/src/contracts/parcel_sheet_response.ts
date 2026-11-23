@@ -127,7 +127,7 @@ export type Confidence = number | null;
 export type FeatureId = string | null;
 export type High = number | null;
 export type Low = number | null;
-export type ValueMark = "dato" | "supuesto" | "usuario";
+export type ValueMark = "dato" | "estimacion" | "supuesto" | "usuario";
 export type NullReason =
   | "NOT_APPLICABLE"
   | "SOURCE_NO_COVERAGE"

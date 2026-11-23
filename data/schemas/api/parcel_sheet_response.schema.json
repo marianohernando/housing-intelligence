@@ -2497,6 +2497,7 @@
     "ValueMark": {
       "enum": [
         "dato",
+        "estimacion",
         "supuesto",
         "usuario"
       ],

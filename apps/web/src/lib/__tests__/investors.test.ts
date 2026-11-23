@@ -28,6 +28,7 @@ import {
   initialFields,
   isoInWords,
   landName,
+  MARK_TEXT,
   missingFields,
   money,
   parcelsLine,
@@ -65,6 +66,11 @@ const defaults: ViabilityDefaults = {
 const parcel = (code: string, m2: number | null): LandItem => ({ kind: "parcela", code, name: `Calle ${code}`, parcel: null, buildable_m2: m2 });
 
 describe("figures in words", () => {
+  it("names the barrio's estimated price «Estimación», never «Dato» (D-234)", () => {
+    expect(MARK_TEXT.estimacion).toBe("Estimación");
+    expect(new Set(Object.values(MARK_TEXT)).size).toBe(Object.keys(MARK_TEXT).length);
+  });
+
   it("says the unknown as such, never 0", () => {
     expect(figure(value(null, "%"))).toBe("Sin dato");
     expect(figure(value(0, "%"))).toBe("0 %");
