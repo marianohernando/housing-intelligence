@@ -2,7 +2,7 @@
   "validator": "https://www.itb.ec.europa.eu/shacl/dcat-ap/api/validate (REST API del validador SHACL de DCAT-AP de la Comisión Europea, ITB)",
   "date": "2026-11-23",
   "file": "apps/web/public/datos/catalogo.dcat.jsonld",
-  "sha256": "7f6d0ca0a647e3b181bbbf0f6f79b7e18fc81d046a3043b033524d6260e570e2",
+  "sha256": "ebe80b829f48f9bbeab51875f966749dfd3f2cac4194e233b26aea39ffff9c16",
   "background_check": "Un catálogo mínimo de 2 nodos (dcat:Catalog + foaf:Agent) da las mismas 5 violaciones foaf:name en 'base': están en nodos en blanco del conocimiento de fondo del validador, no en nuestro fichero. Igual con las 6 dct:title de 'full', sobre los esquemas ADMS (purl.org/adms/*).",
   "runs": {
     "dcatap.3_0_1_base": {
@@ -37,13 +37,13 @@
         {
           "severity": "Warning",
           "path": "dct:spatial",
-          "message": "Value does not have shape _:866ad4c0e40c062a7979835c65f09c0f",
+          "message": "Value does not have shape _:fc74ade3e6f9a2cc367363a0404ea47c",
           "count": 43
         },
         {
           "severity": "Warning",
           "path": "dct:spatial",
-          "message": "Value does not have shape _:5e7ed3b08ea5354025312f17e001ebc0",
+          "message": "Value does not have shape _:9f446d0221f14c161c410847b44c58a0",
           "count": 1
         }
       ]
@@ -226,13 +226,13 @@
         },
         {
           "severity": "Warning",
-          "path": "dct:issued",
+          "path": "dct:modified",
           "message": "Property needs to have at least 1 value",
           "count": 1
         },
         {
           "severity": "Warning",
-          "path": "dct:modified",
+          "path": "dct:issued",
           "message": "Property needs to have at least 1 value",
           "count": 1
         },
@@ -302,7 +302,7 @@
         {
           "severity": "Warning",
           "path": null,
-          "message": "Value must have at least one of the following shapes: _:38522eca6f24ee920b0fbe45237881b2, _:80c754c06aae2103b4330b9d931da18c, _:40f4aa5e900d6d9ee62d18c88efbd31b, _:5743ef7cd2a5f0c270794348d5de17b6, _:8fdd8f54ab811a4301db9e5ca11e8800, _:62e326304880780730b4ca60935ea067",
+          "message": "Value must have at least one of the following shapes: _:e67268af60eae33270094a41bbda8297, _:6fefaab7a570c76ebfbe63fa7d5f2250, _:b7d50a8e50f41d00fea8fd6860caae59, _:8207ff6bc680279a7a19a629e6cb344d, _:45761e0d12812ee1b9adb9f71bb5a6a9, _:011268a4953abfcbe67026d61579445a",
           "count": 7
         },
         {
@@ -314,7 +314,7 @@
         {
           "severity": "Violation",
           "path": null,
-          "message": "Value must have at least one of the following shapes: _:ec80c8f51f49af041c7607477596cbd1, _:13c6e99357b7d728e1e22a79fe041af7",
+          "message": "Value must have at least one of the following shapes: _:fe42accf7db7f8323ab3f9d418f97e2e, _:9208d8aaa9ba91c5b4b753c6a829dd06",
           "count": 1
         },
         {
@@ -336,7 +336,7 @@
           "count": 1
         }
       ],
-      "note": "El perfil HVD trata todos los datasets del fichero como de alto valor: las 561 violaciones son, casi todas, que los 56 conjuntos que no son HVD no llevan hvdCategory ni applicableLegislation. En los 6 marcados como HVD quedan 12: 6 de la regla de API (un dataset HVD debe servirse por un dcat:DataService; ni la Comunidad ni el Ayuntamiento declaran uno para ellos, y no lo inventamos) y 6 de rango sobre dcat:accessURL (rdfs:Resource), que el validador no infiere sin razonador.",
+      "note": "El perfil HVD trata todos los datasets del fichero como de alto valor: casi todas sus violaciones son que los 56 conjuntos que no son HVD no llevan hvdCategory ni applicableLegislation. En los 6 marcados como HVD quedan 12: 6 de la regla de API (un dataset HVD debe servirse por un dcat:DataService; ni la Comunidad ni el Ayuntamiento declaran uno para ellos, y no lo inventamos) y 6 de rango sobre dcat:accessURL (rdfs:Resource), que el validador no infiere sin razonador.",
       "on_the_6_hvd_datasets": [
         {
           "severity": "Violation",

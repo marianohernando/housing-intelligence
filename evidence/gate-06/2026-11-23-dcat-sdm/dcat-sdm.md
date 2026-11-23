@@ -4,9 +4,9 @@ Rama `claude/f14-dcat-sdm`, desde `claude/sprint-1-public` en `4355527d`. Tres f
 
 | Fichero | Tamaño | Qué es | De dónde sale |
 |---|---|---|---|
-| `datos/catalogo.dcat.jsonld` | 223 KB | `dcat:Catalog` de Vida Fácil (licencia CC BY 4.0) con 62 `dcat:Dataset`: los 59 que usamos (39 del portal CM y 20 complementarios, los que tienen evidencia de Gate 1, como `pitch/datasets_cm.md`), los indicadores de la API (`dct:source` a los 59) y los dos ficheros SDM; y un `dcat:DataService`, la API (`dcat:endpointURL` de producción y su OpenAPI) | `data/catalog/{sources,datasets}`, título y licencia de cada ficha CM de `pitch/portal_cm_snapshot.json`, HVD de `data/catalog/manual/hvd_datasets.yaml` |
-| `datos/sdm/datasets.json` | 59 KB | Los 39 conjuntos CM como `Dataset` de `dataModel.DCAT-AP` (esquema 3.0.0) con MELODA en los campos que prevé el modelo: `accessMechanism` (D2) y `standardization` (D4) | `pitch/meloda_cm_snapshot.json` (API del Monitorizador leída el 20 nov; «Fuente: spain.meloda.org», CC BY 4.0) |
-| `datos/sdm/farmacias.json` | 1.679 KB | Las 2.957 oficinas de farmacia como `PointOfInterest` (esquema 0.3.1), toda la Comunidad: no hace falta recortar | `GET /api/v1/places?category=pharmacy` de producción, **1 petición** (1 página de 5.000) el 23 nov, guardada en `data/catalog/manual/farmacias_places_api.csv` |
+| `datos/catalogo.dcat.jsonld` | 231 KB | `dcat:Catalog` de Vida Fácil (licencia CC BY 4.0) con 62 `dcat:Dataset`: los 59 que usamos (39 del portal CM y 20 complementarios, los que tienen evidencia de Gate 1, como `pitch/datasets_cm.md`), los indicadores de la API (`dct:source` a los 59) y los dos ficheros SDM; y un `dcat:DataService`, la API (`dcat:endpointURL` de producción y su OpenAPI) | `data/catalog/{sources,datasets}`, título y licencia de cada ficha CM de `pitch/portal_cm_snapshot.json`, HVD de `data/catalog/manual/hvd_datasets.yaml` |
+| `datos/sdm/datasets.json` | 65 KB | Los 39 conjuntos CM como `Dataset` de `dataModel.DCAT-AP` (esquema 3.0.0) con MELODA en los campos que prevé el modelo: `accessMechanism` (D2) y `standardization` (D4) | `pitch/meloda_cm_snapshot.json` (API del Monitorizador leída el 20 nov; «Fuente: spain.meloda.org», CC BY 4.0) |
+| `datos/sdm/farmacias.json` | 1.680 KB | Las 2.957 oficinas de farmacia como `PointOfInterest` (esquema 0.3.1), toda la Comunidad: no hace falta recortar | `GET /api/v1/places?category=pharmacy` de producción, **1 petición** (1 página de 5.000) el 23 nov, guardada en `data/catalog/manual/farmacias_places_api.csv` |
 
 ## Decisiones del generador
 
@@ -17,9 +17,18 @@ Rama `claude/f14-dcat-sdm`, desde `claude/sprint-1-public` en `4355527d`. Tres f
 - **SDM.** `license` es el identificador SPDX (`CC-BY-4.0`) y falta en las 10 del CRTM, cuya licencia no tiene uno. `dissemination` y `reputation` no se incluyen: el Monitorizador no las mide. El resto de la puntuación MELODA queda enlazado en `isReferencedBy` (la ficha de la API del Monitorizador). `geolocation` sale de la geometría del catálogo (punto, polígono o línea).
 - **Farmacias.** Nombre sintético («Farmacia · calle y número»): el registro nombra a los titulares, que nunca se guardan. Cada entidad lleva `source` (la ficha CM) y el fichero, la licencia y el texto de cita de la fuente. 5 coordenadas geocodificadas lo dicen en `description`.
 
+## Revisión de #124
+
+- **R-03:** el `dct:description` del catálogo dice «La licencia de este catálogo cubre sus metadatos; cada distribución lleva la licencia de su fuente.» La licencia CC BY 4.0 del catálogo se mantiene.
+- **R-02:** cada uno de los 6 datasets HVD lleva un `rdfs:comment` con el criterio, que sale del `reason` de `hvd_datasets.yaml`: «Marcado como HVD por Vida Fácil: datos de la Directiva 2008/50/CE, … (Reglamento de Ejecución (UE) 2023/138, anexo); el publicador no lo declara.»
+- **R-01:** el mapeo de «cc-by» a CC BY 4.0 no cambia. Las 29 fichas CM con «cc-by», su entidad SDM y la fuente de `farmacias.json` dicen que el portal no da versión y que la 4.0 es la del registro de fuentes del portal (`data/catalog/sources/comunidad_madrid_ckan.yaml`).
+- **R-04:** `claude/sprint-1-public` (#120, #121 y #122) ya estaba fusionada; `make lint` en verde con los ficheros regenerados.
+
+Tras estos cambios se repitieron las dos validaciones en línea, con el mismo resultado: 0 violaciones propias en el ITB y 39/39 y 2.957/2.957 en `pysmartdatamodels`.
+
 ## Validación sin red (tests)
 
-`tests/unit/catalog/test_dcat_sdm_export.py`, 13 tests: `--check` sin diferencias; JSON-LD con los espacios de nombres y las propiedades obligatorias de DCAT-AP 3.0.1 por clase; vocabularios de la UE con su clase; HVD solo en las 6 del registro; copias de los esquemas SDM con el sha256 del original (`data/schemas/sdm/sources.json`); **39/39 `Dataset` y 2.957/2.957 `PointOfInterest` válidos** con `jsonschema` 4.26 (`Draft202012Validator`) y un `Registry` de `referencing` 0.37 que resuelve las URL oficiales a las copias; el validador rechaza un nivel inexistente y una entidad sin `name`. En la web, `openData.test.ts` comprueba que los tres enlaces son ficheros JSON de `public/`.
+`tests/unit/catalog/test_dcat_sdm_export.py`, 14 tests: `--check` sin diferencias; JSON-LD con los espacios de nombres y las propiedades obligatorias de DCAT-AP 3.0.1 por clase; vocabularios de la UE con su clase; HVD solo en las 6 del registro; copias de los esquemas SDM con el sha256 del original (`data/schemas/sdm/sources.json`); **39/39 `Dataset` y 2.957/2.957 `PointOfInterest` válidos** con `jsonschema` 4.26 (`Draft202012Validator`) y un `Registry` de `referencing` 0.37 que resuelve las URL oficiales a las copias; el validador rechaza un nivel inexistente y una entidad sin `name`. En la web, `openData.test.ts` comprueba que los tres enlaces son ficheros JSON de `public/`.
 
 ## Validación en línea
 
@@ -38,7 +47,7 @@ Rama `claude/f14-dcat-sdm`, desde `claude/sprint-1-public` en `4355527d`. Tres f
 ## Gate
 
 - `make lint typecheck`: verde (`make-lint-typecheck.txt`), con el nuevo `export_dcat_sdm.py --check` también en `make lint` y en CI.
-- `make test-unit`: 1.364 tests de Python y 649 de la web, verdes (`make-test-unit.txt`), tras fusionar `claude/sprint-1-public` (#121, #122).
+- `make test-unit`: 1.365 tests de Python y 649 de la web, verdes (`make-test-unit.txt`), tras fusionar `claude/sprint-1-public` (#121, #122).
 - `npm run build` de `apps/web`: verde (`npm-run-build.txt`). Tras cada `npm ci`, la primera ejecución se detiene en el aviso de seguridad de la versión de Next.js (16.4.2) y la siguiente termina; la versión no se toca en esta rama.
 
 ## Pendiente tras desplegar

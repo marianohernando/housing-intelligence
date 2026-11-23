@@ -16,9 +16,9 @@ DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_test
 ........................................................................ [ 79%]
 ........................................................................ [ 84%]
 ........................................................................ [ 89%]
-........................................................................ [ 95%]
-....................................................................     [100%]
-1364 passed in 33.07s
+........................................................................ [ 94%]
+.....................................................................    [100%]
+1365 passed in 52.37s
 
 > @hi/web@0.0.1 test
 > vitest --run
@@ -29,10 +29,10 @@ DATABASE_URL=postgresql+psycopg://unit:unit@127.0.0.1:1/no_database_in_unit_test
 
  Test Files  44 passed (44)
       Tests  649 passed (649)
-   Start at  11:24:45
-   Duration  1.16s (transform 52%, import 23%, tests 21%, worker 3%)
+   Start at  11:36:56
+   Duration  788ms (tests 45%, import 35%, transform 14%, worker 6%)
 
-    Isolate  44 workers spawned · ~88ms startup each (spawn + environment, per file)
-             at least ~344ms faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  44 workers spawned · ~81ms startup each (spawn + environment, per file)
+             at least ~315ms faster with isolate: false — reuses workers across files instead of one per file
 
 exit=0
