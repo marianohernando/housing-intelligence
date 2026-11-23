@@ -278,6 +278,38 @@ export const API_GROUPS: readonly ApiGroup[] = [
   },
 ];
 
+export interface OpenDataFile {
+  title: string;
+  /** Where the web serves it: a static file of public/, in this same domain */
+  path: string;
+  text: string;
+}
+
+/** F14: the files that scripts/export_dcat_sdm.py writes in apps/web/public/datos/ (desarrolladores.ficheros). */
+export const OPEN_DATA_TEXT = {
+  title: "Catálogo y Smart Data Models: ficheros para descargar",
+  intro:
+    "Ficheros estáticos en este mismo dominio, sin clave. Se generan desde el catálogo de datos del repositorio y se validan contra los esquemas oficiales.",
+} as const;
+
+export const OPEN_DATA_FILES: readonly OpenDataFile[] = [
+  {
+    title: "Catálogo DCAT-AP (europeo)",
+    path: "/datos/catalogo.dcat.jsonld",
+    text: "Los conjuntos de datos que usamos, la API y estos ficheros, en DCAT-AP 3.0.1 (JSON-LD), el perfil europeo: con su licencia, su frecuencia de actualización, su tema y, donde aplica, su categoría de alto valor.",
+  },
+  {
+    title: "Smart Data Models: Dataset con MELODA",
+    path: "/datos/sdm/datasets.json",
+    text: "Los conjuntos de datos de la Comunidad de Madrid que usamos, como entidades Dataset de dataModel.DCAT-AP, con su nivel MELODA de acceso y de estandarización (spain.meloda.org).",
+  },
+  {
+    title: "Smart Data Models: farmacias como PointOfInterest",
+    path: "/datos/sdm/farmacias.json",
+    text: "Las oficinas de farmacia del registro de la Comunidad de Madrid como entidades PointOfInterest, con la licencia y la cita de su fuente.",
+  },
+];
+
 export interface McpTool {
   name: string;
   text: string;
