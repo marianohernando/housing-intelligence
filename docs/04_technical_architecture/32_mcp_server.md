@@ -58,12 +58,17 @@ Cómo conectarlo:
 Cómo funciona (`services/mcp/src/hi_mcp/http.py`):
 - **Dónde vive.** El contenedor de la API arranca `hi_mcp.http:app` (`infra/deploy/api/Dockerfile`): la API de `hi_api.main:app` montada tal cual y, delante, una sola ruta, `/api/v1/mcp`. Tiene que estar bajo `/api/v1/` porque `vercel.json` solo envía eso al contenedor. No entra en `openapi.json` y ninguna ruta de la API cambia.
 - **Lo mismo que la API.** Las mismas herramientas (`build_server`), los mismos servicios, el mismo *engine* (`hi_api.deps.get_engine`, con su pool) y el mismo rol de solo lectura (`DATABASE_URL`), con una transacción `READ ONLY` por llamada. Ninguna herramienta llama al Catastro ni a otro servicio externo: la búsqueda por parcela, con su guarda y su caché (`upstream_guard.py`), sigue solo en la API.
-- **Sin estado y con respuestas JSON** (`stateless_http`, `json_response`). Vercel puede mandar cada POST a una instancia distinta, así que no hay `Mcp-Session-Id` ni flujo SSE. Solo acepta POST: GET y DELETE dan 405, que es lo que pide la especificación cuando el servidor no abre flujo ni guarda sesiones. Sin estado, el SDK dejaría un GET abierto sin mandar nada.
+- **Sin estado y con respuestas JSON** (`stateless_http`, `json_response`). Vercel puede mandar cada POST a una instancia distinta, así que no hay `Mcp-Session-Id` ni flujo SSE. Solo acepta POST: GET, DELETE y OPTIONS dan 405, que es lo que pide la especificación cuando el servidor no abre flujo ni guarda sesiones. Sin estado, el SDK dejaría un GET abierto sin mandar nada.
+- **Solo clientes que no son de navegador.** Como OPTIONS da 405 y la ruta no lleva CORS, no hay *preflight*: un cliente MCP que llame desde el navegador (por ejemplo, el MCP Inspector cuando conecta directamente) no puede usarlo. Claude.ai, Claude Code y `mcp-remote` sí, porque llaman desde un servidor o desde la terminal.
+- **Si el MCP falla, la API sigue.**
+  - Si no se puede construir (por ejemplo, porque el SDK no se importa), `hi_mcp.http:app` es la API sola: `/api/v1/mcp` da 404 y el registro dice «MCP server not built».
+  - Si su gestor de sesiones no arranca, la API arranca igual y `/api/v1/mcp` da 503 («MCP session manager did not start»).
+  - El smoke (`make smoke-demo`) lo detecta en los dos casos, porque pide `initialize` y `tools/list`.
 - **Protección contra DNS rebinding: encendida y con nuestros hosts.** Por defecto el SDK solo admite localhost, y en producción respondería 421 a todo. Se le pasan los hosts admitidos: `vidafacil-madrid.vercel.app`, `vida-facil-eight.vercel.app`, y `127.0.0.1:*`, `localhost:*` y `[::1]:*` para local y tests.
   - Otro `Host` da 421.
   - Si la petición trae `Origin`, tiene que ser una de las dos webs, `https://claude.ai`, `https://claude.com` o localhost; si no, da 403.
   - Sin `Origin` (curl, clientes de servidor, `mcp-remote`) no se comprueba.
-  - Se cambian sin tocar el código con `MCP_ALLOWED_HOSTS` y `MCP_ALLOWED_ORIGINS` (listas JSON, como `CORS_ORIGINS`).
+  - Se cambian sin tocar el código con `MCP_ALLOWED_HOSTS` y `MCP_ALLOWED_ORIGINS`. Las lee pydantic-settings, así que van como una lista JSON, igual que `CORS_ORIGINS`, y **sustituyen** a la lista por defecto: hay que repetir los hosts que se quieran conservar. Por ejemplo, `MCP_ALLOWED_HOSTS='["vidafacil-madrid.vercel.app","vida-facil-eight.vercel.app","localhost:*"]'`. En Vercel, como cualquier variable del servicio `api`, se aplican a partir del siguiente despliegue.
 - **Sin autenticación:** datos públicos y de solo lectura, como la API.
 - **Registros.** uvicorn anota cada `POST /api/v1/mcp`, y `hi_mcp` el nombre y el tiempo de cada herramienta (nunca sus argumentos), por stdout como la API. Un `Host` rechazado deja «Invalid Host header: …». El registro raíz no cambia: el SDK lo configura para stdio, pero aquí se deja como estaba.
 - **En local:** `uv run uvicorn hi_mcp.http:app --port 8010`, con la misma base que la API. El paquete offline (`make demo-offline`) construye la misma imagen, así que también lo sirve en `http://localhost:8012/api/v1/mcp`.
@@ -140,7 +145,8 @@ Claude Code avisa por encima de unos 10.000 tokens por resultado y corta en 25.0
   - `initialize` responde JSON y sin sesión, y `tools/list` da las 7, de solo lectura;
   - `tools/call` de `viabilidad` da lo mismo que su ruta, y la base caída es un error de herramienta, no un 500;
   - los dos hosts públicos pasan; otro `Host` da 421 y otro `Origin`, 403;
-  - GET y DELETE dan 405;
+  - GET, DELETE y OPTIONS dan 405;
+  - si el MCP no se puede construir (el SDK no se importa o falla al construirse), la API arranca sola y `health` da 200; si su gestor de sesiones no arranca, la API arranca, `health` da 200 y el MCP da 503;
   - `/api/v1/health`, `/api/v1/datasets`, `openapi.json` (sin la ruta del MCP) y un 404 responden igual que `hi_api.main:app`.
 - `tests/integration/test_mcp_tools.py`, con la base de fixtures:
   - cada herramienta devuelve lo mismo que su ruta (`data`, `warnings` y versiones), también `ficha_inversor` por nombre y por código, y su error fuera del piloto es el mensaje del 404;
