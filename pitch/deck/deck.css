@@ -200,11 +200,11 @@ a {
   object-position: center;
 }
 
-/* C3 (18 nov, D, producción con 55651c2, pitch/capturas/C3.png a 1440 × 900): «¿Queréis ver más
-   zonas?» y su primera opción, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas en
-   total» (x 1000–1370, y 100–372) */
+/* C3 (23 nov, P, producción con el deploy-46, 542283b8; pitch/capturas/C3.png a 1440 × 900): «¿Queréis
+   ver más zonas?» y su primera opción, «+5 min a pie hasta colegio con primaria · saldrían 49 más: 91 zonas
+   en total» (x 1010–1380, y 100–372: la tarjeta va 15 px más a la derecha que en la del 18 nov) */
 .shot[data-shot="C3"] img {
-  object-view-box: inset(11.1% 4.9% 58.7% 69.4%);
+  object-view-box: inset(11.1% 4.2% 58.7% 70.1%);
   object-fit: contain;
   object-position: center;
 }
@@ -216,8 +216,11 @@ a {
   object-position: center;
 }
 
+/* C5 (23 nov, P, producción con el deploy-46, 542283b8; pitch/capturas/C5.png a 1440 × 900): desde
+   x 525, a la derecha de la pestaña «Mapa», y desde arriba, para que se vean «Qué falta», «Cómo lo
+   calculamos» e «Inversores», el mapa 3D de Chamartín y «Lo que le falta a esta zona» */
 .shot[data-shot="C5"] img {
-  object-view-box: inset(8% 0 0 37%);
+  object-view-box: inset(0 0 0 36.5%);
 }
 
 .shot[data-shot="C7"] img {
@@ -681,13 +684,13 @@ a {
 }
 
 .s4 .m2 {
-  left: 692px;
+  left: 703px; /* 23 nov: C1 nueva, la tarjeta empieza en x 1005 (antes 990) */
   top: 136px;
 }
 
 .s4 .m3 {
-  left: 692px;
-  top: 428px;
+  left: 703px;
+  top: 458px; /* 23 nov: «No le falta nada…» baja a y 646 por la nota del precio de 2024 */
 }
 
 /* Móvil 390 × 844 superpuesto al escritorio */
