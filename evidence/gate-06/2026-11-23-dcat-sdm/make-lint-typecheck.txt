@@ -1,7 +1,7 @@
 uv run ruff check .
 All checks passed!
 uv run ruff format --check .
-577 files already formatted
+581 files already formatted
 uv run python scripts/export_schemas.py --check
 uv run python scripts/export_search_scope.py --check
 uv run python scripts/export_investor_data.py --check

@@ -8,20 +8,20 @@ maplibre worker copied to <workspace>/hi-f14d/apps/web/public/maplibre
 > next build
 
 ▲ Next.js 16.4.2 (Turbopack)
-✓ Running next.config.ts took 55ms
+✓ Running next.config.ts took 19ms
 
   Creating an optimized production build ...
-✓ Compiled successfully in 524ms
+✓ Compiled successfully in 202ms
   Running TypeScript ...
 ⚠ Your version of Next.js is affected by a known security vulnerability. This command is continuing after the upgrade reminder.
 Reference: https://registry.npmjs.org/-/npm/v1/security/advisories/bulk
-  Finished TypeScript in 1326ms ...
+  Finished TypeScript in 1205ms ...
   Collecting page data using 9 workers ...
   Generating static pages using 9 workers (0/14) ...
   Generating static pages using 9 workers (3/14) 
   Generating static pages using 9 workers (6/14) 
   Generating static pages using 9 workers (10/14) 
-✓ Generating static pages using 9 workers (14/14) in 247ms
+✓ Generating static pages using 9 workers (14/14) in 206ms
   Finalizing page optimization ...
 
 Route (app)

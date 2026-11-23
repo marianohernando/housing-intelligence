@@ -38,8 +38,8 @@ Rama `claude/f14-dcat-sdm`, desde `claude/sprint-1-public` en `4355527d`. Tres f
 ## Gate
 
 - `make lint typecheck`: verde (`make-lint-typecheck.txt`), con el nuevo `export_dcat_sdm.py --check` también en `make lint` y en CI.
-- `make test-unit`: 1.350 tests de Python y 639 de la web, verdes (`make-test-unit.txt`).
-- `npm run build` de `apps/web`: verde (`npm-run-build.txt`). La primera ejecución se detuvo en el aviso de seguridad de la versión de Next.js (16.4.2) y la segunda terminó; la versión no se toca en esta rama.
+- `make test-unit`: 1.364 tests de Python y 649 de la web, verdes (`make-test-unit.txt`), tras fusionar `claude/sprint-1-public` (#121, #122).
+- `npm run build` de `apps/web`: verde (`npm-run-build.txt`). Tras cada `npm ci`, la primera ejecución se detiene en el aviso de seguridad de la versión de Next.js (16.4.2) y la siguiente termina; la versión no se toca en esta rama.
 
 ## Pendiente tras desplegar
 
