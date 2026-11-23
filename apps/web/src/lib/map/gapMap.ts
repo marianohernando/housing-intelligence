@@ -7,12 +7,12 @@
 import type { GapRowMap, ZoneGapStatus } from "@/contracts/gap_row_map_response";
 import type { GapRowKey } from "@/contracts/zone_gap_list_response";
 import type { ComparisonGroup, GapStatus } from "@/contracts/zone_gap_list_response";
-import { notComparable, ROW_NAME } from "@/lib/gaps";
+import { isContextRow, notComparable, ROW_NAME } from "@/lib/gaps";
 
 import type { ZoneCollection, ZoneProperties } from "./zones";
 
-/** Rows a person can paint the map with, in the API order (GapRowKey). */
-export const MAP_ROWS = Object.keys(ROW_NAME) as GapRowKey[];
+/** Rows a person can paint the map with, in the API order (GapRowKey); a context row has no status to paint (gap-0.4). */
+export const MAP_ROWS = (Object.keys(ROW_NAME) as GapRowKey[]).filter((row) => !isContextRow(row));
 
 export function isGapRow(value: unknown): value is GapRowKey {
   return typeof value === "string" && (MAP_ROWS as string[]).includes(value);
@@ -84,7 +84,7 @@ export type StatusCounts = Record<MapCategory, number> & { pending: number };
 
 /** How many zones of the map fall in each status (Madrid counts as its 21 districts). */
 export function countByStatus(painted: PaintedCollection): StatusCounts {
-  const counts: StatusCounts = { FALTA: 0, JUSTO: 0, CUBIERTO: 0, ZONA_PEQUENA: 0, SIN_DATOS: 0, pending: 0 };
+  const counts: StatusCounts = { FALTA: 0, JUSTO: 0, CUBIERTO: 0, ZONA_PEQUENA: 0, SIN_DATOS: 0, CONTEXTO: 0, pending: 0 };
   for (const f of painted.features) counts[f.properties.gap ?? "pending"] += 1;
   return counts;
 }

@@ -29,7 +29,24 @@ export const GAP_STATUS: Record<GapStatus, { label: string; help: string; short:
     help: "No tenemos este dato para esta zona. No quiere decir que no haya.",
     short: "no tenemos el dato; no quiere decir que no haya.",
   },
+  // gap-0.4 (D-254): a context row, shown with its reference and never judged
+  CONTEXTO: {
+    label: "CONTEXTO",
+    help: "Es un dato para conocer la zona, no un veredicto: no decimos si falta o sobra.",
+    short: "es un dato para conocer la zona; no decimos si falta.",
+  },
 };
+
+/**
+ * Rows shown as context, never judged (gap-0.4, D-254; the API's `method.context_rows`): the housing
+ * row, because second homes inflate the stock of the villages. Not on the map, in the card or in the
+ * summary of «Qué falta»; in its list, last and with its figure in view.
+ */
+export const CONTEXT_ROWS: readonly GapRowKey[] = ["vivienda"];
+
+export function isContextRow(row: GapRowKey | undefined): boolean {
+  return row !== undefined && CONTEXT_ROWS.includes(row);
+}
 
 /**
  * fila.zona_pequena: a row with `reliable: false` and no group of neighbours shows «No comparable»
@@ -128,7 +145,7 @@ export const ROW_NAME: Record<GapRowKey, string> = {
   centro_salud: "Centros de salud",
   mayores: "Centros de mayores",
   farmacia: "Farmacias",
-  vivienda: "Vivienda para familias",
+  vivienda: "Viviendas grandes por cada 100 hogares grandes (contexto)",
 };
 
 /** Row names inside a sentence (fila.lista.*): «Aquí falta: escuelas infantiles». */
@@ -210,7 +227,7 @@ export function pendingRows(warnings: readonly string[] | undefined): GapRowKey[
   return ROW_ORDER.filter((key) => keys.has(key));
 }
 
-const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3 };
+const STATUS_ORDER: Record<GapStatus, number> = { FALTA: 0, JUSTO: 1, CUBIERTO: 2, SIN_DATOS: 3, CONTEXTO: 4 };
 
 type Classified = { status: GapStatus; reliable?: boolean; comparison_group?: ComparisonGroup | null };
 
@@ -266,13 +283,15 @@ export function householdRows(household: HouseholdLike | null | undefined): GapR
  * order. Other rows only fill in when fewer than three of the household's have data, by status;
  * those about children never do in a home without children, and the pharmacy never does (only when
  * marked). The household's rows without data go last. Without a household, every row, the pharmacy too.
+ * A context row (gap-0.4) never: it says nothing about what is missing.
  */
 export function topRows<T extends Classified & { row?: GapRowKey }>(
-  rows: readonly T[],
+  allRows: readonly T[],
   limit = 3,
   household?: HouseholdLike | null,
   marked: readonly GapRowKey[] = [],
 ): T[] {
+  const rows = allRows.filter((r) => !isContextRow(r.row));
   if (!household) return sortRows(rows).slice(0, limit);
   // The household's rows and then what the person marks (review R-02 of PR #81), as the essentials
   const mine = [...new Set([...householdRows(household), ...marked])];
@@ -307,9 +326,9 @@ export function notComparable(row: { status: GapStatus; reliable?: boolean; comp
 
 const cannotCompare = notComparable;
 
-/** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*). */
+/** Comparable rows of each status, and the rest, as names inside a sentence (fila.lista.*); never a context row. */
 function rowsByStatus(rows: readonly SummaryRow[]) {
-  const names = (pick: (r: SummaryRow) => boolean) => rows.filter(pick).map((r) => ROW_IN_LIST[r.row]);
+  const names = (pick: (r: SummaryRow) => boolean) => rows.filter((r) => !isContextRow(r.row) && pick(r)).map((r) => ROW_IN_LIST[r.row]);
   const comparable = (status: GapStatus) => (r: SummaryRow) => r.status === status && !cannotCompare(r);
   return {
     falta: names(comparable("FALTA")),

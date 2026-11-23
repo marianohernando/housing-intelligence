@@ -202,7 +202,8 @@ def test_defaults_are_documented_assumptions() -> None:
         "3,75 %" in COST_PARTS[2].source
         and "ordenanza fiscal del ICIO, art. 25" in COST_PARTS[2].source
     )
-    assert "Libro de Ordenanzas Fiscales 2024, p. 154; vigente en 2025" in COST_PARTS[2].source
+    assert "Libro de Ordenanzas Fiscales 2024, p. 154)" in COST_PARTS[2].source
+    assert "vigente" not in COST_PARTS[2].source  # only what was verified (2024)
     assert pytest.approx(0.08) == SALES_COSTS_SHARE
     # D-252 (D8): «ajustar» from 15 %, under the 18 % the appraisal asks (ECO/805/2003, DA 6.ª)
     assert (TARGET_MARGIN, ADJUST_FLOOR, APPRAISAL_MIN_MARGIN) == (0.20, 0.15, 0.18)

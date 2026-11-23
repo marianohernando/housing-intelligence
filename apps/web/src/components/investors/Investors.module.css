@@ -238,6 +238,13 @@
   color: var(--violet-strong);
 }
 
+/* Computed from data, not published (the barrio's price): data's colour, an assumption's dashes */
+.mark_estimacion {
+  border-color: var(--violet-strong);
+  border-style: dashed;
+  color: var(--violet-strong);
+}
+
 .mark_supuesto {
   border-style: dashed;
 }

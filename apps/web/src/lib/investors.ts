@@ -57,6 +57,7 @@ export const METHOD_LINK = {
 /** «dato», «supuesto», «lo pones tú» next to a figure (never a colour alone). */
 export const MARK_TEXT: Record<SourcedValue["mark"] | "sin_dato", string> = {
   dato: "Dato",
+  estimacion: "Estimación",
   supuesto: "Supuesto",
   usuario: "Lo pones tú",
   sin_dato: "Sin dato",

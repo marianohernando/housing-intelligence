@@ -55,7 +55,7 @@ export const ROW_NAME = {
   centro_salud: "Centros de salud",
   mayores: "Centros de mayores",
   farmacia: "Farmacias",
-  vivienda: "Vivienda para familias",
+  vivienda: "Viviendas grandes por cada 100 hogares grandes (contexto)",
 };
 const ROW_IN_LIST = {
   escuela_infantil: "escuelas infantiles",
