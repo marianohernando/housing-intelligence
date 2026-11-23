@@ -145,7 +145,7 @@ Ahora, un promotor busca una parcela de Madrid capital: Méndez Álvaro cuarenta
 
 ---
 
-## Bloque 4 · 2:45–3:40 · La base: la zona que te conviene (personas)
+## Bloque 4 · 2:45–3:45 · La base: la zona que te conviene (personas)
 **El ganador de 2024**, según el formador de la sesión del 5 nov: «te daba los pisos pero te daba también… donde había un ambulatorio, donde estaba la estación de metro… podías hacerte una especie de perfil adaptado a tus necesidades» [01:20:39]–[01:21:20], y «utilizaba un scrapeo» [01:21:34]. No se dice nada más de él (pregunta 66).
 
 **Caso precargado:** `data/fixtures/contracts/scenario_state.familia_castellana.fixture.json`:
@@ -180,7 +180,7 @@ Y la base, para quien busca casa. En la formación nos contaron que lo que ganó
 
 ---
 
-## Bloque 5 · 3:40–4:35 · Datos, MELODA, la IA, la API y quién paga
+## Bloque 5 · 3:45–4:40 · Datos, MELODA, la IA, la API y quién paga
 **Pantalla:** la slide 2 en «¿Con qué datos?», con las dos líneas de MELODA bajo la tabla, de donde se leen [Treinta y nueve] y [dieciséis]. En «Ninguna cifra la genera una IA» se pasa a la slide 3: su columna «Viabilidad» acaba con la comprobación de Parla, de donde se leen [dos coma cero tres] y [dos coma cero cuatro], y en la banda, bajo la URL de la demo, está «MCP, sin clave: vidafacil-madrid.vercel.app/api/v1/mcp», la dirección a la que apunta «con esta dirección». «¿Quién paga?» se dice con la misma slide.
 
 <!-- habla:b5:inicio -->
@@ -198,13 +198,13 @@ Y la base, para quien busca casa. En la formación nos contaron que lo que ganó
 - «Ninguna cifra la genera una IA: son cálculos deterministas sobre datos oficiales, y los comprobamos»: `CLAUDE.md` §3 (IA: «El LLM no calcula si existe una función determinista»; «El LLM no inventa cifras faltantes») y pregunta 32. La IA se usó para programar, como permiten las bases (§7). Matiz, si preguntan: por el MCP, la cifra es la de la API, pero el texto lo redacta el modelo del asistente (pregunta 67).
 - «En Parla contamos [dos coma cero tres] farmacias por cada diez mil habitantes; la estadística oficial da [dos coma cero cuatro]»: `GET /api/v1/gaps/municipio/28106` en producción (`data_version` 2026-11-19, leída el 23 nov), fila de farmacias: `oficinas_farmacia_por_10000_hab` 2,029, contadas en el registro de oficinas de farmacia de la Comunidad con su población, frente a `farmacias_por_10000_hab_oficial` 2,04, la estadística de farmacias por municipio de la Comunidad. Son dos conjuntos distintos de la Comunidad que cuadran (pregunta 32). Los tests y las 62 respuestas del despliegue, solo si preguntan.
 - El código abierto (`LICENSE`, Apache-2.0, D-191) ya no se dice en voz alta, por tiempo: está en la slide 3 («Código abierto», con el enlace al repositorio) y en el pie de la slide 1.
-- «La base es una API abierta; el MCP es una capa fina encima: cualquier asistente compatible con MCP se conecta con esta dirección, sin clave ni instalar nada»: la API pública está en producción, sin claves, con su OpenAPI en `/api/v1/openapi.json` y una página pública, `/desarrolladores` (D-249). El MCP tiene 7 herramientas de solo lectura y, **desde el deploy-46, funciona en remoto**, gratis y sin clave, en `https://vidafacil-madrid.vercel.app/api/v1/mcp` (D-255; en el deploy-46, `initialize`, `tools/list` con 7 herramientas y tres `tools/call` en producción, y Claude Code conectado). Mariano lo probó también desde Claude web, el 23 nov, y las cifras coinciden con la API. Es la única frase del MCP en los 5 minutos: lo demás, en las preguntas 2 y 67. Nunca «cualquiera con Claude» ni una demo en vivo.
+- «La base es una API abierta; el MCP es una capa fina encima: cualquier asistente compatible con MCP se conecta con esta dirección, sin clave ni instalar nada»: la API pública está en producción, sin claves, con su OpenAPI en `/api/v1/openapi.json` y una página pública, `/desarrolladores` (D-249). El MCP tiene 7 herramientas de solo lectura y, **desde el deploy-46, funciona en remoto**, gratis y sin clave, en `https://vidafacil-madrid.vercel.app/api/v1/mcp` (D-255; en el deploy-46, `initialize`, `tools/list` con 7 herramientas y tres `tools/call` en producción, y Claude Code conectado). Mariano lo probó también desde Claude web, el 23 nov, y las cifras coinciden con la API (`evidence/gate-06/2026-11-23-mcp-claude-web/prueba-claude-web.md`). Es la única frase del MCP en los 5 minutos: lo demás, en las preguntas 2 y 67. Nunca «cualquiera con Claude» ni una demo en vivo.
 - «¿Quién paga? Gratis siempre: datos, zonas, qué falta, cada parcela y la API; pagarán las empresas carteras de parcelas, avisos de suelo nuevo e informes a medida»: decisión de Mariano del 23 nov (`pitch/modelo_negocio.md`). De pago: el plan empresarial (carteras de parcelas, avisos de suelo nuevo y la API y el MCP a gran volumen con clave) y los informes personalizados (estudios de suelo a medida). «Pagarán»: hoy no se cobra nada. Los precios no se dicen; si preguntan, pregunta 6.
 - La privacidad («nunca vendemos datos de personas») ya no se dice en voz alta, por tiempo: está en la slide 3 («Solo zonas, nunca datos de personas.») y en la pregunta 33.
 
 ---
 
-## Bloque 6 · 4:35–5:00 · Pruebas y cierre
+## Bloque 6 · 4:40–5:00 · Pruebas y cierre
 **Pantalla:** la slide 4 (pantallazo) con la URL. El recuadro dice «Probada con 8 personas».
 
 <!-- habla:b6:inicio -->
