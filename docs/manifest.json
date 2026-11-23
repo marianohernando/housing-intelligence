@@ -1,6 +1,6 @@
 {
-  "version": "0.5.93",
-  "updated": "2026-11-20T00:17:22.511537+00:00",
+  "version": "0.5.94",
+  "updated": "2026-11-23T10:09:04.965306+00:00",
   "markdown_files": 278,
   "files": {
     "00_index/00_master_index.md": {
@@ -8,8 +8,8 @@
       "bytes": 3055
     },
     "00_index/01_decisions_log.md": {
-      "sha256": "1851c847b2e29be36aa3a195f3d1166cf2633e646affc73a2c34e90d650b42d8",
-      "bytes": 407503
+      "sha256": "4b096a26bbe73e0205cf9876f24764a3fd305df3be0e95cbd63325acae404dd3",
+      "bytes": 412518
     },
     "00_index/02_open_questions.md": {
       "sha256": "9ba7326f12b34f40644de3a9c2c2a31803dbeae6af01e9039fd9df2abfd98976",
@@ -644,8 +644,8 @@
       "bytes": 30785
     },
     "04_technical_architecture/32_mcp_server.md": {
-      "sha256": "33c7927935772fb0e1086aaa8770c66814f6798860c244ab1b8de49a1ae6be4a",
-      "bytes": 12003
+      "sha256": "aea552bf469ba09ced74eddcc6984da7a247c50be92d01a27eeb217d6d358a6b",
+      "bytes": 16270
     },
     "05_map_ux/01_map_3d_digital_twin.md": {
       "sha256": "9bb353ceabb6802e8a05e2deec172d62a9996498dcecbcd70e5b463294eac0a3",

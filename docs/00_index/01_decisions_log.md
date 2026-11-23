@@ -2299,3 +2299,29 @@ Punto 1 de P7 (inversor) («los suministros son súper importantes»; en Madrid 
    - Los estados terminados de las obras de un ámbito salen del dominio (`DONE_PHASES`, en `investorMethod.ts`), no de una copia en la web.
    - «Llévate esta ficha (PDF) a tu consultora: ahorra parte de la recopilación de datos públicos.»
    - La ordenanza del ICIO se cita sin número (punto 10): el número que se le daba no se ha podido comprobar.
+
+## D-255 — MCP remoto de solo lectura en `/api/v1/mcp` (2026-11-23)
+Decisión de Mariano del 23 nov: un miembro del jurado tiene que poder conectar el MCP desde su cliente de IA sin instalar nada. Hasta hoy solo funcionaba en local, por stdio (D-225), y `/desarrolladores` daba el MCP en remoto como planteado (D-249). Es aditivo y reversible: un fichero nuevo (`services/mcp/src/hi_mcp/http.py`), su test y dos líneas del `Dockerfile`. **Ninguna ruta, contrato, herramienta ni tabla de la API cambia; `fit`, `gap_row` y el golden tampoco.** Uso y configuración de los clientes: `docs/04_technical_architecture/32_mcp_server.md`, «En remoto».
+
+1. **URL:** `https://vidafacil-madrid.vercel.app/api/v1/mcp`. Tiene que ir bajo `/api/v1/`, porque `vercel.json` solo envía eso al contenedor; `/mcp` caería en Next.js y pediría otra regla.
+2. **Dónde vive.** El contenedor arranca `hi_mcp.http:app` en lugar de `hi_api.main:app`:
+   - es la API, montada tal cual, con una sola ruta delante, `/api/v1/mcp` (una `Route`, no un `Mount`, para no redirigir a `/api/v1/mcp/`);
+   - no toca `hi_api`, así que no hay dependencia circular `hi_api → hi_mcp`;
+   - la imagen instala `hi-mcp`, que arrastra `hi-api` (`uv sync --package hi-mcp`; suma el SDK `mcp` y sus dependencias).
+3. **El *lifespan*.** El gestor de sesiones del transporte Streamable HTTP tiene que correr dentro del *lifespan* de la app, y solo una vez por instancia. `create_app()` crea el suyo (en los tests, uno por app) y lo envuelve con el de la API, porque el *lifespan* de una app montada no se ejecuta solo.
+4. **Sin estado y con respuestas JSON** (`stateless_http=True`, `json_response=True`). Vercel no da afinidad de sesión, así que no hay `Mcp-Session-Id` ni flujo SSE. Solo POST: GET y DELETE dan 405. Sin estado, el SDK dejaría un GET abierto como flujo SSE vacío hasta que lo cortara el cliente o la plataforma.
+5. **Protección contra DNS rebinding: se configura, no se desactiva.** Por defecto el SDK solo admite localhost (daría 421 en producción). Sus listas quedan explícitas, y se pueden cambiar con `MCP_ALLOWED_HOSTS` y `MCP_ALLOWED_ORIGINS` sin tocar el código:
+   - **Hosts:** `vidafacil-madrid.vercel.app`, `vida-facil-eight.vercel.app` y `127.0.0.1:*`, `localhost:*` y `[::1]:*` (local, tests y el paquete offline). Otro `Host` da 421.
+   - **Orígenes**, que solo se comprueban si la petición trae `Origin`: las dos webs, `https://claude.ai`, `https://claude.com` y localhost. Otro da 403.
+   - **Por qué así:** sin cookies ni autenticación, lo que protege es que el servidor solo responda en nuestros dominios. Claude.ai entra por si su conector manda `Origin`. Los clientes de servidor, curl y `mcp-remote` no lo mandan.
+6. **Lo mismo que la API.** Las 7 herramientas de `build_server` (D-249), los mismos servicios, el mismo *engine* (`hi_api.deps.get_engine`, pool 1 + 0 en producción) y el mismo rol de solo lectura (`vf_api_ro`, por `DATABASE_URL`). Cada llamada va en una transacción `READ ONLY`. Ninguna herramienta llama al Catastro ni a otro servicio externo: la búsqueda por parcela, con su guarda y su caché (`upstream_guard.py`), sigue solo en la API. Sin autenticación ni límite de uso propio, como el resto de la API.
+7. **Registros.** El SDK configura el registro raíz para stdio (INFO, a stderr). En el contenedor duplicaría cada línea de la API y sacaría líneas de librerías que hoy no salen, así que `http.py` lo deja como estaba. `hi_mcp` escribe por stdout, como `hi_api`, el nombre y el tiempo de cada herramienta, nunca sus argumentos.
+8. **Tests** (`tests/unit/mcp/test_http.py`, sin base ni red, con el cliente ASGI de httpx):
+   - `initialize` (JSON y sin sesión) y `tools/list` → 7;
+   - `tools/call` de `viabilidad`, igual que su ruta, y la base caída como error de herramienta;
+   - los hosts públicos pasan; otro `Host` da 421 y otro `Origin`, 403;
+   - GET y DELETE dan 405;
+   - `/api/v1/health`, `/api/v1/datasets`, `openapi.json` y un 404 responden igual que `hi_api.main:app`.
+   - Comprobado además en local, sin Docker, con un entorno instalado como la imagen (`uv sync --package hi-mcp --no-dev --no-editable`) y el mismo `uvicorn` del `CMD`: curl (`initialize`, `tools/list`, 421, 405) y el cliente oficial del SDK por HTTP (`list_tools` → 7 y `viabilidad`).
+9. **Después de desplegar:** `tools/list` por curl contra la URL tiene que dar 7 (comando en `32_mcp_server.md`), y hay que probar un cliente real (Claude Code con `--transport http` y el conector de Claude.ai). **Riesgo:** si el proxy de Vercel entregara al contenedor otro `Host` que el dominio público, todo daría 421 y quedaría «Invalid Host header: …» en los registros. Se corrige con `MCP_ALLOWED_HOSTS` y un redespliegue, sin tocar la API. `/desarrolladores` se actualiza aparte, cuando esté verificado en producción.
+10. **Cómo volver atrás:** revertir el PR y desplegar, o un rollback al despliegue anterior. No hay datos, migraciones ni sincronización que deshacer.
