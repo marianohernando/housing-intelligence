@@ -2,7 +2,7 @@
 
 # Vida Fácil · La zona que te conviene, y lo que le falta
 
-Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos; un promotor elige suelo sin ver la demanda; y quien busca casa mira el precio en una web, los colegios en otra y el transporte en otra. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid, descargados por API y sin scraping, para decir qué le falta a cada zona, dar la ficha de una parcela exacta de Madrid capital y servirlo todo por una API abierta. Debajo, como base, las zonas que le convienen a quien busca casa.**
+Un ayuntamiento que quiere saber dónde falta una escuela infantil o un centro de salud tiene los datos sueltos; un promotor elige suelo sin ver la demanda; y quien busca casa mira el precio en una web, los colegios en otra y el transporte en otra. **Vida Fácil cruza los datos abiertos de la Comunidad de Madrid y de otras fuentes abiertas, descargados de sus portales y sin scraping, para decir qué le falta a cada zona, dar la ficha de una parcela exacta de Madrid capital y servirlo todo por una API abierta. Debajo, como base, las zonas que le convienen a quien busca casa.**
 
 **Pruébalo:** [vidafacil-madrid.vercel.app](https://vidafacil-madrid.vercel.app)
 

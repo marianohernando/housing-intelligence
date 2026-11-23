@@ -404,10 +404,11 @@ a {
   color: var(--ink-soft);
 }
 
-/* 23 nov: dos líneas de MELODA bajo la de apoyo (P6 del informe del jurado simulado) */
+/* 23 nov: dos líneas de MELODA bajo la de apoyo (P6 del informe del jurado simulado); 22 px, el mínimo
+   del build, para que quepan con «(281 conjuntos)» (revisión del #122, R-07) */
 .s2 .meloda {
   margin-top: 4px;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.3;
   color: var(--ink);
 }
@@ -747,7 +748,7 @@ a {
 
 .s4 .tested p {
   margin: 6px 0 0;
-  font-size: 26px;
+  font-size: 24px; /* 23 nov: 24 px (antes 26), para que «Se hizo lo que pidieron…» no suba sobre el paso 3 */
   line-height: 1.3;
 }
 

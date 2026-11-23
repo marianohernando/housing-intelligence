@@ -26,18 +26,17 @@
 
 | Bloque | Tiempo | Duración | Pantalla | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|---|
-| 1 | 0:00–0:30 | 30 s | Slide 1 → slide 2 | Tres preguntas: ayuntamiento, promotor y API; sin scraping | 61 | 28 s |
+| 1 | 0:00–0:30 | 30 s | Slide 1 → slide 2 | Tres preguntas: ayuntamiento, promotor y API; sin scraping | 62 | 29 s |
 | 2 | 0:30–1:45 | 75 s | Demo: «Qué falta» | Dónde invertir primero y Puente de Vallecas | 108 | 50 s + unos 12 s de clics |
 | 3 | 1:45–2:45 | 60 s | Demo: «Inversores» | La ficha de una parcela exacta: Méndez Álvaro 47 | 88 | 41 s + unos 15 s de bajar por la ficha |
-| 4 | 2:45–3:40 | 55 s | Demo: «Mapa» | La base: la zona que te conviene, frente a lo de 2024 | 102 | 47 s + unos 10 s de clics |
-| 5 | 3:40–4:35 | 55 s | Slide 2 → slide 3 | Datos, MELODA, la IA, la API y quién paga | 140 | 65 s |
+| 4 | 2:45–3:40 | 55 s | Demo: «Mapa» | La base: la zona que te conviene, frente a lo de 2024 | 108 | 50 s + unos 10 s de clics |
+| 5 | 3:40–4:35 | 55 s | Slide 2 → slide 3 | Datos, MELODA, la IA, la API y quién paga | 133 | 61 s |
 | 6 | 4:35–5:00 | 25 s | Slide 4 | Pruebas con personas y cierre con el lema | 44 | 20 s |
 | **Total** | | **300 s** | | | **543** | **251 s + unos 41 s de clics y cambios = unos 8 s de margen** |
 
-**Recuento del 23 nov** (comando de arriba): b1 61, b2 108, b3 88, b4 102, b5 140 y b6 44; 543 palabras, dentro de las 500–550 que pidió Mariano. El margen baja de unos 26 s a unos 8 s porque hay un recorrido más (la parcela) y la frase de MELODA, que pasó el coordinador con las cifras de `pitch/meloda_cm_snapshot.json`. Los clics son una estimación: se miden en los ensayos. Si no llega, se quita, por este orden:
+**Recuento del 23 nov, tras la revisión del #122** (comando de arriba): b1 62, b2 108, b3 88, b4 108, b5 133 y b6 44; 543 palabras, dentro de las 500–550 que pidió Mariano. El bloque 4 atribuye lo de 2024 a la formación (+6 palabras, R-06) y el bloque 5 pierde «Cada conjunto pasa nuestro control de calidad.» (lo dice la slide 2). El margen baja de unos 26 s a unos 8 s porque hay un recorrido más (la parcela) y la frase de MELODA, que pasó el coordinador con las cifras de `pitch/meloda_cm_snapshot.json`. Los clics son una estimación: se miden en los ensayos. Si no llega, se quita, por este orden:
 1. «Una de ellas repitió esta semana: «ha mejorado un montón».», del bloque 6 (9 palabras, unos 4 s; la cita sigue en la slide 3);
-2. «Y, para quien busca casa, la zona que le conviene.», del bloque 1 (10 palabras, unos 5 s; el bloque 4 ya lo cuenta);
-3. «Cada conjunto pasa nuestro control de calidad.», del bloque 5 (7 palabras, unos 3 s; lo dice la slide 2).
+2. «Y, para quien busca casa, la zona que le conviene.», del bloque 1 (10 palabras, unos 5 s; el bloque 4 ya lo cuenta).
 
 ### Recuentos anteriores (orden del 19 nov: personas, ayuntamiento, datos)
 - **19 nov, tras la búsqueda por parcela (D-250):** b1 74, b2 130, b2s 136, b3 125, b4 105 y b5 66: 500 palabras con buscador y 506 sin él, con unos 26 s de margen.
@@ -67,10 +66,10 @@
 **Pantalla:** slide 1 (título y lema). En «Un ayuntamiento» se pasa a la slide 2, cuya columna del problema va en el mismo orden: ayuntamientos, promotores e inversores, y personas.
 
 <!-- habla:b1:inicio -->
-Buenas tardes. Vida Fácil responde a tres preguntas con datos abiertos. Un ayuntamiento: ¿qué le falta a cada zona? Un promotor: ¿qué pasa en esta parcela exacta y quién vive alrededor? Y un agente de IA: lo mismo, por una API abierta. Todo con datos oficiales descargados por API, sin scraping. Y, para quien busca casa, la zona que le conviene.
+Buenas tardes. Vida Fácil responde a tres preguntas con datos abiertos. Un ayuntamiento: ¿qué le falta a cada zona? Un promotor: ¿qué pasa en esta parcela exacta y quién vive alrededor? Y un agente de IA: lo mismo, por una API abierta. Todo con datos abiertos descargados de sus portales, sin scraping. Y, para quien busca casa, la zona que le conviene.
 <!-- habla:b1:fin -->
 
-**Fuentes:** «descargados por API»: los 29 conjuntos de la Comunidad salen de la API CKAN de su portal (`data/catalog/sources/comunidad_madrid_ckan.yaml`, `api_type: ckan`) y los 10 del Consorcio, de la API de su portal (`crtm_open_data.yaml`, `api_type: arcgis_hub`). «Sin scraping»: `CLAUDE.md` §15 y pregunta 35; Google Maps y Gosom, descartados (D-175 y D-185). La parcela llega a toda Madrid capital (D-250 §6); no se dice «toda la región».
+**Fuentes:** «descargados de sus portales» (revisión del #122, R-03: no todo es «oficial» ni todo llega «por API»): los 29 conjuntos de la Comunidad salen de la API CKAN de su portal (`data/catalog/sources/comunidad_madrid_ckan.yaml`, `api_type: ckan`) y los 10 del Consorcio, de la API de su portal (`crtm_open_data.yaml`, `api_type: arcgis_hub`). «Sin scraping»: `CLAUDE.md` §15 y pregunta 35; Google Maps y Gosom, descartados (D-175 y D-185). La parcela llega a toda Madrid capital (D-250 §6); no se dice «toda la región».
 
 **Al terminar:** cambiar a la pestaña 2 (Cmd + 2).
 
@@ -158,7 +157,7 @@ Ahora, un promotor busca una parcela de Madrid capital: Méndez Álvaro cuarenta
 - el precio es el de los contratos firmados en 2024 (Agencia Tributaria, D-228): en varias zonas baratas, un anuncio de hoy pide entre 1,28 y 1,33 veces esa cifra (pregunta 57).
 
 <!-- habla:b4:inicio -->
-Y la base, para quien busca casa. Lo que ganó en 2024 daba pisos sacados con scraping, con el ambulatorio y el metro cercanos. Nosotros lo hacemos en los ciento setenta y nueve municipios, solo con datos oficiales, con el trayecto al trabajo y con lo que le falta. Una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana: cumplen lo que piden [cuarenta y dos] zonas. La primera: [colegio a cuatro minutos], [cuarenta y un minutos al trabajo] y [unos mil ciento veintinueve euros]: es el precio de los contratos de 2024; un anuncio de hoy pide más.
+Y la base, para quien busca casa. En la formación nos contaron que lo que ganó en 2024 daba pisos sacados con scraping, con el ambulatorio y el metro cercanos. Nosotros lo hacemos en los ciento setenta y nueve municipios, solo con datos oficiales, con el trayecto al trabajo y con lo que le falta. Una pareja con dos hijos, mil quinientos euros y trabajo en la Castellana: cumplen lo que piden [cuarenta y dos] zonas. La primera: [colegio a cuatro minutos], [cuarenta y un minutos al trabajo] y [unos mil ciento veintinueve euros]: es el precio de los contratos de 2024; un anuncio de hoy pide más.
 <!-- habla:b4:fin -->
 
 | # | Acción | Qué tiene que verse | Si falla |
@@ -175,10 +174,10 @@ Y la base, para quien busca casa. Lo que ganó en 2024 daba pisos sacados con sc
 ---
 
 ## Bloque 5 · 3:40–4:35 · Datos, MELODA, la IA, la API y quién paga
-**Pantalla:** la slide 2 en «¿Con qué datos?», con las dos líneas de MELODA bajo la tabla («Reutilización (MELODA): 16 sobre 49 de media en los 39; la actualización, 1 de 5 en todos. Las 10 fichas del Consorcio sacan 8 en este portal; el suyo, 24,7 de media.»), de donde se leen los corchetes, y la slide 3 en «¿Quién paga?». La columna «Viabilidad» de la slide 3 dice lo mismo: «Gratis siempre…», «Pagarán las empresas…», «API abierta y gratuita; MCP de código abierto.» y «Ninguna cifra la genera una IA…».
+**Pantalla:** la slide 2 en «¿Con qué datos?», con las dos líneas de MELODA bajo la tabla («MELODA: 16 sobre 49 de media; 1 de 5 en actualización. Las 10 fichas del Consorcio sacan 8 en este portal, frente a 24,7 de media en el portal del Consorcio (281 conjuntos).»), de donde se leen los corchetes, y la slide 3 en «¿Quién paga?». La columna «Viabilidad» de la slide 3 dice lo mismo: «Gratis siempre…», «Pagarán las empresas…», «API abierta y gratuita; MCP de código abierto.» y «Ninguna cifra la genera una IA…».
 
 <!-- habla:b5:inicio -->
-¿Con qué datos? [Treinta y nueve] conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid, y medimos su reutilización con MELODA: [dieciséis] sobre cuarenta y nueve de media. Lo más flojo es la actualización: [uno de cinco] en todos. Las diez fichas del Consorcio sacan [ocho] en el portal de la Comunidad, frente a [veinticuatro coma siete] de media en su propio portal. Cada conjunto pasa nuestro control de calidad. Ninguna cifra la genera una IA: salen de cálculos deterministas sobre datos oficiales, cada una con su fuente. El código es abierto; la API, abierta y gratuita, y el MCP, de código abierto. ¿Quién paga? Gratis siempre: los datos, las zonas, qué falta, cada ficha de parcela y la API. Pagarán las empresas un plan con carteras de parcelas y avisos de suelo nuevo, e informes a medida.
+¿Con qué datos? [Treinta y nueve] conjuntos del Portal de Datos Abiertos de la Comunidad de Madrid, y medimos su reutilización con MELODA: [dieciséis] sobre cuarenta y nueve de media. Lo más flojo es la actualización: [uno de cinco] en todos. Las diez fichas del Consorcio sacan [ocho] en el portal de la Comunidad, frente a [veinticuatro coma siete] de media en su propio portal. Ninguna cifra la genera una IA: salen de cálculos deterministas sobre datos oficiales, cada una con su fuente. El código es abierto; la API, abierta y gratuita, y el MCP, de código abierto. ¿Quién paga? Gratis siempre: los datos, las zonas, qué falta, cada ficha de parcela y la API. Pagarán las empresas un plan con carteras de parcelas y avisos de suelo nuevo, e informes a medida.
 <!-- habla:b5:fin -->
 
 **Fuentes de lo que se dice:**
@@ -201,7 +200,7 @@ Y la base, para quien busca casa. Lo que ganó en 2024 daba pisos sacados con sc
 **Pantalla:** la slide 4 (pantallazo) con la URL. El recuadro dice «Probada con 8 personas».
 
 <!-- habla:b6:inicio -->
-La probaron ocho personas: siete que buscan casa, una de ellas mayor, y un inversor; y ya tiene lo que pidieron. Una de ellas repitió esta semana: «ha mejorado un montón». Vida Fácil: la zona que te conviene, y lo que le falta. Gracias.
+La probaron ocho personas: siete que buscan casa, una de ellas mayor, y un inversor; y se hizo lo que pidieron. Una de ellas repitió esta semana: «ha mejorado un montón». Vida Fácil: la zona que te conviene, y lo que le falta. Gracias.
 <!-- habla:b6:fin -->
 
 **Las ocho personas:**
