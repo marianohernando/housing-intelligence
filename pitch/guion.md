@@ -22,7 +22,7 @@
   - el precio: «es el precio de los contratos de 2024; un anuncio de hoy suele pedir más», como dice la tarjeta desde el deploy-46 (pregunta 57);
   - «API y MCP abiertos y gratuitos, sin clave»: desde el 23 nov el MCP funciona en remoto (D-255). Comprobar en producción antes de decirlo.
 - **Farmacias:** no se presume de ellas en la parte de personas (segunda prueba de P6, 23 nov: a un ciudadano no le sirve el dato; la web las quita de la tarjeta de zona si no se piden). En «Qué falta», para ayuntamientos, se quedan.
-- **Capturas:** C5 (slide 1), C1 (slide 4) y C3 (slide 3) se rehacen después del despliegue del 23 nov (`pitch/slides.md`, «Capturas necesarias»). Hasta entonces enseñan textos anteriores, como el lema viejo y «35 conjuntos».
+- **Capturas:** C5 (slide 1), C1 (slide 4), C3 (slide 3) y C6 (slide 4) rehechas el 23 nov en producción con el deploy-46 (`542283b8`): lema nuevo, pestaña «Inversores» y «39 conjuntos» (`pitch/slides.md`, «Capturas necesarias»).
 
 | Bloque | Tiempo | Duración | Pantalla | Contenido | Palabras | Tiempo hablado a 130 ppm |
 |---|---|---|---|---|---|---|
