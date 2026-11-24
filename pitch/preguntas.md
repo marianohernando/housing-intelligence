@@ -209,7 +209,13 @@ Claves únicas, que cada municipio exista en la geografía oficial, errores de l
 Sí, y los tratamos sin ocultarlos. Comparamos 10 zonas a mano con la fuente oficial y encontramos centros sin coordenadas o en el municipio equivocado: 40 se han colocado con el geocodificador oficial del IGN, solo si la dirección cuadra, y los que no van a cuarentena, nunca al sitio equivocado. También sacamos del mapa 1.001 «centros polivalentes», casi todos clínicas privadas, que no son atención primaria ni servicios para mayores.
 - Evidencia: `pitch/revision_10_zonas.md` (D1–D7) · D-216 §1 y §3 · D-218 §10 · `evidence/gate-01/2026-11-12/audit-places.md` · `evidence/gate-01/2026-11-12/correcciones.md` · `evidence/gate-01/2026-11-12/cm_centros_educativos/row_counts.json` (40 en cuarentena) · `notes` de `data/catalog/datasets/cm_secciones_censales.yaml` (geometría inválida reparada).
 - Límite: los 4 centros de salud «S/N» de Madrid y Alcalá ya están colocados con el número de portal del catálogo del Ministerio (D-218 §10). Quedan sin poder colocar 3, porque ninguna fuente oficial da su ubicación: el consultorio de Villar del Olmo, el de Buitrago y el colegio de Navalafuente. Hoy cuentan como si no estuvieran, y A propone enseñar SIN DATOS.
-- Si preguntan si se lo habéis dicho a la Comunidad: estamos dados de alta como reutilizadores de datos abiertos de la Comunidad de Madrid (Mariano, 23 nov, con el formulario de solicitud de reutilización del portal). El informe con las incoherencias encontradas, para su canal «Valora los datos abiertos», está redactado (`prompts/`, fuera del repo); decir que se ha enviado solo si se ha enviado.
+- Si preguntan si se lo habéis dicho a la Comunidad: sí. Desde el 23 nov estamos dados de alta como reutilizadores de datos abiertos de la Comunidad de Madrid. El 24 nov le enviamos, por su canal «Valora los datos abiertos», un informe con 17 incoherencias, comprobadas ese mismo día en el portal, y cuatro propuestas. Las incoherencias tocan:
+  - los metadatos: la frecuencia, la licencia en la exportación DCAT y el contacto;
+  - el registro sanitario, que no tiene nombres;
+  - centros sin coordenadas o con coordenadas repetidas;
+  - barrios desfasados;
+  - el GTFS de metro caducado.
+- Evidencia del informe: `evidence/gate-06/2026-11-24-informe-portal/informe-enviado.md` (texto enviado y cómo se comprobó cada punto).
 
 **29. ¿Los datos están al día?**
 Cada fuente se recarga según su propia frecuencia de publicación, y en los GTFS el control de calidad avisa si el horario está caducado. Por ejemplo, el GTFS de metro venció el 27 de mayo de 2026 y sigue siendo el último publicado: lo usamos y el control de calidad lo marca.
